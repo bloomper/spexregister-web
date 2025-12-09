@@ -4,6 +4,7 @@ import "./globals.css";
 import {NextIntlClientProvider} from "next-intl";
 import {Header} from "@/components/header";
 import {auth} from "@/auth";
+import {ThemeProvider} from "@/components/theme-provider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -21,19 +22,28 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-                                       children,
-                                   }: Readonly<{
+                                             children,
+                                         }: Readonly<{
     children: React.ReactNode;
 }>) {
     const session = await auth();
 
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
         <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-        <Header session={session} />
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+            >
+                <Header session={session}/>
+                {children}
+            </ThemeProvider>
+        </NextIntlClientProvider>
         </body>
         </html>
     );

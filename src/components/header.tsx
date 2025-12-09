@@ -2,6 +2,7 @@
 import {Session} from 'next-auth';
 import SignIn from './sign-in';
 import SignOut from './sign-out';
+import {ModeToggle} from "@/components/mode-toggle";
 
 export interface HeaderProps {
     session?: Session | null;
@@ -19,6 +20,7 @@ export function Header({session}: HeaderProps) {
             ) : (
                 <SignIn/>
             )}
+            <ModeToggle/>
         </header>
     );
 }
