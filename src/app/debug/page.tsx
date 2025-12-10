@@ -7,7 +7,6 @@ export default async function DebugPage() {
         return <div>Not authenticated</div>;
     }
 
-    // Decode the access token
     const accessToken = session.accessToken as string;
     const parts = accessToken?.split('.');
     const decodedToken = parts?.[1]

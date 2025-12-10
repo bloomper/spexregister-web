@@ -5,6 +5,7 @@ import {NextIntlClientProvider} from "next-intl";
 import {Header} from "@/components/header";
 import {auth} from "@/auth";
 import {ThemeProvider} from "@/components/theme-provider";
+import Providers from "@/components/providers";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -33,17 +34,10 @@ export default async function RootLayout({
         <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-        <NextIntlClientProvider>
-            <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-            >
-                <Header session={session}/>
-                {children}
-            </ThemeProvider>
-        </NextIntlClientProvider>
+        <Providers>
+            <Header session={session}/>
+            {children}
+        </Providers>
         </body>
         </html>
     );
