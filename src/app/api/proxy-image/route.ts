@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
         const response = await fetch(fullImageUrl, {
             headers: {
-                Authorization: session?.accessToken ? `Bearer ${session.accessToken}` : '',
+                Authorization: session?.access_token ? `Bearer ${session.access_token}` : '',
             },
         });
 

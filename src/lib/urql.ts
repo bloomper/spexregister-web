@@ -32,7 +32,7 @@ const makeClient = () => {
 
                     async refreshAuth() {
                         const session = await auth();
-                        token = session?.accessToken || null;
+                        token = session?.access_token || null;
                     },
 
                     willAuthError(_operation) {

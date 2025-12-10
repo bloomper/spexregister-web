@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getSession } from 'next-auth/react';
+import {auth} from "@/auth";
 
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
@@ -11,10 +11,10 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
     async (config) => {
-        const session = await getSession();
+        const session = await auth();
 
-        if (session?.accessToken) {
-            config.headers.Authorization = `Bearer ${session.accessToken}`;
+        if (session?.access_token) {
+            config.headers.Authorization = `Bearer ${session.access_token}`;
         }
 
         return config;
