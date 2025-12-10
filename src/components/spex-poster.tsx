@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SpexPosterProps {
     posterUrl: string;
@@ -14,9 +14,19 @@ export function SpexPoster({ posterUrl, title, spexId }: SpexPosterProps) {
 
     const proxyImageUrl = `/api/proxy-image?url=${encodeURIComponent(posterUrl)}`;
 
+    useEffect(() => {
+        const img = new Image();
+        img.onload = () => setLoading(false);
+        img.onerror = () => {
+            setLoading(false);
+            setError(true);
+        };
+        img.src = proxyImageUrl;
+    }, [proxyImageUrl]);
+
     return (
         <div className="relative h-48 w-full overflow-hidden rounded bg-gray-100">
-            {loading && (
+            {loading && !error && (
                 <div className="absolute inset-0 flex items-center justify-center">
                     <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
                 </div>
@@ -32,12 +42,7 @@ export function SpexPoster({ posterUrl, title, spexId }: SpexPosterProps) {
                 <img
                     src={proxyImageUrl}
                     alt={`${title} poster`}
-                    className="h-full w-full object-cover"
-                    onLoad={() => setLoading(false)}
-                    onError={() => {
-                        setLoading(false);
-                        setError(true);
-                    }}
+                    className={`h-full w-full object-cover transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'}`}
                 />
             )}
         </div>

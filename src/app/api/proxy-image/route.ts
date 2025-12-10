@@ -1,13 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import {NextRequest, NextResponse} from 'next/server';
+import axios from "@/lib/axios";
+import {isAxiosError} from 'axios';
 
 export async function GET(request: NextRequest) {
-    const session = await auth();
-
     const imageUrl = request.nextUrl.searchParams.get('url');
 
     if (!imageUrl) {
-        return NextResponse.json({ error: 'Image URL is required' }, { status: 400 });
+        return NextResponse.json({error: 'Image URL is required'}, {status: 400});
     }
 
     try {
@@ -15,23 +14,12 @@ export async function GET(request: NextRequest) {
             ? imageUrl
             : `${process.env.API_REST_BASE_URL}${imageUrl}`;
 
-        console.log('Fetching image:', fullImageUrl);
-
-        const response = await fetch(fullImageUrl, {
-            headers: {
-                Authorization: session?.access_token ? `Bearer ${session.access_token}` : '',
-            },
+        const response = await axios.get(fullImageUrl, {
+            responseType: 'arraybuffer',
         });
 
-        if (!response.ok) {
-            return NextResponse.json(
-                { error: 'Failed to fetch image' },
-                { status: response.status }
-            );
-        }
-
-        const imageBuffer = await response.arrayBuffer();
-        const contentType = response.headers.get('content-type') || 'image/jpeg';
+        const imageBuffer = response.data;
+        const contentType = response.headers['content-type'] || 'image/jpeg';
 
         return new NextResponse(imageBuffer, {
             headers: {
@@ -41,6 +29,14 @@ export async function GET(request: NextRequest) {
         });
     } catch (error) {
         console.error('Error proxying image:', error);
-        return NextResponse.json({ error: 'Failed to proxy image' }, { status: 500 });
+
+        if (isAxiosError(error) && error.response) {
+            return NextResponse.json(
+                {error: 'Failed to fetch image'},
+                {status: error.response.status}
+            );
+        }
+
+        return NextResponse.json({error: 'Failed to proxy image'}, {status: 500});
     }
 }
