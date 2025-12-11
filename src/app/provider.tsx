@@ -4,7 +4,7 @@ import * as React from "react"
 import {NextIntlClientProvider} from "next-intl";
 import {ThemeProvider} from "@/components/theme-provider";
 
-export default function Providers({
+export default function Provider({
                                       children,
                                   }: Readonly<{
     children: React.ReactNode;

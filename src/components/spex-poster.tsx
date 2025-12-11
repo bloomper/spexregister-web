@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 
 interface SpexPosterProps {
     posterUrl: string;
@@ -8,7 +8,7 @@ interface SpexPosterProps {
     spexId: string;
 }
 
-export function SpexPoster({ posterUrl, title, spexId }: SpexPosterProps) {
+export function SpexPoster({posterUrl, title, spexId}: SpexPosterProps) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
@@ -28,7 +28,7 @@ export function SpexPoster({ posterUrl, title, spexId }: SpexPosterProps) {
         <div className="relative h-48 w-full overflow-hidden rounded bg-gray-100">
             {loading && !error && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"/>
                 </div>
             )}
 
