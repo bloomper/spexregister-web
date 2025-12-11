@@ -2,6 +2,10 @@
   "Home": {
     "title": "Hi"
   },
+  "Header": {
+    "toggleLanguage": "Toggle language",
+    "toggleTheme": "Toggle theme"
+  },
   "Metadata": {
     "title": "Chalmersspexet's Address Register",
     "description": "Address registry for Chalmersspexet's members"

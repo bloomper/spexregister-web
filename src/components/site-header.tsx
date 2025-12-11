@@ -1,22 +1,17 @@
-"use client"
+"use client";
 
-import {SidebarIcon} from "lucide-react"
-
-import {SearchForm} from "@/components/search-form"
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import {Button} from "@/components/ui/button"
-import {Separator} from "@/components/ui/separator"
-import {useSidebar} from "@/components/ui/sidebar"
+import {SidebarIcon} from "lucide-react";
+import {useTranslations} from "next-intl";
+import {SearchForm} from "@/components/search-form";
+import {Button} from "@/components/ui/button";
+import {Separator} from "@/components/ui/separator";
+import {useSidebar} from "@/components/ui/sidebar";
 import {ModeToggle} from "@/components/mode-toggle";
+import {LanguageToggle} from "@/components/language-toggle";
 
 export function SiteHeader() {
-    const {toggleSidebar} = useSidebar()
+    const {toggleSidebar} = useSidebar();
+    const t = useTranslations("Metadata");
 
     return (
         <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
@@ -30,21 +25,14 @@ export function SiteHeader() {
                     <SidebarIcon/>
                 </Button>
                 <Separator orientation="vertical" className="mr-2 h-4"/>
-                <Breadcrumb className="hidden sm:block">
-                    <BreadcrumbList>
-                        <BreadcrumbItem>
-                            Chalmersspexets Adressregister
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator/>
-                        <BreadcrumbItem>
-                            <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                        </BreadcrumbItem>
-                    </BreadcrumbList>
-                </Breadcrumb>
+                <h1 className="text-lg font-semibold">
+                    {t('title')}
+                </h1>
                 <SearchForm className="w-full sm:ml-auto sm:w-auto"/>
                 <Separator orientation="vertical" className="mr-2 h-4"/>
+                <LanguageToggle/>
                 <ModeToggle/>
             </div>
         </header>
-    )
+    );
 }

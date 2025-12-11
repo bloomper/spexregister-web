@@ -2,6 +2,10 @@
   "Home": {
     "title": "Hej"
   },
+  "Header": {
+    "toggleLanguage": "Byt språk",
+    "toggleTheme": "Byt tema"
+  },
   "Metadata": {
     "title": "Chalmersspexets Adressregister",
     "description": "Adressregister för medlemmar i Chalmersspexet"
