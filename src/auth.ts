@@ -1,6 +1,5 @@
 import nextAuth from 'next-auth';
 import Keycloak from 'next-auth/providers/keycloak';
-import type { User } from 'next-auth';
 
 declare module 'next-auth' {
     interface Session {
@@ -52,7 +51,7 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
                     }),
                 })
 
-                const tokensOrError = await response.json()
+                const tokensOrError = await response.json();
 
                 if (!response.ok) {
                     throw tokensOrError;
@@ -62,24 +61,25 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
                     access_token: string
                     expires_in: number
                     refresh_token?: string
-                }
+                };
 
                 return {
                     ...token,
                     access_token: newTokens.access_token,
                     expires_at: Math.floor(Date.now() / 1000 + newTokens.expires_in),
                     refresh_token: newTokens.refresh_token ? newTokens.refresh_token : token.refresh_token,
-                }
+                };
             } catch (error) {
-                console.error("Error refreshing access_token", error)
-                token.error = "RefreshTokenError"
-                return token
+                console.error("Error refreshing access_token", error);
+                token.error = "RefreshTokenError";
+                return token;
             }
         },
         async session({session, token}) {
             session.access_token = token.access_token as string;
             session.expires_at = token.expires_at as number;
             session.refresh_token = token.refresh_token as string;
+
             if (token.sub && token.email) {
                 session.user = {
                     id: token.sub as string,
@@ -93,7 +93,7 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
                 session.error = token.error as "RefreshTokenError";
             }
 
-            return session
+            return session;
         },
     },
 })
