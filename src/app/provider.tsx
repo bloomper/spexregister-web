@@ -3,6 +3,7 @@
 import * as React from "react";
 import {NextIntlClientProvider} from "next-intl";
 import {ThemeProvider} from "@/components/theme-provider";
+import {ConsentManager} from "@/components/consent-manager";
 
 export default function Provider({
                                      children,
@@ -32,14 +33,17 @@ export default function Provider({
     return (
         <NextIntlClientProvider locale={locale} messages={messages} onError={() => {
         }}>
-            <LocaleContext.Provider value={{ locale, changeLocale }}>
+            <LocaleContext.Provider value={{locale, changeLocale}}>
+
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
                     enableSystem
                     disableTransitionOnChange
                 >
-                    {children}
+                    <ConsentManager>
+                        {children}
+                    </ConsentManager>
                 </ThemeProvider>
             </LocaleContext.Provider>
         </NextIntlClientProvider>
