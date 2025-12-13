@@ -1,6 +1,9 @@
 {
+  "Common": {
+    "login": "Log in"
+  },
   "Home": {
-    "title": "Hi"
+    "mustBeLoggedIn": "You must be logged in to use the address register."
   },
   "Header": {
     "toggleLanguage": "Toggle language",

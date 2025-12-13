@@ -153,7 +153,12 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <a href="#">
+                            <a
+                                href="https://www.fgv.nu"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 flex-nowrap bg-transparent! hover:bg-transparent! active:bg-transparent! focus:bg-transparent!"
+                            >
                                 <div className="flex aspect-square size-10 items-center justify-center rounded-lg">
                                     <Logo/>
                                 </div>

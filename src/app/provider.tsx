@@ -4,6 +4,7 @@ import * as React from "react";
 import {NextIntlClientProvider} from "next-intl";
 import {ThemeProvider} from "@/components/theme-provider";
 import {ConsentManager} from "@/components/consent-manager";
+import {useRouter} from "next/navigation";
 
 export default function Provider({
                                      children,
@@ -14,6 +15,7 @@ export default function Provider({
     locale: string;
     messages: any;
 }>) {
+    const router = useRouter();
     const [locale, setLocale] = React.useState(initialLocale);
     const [messages, setMessages] = React.useState(initialMessages);
 
@@ -24,7 +26,8 @@ export default function Provider({
 
         setLocale(newLocale);
         setMessages(newMessages);
-    }, []);
+        router.refresh();
+    }, [router]);
 
     React.useEffect(() => {
         document.documentElement.lang = locale;

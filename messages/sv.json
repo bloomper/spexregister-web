@@ -1,6 +1,9 @@
 {
+  "Common": {
+    "login": "Logga in"
+  },
   "Home": {
-    "title": "Hej"
+    "mustBeLoggedIn": "Du behöver vara inloggad för att använda adressregistret."
   },
   "Header": {
     "toggleLanguage": "Byt språk",
