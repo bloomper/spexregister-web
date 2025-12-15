@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import {BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles,} from "lucide-react"
+import {BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles,} from "lucide-react";
 
-import {Avatar, AvatarFallback, AvatarImage,} from "@/components/ui/avatar"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,9 +10,14 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/components/ui/sidebar"
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@/components/ui/sidebar";
+import * as React from "react";
+import {useTranslations} from "next-intl";
+import {signOut} from "next-auth/react";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
 export function NavUser({
                             user,
@@ -23,7 +28,9 @@ export function NavUser({
         avatar: string
     }
 }) {
-    const {isMobile} = useSidebar()
+    const {isMobile} = useSidebar();
+    const t = useTranslations();
+    const router = useRouter();
 
     return (
         <SidebarMenu>
@@ -86,13 +93,24 @@ export function NavUser({
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
-                        <DropdownMenuItem>
-                            <LogOut/>
-                            Log out
+                        <DropdownMenuItem
+                            className="flex items-center gap-2"
+                            onSelect={async (e) => {
+                                e.preventDefault();
+
+                                toast.message(t("Common.loggedOut"));
+
+                                await signOut({ redirect: false });
+                                router.push("/");
+                                router.refresh();
+                            }}
+                        >
+                            <LogOut className="h-4 w-4" />
+                            <span className="whitespace-nowrap">{t("Common.logout")}</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>
         </SidebarMenu>
-    )
+    );
 }

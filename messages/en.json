@@ -1,6 +1,8 @@
 {
   "Common": {
-    "login": "Log in"
+    "login": "Log in",
+    "logout": "Log out",
+    "loggedOut": "You have been logged out."
   },
   "Home": {
     "mustBeLoggedIn": "You must be logged in to use the address register."

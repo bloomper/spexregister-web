@@ -5,6 +5,7 @@ import {NextIntlClientProvider} from "next-intl";
 import {ThemeProvider} from "@/components/theme-provider";
 import {ConsentManager} from "@/components/consent-manager";
 import {useRouter} from "next/navigation";
+import {Toaster} from "@/components/ui/sonner";
 
 export default function Provider({
                                      children,
@@ -46,6 +47,7 @@ export default function Provider({
                 >
                     <ConsentManager>
                         {children}
+                        <Toaster/>
                     </ConsentManager>
                 </ThemeProvider>
             </LocaleContext.Provider>

@@ -1,6 +1,8 @@
 {
   "Common": {
-    "login": "Logga in"
+    "login": "Logga in",
+    "logout": "Logga ut",
+    "loggedOut": "Du har loggats ut."
   },
   "Home": {
     "mustBeLoggedIn": "Du behöver vara inloggad för att använda adressregistret."
