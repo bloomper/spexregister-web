@@ -1,8 +1,9 @@
-import nextAuth from 'next-auth';
+import nextAuth, {DefaultSession} from 'next-auth';
 import Keycloak from 'next-auth/providers/keycloak';
+import {createHash} from "node:crypto";
 
 declare module 'next-auth' {
-    interface Session {
+    interface Session extends DefaultSession {
         error?: "RefreshTokenError"
         access_token: string
         expires_at: number
@@ -81,11 +82,16 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
             session.refresh_token = token.refresh_token as string;
 
             if (token.sub && token.email) {
+                const email = String(token.email).trim().toLowerCase();
+                const emailHash = createHash("md5").update(email).digest("hex");
+                const gravatarUrl = `https://www.gravatar.com/avatar/${emailHash}?d=404&s=128`;
+
                 session.user = {
                     id: token.sub as string,
                     email: token.email as string,
                     emailVerified: null,
                     name: token.name as string,
+                    image: gravatarUrl,
                 };
             }
 

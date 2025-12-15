@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar"
 import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
+import {useSession} from "next-auth/react";
 
 const data = {
     user: {
@@ -144,6 +145,14 @@ const data = {
 }
 
 export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
+    const { data: session } = useSession();
+
+    const user = {
+        name: session?.user?.name ?? "",
+        email: session?.user?.email ?? "",
+        avatar: session?.user?.image ?? "",
+    };
+
     return (
         <Sidebar collapsible="icon"
                  className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
@@ -176,7 +185,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                 <NavSecondary items={data.navSecondary} className="mt-auto"/>
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={data.user}/>
+                <NavUser user={user}/>
             </SidebarFooter>
         </Sidebar>
     )

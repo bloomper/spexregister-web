@@ -6,6 +6,7 @@ import {ThemeProvider} from "@/components/theme-provider";
 import {ConsentManager} from "@/components/consent-manager";
 import {useRouter} from "next/navigation";
 import {Toaster} from "@/components/ui/sonner";
+import {SessionProvider} from "next-auth/react";
 
 export default function Provider({
                                      children,
@@ -38,18 +39,19 @@ export default function Provider({
         <NextIntlClientProvider locale={locale} messages={messages} onError={() => {
         }}>
             <LocaleContext.Provider value={{locale, changeLocale}}>
-
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <ConsentManager>
-                        {children}
-                        <Toaster/>
-                    </ConsentManager>
-                </ThemeProvider>
+                <SessionProvider>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        <ConsentManager>
+                            {children}
+                            <Toaster/>
+                        </ConsentManager>
+                    </ThemeProvider>
+                </SessionProvider>
             </LocaleContext.Provider>
         </NextIntlClientProvider>
     );
