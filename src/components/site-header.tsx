@@ -11,7 +11,7 @@ import {LanguageToggle} from "@/components/language-toggle";
 
 export function SiteHeader() {
     const {toggleSidebar} = useSidebar();
-    const t = useTranslations("Metadata");
+    const t = useTranslations("Meta");
 
     return (
         <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">

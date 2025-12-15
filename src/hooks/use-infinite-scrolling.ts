@@ -1,0 +1,139 @@
+'use client';
+
+import * as React from 'react';
+import {CursorPage, CursorPageInfo} from "@/types/pagination";
+
+export type UseInfiniteCursorOptions<TItem> = {
+    fetchPageAction: (args: { after: string | null; pageSize: number }) => Promise<CursorPage<TItem>>;
+    pageSize?: number;
+    rootMargin?: string;
+    getKeyAction?: (item: TItem) => string;
+
+    initialItems?: TItem[];
+    initialPageInfo?: CursorPageInfo;
+    initialAfter?: string | null;
+};
+
+function useInView<T extends Element>(options?: IntersectionObserverInit) {
+    const ref = React.useRef<T | null>(null);
+    const [inView, setInView] = React.useState(false);
+
+    React.useEffect(() => {
+        if (!ref.current) {
+            return;
+        }
+
+        const obs = new IntersectionObserver(([entry]) => {
+            setInView(entry.isIntersecting);
+        }, options);
+
+        obs.observe(ref.current);
+        return () => obs.disconnect();
+    }, [options?.root, options?.rootMargin, options?.threshold]);
+
+    return {ref, inView};
+}
+
+export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem>) {
+    const {
+        fetchPageAction,
+        pageSize = 10,
+        rootMargin = '600px',
+        getKeyAction,
+        initialItems = [],
+        initialPageInfo,
+        initialAfter,
+    } = options;
+
+    const [items, setItems] = React.useState<TItem[]>(initialItems);
+    const [after, setAfter] = React.useState<string | null>(
+        initialAfter ?? initialPageInfo?.endCursor ?? null
+    );
+    const [hasNextPage, setHasNextPage] = React.useState<boolean>(
+        initialPageInfo ? Boolean(initialPageInfo.hasNextPage) : true
+    );
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        if (initialPageInfo) {
+            setAfter(initialPageInfo.endCursor ?? null);
+            setHasNextPage(Boolean(initialPageInfo.hasNextPage));
+        }
+    }, [initialPageInfo]);
+
+    const {ref: sentinelRef, inView} = useInView<HTMLDivElement>({rootMargin});
+
+    const loadMore = React.useCallback(async (force = false) => {
+        if (loading || !hasNextPage || (error && !force)) {
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const page = await fetchPageAction({after, pageSize});
+
+            setItems((prev) => {
+                if (!getKeyAction) {
+                    return [...prev, ...page.items];
+                }
+
+                const seen = new Set(prev.map(getKeyAction));
+                const merged = [...prev];
+                for (const item of page.items) {
+                    const key = getKeyAction(item);
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        merged.push(item);
+                    }
+                }
+                return merged;
+            });
+
+            setHasNextPage(Boolean(page.pageInfo?.hasNextPage));
+            setAfter(page.pageInfo?.endCursor ?? null);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : 'Failed to load data');
+        } finally {
+            setLoading(false);
+        }
+    }, [after, fetchPageAction, getKeyAction, hasNextPage, loading, pageSize]);
+
+    React.useEffect(() => {
+        if (initialItems.length === 0 && items.length === 0 && !loading && error === null) {
+            void loadMore();
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (!inView) {
+            return;
+        }
+        void loadMore();
+    }, [inView, loadMore]);
+
+    const reset = React.useCallback(() => {
+        setItems([]);
+        setAfter(null);
+        setHasNextPage(true);
+        setLoading(false);
+        setError(null);
+    }, []);
+
+    const clearError = React.useCallback(() => {
+        setError(null);
+    }, []);
+
+    return {
+        items,
+        loading,
+        error,
+        hasNextPage,
+        sentinelRef,
+        loadMore,
+        reset,
+        clearError,
+    };
+}

@@ -2,17 +2,25 @@
   "Common": {
     "login": "Logga in",
     "logout": "Logga ut",
-    "loggedOut": "Du har loggats ut."
+    "loggedOut": "Du har loggats ut.",
+    "loading": "Laddar…",
+    "noMoreDataFound": "Ingen mer data hittades.",
+    "couldNotLoadData": "Något gick fel när data laddades.",
+    "failedToLoadData": "Kunde inte ladda data",
+    "insufficientPermissions": "Otillräckliga rättigheter",
+    "tryAgain": "Försök igen"
   },
-  "Home": {
-    "mustBeLoggedIn": "Du behöver vara inloggad för att använda adressregistret."
+  "Meta": {
+    "title": "Chalmersspexets Adressregister",
+    "description": "Adressregister för medlemmar i Chalmersspexet"
   },
   "Header": {
     "toggleLanguage": "Byt språk",
     "toggleTheme": "Byt tema"
   },
-  "Metadata": {
-    "title": "Chalmersspexets Adressregister",
-    "description": "Adressregister för medlemmar i Chalmersspexet"
+  "Home": {
+    "mustBeLoggedIn": "Du behöver vara inloggad för att använda adressregistret.",
+    "latestNews": "Senaste nyheterna",
+    "showAllNews": "Visa alla nyheter"
   }
 }

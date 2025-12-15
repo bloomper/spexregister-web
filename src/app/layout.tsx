@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-    const t = await getTranslations('Metadata');
+    const t = await getTranslations('Meta');
 
     return {
         title: t('title'),
@@ -36,9 +36,7 @@ export default async function RootLayout({
 
     return (
         <html lang={locale} suppressHydrationWarning>
-        <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Provider locale={locale} messages={messages}>
             {children}
         </Provider>

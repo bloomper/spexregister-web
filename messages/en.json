@@ -2,17 +2,25 @@
   "Common": {
     "login": "Log in",
     "logout": "Log out",
-    "loggedOut": "You have been logged out."
+    "loggedOut": "You have been logged out.",
+    "loading": "Loading…",
+    "noMoreDataFound": "No more data found.",
+    "couldNotLoadData": "Something went wrong while loading data.",
+    "failedToLoadData": "Failed to load data",
+    "insufficientPermissions": "Insufficient permissions",
+    "tryAgain": "Try again"
   },
-  "Home": {
-    "mustBeLoggedIn": "You must be logged in to use the address register."
+  "Meta": {
+    "title": "Chalmersspexet's Address Register",
+    "description": "Address registry for Chalmersspexet's members"
   },
   "Header": {
     "toggleLanguage": "Toggle language",
     "toggleTheme": "Toggle theme"
   },
-  "Metadata": {
-    "title": "Chalmersspexet's Address Register",
-    "description": "Address registry for Chalmersspexet's members"
+  "Home": {
+    "mustBeLoggedIn": "You must be logged in to use the address register.",
+    "latestNews": "Latest news",
+    "showAllNews": "Show all news"
   }
 }
