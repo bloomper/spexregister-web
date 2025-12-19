@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
-import {Policies} from "@/utils/policy";
-import {withPolicy} from "@/utils/route";
+import {Policies} from "@/utils/policy.server";
+import {withPolicy} from "@/utils/route.server";
 import {getNewsPaged} from "@/lib/news";
 
 export const GET = withPolicy(Policies.news.requireRead, async (request, _ctx, _authz) => {

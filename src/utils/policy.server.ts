@@ -1,10 +1,7 @@
 import 'server-only';
 
-import {type Role, requireAnyRole} from '@/utils/auth';
-
-type PolicyResult =
-    | {ok: true; roles: Role[]}
-    | {ok: false; status: 401 | 403; message: string};
+import {type PolicyResult} from '@/types/auth';
+import {requireAnyRole} from "@/utils/auth.server";
 
 export const Policies = {
     news: {

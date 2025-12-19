@@ -18,123 +18,140 @@ import {
 import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
 import {useSession} from "next-auth/react";
+import {Role} from "@/types/auth";
+import {AuthUtils} from "@/utils/auth";
+import {useMemo} from "react";
 
-const data = {
-    navMain: [
-        {
-            title: "Home",
-            url: "/",
-            icon: House,
-            isActive: false,
-        },
-        {
-            title: "News",
-            url: "/news",
-            icon: BookOpen,
-            isActive: false,
-        },
-        {
-            title: "Playground",
-            url: "#",
-            icon: SquareTerminal,
-            isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Models",
-            url: "#",
-            icon: Bot,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Documentation",
-            url: "#",
-            icon: BookOpen,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Settings",
-            url: "#",
-            icon: Settings2,
-            items: [
-                {
-                    title: "General",
-                    url: "#",
-                },
-                {
-                    title: "Team",
-                    url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
-                    url: "#",
-                },
-            ],
-        },
-    ],
-    navSecondary: [
-        {
-            title: "Support",
-            url: "#",
-            icon: LifeBuoy,
-        },
-        {
-            title: "Feedback",
-            url: "#",
-            icon: Send,
-        },
-    ]
+function getNavigation(roles: Role[]) {
+    const isAdmin = AuthUtils.isAdmin(roles);
+    const isAdminOrEditor = AuthUtils.isAdminOrEditor(roles);
+
+    return {
+        main: [
+            {
+                title: "Home",
+                url: "/",
+                icon: House,
+                isActive: false,
+            },
+            {
+                title: "News",
+                url: "/news",
+                icon: BookOpen,
+                isActive: false,
+                items: isAdminOrEditor ? [
+                    { title: "Manage", url: "/news/manage" },
+                    { title: "Create", url: "/news/create" },
+                ] : undefined,
+            },
+            {
+                title: "Playground",
+                url: "#",
+                icon: SquareTerminal,
+                isActive: true,
+                items: [
+                    {
+                        title: "History",
+                        url: "#",
+                    },
+                    {
+                        title: "Starred",
+                        url: "#",
+                    },
+                    {
+                        title: "Settings",
+                        url: "#",
+                    },
+                ],
+            },
+            {
+                title: "Models",
+                url: "#",
+                icon: Bot,
+                items: [
+                    {
+                        title: "Genesis",
+                        url: "#",
+                    },
+                    {
+                        title: "Explorer",
+                        url: "#",
+                    },
+                    {
+                        title: "Quantum",
+                        url: "#",
+                    },
+                ],
+            },
+            {
+                title: "Documentation",
+                url: "#",
+                icon: BookOpen,
+                items: [
+                    {
+                        title: "Introduction",
+                        url: "#",
+                    },
+                    {
+                        title: "Get Started",
+                        url: "#",
+                    },
+                    {
+                        title: "Tutorials",
+                        url: "#",
+                    },
+                    {
+                        title: "Changelog",
+                        url: "#",
+                    },
+                ],
+            },
+            {
+                title: "Settings",
+                url: "#",
+                icon: Settings2,
+                items: [
+                    {
+                        title: "General",
+                        url: "#",
+                    },
+                    {
+                        title: "Team",
+                        url: "#",
+                    },
+                    {
+                        title: "Billing",
+                        url: "#",
+                    },
+                    {
+                        title: "Limits",
+                        url: "#",
+                    },
+                ],
+            },
+        ],
+        secondary: [
+            {
+                title: "Support",
+                url: "#",
+                icon: LifeBuoy,
+            },
+            {
+                title: "Feedback",
+                url: "#",
+                icon: Send,
+            },
+        ]
+    };
 }
 
-export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
-    const { data: session } = useSession();
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+    roles: Role[];
+}
+
+export function AppSidebar({roles, ...props}: AppSidebarProps) {
+    const {data: session} = useSession();
+    const navigation = useMemo(() => getNavigation(roles), [roles]);
 
     const user = {
         name: session?.user?.name ?? "",
@@ -169,8 +186,8 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain}/>
-                <NavSecondary items={data.navSecondary} className="mt-auto"/>
+                <NavMain items={navigation.main}/>
+                <NavSecondary items={navigation.secondary} className="mt-auto"/>
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={user}/>

@@ -1,8 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
 import {getTranslations} from "next-intl/server";
-
-import {auth} from "@/auth";
 import {AppSidebar} from "@/components/app-sidebar";
 import {SiteHeader} from "@/components/site-header";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
@@ -11,9 +9,10 @@ import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
 import {ModeToggle} from "@/components/mode-toggle";
 import {LanguageToggle} from "@/components/language-toggle";
+import {requireUser} from "@/utils/auth.server";
 
 export default async function AppLayout({children}: { children: React.ReactNode }) {
-    const session = await auth();
+    const { session, roles } = await requireUser();
     const t = await getTranslations();
 
     if (!session || session?.error === "RefreshTokenError") {
@@ -72,7 +71,7 @@ export default async function AppLayout({children}: { children: React.ReactNode 
             <SidebarProvider className="flex flex-col">
                 <SiteHeader/>
                 <div className="flex flex-1">
-                    <AppSidebar/>
+                    <AppSidebar roles={roles}/>
                     <SidebarInset>
                         {children}
                     </SidebarInset>
