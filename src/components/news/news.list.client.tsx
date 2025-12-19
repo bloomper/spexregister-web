@@ -6,12 +6,14 @@ import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {useLocale, useTranslations} from "next-intl";
 import {News} from "@/gql/graphql";
-import {NewsPage} from "@/lib/news";
-import {CursorPage, CursorPageInfo} from "@/types/pagination";
+import {CursorPage, CursorPageInfo, NewsPage} from "@/types/pagination";
 import {formatDate} from "@/utils/utils";
-import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer";
+import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 
-async function fetchNewsPageAction(args: { after: string | null; pageSize: number }, t: any): Promise<CursorPage<News>> {
+async function fetchNewsPageAction(args: {
+    after: string | null;
+    pageSize: number
+}, t: any): Promise<CursorPage<News>> {
     const params = new URLSearchParams();
     params.set('first', String(args.pageSize));
     if (args.after) {

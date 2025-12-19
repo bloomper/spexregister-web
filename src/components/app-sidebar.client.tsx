@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
+import {useMemo} from "react";
 import {BookOpen, Bot, House, LifeBuoy, Send, Settings2, SquareTerminal} from "lucide-react";
 
-import {NavMain} from "@/components/nav-main";
-import {NavSecondary} from "@/components/nav-secondary";
-import {NavUser} from "@/components/nav-user";
+import {NavMain} from "@/components/nav-main.client";
+import {NavSecondary} from "@/components/nav-secondary.client";
+import {NavUser} from "@/components/nav-user.client";
 import {
     Sidebar,
     SidebarContent,
@@ -19,12 +20,11 @@ import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
 import {useSession} from "next-auth/react";
 import {Role} from "@/types/auth";
-import {AuthUtils} from "@/utils/auth";
-import {useMemo} from "react";
+import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 
 function getNavigation(roles: Role[]) {
-    const isAdmin = AuthUtils.isAdmin(roles);
-    const isAdminOrEditor = AuthUtils.isAdminOrEditor(roles);
+    const isCurrentUserAdmin = isAdmin(roles);
+    const isCurrentUserAdminOrEditor = isAdminOrEditor(roles);
 
     return {
         main: [
@@ -39,9 +39,9 @@ function getNavigation(roles: Role[]) {
                 url: "/news",
                 icon: BookOpen,
                 isActive: false,
-                items: isAdminOrEditor ? [
-                    { title: "Manage", url: "/news/manage" },
-                    { title: "Create", url: "/news/create" },
+                items: isCurrentUserAdminOrEditor ? [
+                    {title: "Manage", url: "/news/manage"},
+                    {title: "Create", url: "/news/create"},
                 ] : undefined,
             },
             {

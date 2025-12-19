@@ -7,7 +7,7 @@ import {SE, US} from "@/components/flags";
 
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import {useLocaleContext} from "@/app/provider";
+import {useLocaleContext} from "@/app/provider.client";
 
 type FlagIcon = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 

@@ -1,3 +1,5 @@
+import 'server-only';
+
 import axios from 'axios';
 import {auth} from "@/auth";
 
@@ -24,13 +26,10 @@ instance.interceptors.request.use(
     }
 );
 
-// Response interceptor
 instance.interceptors.response.use(
     (response) => response,
     async (error) => {
         if (error.response?.status === 401) {
-            // Handle unauthorized access
-            // You might want to trigger a session refresh or redirect
             const event = new Event('unauthorized');
             window.dispatchEvent(event);
         }

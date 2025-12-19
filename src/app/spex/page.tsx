@@ -1,6 +1,5 @@
-
-import { Suspense } from 'react';
-import { getClient } from '@/lib/urql';
+import {Suspense} from 'react';
+import {getClient} from '@/lib/urql.server';
 import {SpexPoster} from "@/components/spex-poster";
 
 const SpexPagedQuery = `
@@ -59,7 +58,7 @@ async function SpexList() {
         );
     }
 
-    const { edges, pageInfo } = result.data.spexPaged;
+    const {edges, pageInfo} = result.data.spexPaged;
 
     return (
         <div className="space-y-6">
@@ -122,11 +121,11 @@ export default function SpexPage() {
             <Suspense
                 fallback={
                     <div className="flex items-center justify-center p-8">
-                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"/>
                     </div>
                 }
             >
-                <SpexList />
+                <SpexList/>
             </Suspense>
         </main>
     );

@@ -2,7 +2,7 @@
 
 import {ChevronsUpDown, ExternalLink, LogOut, UserCog} from "lucide-react";
 
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.client";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,9 +16,9 @@ import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@/com
 import * as React from "react";
 import {useMemo} from "react";
 import {useTranslations} from "next-intl";
-import {signOut} from "next-auth/react";
-import {useRouter} from "next/navigation";
 import {toast} from "sonner";
+import {useSession} from "next-auth/react";
+import {generateKeycloakLogoutUrl} from "@/utils/auth";
 
 function getInitials(name: string, email: string) {
     const base = (name?.trim() || email?.trim() || "").trim();
@@ -44,7 +44,7 @@ export function NavUser({
 }) {
     const {isMobile} = useSidebar();
     const t = useTranslations();
-    const router = useRouter();
+    const {data: session} = useSession();
 
     const initials = useMemo(() => getInitials(user.name, user.email), [user.name, user.email]);
     const [avatarFailed, setAvatarFailed] = React.useState(false);
@@ -99,23 +99,23 @@ export function NavUser({
                                     rel="noopener noreferrer"
                                     className="flex w-full items-center gap-2"
                                 >
-                                    <UserCog className="size-4" />
+                                    <UserCog className="size-4"/>
                                     <span className="flex-1">{t("Common.myFgvAccount")}</span>
-                                    <ExternalLink className="ml-auto size-3 opacity-50" />
+                                    <ExternalLink className="ml-auto size-3 opacity-50"/>
                                 </a>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem
                             className="flex items-center gap-2"
-                            onSelect={async (e) => {
-                                e.preventDefault();
+                            onSelect={() => {
+                                const logoutUrl = generateKeycloakLogoutUrl(
+                                    process.env.NEXT_PUBLIC_AUTH_URL ?? '',
+                                    session?.id_token
+                                );
 
                                 toast.message(t("Common.loggedOut"));
-
-                                await signOut({redirect: false});
-                                router.push("/");
-                                router.refresh();
+                                window.location.href = logoutUrl;
                             }}
                         >
                             <LogOut className="h-4 w-4"/>

@@ -4,8 +4,8 @@ import type {NextRequest} from 'next/server';
 import {NextResponse} from 'next/server';
 import type {Role} from '@/types/auth';
 
-export type AuthzOk = {ok: true; roles: Role[]};
-export type AuthzFail = {ok: false; status: 401 | 403; message: string};
+export type AuthzOk = { ok: true; roles: Role[] };
+export type AuthzFail = { ok: false; status: 401 | 403; message: string };
 export type AuthzResult = AuthzOk | AuthzFail;
 
 type RouteContext = unknown;

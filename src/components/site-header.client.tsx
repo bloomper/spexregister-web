@@ -6,8 +6,8 @@ import {SearchForm} from "@/components/search-form";
 import {Button} from "@/components/ui/button";
 import {Separator} from "@/components/ui/separator";
 import {useSidebar} from "@/components/ui/sidebar";
-import {ModeToggle} from "@/components/mode-toggle";
-import {LanguageToggle} from "@/components/language-toggle";
+import {ModeToggle} from "@/components/mode-toggle.client";
+import {LanguageToggle} from "@/components/language-toggle.client";
 
 export function SiteHeader() {
     const {toggleSidebar} = useSidebar();

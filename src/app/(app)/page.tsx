@@ -7,7 +7,7 @@ import {buttonVariants} from "@/components/ui/button";
 
 export default async function HomePage() {
     const t = await getTranslations();
-    const page = await getNewsPaged({ first: 6 });
+    const page = await getNewsPaged({first: 6});
     const initialItems = page.edges.map(e => e.node);
 
     return (
@@ -32,7 +32,7 @@ export default async function HomePage() {
             <div className="flex justify-center mt-4">
                 <Link
                     href="/news"
-                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                    className={buttonVariants({variant: "outline", size: "sm"})}
                 >
                     {t("Home.showAllNews") || "Show all news"}
                 </Link>

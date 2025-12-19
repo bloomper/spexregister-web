@@ -4,7 +4,7 @@ type Props = React.SVGProps<SVGSVGElement> & {
     title?: string;
 };
 
-export function SE({ title, ...props }: Props) {
+export function SE({title, ...props}: Props) {
     return (
         <svg
             viewBox="0 0 28 20"
@@ -15,14 +15,14 @@ export function SE({ title, ...props }: Props) {
             {...props}
         >
             {title ? <title>{title}</title> : null}
-            <rect width="28" height="20" fill="#006AA7" />
-            <rect x="0" y="8" width="28" height="4" fill="#FECC00" />
-            <rect x="8" y="0" width="4" height="20" fill="#FECC00" />
+            <rect width="28" height="20" fill="#006AA7"/>
+            <rect x="0" y="8" width="28" height="4" fill="#FECC00"/>
+            <rect x="8" y="0" width="4" height="20" fill="#FECC00"/>
         </svg>
     );
 }
 
-export function US({ title, ...props }: Props) {
+export function US({title, ...props}: Props) {
     return (
         <svg
             viewBox="0 0 28 20"

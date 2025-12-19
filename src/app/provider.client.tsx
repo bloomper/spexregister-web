@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import {NextIntlClientProvider} from "next-intl";
-import {ThemeProvider} from "@/components/theme-provider";
-import {ConsentManager} from "@/components/consent-manager";
+import {ThemeProvider} from "@/components/theme-provider.client";
+import {ConsentManager} from "@/components/consent-manager.client";
 import {useRouter} from "next/navigation";
-import {Toaster} from "@/components/ui/sonner";
+import {Toaster} from "@/components/ui/sonner.client";
 import {SessionProvider} from "next-auth/react";
 
 export default function Provider({

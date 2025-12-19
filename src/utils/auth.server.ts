@@ -2,7 +2,7 @@ import 'server-only';
 
 import {auth} from '@/auth';
 import {jwtDecode} from 'jwt-decode';
-import {type Role, type AuthzOk, type AuthzFail} from '@/types/auth';
+import {type AuthzFail, type AuthzOk, type Role} from '@/types/auth';
 
 type AccessTokenClaims = {
     resource_access?: {

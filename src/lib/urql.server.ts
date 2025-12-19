@@ -1,3 +1,5 @@
+import 'server-only';
+
 import {cacheExchange, createClient, fetchExchange} from '@urql/core';
 import {registerUrql} from '@urql/next/rsc';
 import {auth} from '@/auth';

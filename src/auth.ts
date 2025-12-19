@@ -1,3 +1,5 @@
+import 'server-only';
+
 import nextAuth, {DefaultSession} from 'next-auth';
 import Keycloak from 'next-auth/providers/keycloak';
 import {createHash} from "node:crypto";
@@ -6,6 +8,7 @@ declare module 'next-auth' {
     interface Session extends DefaultSession {
         error?: "RefreshTokenError"
         access_token: string
+        id_token?: string
         expires_at: number
         refresh_token?: string
     }
@@ -24,6 +27,7 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
                 return {
                     ...token,
                     access_token: account.access_token,
+                    id_token: account.id_token,
                     expires_at: account.expires_at,
                     refresh_token: account.refresh_token,
                     user
@@ -78,6 +82,7 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
         },
         async session({session, token}) {
             session.access_token = token.access_token as string;
+            session.id_token = token.id_token as string;
             session.expires_at = token.expires_at as number;
             session.refresh_token = token.refresh_token as string;
 

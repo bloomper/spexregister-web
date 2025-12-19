@@ -1,18 +1,18 @@
 import * as React from "react";
 import Link from "next/link";
 import {getTranslations} from "next-intl/server";
-import {AppSidebar} from "@/components/app-sidebar";
-import {SiteHeader} from "@/components/site-header";
+import {AppSidebar} from "@/components/app-sidebar.client";
+import {SiteHeader} from "@/components/site-header.client";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 import {Button} from "@/components/ui/button";
 import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
-import {ModeToggle} from "@/components/mode-toggle";
-import {LanguageToggle} from "@/components/language-toggle";
+import {ModeToggle} from "@/components/mode-toggle.client";
+import {LanguageToggle} from "@/components/language-toggle.client";
 import {requireUser} from "@/utils/auth.server";
 
 export default async function AppLayout({children}: { children: React.ReactNode }) {
-    const { session, roles } = await requireUser();
+    const {session, roles} = await requireUser();
     const t = await getTranslations();
 
     if (!session || session?.error === "RefreshTokenError") {

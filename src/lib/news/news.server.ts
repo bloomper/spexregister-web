@@ -1,12 +1,8 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql';
+import {getClient} from '@/lib/urql.server';
 import {News, NewsConnection, NewsEdge} from "@/gql/graphql";
-import {CursorPage} from "@/types/pagination";
-
-export type NewsPage = CursorPage<News> & {
-    edges: Array<Omit<NewsEdge, 'node'> & { node: News }>;
-};
+import {NewsPage} from "@/types/pagination";
 
 const NewsPagedQuery = /* GraphQL */`
     query NewsPaged($first: Int!, $after: String) {
