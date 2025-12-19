@@ -8,7 +8,8 @@
     "couldNotLoadData": "Something went wrong while loading data.",
     "failedToLoadData": "Failed to load data",
     "insufficientPermissions": "Insufficient permissions",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "myFgvAccount": "My FGV account"
   },
   "Meta": {
     "title": "Chalmersspexet's Address Register",

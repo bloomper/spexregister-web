@@ -8,7 +8,8 @@
     "couldNotLoadData": "Något gick fel när data laddades.",
     "failedToLoadData": "Kunde inte ladda data",
     "insufficientPermissions": "Otillräckliga rättigheter",
-    "tryAgain": "Försök igen"
+    "tryAgain": "Försök igen",
+    "myFgvAccount": "Mitt FGV-konto"
   },
   "Meta": {
     "title": "Chalmersspexets Adressregister",

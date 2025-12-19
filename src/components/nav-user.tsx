@@ -1,6 +1,6 @@
 "use client";
 
-import {BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles,} from "lucide-react";
+import {ChevronsUpDown, ExternalLink, LogOut, UserCog} from "lucide-react";
 
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {
@@ -50,6 +50,8 @@ export function NavUser({
     const [avatarFailed, setAvatarFailed] = React.useState(false);
     const avatarSrc = !avatarFailed && user.avatar ? user.avatar : undefined;
 
+    const accountUrl = `${process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}/account`;
+
     return (
         <SidebarMenu>
             <SidebarMenuItem>
@@ -91,23 +93,16 @@ export function NavUser({
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
-                                <Sparkles/>
-                                Upgrade to Pro
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <BadgeCheck/>
-                                Account
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <CreditCard/>
-                                Billing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Bell/>
-                                Notifications
+                                <a
+                                    href={accountUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex w-full items-center gap-2"
+                                >
+                                    <UserCog className="size-4" />
+                                    <span className="flex-1">{t("Common.myFgvAccount")}</span>
+                                    <ExternalLink className="ml-auto size-3 opacity-50" />
+                                </a>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
