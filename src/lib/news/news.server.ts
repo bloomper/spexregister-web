@@ -4,29 +4,56 @@ import {getClient} from '@/lib/urql.server';
 import {News, NewsConnection, NewsEdge} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
 
-const NewsPagedQuery = /* GraphQL */`
-    query NewsPaged($first: Int!, $after: String) {
-        newsPaged(first: $first, after: $after) {
+const NewsSummaryFields = `
+    id
+    subject
+    text
+    visibleFrom
+`;
+
+const NewsFullFields = `
+    ${NewsSummaryFields}
+    published
+    visibleTo
+    createdAt
+    createdBy
+    lastModifiedAt
+    lastModifiedBy
+`;
+
+const createQuery = (fields: string) => /* GraphQL */ `
+    query NewsPaged($first: Int, $last: Int, $after: String, $before: String) {
+        newsPaged(first: $first, last: $last, after: $after, before: $before) {
             edges {
                 cursor
-                node {
-                    id
-                    visibleFrom
-                    subject
-                    text
-                }
+                node { ${fields} }
             }
             pageInfo {
                 hasNextPage
+                hasPreviousPage
+                startCursor
                 endCursor
             }
         }
     }
 `;
 
-export async function getNewsPaged(args: { first: number; after?: string | null }): Promise<NewsPage> {
+export async function getNewsPaged(args: {
+    first?: number;
+    last?: number;
+    after?: string | null;
+    before?: string | null;
+    full?: boolean
+}): Promise<NewsPage> {
+    const query = createQuery(args.full ? NewsFullFields : NewsSummaryFields);
+
     const result = await getClient()
-        .query<{ newsPaged: NewsConnection }>(NewsPagedQuery, {first: args.first, after: args.after ?? null})
+        .query<{ newsPaged: NewsConnection }>(query, {
+            first: args.first,
+            last: args.last,
+            after: args.after ?? null,
+            before: args.before ?? null
+        })
         .toPromise();
 
     if (result.error) {
@@ -42,7 +69,10 @@ export async function getNewsPaged(args: { first: number; after?: string | null 
         edges: validEdges,
         pageInfo: {
             hasNextPage: Boolean(conn?.pageInfo?.hasNextPage),
+            hasPreviousPage: Boolean(conn?.pageInfo?.hasPreviousPage),
+            startCursor: conn?.pageInfo?.startCursor ?? null,
             endCursor: conn?.pageInfo?.endCursor ?? null,
+
         },
     };
 }

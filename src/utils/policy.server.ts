@@ -15,7 +15,7 @@ export const Policies = {
             return requireAnyRole(['EDITOR', 'ADMIN']);
         },
         async requireDelete(): Promise<PolicyResult> {
-            return requireAnyRole(['ADMIN']);
+            return requireAnyRole(['EDITOR', 'ADMIN']);
         },
     },
 } as const;

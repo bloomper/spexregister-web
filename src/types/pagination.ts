@@ -2,6 +2,8 @@ import {News, NewsEdge} from "@/gql/graphql";
 
 export type CursorPageInfo = {
     hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string | null;
     endCursor: string | null;
 };
 

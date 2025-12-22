@@ -4,43 +4,14 @@ import * as React from 'react';
 import {useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import {useLocale, useTranslations} from "next-intl";
+import {useTranslations} from "next-intl";
 import {News} from "@/gql/graphql";
-import {CursorPage, CursorPageInfo, NewsPage} from "@/types/pagination";
+import {CursorPageInfo} from "@/types/pagination";
 import {formatDate} from "@/utils/utils";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-
-async function fetchNewsPageAction(args: {
-    after: string | null;
-    pageSize: number
-}, t: any): Promise<CursorPage<News>> {
-    const params = new URLSearchParams();
-    params.set('first', String(args.pageSize));
-    if (args.after) {
-        params.set('after', args.after);
-    }
-
-    const res = await fetch(`/api/news?${params.toString()}`, {
-        method: 'GET',
-        headers: {Accept: 'application/json'},
-    });
-
-    if (res.status === 401 || res.status === 403) {
-        throw new Error(t("Common.insufficientPermissions"));
-    }
-    if (res.ok) {
-        throw new Error(t("Common.failedToLoadData"));
-    }
-
-    const json = await res.json() as NewsPage;
-
-    return {
-        items: json.edges.map((e) => e.node),
-        pageInfo: json.pageInfo,
-    };
-}
+import {fetchNewsAction} from "@/app/(app)/news/manage/page";
 
 export function NewsList({
                              initialItems = [],
@@ -52,7 +23,6 @@ export function NewsList({
     maxItems?: number;
 }) {
     const t = useTranslations();
-    const locale = useLocale();
     const [mounted, setMounted] = React.useState(false);
 
     React.useEffect(() => {
@@ -67,7 +37,10 @@ export function NewsList({
         sentinelRef,
         loadMore
     } = useInfiniteCursor<News>({
-        fetchPageAction: (args) => fetchNewsPageAction(args, t),
+        fetchPageAction: (args) => fetchNewsAction({
+            after: args.after,
+            first: args.pageSize
+        }),
         pageSize: 24,
         rootMargin: '600px',
         getKeyAction: (n) => n.id,
@@ -101,7 +74,7 @@ export function NewsList({
                                 <CardHeader className="space-y-1">
                                     <CardDescription>
                                         <time dateTime={n.visibleFrom}>
-                                            {formatDate(n.visibleFrom, locale)}
+                                            {formatDate(n.visibleFrom)}
                                         </time>
                                     </CardDescription>
                                     <CardTitle className="line-clamp-1">{n.subject}</CardTitle>
@@ -120,7 +93,7 @@ export function NewsList({
                             <DialogHeader>
                                 <div className="text-xs text-muted-foreground">
                                     <time dateTime={selected?.visibleFrom}>
-                                        {selected?.visibleFrom ? formatDate(selected.visibleFrom, locale) : ''}
+                                        {selected?.visibleFrom ? formatDate(selected.visibleFrom) : ''}
                                     </time>
                                 </div>
                                 <DialogTitle>{selected?.subject ?? ''}</DialogTitle>

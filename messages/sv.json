@@ -12,7 +12,15 @@
     "insufficientPermissions": "Otillräckliga rättigheter",
     "tryAgain": "Försök igen",
     "close": "Stäng",
-    "myFgvAccount": "Mitt FGV-konto"
+    "edit": "Ändra",
+    "delete": "Radera",
+    "rowsPerPage": "Rader per sida",
+    "openMenu": "Öppna meny",
+    "myFgvAccount": "Mitt FGV-konto",
+    "createdAt": "Skapad",
+    "createdBy": "Skapad av",
+    "lastModifiedAt": "Senast uppdaterad",
+    "lastModifiedBy": "Senast uppdaterad av"
   },
   "Meta": {
     "title": "Chalmersspexets Adressregister",
@@ -26,5 +34,13 @@
     "mustBeLoggedIn": "Du behöver vara inloggad för att använda adressregistret.",
     "latestNews": "Senaste nyheterna",
     "showAllNews": "Visa alla nyheter"
+  },
+  "News": {
+    "title": "Nyheter",
+    "subject": "Ämne",
+    "text": "Text",
+    "published": "Publicerad?",
+    "visibleFrom": "Synlig från",
+    "visibleTo": "Synlig till"
   }
 }

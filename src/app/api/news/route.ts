@@ -4,17 +4,22 @@ import {withPolicy} from "@/utils/route.server";
 import {getNewsPaged} from "@/lib/news";
 
 export const GET = withPolicy(Policies.news.requireRead, async (request, _ctx, _authz) => {
-    const url = new URL(request.url);
-    const first = Math.min(Math.max(Number(url.searchParams.get('first') ?? 10) || 10, 1), 50);
-    const after = url.searchParams.get('after');
+    const { searchParams } = new URL(request.url);
+    const first = searchParams.get("first") ? parseInt(searchParams.get("first")!) : undefined;
+    const last = searchParams.get("last") ? parseInt(searchParams.get("last")!) : undefined;
+    const after = searchParams.get("after");
+    const before = searchParams.get("before");
+    const full = searchParams.get("full") === "true"; // Check for the 'full' flag
 
     try {
-        const page = await getNewsPaged({first, after: after || null});
-
-        return NextResponse.json({
-            edges: page.edges,
-            pageInfo: page.pageInfo,
+        const data = await getNewsPaged({
+            first,
+            last,
+            after,
+            before,
+            full
         });
+        return NextResponse.json(data);
     } catch (err: any) {
         console.error("GET /api/news failed", {message: err?.message ?? String(err)});
         return NextResponse.json({error: "Failed to load news"}, {status: 500});

@@ -12,7 +12,15 @@
     "insufficientPermissions": "Insufficient permissions",
     "tryAgain": "Try again",
     "close": "Close",
-    "myFgvAccount": "My FGV account"
+    "edit": "Edit",
+    "delete": "Delete",
+    "rowsPerPage": "Rows per page",
+    "openMenu": "Open menu",
+    "myFgvAccount": "My FGV account",
+    "createdAt": "Created at",
+    "createdBy": "Created by",
+    "lastModifiedAt": "Last modified at",
+    "lastModifiedBy": "Last modified by"
   },
   "Meta": {
     "title": "Chalmersspexet's Address Register",
@@ -26,5 +34,13 @@
     "mustBeLoggedIn": "You must be logged in to use the address register.",
     "latestNews": "Latest news",
     "showAllNews": "Show all news"
+  },
+  "News": {
+    "title": "News",
+    "subject": "Subject",
+    "text": "Text",
+    "published": "Published?",
+    "visibleFrom": "Visible from",
+    "visibleTo": "Visible to"
   }
 }
