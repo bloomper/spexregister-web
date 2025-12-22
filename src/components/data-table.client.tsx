@@ -6,7 +6,7 @@ import {ColumnDef, flexRender, getCoreRowModel, useReactTable} from "@tanstack/r
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
-import {ChevronLeft, ChevronRight, LoaderPinwheel} from "lucide-react";
+import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, LoaderPinwheel} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useTranslations} from "next-intl";
 import {DataEmpty} from "@/components/data-empty";
@@ -27,7 +27,7 @@ export function RemoteDataTable<TData, TValue>({
                                                    extraParams = {}
                                                }: RemoteDataTableProps<TData, TValue>) {
     const fetchPage = async (args: any) => {
-        return fetchAction({ ...args, ...extraParams });
+        return fetchAction({...args, ...extraParams});
     };
 
     return (
@@ -44,7 +44,12 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     initialData: CursorPage<TData>
     initialPageSize?: number
-    onFetch: (args: { first?: number; last?: number; after?: string | null; before?: string | null }) => Promise<CursorPage<TData>>
+    onFetch: (args: {
+        first?: number;
+        last?: number;
+        after?: string | null;
+        before?: string | null
+    }) => Promise<CursorPage<TData>>
 }
 
 export function DataTable<TData, TValue>({
@@ -78,26 +83,31 @@ export function DataTable<TData, TValue>({
         }
     };
 
-    const handlePageChange = (direction: "next" | "prev") => {
-        if (direction === "next" && pageInfo.endCursor) {
-            void handleFetch({ first: pageSize, after: pageInfo.endCursor });
+    const handlePageChange = (direction: "next" | "prev" | "first" | "last") => {
+        if (direction === "first") {
+            void handleFetch({first: pageSize});
+        } else if (direction === "last") {
+            void handleFetch({last: pageSize});
+        } else if (direction === "next" && pageInfo.endCursor) {
+            void handleFetch({first: pageSize, after: pageInfo.endCursor});
         } else if (direction === "prev" && pageInfo.startCursor) {
-            void handleFetch({ last: pageSize, before: pageInfo.startCursor });
+            void handleFetch({last: pageSize, before: pageInfo.startCursor});
         }
     };
 
     const handlePageSizeChange = (value: string) => {
         const newSize = parseInt(value, 10);
         setPageSize(newSize);
-        void handleFetch({ first: newSize });
+        void handleFetch({first: newSize});
     };
 
     return (
         <div className="space-y-4">
             <div className={`rounded-md border transition-opacity ${loading ? "opacity-50" : "opacity-100"}`}>
                 {loading && (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
-                        <LoaderPinwheel className="h-6 w-6 animate-spin text-muted-foreground" />
+                    <div
+                        className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
+                        <LoaderPinwheel className="h-6 w-6 animate-spin text-muted-foreground"/>
                     </div>
                 )}
                 <Table>
@@ -152,7 +162,7 @@ export function DataTable<TData, TValue>({
                     <p className="text-sm font-medium">{t("Common.rowsPerPage")}</p>
                     <Select value={`${pageSize}`} onValueChange={handlePageSizeChange}>
                         <SelectTrigger className="h-8 w-[70px]">
-                            <SelectValue placeholder={pageSize} />
+                            <SelectValue placeholder={pageSize}/>
                         </SelectTrigger>
                         <SelectContent side="top">
                             {[10, 15, 20, 25, 30, 40, 50].map((size) => (
@@ -164,11 +174,19 @@ export function DataTable<TData, TValue>({
                 <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
                     <Button
                         variant="outline"
+                        className="hidden h-8 w-8 p-0 lg:flex"
+                        onClick={() => handlePageChange("first")}
+                        disabled={!pageInfo.hasPreviousPage || loading}
+                    >
+                        <ChevronsLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
                         className="h-8 w-8 p-0"
                         onClick={() => handlePageChange("prev")}
                         disabled={!pageInfo.hasPreviousPage || loading}
                     >
-                        <ChevronLeft className="h-4 w-4" />
+                        <ChevronLeft className="h-4 w-4"/>
                     </Button>
                     <Button
                         variant="outline"
@@ -176,7 +194,15 @@ export function DataTable<TData, TValue>({
                         onClick={() => handlePageChange("next")}
                         disabled={!pageInfo.hasNextPage || loading}
                     >
-                        <ChevronRight className="h-4 w-4" />
+                        <ChevronRight className="h-4 w-4"/>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="hidden h-8 w-8 p-0 lg:flex"
+                        onClick={() => handlePageChange("last")}
+                        disabled={!pageInfo.hasNextPage || loading}
+                    >
+                        <ChevronsRight className="h-4 w-4" />
                     </Button>
                 </div>
             </div>

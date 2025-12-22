@@ -13,7 +13,7 @@ export async function fetchNewsAction(args: {
     last?: number;
     after?: string | null;
     before?: string | null;
-    full?: boolean;
+    full?: boolean | string;
 }): Promise<NewsPage> {
     const authz = await Policies.news.requireUpdate();
 
@@ -21,7 +21,10 @@ export async function fetchNewsAction(args: {
         notFound();
     }
 
-    return getNewsPaged(args);
+    return getNewsPaged({
+        ...args,
+        full: args.full === true || args.full === "true"
+    });
 }
 
 export default async function NewsManagePage() {

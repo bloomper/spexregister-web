@@ -41,8 +41,10 @@ export function DataTableSkeleton({
             <div className="flex flex-col gap-4 sm:flex-row items-center justify-between py-4">
                 <Skeleton className="h-8 w-[150px]"/>
                 <div className="flex space-x-2">
+                    <Skeleton className="hidden h-8 w-8 rounded-md lg:block" />
                     <Skeleton className="h-8 w-8 rounded-md"/>
                     <Skeleton className="h-8 w-8 rounded-md"/>
+                    <Skeleton className="hidden h-8 w-8 rounded-md lg:block" />
                 </div>
             </div>
         </div>
