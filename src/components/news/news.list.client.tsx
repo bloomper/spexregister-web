@@ -3,12 +3,14 @@
 import * as React from 'react';
 import {useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {useLocale, useTranslations} from "next-intl";
 import {News} from "@/gql/graphql";
 import {CursorPage, CursorPageInfo, NewsPage} from "@/types/pagination";
 import {formatDate} from "@/utils/utils";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
 
 async function fetchNewsPageAction(args: {
     after: string | null;
@@ -92,22 +94,24 @@ export function NewsList({
                         <button
                             type="button"
                             disabled={!mounted}
-                            className="bg-muted/50 aspect-video rounded-xl p-4 text-left w-full h-full overflow-hidden flex flex-col disabled:cursor-default cursor-pointer"
+                            className="text-left w-full h-full disabled:cursor-default cursor-pointer group"
                             onClick={() => setSelected(n)}
                         >
-                            <time
-                                dateTime={n.visibleFrom}
-                                className="text-xs text-muted-foreground leading-4 h-4"
-                            >
-                                {formatDate(n.visibleFrom, locale)}
-                            </time>
-                            <h2 className="text-lg font-semibold leading-7 h-7 truncate">
-                                {n.subject}
-                            </h2>
-                            <p className="mt-2 text-sm text-muted-foreground leading-5 h-30 overflow-hidden line-clamp-6">
-                                {n.text}
-                            </p>
-                            <div className="mt-auto"/>
+                            <Card className="h-full transition-colors group-hover:bg-muted/50 overflow-hidden">
+                                <CardHeader className="space-y-1">
+                                    <CardDescription>
+                                        <time dateTime={n.visibleFrom}>
+                                            {formatDate(n.visibleFrom, locale)}
+                                        </time>
+                                    </CardDescription>
+                                    <CardTitle className="line-clamp-1">{n.subject}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground line-clamp-4">
+                                        {n.text}
+                                    </p>
+                                </CardContent>
+                            </Card>
                         </button>
                     </DialogTrigger>
 
@@ -125,6 +129,9 @@ export function NewsList({
                             <div className="whitespace-pre-wrap text-sm text-foreground">
                                 {selected?.text ?? ''}
                             </div>
+                            <DialogClose asChild>
+                                <Button variant="outline">{t("Common.close")}</Button>
+                            </DialogClose>
                         </DialogContent>
                     )}
                 </Dialog>

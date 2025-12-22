@@ -7,8 +7,11 @@
     "noMoreDataFound": "Ingen mer data hittades.",
     "couldNotLoadData": "Något gick fel när data laddades.",
     "failedToLoadData": "Kunde inte ladda data",
+    "noDataTitle": "Ingen data hittades",
+    "noDataDescription": "Kunde inte hitta någon data för tillfället. Vänligen kolla senare.",
     "insufficientPermissions": "Otillräckliga rättigheter",
     "tryAgain": "Försök igen",
+    "close": "Stäng",
     "myFgvAccount": "Mitt FGV-konto"
   },
   "Meta": {

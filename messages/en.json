@@ -7,8 +7,11 @@
     "noMoreDataFound": "No more data found.",
     "couldNotLoadData": "Something went wrong while loading data.",
     "failedToLoadData": "Failed to load data",
+    "noDataTitle": "No data found",
+    "noDataDescription": "Couldn't find any data at the moment. Please check back later.",
     "insufficientPermissions": "Insufficient permissions",
     "tryAgain": "Try again",
+    "close": "Close",
     "myFgvAccount": "My FGV account"
   },
   "Meta": {
