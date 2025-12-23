@@ -11,6 +11,8 @@
     "noDataDescription": "Kunde inte hitta någon data för tillfället. Vänligen kolla senare.",
     "insufficientPermissions": "Otillräckliga rättigheter",
     "tryAgain": "Försök igen",
+    "clearFilters": "Rensa filter",
+    "reset": "Återställ",
     "cancel": "Avbryt",
     "close": "Stäng",
     "edit": "Ändra",
@@ -53,7 +55,12 @@
     "subject": "Ämne",
     "text": "Text",
     "published": "Publicerad?",
+    "publishedStates": {
+      "true": "Publicerad",
+      "false": "Utkast"
+    },
     "visibleFrom": "Synlig från",
-    "visibleTo": "Synlig till"
+    "visibleTo": "Synlig till",
+    "filterSubject": "Filtrera ämne..."
   }
 }

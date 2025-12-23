@@ -44,8 +44,8 @@ const NewsDeleteMutation = /* GraphQL */ `
 `;
 
 const createQuery = (fields: string) => /* GraphQL */ `
-    query NewsPaged($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection) {
-        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction) {
+    query NewsPaged($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges {
                 cursor
                 node { ${fields} }
@@ -67,6 +67,7 @@ export async function getNewsPaged(args: {
     before?: string | null;
     sort?: string[];
     direction?: SortDirection;
+    filter?: string;
     full?: boolean
 }): Promise<NewsPage> {
     const query = createQuery(args.full ? NewsFullFields : NewsSummaryFields);
@@ -78,7 +79,8 @@ export async function getNewsPaged(args: {
             after: args.after ?? null,
             before: args.before ?? null,
             sort: args.sort ?? ["visibleFrom"],
-            direction: args.direction ?? SortDirection.Desc
+            direction: args.direction ?? SortDirection.Desc,
+            filter: args.filter ?? "published:TRUE",
         }, {
             fetchOptions: {
                 next: {tags: ['news']}

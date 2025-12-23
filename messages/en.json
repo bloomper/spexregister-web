@@ -11,6 +11,8 @@
     "noDataDescription": "Couldn't find any data at the moment. Please check back later.",
     "insufficientPermissions": "Insufficient permissions",
     "tryAgain": "Try again",
+    "clearFilters": "Clear filters",
+    "reset": "Reset",
     "cancel": "Cancel",
     "close": "Close",
     "edit": "Edit",
@@ -53,7 +55,12 @@
     "subject": "Subject",
     "text": "Text",
     "published": "Published?",
+    "publishedStates": {
+      "true": "Published",
+      "false": "Draft"
+    },
     "visibleFrom": "Visible from",
-    "visibleTo": "Visible to"
+    "visibleTo": "Visible to",
+    "filterSubject": "Filter subject..."
   }
 }

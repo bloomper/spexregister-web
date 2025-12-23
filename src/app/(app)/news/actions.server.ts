@@ -13,6 +13,7 @@ export async function fetchNewsPageAction(args: {
     before?: string | null;
     sort?: string[];
     direction?: SortDirection;
+    filter?: string;
     full?: boolean | string;
 }) {
     return withPolicyAction(Policies.news.requireRead, async () => {

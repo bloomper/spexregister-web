@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {ColumnDef, flexRender, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
@@ -27,6 +27,7 @@ interface DataTableProps<TData, TValue> {
         before?: string | null;
         sort?: string[];
         direction?: SortDirection;
+        filter?: string;
     }) => Promise<CursorPage<TData>>
 }
 
@@ -43,6 +44,7 @@ export function DataTable<TData, TValue>({
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
     const [pageSize, setPageSize] = useState(initialPageSize);
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
+    const [filter, setFilter] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const lastInitialData = useRef(initialData);
 
@@ -57,9 +59,10 @@ export function DataTable<TData, TValue>({
         const currentSort = sorting[0];
         const sort = args.sort || (currentSort ? [currentSort.id] : undefined);
         const direction = args.direction || (currentSort ? (currentSort.desc ? SortDirection.Desc : SortDirection.Asc) : undefined);
+        const currentFilter = args.filter !== undefined ? args.filter : filter;
 
         try {
-            const result = await onFetch({...args, sort, direction});
+            const result = await onFetch({...args, sort, direction, filter: currentFilter});
             setData(result.items);
             setPageInfo(result.pageInfo);
         } finally {
@@ -71,11 +74,22 @@ export function DataTable<TData, TValue>({
         void handleFetch({first: pageSize});
     };
 
-    React.useEffect(() => {
-        if (extraMeta?.setRefresh) {
-            extraMeta.setRefresh(refresh);
+    const handleFilterChange = React.useCallback((newFilter: string) => {
+        setFilter(newFilter);
+        void handleFetch({first: pageSize, filter: newFilter});
+    }, [pageSize, filter]);
+
+    const extraMetaRef = useRef(extraMeta);
+    extraMetaRef.current = extraMeta;
+
+    useEffect(() => {
+        if (extraMetaRef.current?.setRefresh) {
+            extraMetaRef.current.setRefresh(() => refresh);
         }
-    }, [refresh, extraMeta?.setRefresh]);
+        if (extraMetaRef.current?.setFilter) {
+            extraMetaRef.current.setFilter(() => handleFilterChange);
+        }
+    }, [handleFilterChange, refresh]);
 
     const handlePageChange = (direction: "next" | "prev" | "first" | "last") => {
         if (direction === "first") {
@@ -111,6 +125,7 @@ export function DataTable<TData, TValue>({
         manualSorting: true,
         meta: {
             refresh,
+            setFilter: handleFilterChange,
             ...extraMeta
         }
     });
@@ -125,6 +140,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div className="space-y-4">
+            {children}
             <div className={`rounded-md border transition-opacity ${loading ? "opacity-50" : "opacity-100"}`}>
                 {loading && (
                     <div
@@ -228,7 +244,6 @@ export function DataTable<TData, TValue>({
                     </Button>
                 </div>
             </div>
-            {children}
         </div>
     )
 }

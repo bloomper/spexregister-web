@@ -1,7 +1,7 @@
 "use client";
 
 import {ColumnDef} from "@tanstack/react-table";
-import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, MoreHorizontal} from "lucide-react";
+import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, MoreHorizontal, Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {News} from "@/gql/graphql";
@@ -20,13 +20,16 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {NewsForm} from "@/components/news/news-form.client";
-import {useEffect, useState, useTransition} from "react";
+import {useEffect, useRef, useState, useTransition} from "react";
 import {deleteNewsAction, fetchNewsPageAction} from "@/app/(app)/news/actions.server";
 import {toast} from "sonner";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
+import {Input} from "@/components/ui/input";
+import {DataTableFacetedFilter} from "@/components/data-table-facet-filter";
+import Link from "next/link";
 
 
 function Translated({id}: { id: string }) {
@@ -221,21 +224,27 @@ export const columns: ColumnDef<News>[] = [
     },
 ];
 
-export function NewsTable({initialData}: { initialData: CursorPage<News> }) {
+export function NewsTable({
+                              initialData,
+                              defaultPublishedStates = ["true"]
+                          }: {
+    initialData: CursorPage<News>,
+    defaultPublishedStates?: string[]
+}) {
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [editItem, setEditItem] = useState<News | null>(null);
     const [deleteItem, setDeleteItem] = useState<News | null>(null);
+    const [subjectFilter, setSubjectFilter] = useState("");
+    const [publishedValues, setPublishedValues] = useState<Set<string>>(new Set(defaultPublishedStates));
+    const setFilterRef = useRef<((filter: string) => void) | null>(null);
+    const lastQueryRef = useRef<string>("");
     const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
         setMounted(true);
     }, []);
-
-    if (!mounted) {
-        return <DataTableSkeleton columnCount={7} rowCount={15}/>;
-    }
 
     const handleDelete = () => {
         if (!deleteItem) {
@@ -254,6 +263,44 @@ export function NewsTable({initialData}: { initialData: CursorPage<News> }) {
         });
     };
 
+    const buildFilterString = (subject: string, published: Set<string>) => {
+        const parts: string[] = [];
+
+        if (subject) {
+            parts.push(`subject~*${subject}*`);
+        }
+
+        if (published.size > 0 && published.size < 2) {
+            const val = published.has("true") ? "TRUE" : "FALSE";
+            parts.push(`published:${val}`);
+        } else if (published.size === 2) {
+            parts.push(`published:TRUE OR published:FALSE`);
+        }
+
+        return parts.join(" AND ");
+    };
+
+    const isFilterActive = subjectFilter !== "" ||
+        publishedValues.size !== defaultPublishedStates.length ||
+        ![...publishedValues].every(value => defaultPublishedStates.includes(value));
+
+    useEffect(() => {
+        const query = buildFilterString(subjectFilter, publishedValues);
+
+        const timer = setTimeout(() => {
+            if (setFilterRef.current && query !== lastQueryRef.current) {
+                lastQueryRef.current = query;
+                setFilterRef.current(query);
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [subjectFilter, publishedValues]);
+
+    if (!mounted) {
+        return <DataTableSkeleton columnCount={7} rowCount={15}/>;
+    }
+
     return (
         <>
             <DataTable
@@ -264,8 +311,50 @@ export function NewsTable({initialData}: { initialData: CursorPage<News> }) {
                 meta={{
                     setEditItem,
                     setDeleteItem,
+                    setFilter: (fn: any) => {
+                        setFilterRef.current = typeof fn === 'function' && fn.length === 0 ? fn() : fn;
+                    },
                 }}
-            />
+            >
+                <div className="flex items-center gap-2 py-4">
+                    <Input
+                        placeholder={t("News.filterSubject")}
+                        value={subjectFilter}
+                        onChange={(e) => setSubjectFilter(e.target.value)}
+                        className="h-8 w-[150px] lg:w-[250px]"
+                    />
+
+                    <DataTableFacetedFilter
+                        title={t("News.published")}
+                        selectedValues={publishedValues}
+                        onSelect={setPublishedValues}
+                        options={[
+                            {label: t("News.publishedStates.true"), value: "true", icon: CheckCircle2},
+                            {label: t("News.publishedStates.false"), value: "false", icon: Circle},
+                        ]}
+                    />
+
+                    {isFilterActive && (
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setSubjectFilter("");
+                                setPublishedValues(new Set(defaultPublishedStates));
+                            }}
+                            className="h-8 px-2 lg:px-3"
+                        >
+                            {t("Common.reset")}
+                            <X className="ml-2 h-4 w-4" />
+                        </Button>
+                    )}
+                    <Button asChild size="sm" className="ml-auto h-8 lg:flex">
+                        <Link href="/news/create">
+                            <Plus className="mr-2 h-4 w-4"/>
+                            {t("News.createTitle")}
+                        </Link>
+                    </Button>
+                </div>
+            </DataTable>
 
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (
