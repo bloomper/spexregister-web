@@ -267,14 +267,14 @@ export function NewsTable({
         const parts: string[] = [];
 
         if (subject) {
-            parts.push(`subject~*${subject}*`);
+            parts.push(`subject:*${subject}*`);
         }
 
         if (published.size > 0 && published.size < 2) {
             const val = published.has("true") ? "TRUE" : "FALSE";
             parts.push(`published:${val}`);
         } else if (published.size === 2) {
-            parts.push(`published:TRUE OR published:FALSE`);
+            parts.push(`(published:TRUE OR published:FALSE)`);
         }
 
         return parts.join(" AND ");
@@ -316,40 +316,45 @@ export function NewsTable({
                     },
                 }}
             >
-                <div className="flex items-center gap-2 py-4">
-                    <Input
-                        placeholder={t("News.filterSubject")}
-                        value={subjectFilter}
-                        onChange={(e) => setSubjectFilter(e.target.value)}
-                        className="h-8 w-[150px] lg:w-[250px]"
-                    />
+                <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <Input
+                            placeholder={t("News.filterSubject")}
+                            value={subjectFilter}
+                            onChange={(e) => setSubjectFilter(e.target.value)}
+                            className="h-8 w-full sm:w-[150px] lg:w-[250px]"
+                        />
 
-                    <DataTableFacetedFilter
-                        title={t("News.published")}
-                        selectedValues={publishedValues}
-                        onSelect={setPublishedValues}
-                        options={[
-                            {label: t("News.publishedStates.true"), value: "true", icon: CheckCircle2},
-                            {label: t("News.publishedStates.false"), value: "false", icon: Circle},
-                        ]}
-                    />
+                        <div className="flex items-center gap-2">
+                            <DataTableFacetedFilter
+                                title={t("News.published")}
+                                selectedValues={publishedValues}
+                                onSelect={setPublishedValues}
+                                options={[
+                                    { label: "Published", value: "true", icon: CheckCircle2 },
+                                    { label: "Draft", value: "false", icon: Circle },
+                                ]}
+                            />
 
-                    {isFilterActive && (
-                        <Button
-                            variant="ghost"
-                            onClick={() => {
-                                setSubjectFilter("");
-                                setPublishedValues(new Set(defaultPublishedStates));
-                            }}
-                            className="h-8 px-2 lg:px-3"
-                        >
-                            {t("Common.reset")}
-                            <X className="ml-2 h-4 w-4" />
-                        </Button>
-                    )}
-                    <Button asChild size="sm" className="ml-auto h-8 lg:flex">
+                            {isFilterActive && (
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setSubjectFilter("");
+                                        setPublishedValues(new Set(defaultPublishedStates));
+                                    }}
+                                    className="h-8 px-2 lg:px-3"
+                                >
+                                    {t("Common.reset")}
+                                    <X className="ml-2 h-4 w-4" />
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+
+                    <Button asChild size="sm" className="h-8 w-full lg:w-auto">
                         <Link href="/news/create">
-                            <Plus className="mr-2 h-4 w-4"/>
+                            <Plus className="mr-2 h-4 w-4" />
                             {t("News.createTitle")}
                         </Link>
                     </Button>
