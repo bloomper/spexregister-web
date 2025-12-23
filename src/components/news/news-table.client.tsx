@@ -30,6 +30,7 @@ import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import {DataTableFacetedFilter} from "@/components/data-table-facet-filter";
 import Link from "next/link";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 
 
 function Translated({id}: { id: string }) {
@@ -234,6 +235,7 @@ export function NewsTable({
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
+    const [viewItem, setViewItem] = useState<News | null>(null);
     const [editItem, setEditItem] = useState<News | null>(null);
     const [deleteItem, setDeleteItem] = useState<News | null>(null);
     const [subjectFilter, setSubjectFilter] = useState("");
@@ -303,6 +305,7 @@ export function NewsTable({
                 columns={columns}
                 initialData={initialData}
                 initialSorting={[{id: "visibleFrom", desc: true}]}
+                onRowClick={setViewItem}
                 onFetch={(args) => fetchNewsPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
@@ -327,8 +330,8 @@ export function NewsTable({
                                 selectedValues={publishedValues}
                                 onSelect={setPublishedValues}
                                 options={[
-                                    { label: "Published", value: "true", icon: CheckCircle2 },
-                                    { label: "Draft", value: "false", icon: Circle },
+                                    {label: "Published", value: "true", icon: CheckCircle2},
+                                    {label: "Draft", value: "false", icon: Circle},
                                 ]}
                             />
 
@@ -342,7 +345,7 @@ export function NewsTable({
                                     className="h-8 px-2 lg:px-3"
                                 >
                                     {t("Common.reset")}
-                                    <X className="ml-2 h-4 w-4" />
+                                    <X className="ml-2 h-4 w-4"/>
                                 </Button>
                             )}
                         </div>
@@ -350,12 +353,61 @@ export function NewsTable({
 
                     <Button asChild size="sm" className="h-8 w-full lg:w-auto">
                         <Link href="/news/create">
-                            <Plus className="mr-2 h-4 w-4" />
+                            <Plus className="mr-2 h-4 w-4"/>
                             {t("News.createTitle")}
                         </Link>
                     </Button>
                 </div>
             </DataTable>
+
+            <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
+                <DialogContent className="sm:max-w-2xl">
+                    <DialogHeader>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-1">
+                            <div>{viewItem?.visibleFrom ? formatDate(viewItem.visibleFrom) : ''}</div>
+                            {viewItem && (
+                                <>
+                                    <div className="h-3 w-px bg-border" /> {/* Separator */}
+                                    <div className="flex items-center gap-1.5">
+                                        {viewItem.published ? (
+                                            <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                                        ) : (
+                                            <Circle className="h-3.5 w-3.5" />
+                                        )}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        <DialogTitle className="text-xl pr-6">{viewItem?.subject}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-6">
+                        <div className="whitespace-pre-wrap text-sm text-foreground max-h-[50vh] overflow-y-auto">
+                            {viewItem?.text}
+                        </div>
+
+                        {viewItem && (
+                            <div
+                                className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/30 p-3 text-[11px] text-muted-foreground">
+                                <div className="space-y-1">
+                                    <p className="font-semibold text-foreground/70 uppercase tracking-wider">{t("Common.createdAt")}</p>
+                                    <p>{formatDateTime(viewItem.createdAt)} ({viewItem.createdBy})</p>
+                                </div>
+                                {viewItem.lastModifiedAt && (
+                                    <div className="space-y-1">
+                                        <p className="font-semibold text-foreground/70 uppercase tracking-wider">{t("Common.lastModifiedAt")}</p>
+                                        <p>{formatDateTime(viewItem.lastModifiedAt)} ({viewItem.lastModifiedBy})</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setViewItem(null)}>
+                            {t("Common.close")}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (

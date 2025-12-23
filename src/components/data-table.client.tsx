@@ -10,8 +10,8 @@ import {CursorPage, CursorPageInfo} from "@/types/pagination";
 import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, LoaderPinwheel} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useTranslations} from "next-intl";
-import {DataEmpty} from "@/components/data-empty";
 import {SortDirection} from "@/gql/graphql";
+import {DataEmpty} from "@/components/data-empty";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -20,6 +20,7 @@ interface DataTableProps<TData, TValue> {
     initialSorting?: SortingState
     meta?: Record<string, any>
     children?: React.ReactNode
+    onRowClick?: (data: TData) => void
     onFetch: (args: {
         first?: number;
         last?: number;
@@ -39,6 +40,7 @@ export function DataTable<TData, TValue>({
                                              onFetch,
                                              meta: extraMeta,
                                              children,
+                                             onRowClick
                                          }: DataTableProps<TData, TValue>) {
     const [data, setData] = useState<TData[]>(initialData.items);
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
@@ -174,11 +176,21 @@ export function DataTable<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className={onRowClick ? "cursor-pointer" : ""}
+                                    onClick={() => onRowClick?.(row.original)}
                                 >
                                     {row.getVisibleCells().map((cell) => {
                                         const meta = cell.column.columnDef.meta as { className?: string };
                                         return (
-                                            <TableCell key={cell.id} className={meta?.className}>
+                                            <TableCell
+                                                key={cell.id}
+                                                className={meta?.className}
+                                                onClick={(e) => {
+                                                    if (cell.column.id === "actions") {
+                                                        e.stopPropagation();
+                                                    }
+                                                }}
+                                            >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </TableCell>
                                         );
@@ -208,42 +220,42 @@ export function DataTable<TData, TValue>({
                             ))}
                         </SelectContent>
                     </Select>
-                </div>
-                <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                    <Button
-                        variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => handlePageChange("first")}
-                        disabled={!pageInfo.hasPreviousPage || loading}
-                    >
-                        <ChevronsLeft className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0"
-                        onClick={() => handlePageChange("prev")}
-                        disabled={!pageInfo.hasPreviousPage || loading}
-                    >
-                        <ChevronLeft className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0"
-                        onClick={() => handlePageChange("next")}
-                        disabled={!pageInfo.hasNextPage || loading}
-                    >
-                        <ChevronRight className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => handlePageChange("last")}
-                        disabled={!pageInfo.hasNextPage || loading}
-                    >
-                        <ChevronsRight className="h-4 w-4"/>
-                    </Button>
-                </div>
+            </div>
+            <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                <Button
+                    variant="outline"
+                    className="hidden h-8 w-8 p-0 lg:flex"
+                    onClick={() => handlePageChange("first")}
+                    disabled={!pageInfo.hasPreviousPage || loading}
+                >
+                    <ChevronsLeft className="h-4 w-4"/>
+                </Button>
+                <Button
+                    variant="outline"
+                    className="h-8 w-8 p-0"
+                    onClick={() => handlePageChange("prev")}
+                    disabled={!pageInfo.hasPreviousPage || loading}
+                >
+                    <ChevronLeft className="h-4 w-4"/>
+                </Button>
+                <Button
+                    variant="outline"
+                    className="h-8 w-8 p-0"
+                    onClick={() => handlePageChange("next")}
+                    disabled={!pageInfo.hasNextPage || loading}
+                >
+                    <ChevronRight className="h-4 w-4"/>
+                </Button>
+                <Button
+                    variant="outline"
+                    className="hidden h-8 w-8 p-0 lg:flex"
+                    onClick={() => handlePageChange("last")}
+                    disabled={!pageInfo.hasNextPage || loading}
+                >
+                    <ChevronsRight className="h-4 w-4"/>
+                </Button>
             </div>
         </div>
-    )
+</div>
+)
 }
