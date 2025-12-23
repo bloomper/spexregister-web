@@ -7,7 +7,11 @@ import {withPolicyPage} from "@/utils/route.server";
 export default async function NewsManagePage() {
     return withPolicyPage(Policies.news.requireUpdate, async () => {
         const defaultPageSize = 15;
-        const initialData = await getNewsPaged({first: defaultPageSize, full: true});
+        const initialData = await getNewsPaged({
+            first: defaultPageSize,
+            filter: "(published:TRUE OR published:FALSE)",
+            full: true
+        });
         const t = await getTranslations();
 
         return (

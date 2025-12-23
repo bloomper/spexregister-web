@@ -7,13 +7,13 @@ import {Collapsible, CollapsibleContent, CollapsibleTrigger,} from "@/components
 import {
     SidebarGroup,
     SidebarMenu,
-    SidebarMenuAction,
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem
 } from "@/components/ui/sidebar";
+import {usePathname} from "next/navigation";
 
 export function NavMain({
                             items,
@@ -29,62 +29,67 @@ export function NavMain({
         }[]
     }[]
 }) {
+    const pathname = usePathname();
+
     return (
         <SidebarGroup>
             <SidebarMenu>
                 {items.map((item) => {
                     const isInternal = item.url.startsWith("/")
+                    const hasSubItems = !!item.items?.length
+
+                    const LinkComponent = isInternal ? Link : "a"
+                    const linkProps = isInternal ? {href: item.url} : {href: item.url}
 
                     return (
                         <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild tooltip={item.title}>
-                                    {isInternal ? (
-                                        <Link href={item.url}>
+                                {hasSubItems ? (
+                                    <CollapsibleTrigger asChild>
+                                        <SidebarMenuButton tooltip={item.title} asChild>
+                                            <LinkComponent {...linkProps}>
+                                                <item.icon/>
+                                                <span>{item.title}</span>
+                                                <ChevronRight
+                                                    className="ml-auto transition-transform duration-200 group-data-[state=open]/menu-item:rotate-90"/>
+                                            </LinkComponent>
+                                        </SidebarMenuButton>
+                                    </CollapsibleTrigger>
+                                ) : (
+                                    <SidebarMenuButton tooltip={item.title} asChild>
+                                        <LinkComponent {...linkProps}>
                                             <item.icon/>
                                             <span>{item.title}</span>
-                                        </Link>
-                                    ) : (
-                                        <a href={item.url}>
-                                            <item.icon/>
-                                            <span>{item.title}</span>
-                                        </a>
-                                    )}
-                                </SidebarMenuButton>
+                                        </LinkComponent>
+                                    </SidebarMenuButton>
+                                )}
 
-                                {item.items?.length ? (
-                                    <>
-                                        <CollapsibleTrigger asChild>
-                                            <SidebarMenuAction className="data-[state=open]:rotate-90">
-                                                <ChevronRight/>
-                                                <span className="sr-only">Toggle</span>
-                                            </SidebarMenuAction>
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent>
-                                            <SidebarMenuSub>
-                                                {item.items?.map((subItem) => {
-                                                    const isSubInternal = subItem.url.startsWith("/")
+                                {hasSubItems && (
+                                    <CollapsibleContent>
+                                        <SidebarMenuSub>
+                                            {item.items?.map((subItem) => {
+                                                const isSubInternal = subItem.url.startsWith("/")
+                                                const isSubActive = pathname === subItem.url;
 
-                                                    return (
-                                                        <SidebarMenuSubItem key={subItem.title}>
-                                                            <SidebarMenuSubButton asChild>
-                                                                {isSubInternal ? (
-                                                                    <Link href={subItem.url}>
-                                                                        <span>{subItem.title}</span>
-                                                                    </Link>
-                                                                ) : (
-                                                                    <a href={subItem.url}>
-                                                                        <span>{subItem.title}</span>
-                                                                    </a>
-                                                                )}
-                                                            </SidebarMenuSubButton>
-                                                        </SidebarMenuSubItem>
-                                                    )
-                                                })}
-                                            </SidebarMenuSub>
-                                        </CollapsibleContent>
-                                    </>
-                                ) : null}
+                                                return (
+                                                    <SidebarMenuSubItem key={subItem.title}>
+                                                        <SidebarMenuSubButton asChild isActive={isSubActive}>
+                                                            {isSubInternal ? (
+                                                                <Link href={subItem.url}>
+                                                                    <span>{subItem.title}</span>
+                                                                </Link>
+                                                            ) : (
+                                                                <a href={subItem.url}>
+                                                                    <span>{subItem.title}</span>
+                                                                </a>
+                                                            )}
+                                                        </SidebarMenuSubButton>
+                                                    </SidebarMenuSubItem>
+                                                )
+                                            })}
+                                        </SidebarMenuSub>
+                                    </CollapsibleContent>
+                                )}
                             </SidebarMenuItem>
                         </Collapsible>
                     )

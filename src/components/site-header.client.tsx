@@ -8,10 +8,16 @@ import {Separator} from "@/components/ui/separator";
 import {useSidebar} from "@/components/ui/sidebar";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
+import {useEffect, useState} from "react";
 
 export function SiteHeader() {
     const {toggleSidebar} = useSidebar();
+    const [mounted, setMounted] = useState(false);
     const t = useTranslations("Meta");
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     return (
         <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
@@ -30,8 +36,14 @@ export function SiteHeader() {
                 </h1>
                 <SearchForm className="w-full sm:ml-auto sm:w-auto"/>
                 <Separator orientation="vertical" className="mr-2 h-4"/>
-                <LanguageToggle/>
-                <ModeToggle/>
+                {mounted ? (
+                    <>
+                        <LanguageToggle />
+                        <ModeToggle />
+                    </>
+                ) : (
+                    <div className="h-8 w-8 animate-pulse rounded bg-muted" />
+                )}
             </div>
         </header>
     );

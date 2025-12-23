@@ -239,8 +239,6 @@ export function NewsTable({
     const [subjectFilter, setSubjectFilter] = useState("");
     const [publishedValues, setPublishedValues] = useState<Set<string>>(new Set(defaultPublishedStates));
     const setFilterRef = useRef<((filter: string) => void) | null>(null);
-    const lastQueryRef = useRef<string>("");
-    const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
         setMounted(true);
@@ -265,20 +263,18 @@ export function NewsTable({
 
     const buildFilterString = (subject: string, published: Set<string>) => {
         const parts: string[] = [];
-
-        if (subject) {
-            parts.push(`subject:*${subject}*`);
-        }
-
+        if (subject) parts.push(`subject:*${subject}*`);
         if (published.size > 0 && published.size < 2) {
             const val = published.has("true") ? "TRUE" : "FALSE";
             parts.push(`published:${val}`);
         } else if (published.size === 2) {
             parts.push(`(published:TRUE OR published:FALSE)`);
         }
-
         return parts.join(" AND ");
     };
+
+    const lastQueryRef = useRef<string>(buildFilterString("", new Set(defaultPublishedStates)));
+    const [isPending, startTransition] = useTransition();
 
     const isFilterActive = subjectFilter !== "" ||
         publishedValues.size !== defaultPublishedStates.length ||
