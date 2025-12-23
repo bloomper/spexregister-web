@@ -22,6 +22,22 @@ const NewsFullFields = `
     lastModifiedBy
 `;
 
+const NewsCreateMutation = /* GraphQL */ `
+    mutation NewsCreate($input: NewsCreate!) {
+        newsCreate(input: $input) {
+            ${NewsFullFields}
+        }
+    }
+`;
+
+const NewsUpdateMutation = /* GraphQL */ `
+    mutation NewsUpdate($id: ID!, $input: NewsUpdate!) {
+        newsUpdate(id: $id, input: $input) {
+            ${NewsFullFields}
+        }
+    }
+`;
+
 const NewsDeleteMutation = /* GraphQL */ `
     mutation NewsDelete($id: ID!) {
         newsDelete(id: $id)
@@ -81,6 +97,24 @@ export async function getNewsPaged(args: {
             endCursor: conn?.pageInfo?.endCursor ?? null,
         },
     };
+}
+
+export async function createNews(input: any) {
+    const result = await getClient()
+        .mutation(NewsCreateMutation, { input })
+        .toPromise();
+
+    if (result.error) throw result.error;
+    return result.data?.newsCreate;
+}
+
+export async function updateNews(id: string, input: any) {
+    const result = await getClient()
+        .mutation(NewsUpdateMutation, { id, input })
+        .toPromise();
+
+    if (result.error) throw result.error;
+    return result.data?.newsUpdate;
 }
 
 export async function deleteNews(id: string) {

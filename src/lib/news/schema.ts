@@ -1,16 +1,10 @@
 import { z } from "zod";
 
-export const newsSchema = z.object({
-    id: z.string(),
-    subject: z.string(),
-    text: z.string(),
-    published: z.boolean(),
-    visibleFrom: z.string(),
-    visibleTo: z.string().nullable(),
-    createdAt: z.string(),
-    createdBy: z.string(),
-    updatedAt: z.string().nullable(),
-    updatedBy: z.string().nullable(),
+export const newsFormSchema = z.object({
+    subject: z.string().min(1, "News.subjectRequired"),
+    text: z.string().min(1, "News.textRequired"),
+    visibleFrom: z.string().min(1, "News.visibleFromRequired"),
+    visibleTo: z.string().nullable().optional()
 });
 
-export type NewsForm = z.infer<typeof newsSchema>;
+export type NewsFormData = z.infer<typeof newsFormSchema>;

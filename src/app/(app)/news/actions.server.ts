@@ -2,7 +2,7 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {deleteNews, getNewsPaged} from "@/lib/news";
+import {createNews, deleteNews, getNewsPaged, newsFormSchema, updateNews} from "@/lib/news";
 import {revalidatePath} from "next/cache";
 
 export async function fetchNewsPageAction(args: {
@@ -20,12 +20,34 @@ export async function fetchNewsPageAction(args: {
     });
 }
 
+export async function createNewsAction(data: unknown) {
+    return withPolicyAction(Policies.news.requireCreate, async () => {
+        const validated = newsFormSchema.parse(data);
+        const result = await createNews(validated);
+        revalidatePaths();
+        return result;
+    });
+}
+
+export async function updateNewsAction(id: string, data: unknown) {
+    return withPolicyAction(Policies.news.requireUpdate, async () => {
+        const validated = newsFormSchema.parse(data);
+        const result = await updateNews(id, validated);
+        revalidatePaths();
+        return result;
+    });
+}
+
 export async function deleteNewsAction(id: string) {
     return withPolicyAction(Policies.news.requireDelete, async () => {
         const result = await deleteNews(id);
-        revalidatePath('/news/manage');
-        revalidatePath('/news');
-        revalidatePath('/');
+        revalidatePaths();
         return result;
     });
+}
+
+function revalidatePaths() {
+    revalidatePath('/news/manage');
+    revalidatePath('/news');
+    revalidatePath('/');
 }

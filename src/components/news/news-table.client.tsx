@@ -21,6 +21,8 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {deleteNewsAction} from "@/app/(app)/news/actions.server";
+import {Sheet, SheetTrigger} from "@/components/ui/sheet";
+import {NewsForm} from "@/components/news/news-form.client";
 
 
 function Translated({id}: { id: string }) {
@@ -98,6 +100,8 @@ export const columns: ColumnDef<News>[] = [
             const news = row.original;
             const t = useTranslations();
             const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+            const [isEditOpen, setIsEditOpen] = useState(false);
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
             const [isPending, startTransition] = useTransition();
 
             const handleDelete = () => {
@@ -116,25 +120,41 @@ export const columns: ColumnDef<News>[] = [
             };
             return (
                 <>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">{t("Common.openMenu")}</span>
-                                <MoreHorizontal className="h-4 w-4"/>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem>{t("Common.edit")}</DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="text-destructive"
-                                onSelect={() => {
-                                    setIsDeleteOpen(true);
-                                }}
-                            >
-                                {t("Common.delete")}
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Sheet open={isEditOpen} onOpenChange={setIsEditOpen}>
+                        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">{t("Common.openMenu")}</span>
+                                    <MoreHorizontal className="h-4 w-4"/>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onSelect={() => {
+                                    setIsMenuOpen(false);
+                                    setIsEditOpen(true);
+                                }}>
+                                    {t("Common.edit")}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="text-destructive"
+                                    onSelect={() => {
+                                        setIsMenuOpen(false);
+                                        setIsDeleteOpen(true);
+                                    }}
+                                >
+                                    {t("Common.delete")}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <NewsForm
+                            news={news}
+                            onSuccess={() => {
+                                setIsEditOpen(false);
+                                (table.options.meta as any)?.refresh();
+                            }}
+                        />
+                    </Sheet>
 
                     <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                         <AlertDialogContent>
