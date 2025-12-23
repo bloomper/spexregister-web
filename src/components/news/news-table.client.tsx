@@ -20,11 +20,13 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {NewsForm} from "@/components/news/news-form.client";
-import {useState, useTransition} from "react";
+import {useEffect, useState, useTransition} from "react";
 import {deleteNewsAction, fetchNewsPageAction} from "@/app/(app)/news/actions.server";
 import {toast} from "sonner";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
+import {useRouter} from "next/navigation";
+import {DataTableSkeleton} from "@/components/data-table-skeleton";
 
 
 function Translated({id}: { id: string }) {
@@ -131,18 +133,31 @@ export const columns: ColumnDef<News>[] = [
 
 export function NewsTable({initialData}: { initialData: CursorPage<News> }) {
     const t = useTranslations();
+    const router = useRouter();
+    const [mounted, setMounted] = useState(false);
     const [editItem, setEditItem] = useState<News | null>(null);
     const [deleteItem, setDeleteItem] = useState<News | null>(null);
     const [isPending, startTransition] = useTransition();
 
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        return <DataTableSkeleton columnCount={7} rowCount={15}/>;
+    }
+
     const handleDelete = () => {
-        if (!deleteItem) return;
+        if (!deleteItem) {
+            return;
+        }
 
         startTransition(async () => {
             try {
                 await deleteNewsAction(deleteItem.id);
                 setDeleteItem(null);
                 toast.success(t("Common.deleteSuccess"));
+                router.refresh();
             } catch (error) {
                 toast.error(t("Common.errorOccurred"));
             }
@@ -165,7 +180,10 @@ export function NewsTable({initialData}: { initialData: CursorPage<News> }) {
                 {editItem && (
                     <NewsForm
                         news={editItem}
-                        onSuccess={() => setEditItem(null)}
+                        onSuccess={() => {
+                            setEditItem(null);
+                            router.refresh();
+                        }}
                     />
                 )}
             </Sheet>

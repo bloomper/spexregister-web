@@ -30,8 +30,8 @@ const NewsCreateMutation = /* GraphQL */ `
 `;
 
 const NewsUpdateMutation = /* GraphQL */ `
-    mutation NewsUpdate($id: ID!, $input: NewsUpdate!) {
-        newsUpdate(id: $id, input: $input) {
+    mutation NewsUpdate($input: NewsUpdate!) {
+        newsUpdate(input: $input) {
             ${NewsFullFields}
         }
     }
@@ -107,16 +107,34 @@ export async function createNews(input: any) {
         .mutation(NewsCreateMutation, {input})
         .toPromise();
 
-    if (result.error) throw result.error;
+    if (result.error) {
+        throw result.error;
+    }
+
+    if (!result.data?.newsCreate) {
+        throw new Error("No data created");
+    }
+
     return result.data?.newsCreate;
 }
 
 export async function updateNews(id: string, input: any) {
     const result = await getClient()
-        .mutation(NewsUpdateMutation, {id, input})
+        .mutation(NewsUpdateMutation, {
+            input: {
+                ...input,
+                id
+            }})
         .toPromise();
 
-    if (result.error) throw result.error;
+    if (result.error) {
+        throw result.error;
+    }
+
+    if (!result.data?.newsUpdate) {
+        throw new Error("No data updated");
+    }
+
     return result.data?.newsUpdate;
 }
 

@@ -22,7 +22,7 @@ export function authzFailureResponse(authz: AuthzFail): Response {
     return NextResponse.json({error: authz.message}, {status: authz.status});
 }
 
-export function withPolicy(policy: () => Promise<AuthzResult>, handler: AuthedRouteHandler): RouteHandler {
+export function withPolicyRoute(policy: () => Promise<AuthzResult>, handler: AuthedRouteHandler): RouteHandler {
     return async (request, context) => {
         const authz = await policy();
         if (!authz.ok) {
@@ -33,6 +33,17 @@ export function withPolicy(policy: () => Promise<AuthzResult>, handler: AuthedRo
 }
 
 export async function withPolicyAction<T>(
+    policy: () => Promise<AuthzResult>,
+    handler: (authz: AuthzOk) => Promise<T>
+): Promise<T> {
+    const authz = await policy();
+    if (!authz.ok) {
+        throw new Error(authz.message);
+    }
+    return handler(authz);
+}
+
+export async function withPolicyPage<T>(
     policy: () => Promise<AuthzResult>,
     handler: (authz: AuthzOk) => Promise<T>
 ): Promise<T> {

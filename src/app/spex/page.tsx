@@ -1,6 +1,6 @@
 import {Suspense} from 'react';
 import {getClient} from '@/lib/urql.server';
-import {SpexPoster} from "@/components/spex-poster";
+import {SpexPoster} from "@/components/spex-poster.client";
 
 const SpexPagedQuery = `
     query GetSpexPaged {

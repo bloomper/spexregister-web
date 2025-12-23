@@ -30,7 +30,8 @@
     "createdAt": "Created at",
     "createdBy": "Created by",
     "lastModifiedAt": "Last modified at",
-    "lastModifiedBy": "Last modified by"
+    "lastModifiedBy": "Last modified by",
+    "fieldRequired": "Field is required"
   },
   "Meta": {
     "title": "Chalmersspexet's Address Register",

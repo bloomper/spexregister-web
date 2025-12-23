@@ -82,9 +82,9 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
         },
         async session({session, token}) {
             session.access_token = token.access_token as string;
-            session.id_token = token.id_token as string;
-            session.expires_at = token.expires_at as number;
-            session.refresh_token = token.refresh_token as string;
+            //session.id_token = token.id_token as string;
+            //session.expires_at = token.expires_at as number;
+            //session.refresh_token = token.refresh_token as string;
 
             if (token.sub && token.email) {
                 const email = String(token.email).trim().toLowerCase();

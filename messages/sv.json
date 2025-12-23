@@ -30,7 +30,8 @@
     "createdAt": "Skapad",
     "createdBy": "Skapad av",
     "lastModifiedAt": "Senast uppdaterad",
-    "lastModifiedBy": "Senast uppdaterad av"
+    "lastModifiedBy": "Senast uppdaterad av",
+    "fieldRequired": "Fältet är obligatoriskt"
   },
   "Meta": {
     "title": "Chalmersspexets Adressregister",

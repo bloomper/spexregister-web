@@ -3,12 +3,13 @@ import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {NewsTable} from "@/components/news";
 import {withPolicyPage} from "@/utils/route.server";
-import {Plus} from "lucide-react";
-import Link from "next/link";
+import {NewsCreateForm} from "@/app/(app)/news/create/create.client";
 import {Button} from "@/components/ui/button";
+import Link from "next/link";
+import {Plus} from "lucide-react";
 
-export default async function NewsManagePage() {
-    return withPolicyPage(Policies.news.requireUpdate, async () => {
+export default async function NewsCreatePage() {
+    return withPolicyPage(Policies.news.requireCreate, async () => {
         const defaultPageSize = 15;
         const initialData = await getNewsPaged({first: defaultPageSize, full: true});
         const t = await getTranslations();
@@ -25,6 +26,7 @@ export default async function NewsManagePage() {
                     </Button>
                 </div>
                 <NewsTable initialData={initialData}/>
+                <NewsCreateForm/>
             </div>
         );
     });

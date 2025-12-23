@@ -1,8 +1,8 @@
 "use client";
 
-import {useForm} from "react-hook-form";
+import {useForm, FieldError as FormError} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {NewsFormData, newsFormSchema} from "@/lib/news/schema";
+import {NewsFormInput, NewsFormOutput, newsFormSchema} from "@/lib/news/schema";
 import {News} from "@/gql/graphql";
 import {useTranslations} from "next-intl";
 import {useTransition} from "react";
@@ -27,17 +27,27 @@ export function NewsForm({news, onSuccess}: NewsFormProps) {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<NewsFormData>({
+    } = useForm<NewsFormInput, any, NewsFormOutput>({
         resolver: zodResolver(newsFormSchema),
         defaultValues: {
             subject: news?.subject ?? "",
             text: news?.text ?? "",
             visibleFrom: news?.visibleFrom ?? new Date().toISOString().split("T")[0],
-            visibleTo: news?.visibleTo ?? null,
+            visibleTo: news?.visibleTo ?? "",
         },
     });
 
-    const onSubmit = (data: NewsFormData) => {
+    const translateError = (error?: FormError) => {
+        if (!error?.message) {
+            return error;
+        }
+        return {
+            ...error,
+            message: t(error.message as any)
+        };
+    };
+
+    const onSubmit = handleSubmit((data) => {
         startTransition(async () => {
             try {
                 if (news) {
@@ -52,20 +62,20 @@ export function NewsForm({news, onSuccess}: NewsFormProps) {
                 toast.error(t("Common.errorOccurred"));
             }
         });
-    };
+    });
 
     return (
         <SheetContent className="sm:max-w-[540px] flex flex-col gap-0 p-0">
             <SheetHeader className="p-6 pb-2">
                 <SheetTitle>{news ? t("News.editTitle") : t("News.createTitle")}</SheetTitle>
             </SheetHeader>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex-1 overflow-y-auto">
+            <form onSubmit={onSubmit} className="flex-1 overflow-y-auto">
                 <div className="space-y-4 px-6 py-4">
                     <Field data-invalid={!!errors.subject}>
                         <FieldLabel>{t("News.subject")}</FieldLabel>
                         <FieldContent>
                             <Input {...register("subject")} />
-                            <FieldError errors={[errors.subject]}/>
+                            <FieldError errors={[translateError(errors.subject)]}/>
                         </FieldContent>
                     </Field>
 
@@ -73,7 +83,7 @@ export function NewsForm({news, onSuccess}: NewsFormProps) {
                         <FieldLabel>{t("News.text")}</FieldLabel>
                         <FieldContent>
                             <Textarea {...register("text")} rows={10}/>
-                            <FieldError errors={[errors.text]}/>
+                            <FieldError errors={[translateError(errors.text)]}/>
                         </FieldContent>
                     </Field>
 
@@ -82,7 +92,7 @@ export function NewsForm({news, onSuccess}: NewsFormProps) {
                             <FieldLabel>{t("News.visibleFrom")}</FieldLabel>
                             <FieldContent>
                                 <Input type="date" {...register("visibleFrom")} />
-                                <FieldError errors={[errors.visibleFrom]}/>
+                                <FieldError errors={[translateError(errors.visibleFrom)]}/>
                             </FieldContent>
                         </Field>
 
@@ -90,7 +100,7 @@ export function NewsForm({news, onSuccess}: NewsFormProps) {
                             <FieldLabel>{t("News.visibleTo")}</FieldLabel>
                             <FieldContent>
                                 <Input type="date" {...register("visibleTo")} />
-                                <FieldError errors={[errors.visibleTo]}/>
+                                <FieldError errors={[translateError(errors.visibleTo)]}/>
                             </FieldContent>
                         </Field>
                     </div>
