@@ -1,31 +1,10 @@
-"use server";
-
 import {getNewsPaged} from "@/lib/news";
 import {notFound} from "next/navigation";
 import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {RemoteDataTable} from "@/components/data-table.client";
 import {columns} from "@/components/news";
-import {NewsPage} from "@/types/pagination";
-
-export async function fetchNewsAction(args: {
-    first?: number;
-    last?: number;
-    after?: string | null;
-    before?: string | null;
-    full?: boolean | string;
-}): Promise<NewsPage> {
-    const authz = await Policies.news.requireUpdate();
-
-    if (!authz.ok) {
-        notFound();
-    }
-
-    return getNewsPaged({
-        ...args,
-        full: args.full === true || args.full === "true"
-    });
-}
+import {fetchNewsPageAction} from "@/app/(app)/news/actions.server";
 
 export default async function NewsManagePage() {
     const authz = await Policies.news.requireUpdate();
@@ -45,7 +24,7 @@ export default async function NewsManagePage() {
             </div>
             <RemoteDataTable
                 columns={columns}
-                fetchAction={fetchNewsAction}
+                fetchAction={fetchNewsPageAction}
                 initialData={initialData}
                 initialPageSize={defaultPageSize}
                 extraParams={{ full: "true" }}

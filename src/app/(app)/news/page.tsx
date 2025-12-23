@@ -2,6 +2,7 @@ import {NewsList} from "@/components/news";
 import {getNewsPaged} from "@/lib/news";
 import {DataEmpty} from "@/components/data-empty";
 
+
 export default async function NewsPage() {
     const first = 24;
 

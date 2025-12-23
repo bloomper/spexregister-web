@@ -8,6 +8,20 @@ import {News} from "@/gql/graphql";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {formatDate, formatDateTime} from "@/utils/utils";
 import {useTranslations} from "next-intl";
+import {useState, useTransition} from "react";
+import {toast} from "sonner";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog";
+import {deleteNewsAction} from "@/app/(app)/news/actions.server";
+
 
 function Translated({id}: { id: string }) {
     const t = useTranslations();
@@ -52,51 +66,100 @@ export const columns: ColumnDef<News>[] = [
                 </div>
             )
         },
-        meta: { className: "hidden md:table-cell" }
+        meta: {className: "hidden md:table-cell"}
     },
     {
         accessorKey: "visibleFrom",
         header: () => <Translated id="News.visibleFrom"/>,
         cell: ({row}) => formatDate(row.getValue("visibleFrom") as string) || "-",
-        meta: { className: "hidden lg:table-cell" }
+        meta: {className: "hidden lg:table-cell"}
     },
     {
         accessorKey: "visibleTo",
         header: () => <Translated id="News.visibleTo"/>,
         cell: ({row}) => formatDate(row.getValue("visibleTo") as string) || "-",
-        meta: { className: "hidden xl:table-cell" }
+        meta: {className: "hidden xl:table-cell"}
     },
     {
         accessorKey: "createdAt",
         header: () => <Translated id="Common.createdAt"/>,
         cell: ({row}) => formatDateTime(row.getValue("createdAt") as string) || "-",
-        meta: { className: "hidden xl:table-cell" }
+        meta: {className: "hidden xl:table-cell"}
     },
     {
         accessorKey: "lastModifiedAt",
         header: () => <Translated id="Common.lastModifiedAt"/>,
         cell: ({row}) => formatDateTime(row.getValue("lastModifiedAt") as string) || "-",
-        meta: { className: "hidden xl:table-cell" }
+        meta: {className: "hidden xl:table-cell"}
     },
     {
         id: "actions",
-        cell: ({row}) => {
-            const news = row.original
+        cell: ({row, table}) => {
+            const news = row.original;
             const t = useTranslations();
+            const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+            const [isPending, startTransition] = useTransition();
 
+            const handleDelete = () => {
+                startTransition(async () => {
+                    try {
+                        await deleteNewsAction(news.id);
+                        setIsDeleteOpen(false);
+                        toast.success(t("Common.deleteSuccess"));
+                        const meta = table.options.meta as { refresh: () => void };
+                        meta?.refresh();
+                    } catch (error) {
+                        toast.error(t("Common.errorOccurred"));
+                        console.error(error);
+                    }
+                });
+            };
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">{t("Common.openMenu")}</span>
-                            <MoreHorizontal className="h-4 w-4"/>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem>{t("Common.edit")}</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">{t("Common.delete")}</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">{t("Common.openMenu")}</span>
+                                <MoreHorizontal className="h-4 w-4"/>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem>{t("Common.edit")}</DropdownMenuItem>
+                            <DropdownMenuItem
+                                className="text-destructive"
+                                onSelect={() => {
+                                    setIsDeleteOpen(true);
+                                }}
+                            >
+                                {t("Common.delete")}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>{t("Common.deleteTitle")}</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    {t("Common.deleteConfirmation", {subject: news.subject})}
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel disabled={isPending}>{t("Common.cancel")}</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleDelete();
+                                    }}
+                                    disabled={isPending}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                    {isPending ? t("Common.deleting") : t("Common.delete")}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </>
             )
         },
     },

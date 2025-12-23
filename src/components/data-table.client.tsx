@@ -63,15 +63,6 @@ export function DataTable<TData, TValue>({
     const [pageSize, setPageSize] = React.useState(initialPageSize);
     const [loading, setLoading] = React.useState(false);
 
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        manualPagination: true
-    });
-
-    const t = useTranslations();
-
     const handleFetch = async (args: Parameters<typeof onFetch>[0]) => {
         setLoading(true);
         try {
@@ -81,6 +72,10 @@ export function DataTable<TData, TValue>({
         } finally {
             setLoading(false);
         }
+    };
+
+    const refresh = () => {
+        void handleFetch({first: pageSize});
     };
 
     const handlePageChange = (direction: "next" | "prev" | "first" | "last") => {
@@ -94,6 +89,18 @@ export function DataTable<TData, TValue>({
             void handleFetch({last: pageSize, before: pageInfo.startCursor});
         }
     };
+
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        manualPagination: true,
+        meta: {
+            refresh
+        }
+    });
+
+    const t = useTranslations();
 
     const handlePageSizeChange = (value: string) => {
         const newSize = parseInt(value, 10);

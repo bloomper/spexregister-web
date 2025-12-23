@@ -11,7 +11,7 @@ import {formatDate} from "@/utils/utils";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {fetchNewsAction} from "@/app/(app)/news/manage/page";
+import {fetchNewsPageAction} from "@/app/(app)/news/actions.server";
 
 export function NewsList({
                              initialItems = [],
@@ -37,7 +37,7 @@ export function NewsList({
         sentinelRef,
         loadMore
     } = useInfiniteCursor<News>({
-        fetchPageAction: (args) => fetchNewsAction({
+        fetchPageAction: (args) => fetchNewsPageAction({
             after: args.after,
             first: args.pageSize
         }),

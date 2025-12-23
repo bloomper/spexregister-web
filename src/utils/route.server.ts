@@ -31,3 +31,14 @@ export function withPolicy(policy: () => Promise<AuthzResult>, handler: AuthedRo
         return handler(request, context, authz);
     };
 }
+
+export async function withPolicyAction<T>(
+    policy: () => Promise<AuthzResult>,
+    handler: (authz: AuthzOk) => Promise<T>
+): Promise<T> {
+    const authz = await policy();
+    if (!authz.ok) {
+        throw new Error(authz.message);
+    }
+    return handler(authz);
+}

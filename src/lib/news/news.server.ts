@@ -3,6 +3,7 @@ import 'server-only';
 import {getClient} from '@/lib/urql.server';
 import {News, NewsConnection, NewsEdge} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
+import {revalidatePath} from "next/cache";
 
 const NewsSummaryFields = `
     id
@@ -19,6 +20,12 @@ const NewsFullFields = `
     createdBy
     lastModifiedAt
     lastModifiedBy
+`;
+
+const NewsDeleteMutation = /* GraphQL */ `
+    mutation NewsDelete($id: ID!) {
+        newsDelete(id: $id)
+    }
 `;
 
 const createQuery = (fields: string) => /* GraphQL */ `
@@ -72,7 +79,18 @@ export async function getNewsPaged(args: {
             hasPreviousPage: Boolean(conn?.pageInfo?.hasPreviousPage),
             startCursor: conn?.pageInfo?.startCursor ?? null,
             endCursor: conn?.pageInfo?.endCursor ?? null,
-
         },
     };
+}
+
+export async function deleteNews(id: string) {
+    const result = await getClient()
+        .mutation(NewsDeleteMutation, { id })
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.newsDelete;
 }
