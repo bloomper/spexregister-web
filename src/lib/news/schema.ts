@@ -1,4 +1,4 @@
-import { z } from "zod";
+import {z} from "zod";
 
 export const newsFormSchema = z.object({
     subject: z.string().min(1, "News.subjectRequired"),

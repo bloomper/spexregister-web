@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import {useRef, useState} from "react";
 import {ColumnDef, flexRender, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
@@ -11,39 +12,12 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {useTranslations} from "next-intl";
 import {DataEmpty} from "@/components/data-empty";
 
-interface RemoteDataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[];
-    initialData: CursorPage<TData>;
-    initialPageSize?: number;
-    fetchAction: (args: any) => Promise<CursorPage<TData>>;
-    extraParams?: Record<string, string>
-}
-
-export function RemoteDataTable<TData, TValue>({
-                                                   columns,
-                                                   initialData,
-                                                   initialPageSize = 15,
-                                                   fetchAction,
-                                                   extraParams = {}
-                                               }: RemoteDataTableProps<TData, TValue>) {
-    const fetchPage = async (args: any) => {
-        return fetchAction({...args, ...extraParams});
-    };
-
-    return (
-        <DataTable
-            columns={columns}
-            initialData={initialData}
-            initialPageSize={initialPageSize}
-            onFetch={fetchPage}
-        />
-    );
-}
-
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     initialData: CursorPage<TData>
     initialPageSize?: number
+    meta?: Record<string, any>
+    children?: React.ReactNode
     onFetch: (args: {
         first?: number;
         last?: number;
@@ -57,11 +31,20 @@ export function DataTable<TData, TValue>({
                                              initialData,
                                              initialPageSize = 15,
                                              onFetch,
+                                             meta: extraMeta,
+                                             children,
                                          }: DataTableProps<TData, TValue>) {
-    const [data, setData] = React.useState(initialData.items);
-    const [pageInfo, setPageInfo] = React.useState<CursorPageInfo>(initialData.pageInfo);
-    const [pageSize, setPageSize] = React.useState(initialPageSize);
-    const [loading, setLoading] = React.useState(false);
+    const [data, setData] = useState<TData[]>(initialData.items);
+    const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
+    const [pageSize, setPageSize] = useState(initialPageSize);
+    const [loading, setLoading] = useState(false);
+    const lastInitialData = useRef(initialData);
+
+    if (lastInitialData.current !== initialData) {
+        setData(initialData.items);
+        setPageInfo(initialData.pageInfo);
+        lastInitialData.current = initialData;
+    }
 
     const handleFetch = async (args: Parameters<typeof onFetch>[0]) => {
         setLoading(true);
@@ -77,6 +60,12 @@ export function DataTable<TData, TValue>({
     const refresh = () => {
         void handleFetch({first: pageSize});
     };
+
+    React.useEffect(() => {
+        if (extraMeta?.setRefresh) {
+            extraMeta.setRefresh(refresh);
+        }
+    }, [refresh, extraMeta?.setRefresh]);
 
     const handlePageChange = (direction: "next" | "prev" | "first" | "last") => {
         if (direction === "first") {
@@ -96,7 +85,8 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
         meta: {
-            refresh
+            refresh,
+            ...extraMeta
         }
     });
 
@@ -185,7 +175,7 @@ export function DataTable<TData, TValue>({
                         onClick={() => handlePageChange("first")}
                         disabled={!pageInfo.hasPreviousPage || loading}
                     >
-                        <ChevronsLeft className="h-4 w-4" />
+                        <ChevronsLeft className="h-4 w-4"/>
                     </Button>
                     <Button
                         variant="outline"
@@ -209,10 +199,11 @@ export function DataTable<TData, TValue>({
                         onClick={() => handlePageChange("last")}
                         disabled={!pageInfo.hasNextPage || loading}
                     >
-                        <ChevronsRight className="h-4 w-4" />
+                        <ChevronsRight className="h-4 w-4"/>
                     </Button>
                 </div>
             </div>
+            {children}
         </div>
     )
 }

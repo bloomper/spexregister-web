@@ -1,32 +1,32 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { newsFormSchema, NewsFormData } from "@/lib/news/schema";
-import { News } from "@/gql/graphql";
-import { useTranslations } from "next-intl";
-import { useTransition } from "react";
-import { toast } from "sonner";
-import { createNewsAction, updateNewsAction } from "@/app/(app)/news/actions.server";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { SheetContent, SheetHeader, SheetTitle, SheetFooter, SheetClose } from "@/components/ui/sheet";
-import { Field, FieldContent, FieldError, FieldLabel } from "@/components/ui/field";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {NewsFormData, newsFormSchema} from "@/lib/news/schema";
+import {News} from "@/gql/graphql";
+import {useTranslations} from "next-intl";
+import {useTransition} from "react";
+import {toast} from "sonner";
+import {createNewsAction, updateNewsAction} from "@/app/(app)/news/actions.server";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 
 interface NewsFormProps {
     news?: News;
     onSuccess: () => void;
 }
 
-export function NewsForm({ news, onSuccess }: NewsFormProps) {
+export function NewsForm({news, onSuccess}: NewsFormProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
 
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: {errors},
     } = useForm<NewsFormData>({
         resolver: zodResolver(newsFormSchema),
         defaultValues: {
@@ -65,15 +65,15 @@ export function NewsForm({ news, onSuccess }: NewsFormProps) {
                         <FieldLabel>{t("News.subject")}</FieldLabel>
                         <FieldContent>
                             <Input {...register("subject")} />
-                            <FieldError errors={[errors.subject]} />
+                            <FieldError errors={[errors.subject]}/>
                         </FieldContent>
                     </Field>
 
                     <Field data-invalid={!!errors.text}>
                         <FieldLabel>{t("News.text")}</FieldLabel>
                         <FieldContent>
-                            <Textarea {...register("text")} rows={10} />
-                            <FieldError errors={[errors.text]} />
+                            <Textarea {...register("text")} rows={10}/>
+                            <FieldError errors={[errors.text]}/>
                         </FieldContent>
                     </Field>
 
@@ -82,7 +82,7 @@ export function NewsForm({ news, onSuccess }: NewsFormProps) {
                             <FieldLabel>{t("News.visibleFrom")}</FieldLabel>
                             <FieldContent>
                                 <Input type="date" {...register("visibleFrom")} />
-                                <FieldError errors={[errors.visibleFrom]} />
+                                <FieldError errors={[errors.visibleFrom]}/>
                             </FieldContent>
                         </Field>
 
@@ -90,7 +90,7 @@ export function NewsForm({ news, onSuccess }: NewsFormProps) {
                             <FieldLabel>{t("News.visibleTo")}</FieldLabel>
                             <FieldContent>
                                 <Input type="date" {...register("visibleTo")} />
-                                <FieldError errors={[errors.visibleTo]} />
+                                <FieldError errors={[errors.visibleTo]}/>
                             </FieldContent>
                         </Field>
                     </div>

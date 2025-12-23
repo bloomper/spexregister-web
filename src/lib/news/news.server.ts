@@ -3,7 +3,6 @@ import 'server-only';
 import {getClient} from '@/lib/urql.server';
 import {News, NewsConnection, NewsEdge} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
-import {revalidatePath} from "next/cache";
 
 const NewsSummaryFields = `
     id
@@ -76,6 +75,10 @@ export async function getNewsPaged(args: {
             last: args.last,
             after: args.after ?? null,
             before: args.before ?? null
+        }, {
+            fetchOptions: {
+                next: {tags: ['news']}
+            }
         })
         .toPromise();
 
@@ -101,7 +104,7 @@ export async function getNewsPaged(args: {
 
 export async function createNews(input: any) {
     const result = await getClient()
-        .mutation(NewsCreateMutation, { input })
+        .mutation(NewsCreateMutation, {input})
         .toPromise();
 
     if (result.error) throw result.error;
@@ -110,7 +113,7 @@ export async function createNews(input: any) {
 
 export async function updateNews(id: string, input: any) {
     const result = await getClient()
-        .mutation(NewsUpdateMutation, { id, input })
+        .mutation(NewsUpdateMutation, {id, input})
         .toPromise();
 
     if (result.error) throw result.error;
@@ -119,7 +122,7 @@ export async function updateNews(id: string, input: any) {
 
 export async function deleteNews(id: string) {
     const result = await getClient()
-        .mutation(NewsDeleteMutation, { id })
+        .mutation(NewsDeleteMutation, {id})
         .toPromise();
 
     if (result.error) {

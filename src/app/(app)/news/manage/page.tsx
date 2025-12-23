@@ -2,9 +2,7 @@ import {getNewsPaged} from "@/lib/news";
 import {notFound} from "next/navigation";
 import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
-import {RemoteDataTable} from "@/components/data-table.client";
-import {columns} from "@/components/news";
-import {fetchNewsPageAction} from "@/app/(app)/news/actions.server";
+import {NewsTable} from "@/components/news";
 
 export default async function NewsManagePage() {
     const authz = await Policies.news.requireUpdate();
@@ -22,13 +20,7 @@ export default async function NewsManagePage() {
             <div className="flex flex-col gap-2">
                 <h2 className="text-2xl font-bold tracking-tight">{t("News.title")}</h2>
             </div>
-            <RemoteDataTable
-                columns={columns}
-                fetchAction={fetchNewsPageAction}
-                initialData={initialData}
-                initialPageSize={defaultPageSize}
-                extraParams={{ full: "true" }}
-            />
+            <NewsTable initialData={initialData}/>
         </div>
     );
 }

@@ -8,8 +8,7 @@ import {News} from "@/gql/graphql";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {formatDate, formatDateTime} from "@/utils/utils";
 import {useTranslations} from "next-intl";
-import {useState, useTransition} from "react";
-import {toast} from "sonner";
+import {DataTable} from "@/components/data-table.client";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,9 +19,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {deleteNewsAction} from "@/app/(app)/news/actions.server";
-import {Sheet, SheetTrigger} from "@/components/ui/sheet";
 import {NewsForm} from "@/components/news/news-form.client";
+import {useState, useTransition} from "react";
+import {deleteNewsAction, fetchNewsPageAction} from "@/app/(app)/news/actions.server";
+import {toast} from "sonner";
+import {Sheet} from "@/components/ui/sheet";
+import {CursorPage} from "@/types/pagination";
 
 
 function Translated({id}: { id: string }) {
@@ -99,89 +101,98 @@ export const columns: ColumnDef<News>[] = [
         cell: ({row, table}) => {
             const news = row.original;
             const t = useTranslations();
-            const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-            const [isEditOpen, setIsEditOpen] = useState(false);
-            const [isMenuOpen, setIsMenuOpen] = useState(false);
-            const [isPending, startTransition] = useTransition();
 
-            const handleDelete = () => {
-                startTransition(async () => {
-                    try {
-                        await deleteNewsAction(news.id);
-                        setIsDeleteOpen(false);
-                        toast.success(t("Common.deleteSuccess"));
-                        const meta = table.options.meta as { refresh: () => void };
-                        meta?.refresh();
-                    } catch (error) {
-                        toast.error(t("Common.errorOccurred"));
-                        console.error(error);
-                    }
-                });
-            };
+            const meta = table.options.meta as any;
+
             return (
-                <>
-                    <Sheet open={isEditOpen} onOpenChange={setIsEditOpen}>
-                        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">{t("Common.openMenu")}</span>
-                                    <MoreHorizontal className="h-4 w-4"/>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={() => {
-                                    setIsMenuOpen(false);
-                                    setIsEditOpen(true);
-                                }}>
-                                    {t("Common.edit")}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    className="text-destructive"
-                                    onSelect={() => {
-                                        setIsMenuOpen(false);
-                                        setIsDeleteOpen(true);
-                                    }}
-                                >
-                                    {t("Common.delete")}
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        <NewsForm
-                            news={news}
-                            onSuccess={() => {
-                                setIsEditOpen(false);
-                                (table.options.meta as any)?.refresh();
-                            }}
-                        />
-                    </Sheet>
-
-                    <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>{t("Common.deleteTitle")}</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    {t("Common.deleteConfirmation", {subject: news.subject})}
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel disabled={isPending}>{t("Common.cancel")}</AlertDialogCancel>
-                                <AlertDialogAction
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        handleDelete();
-                                    }}
-                                    disabled={isPending}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                    {isPending ? t("Common.deleting") : t("Common.delete")}
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                </>
-            )
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">{t("Common.openMenu")}</span>
+                            <MoreHorizontal className="h-4 w-4"/>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => meta?.setEditItem(news)}>
+                            {t("Common.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            className="text-destructive"
+                            onSelect={() => meta?.setDeleteItem(news)}
+                        >
+                            {t("Common.delete")}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
         },
     },
 ];
 
+export function NewsTable({initialData}: { initialData: CursorPage<News> }) {
+    const t = useTranslations();
+    const [editItem, setEditItem] = useState<News | null>(null);
+    const [deleteItem, setDeleteItem] = useState<News | null>(null);
+    const [isPending, startTransition] = useTransition();
+
+    const handleDelete = () => {
+        if (!deleteItem) return;
+
+        startTransition(async () => {
+            try {
+                await deleteNewsAction(deleteItem.id);
+                setDeleteItem(null);
+                toast.success(t("Common.deleteSuccess"));
+            } catch (error) {
+                toast.error(t("Common.errorOccurred"));
+            }
+        });
+    };
+
+    return (
+        <>
+            <DataTable
+                columns={columns}
+                initialData={initialData}
+                onFetch={(args) => fetchNewsPageAction({...args, full: true})}
+                meta={{
+                    setEditItem,
+                    setDeleteItem,
+                }}
+            />
+
+            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
+                {editItem && (
+                    <NewsForm
+                        news={editItem}
+                        onSuccess={() => setEditItem(null)}
+                    />
+                )}
+            </Sheet>
+
+            <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t("Common.deleteTitle")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {t("Common.deleteConfirmation")}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isPending}>{t("Common.cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleDelete();
+                            }}
+                            disabled={isPending}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                            {isPending ? t("Common.deleting") : t("Common.delete")}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
+    );
+}
