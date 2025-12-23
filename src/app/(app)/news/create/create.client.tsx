@@ -26,7 +26,7 @@ export function NewsCreateForm() {
 
     return (
         <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-            <NewsForm onSuccess={handleSuccess} />
+            <NewsForm onSuccess={handleSuccess}/>
         </Sheet>
     );
 }

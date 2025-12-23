@@ -1,7 +1,7 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {News, NewsConnection, NewsEdge} from "@/gql/graphql";
+import {News, NewsConnection, NewsEdge, SortDirection} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
 
 const NewsSummaryFields = `
@@ -44,8 +44,8 @@ const NewsDeleteMutation = /* GraphQL */ `
 `;
 
 const createQuery = (fields: string) => /* GraphQL */ `
-    query NewsPaged($first: Int, $last: Int, $after: String, $before: String) {
-        newsPaged(first: $first, last: $last, after: $after, before: $before) {
+    query NewsPaged($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection) {
+        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction) {
             edges {
                 cursor
                 node { ${fields} }
@@ -65,6 +65,8 @@ export async function getNewsPaged(args: {
     last?: number;
     after?: string | null;
     before?: string | null;
+    sort?: string[];
+    direction?: SortDirection;
     full?: boolean
 }): Promise<NewsPage> {
     const query = createQuery(args.full ? NewsFullFields : NewsSummaryFields);
@@ -74,7 +76,9 @@ export async function getNewsPaged(args: {
             first: args.first,
             last: args.last,
             after: args.after ?? null,
-            before: args.before ?? null
+            before: args.before ?? null,
+            sort: args.sort ?? ["visibleFrom"],
+            direction: args.direction ?? SortDirection.Desc
         }, {
             fetchOptions: {
                 next: {tags: ['news']}

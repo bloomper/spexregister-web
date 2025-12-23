@@ -19,7 +19,7 @@ export default async function NewsManagePage() {
                     <h2 className="text-2xl font-bold tracking-tight">{t("News.title")}</h2>
                     <Button asChild size="sm">
                         <Link href="/news/create">
-                            <Plus className="mr-1 h-4 w-4" />
+                            <Plus className="mr-1 h-4 w-4"/>
                             {t("News.createTitle")}
                         </Link>
                     </Button>

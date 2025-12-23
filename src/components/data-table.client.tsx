@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useRef, useState} from "react";
-import {ColumnDef, flexRender, getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {ColumnDef, flexRender, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
@@ -11,18 +11,22 @@ import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, LoaderPinwheel} 
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useTranslations} from "next-intl";
 import {DataEmpty} from "@/components/data-empty";
+import {SortDirection} from "@/gql/graphql";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     initialData: CursorPage<TData>
     initialPageSize?: number
+    initialSorting?: SortingState
     meta?: Record<string, any>
     children?: React.ReactNode
     onFetch: (args: {
         first?: number;
         last?: number;
         after?: string | null;
-        before?: string | null
+        before?: string | null;
+        sort?: string[];
+        direction?: SortDirection;
     }) => Promise<CursorPage<TData>>
 }
 
@@ -30,6 +34,7 @@ export function DataTable<TData, TValue>({
                                              columns,
                                              initialData,
                                              initialPageSize = 15,
+                                             initialSorting = [],
                                              onFetch,
                                              meta: extraMeta,
                                              children,
@@ -37,6 +42,7 @@ export function DataTable<TData, TValue>({
     const [data, setData] = useState<TData[]>(initialData.items);
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
     const [pageSize, setPageSize] = useState(initialPageSize);
+    const [sorting, setSorting] = useState<SortingState>(initialSorting);
     const [loading, setLoading] = useState(false);
     const lastInitialData = useRef(initialData);
 
@@ -48,8 +54,12 @@ export function DataTable<TData, TValue>({
 
     const handleFetch = async (args: Parameters<typeof onFetch>[0]) => {
         setLoading(true);
+        const currentSort = sorting[0];
+        const sort = args.sort || (currentSort ? [currentSort.id] : undefined);
+        const direction = args.direction || (currentSort ? (currentSort.desc ? SortDirection.Desc : SortDirection.Asc) : undefined);
+
         try {
-            const result = await onFetch(args);
+            const result = await onFetch({...args, sort, direction});
             setData(result.items);
             setPageInfo(result.pageInfo);
         } finally {
@@ -82,8 +92,23 @@ export function DataTable<TData, TValue>({
     const table = useReactTable({
         data,
         columns,
+        state: {
+            sorting,
+        },
+        onSortingChange: (updater) => {
+            const nextSorting = typeof updater === 'function' ? updater(sorting) : updater;
+            setSorting(nextSorting);
+
+            const sortField = nextSorting[0];
+            void handleFetch({
+                first: pageSize,
+                sort: sortField ? [sortField.id] : undefined,
+                direction: sortField ? (sortField.desc ? SortDirection.Desc : SortDirection.Asc) : undefined
+            });
+        },
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
+        manualSorting: true,
         meta: {
             refresh,
             ...extraMeta

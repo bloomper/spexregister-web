@@ -1,7 +1,7 @@
 "use client";
 
 import {ColumnDef} from "@tanstack/react-table";
-import {CheckCircle2, Circle, MoreHorizontal} from "lucide-react";
+import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, MoreHorizontal} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {News} from "@/gql/graphql";
@@ -37,7 +37,25 @@ function Translated({id}: { id: string }) {
 export const columns: ColumnDef<News>[] = [
     {
         accessorKey: "subject",
-        header: () => <Translated id="News.subject"/>,
+        header: ({column}) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                >
+                    <Translated id="News.subject"/>
+                    {isSorted === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4"/>
+                    ) : isSorted === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4"/>
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    )}
+                </Button>
+            );
+        },
         cell: ({row}) => {
             const subject = row.getValue("subject") as string;
 
@@ -76,25 +94,97 @@ export const columns: ColumnDef<News>[] = [
     },
     {
         accessorKey: "visibleFrom",
-        header: () => <Translated id="News.visibleFrom"/>,
+        header: ({column}) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                >
+                    <Translated id="News.visibleFrom"/>
+                    {isSorted === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4"/>
+                    ) : isSorted === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4"/>
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    )}
+                </Button>
+            );
+        },
         cell: ({row}) => formatDate(row.getValue("visibleFrom") as string) || "-",
         meta: {className: "hidden lg:table-cell"}
     },
     {
         accessorKey: "visibleTo",
-        header: () => <Translated id="News.visibleTo"/>,
+        header: ({column}) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                >
+                    <Translated id="News.visibleTo"/>
+                    {isSorted === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4"/>
+                    ) : isSorted === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4"/>
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    )}
+                </Button>
+            );
+        },
         cell: ({row}) => formatDate(row.getValue("visibleTo") as string) || "-",
         meta: {className: "hidden xl:table-cell"}
     },
     {
         accessorKey: "createdAt",
-        header: () => <Translated id="Common.createdAt"/>,
+        header: ({column}) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                >
+                    <Translated id="Common.createdAt"/>
+                    {isSorted === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4"/>
+                    ) : isSorted === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4"/>
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    )}
+                </Button>
+            );
+        },
         cell: ({row}) => formatDateTime(row.getValue("createdAt") as string) || "-",
         meta: {className: "hidden xl:table-cell"}
     },
     {
         accessorKey: "lastModifiedAt",
-        header: () => <Translated id="Common.lastModifiedAt"/>,
+        header: ({column}) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                >
+                    <Translated id="Common.lastModifiedAt"/>
+                    {isSorted === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4"/>
+                    ) : isSorted === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4"/>
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    )}
+                </Button>
+            );
+        },
         cell: ({row}) => formatDateTime(row.getValue("lastModifiedAt") as string) || "-",
         meta: {className: "hidden xl:table-cell"}
     },
@@ -169,6 +259,7 @@ export function NewsTable({initialData}: { initialData: CursorPage<News> }) {
             <DataTable
                 columns={columns}
                 initialData={initialData}
+                initialSorting={[{id: "visibleFrom", desc: true}]}
                 onFetch={(args) => fetchNewsPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
