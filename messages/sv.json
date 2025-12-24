@@ -15,6 +15,8 @@
     "reset": "Återställ",
     "cancel": "Avbryt",
     "close": "Stäng",
+    "manage": "Hantera",
+    "create": "Skapa",
     "edit": "Ändra",
     "save": "Spara",
     "saving": "Sparar...",
@@ -30,13 +32,19 @@
     "createSuccess": "Skapandet lyckades",
     "errorOccurred": "Fel inträffade",
     "rowsPerPage": "Rader per sida",
+    "selected": "valda",
     "openMenu": "Öppna meny",
     "myFgvAccount": "Mitt FGV-konto",
+    "search": "Sök",
+    "searchPlaceholder": "Skriv för att söka...",
     "createdAt": "Skapad",
     "createdBy": "Skapad av",
     "lastModifiedAt": "Senast uppdaterad",
     "lastModifiedBy": "Senast uppdaterad av",
-    "fieldRequired": "Fältet är obligatoriskt"
+    "fieldRequired": "Fältet är obligatoriskt",
+    "themeLight": "Ljus",
+    "themeDark": "Mörk",
+    "themeSystem": "System"
   },
   "Meta": {
     "title": "Chalmersspexets Adressregister",
@@ -47,6 +55,7 @@
     "toggleTheme": "Byt tema"
   },
   "Home": {
+    "title": "Hem",
     "mustBeLoggedIn": "Du behöver vara inloggad för att använda adressregistret.",
     "latestNews": "Senaste nyheterna",
     "showAllNews": "Visa alla nyheter"
@@ -65,5 +74,11 @@
     "visibleFrom": "Synlig från",
     "visibleTo": "Synlig till",
     "filterSubject": "Filtrera ämne..."
+  },
+  "Support": {
+    "title": "Support"
+  },
+  "Feedback": {
+    "title": "Återkoppling"
   }
 }

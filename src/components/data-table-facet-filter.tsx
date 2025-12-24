@@ -36,7 +36,7 @@ export function DataTableFacetedFilter({
                             <Separator orientation="vertical" className="mx-2 h-4"/>
                             <div className="flex space-x-1">
                                 {selectedValues.size > 2 ? (
-                                    <span className="text-xs">{selectedValues.size} selected</span>
+                                    <span className="text-xs">{selectedValues.size} {t("Common.selected")}</span>
                                 ) : (
                                     options
                                         .filter((option) => selectedValues.has(option.value))

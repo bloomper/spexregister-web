@@ -22,44 +22,8 @@ import {useSession} from "next-auth/react";
 import {Role} from "@/types/auth";
 import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {usePathname} from "next/navigation";
+import {useTranslations} from "next-intl";
 
-function getNavigation(roles: Role[], pathname: string) {
-    const isCurrentUserAdmin = isAdmin(roles);
-    const isCurrentUserAdminOrEditor = isAdminOrEditor(roles);
-
-    return {
-        main: [
-            {
-                title: "Home",
-                url: "/",
-                icon: House,
-                isActive: pathname === "/",
-            },
-            {
-                title: "News",
-                url: "/news",
-                icon: BookOpen,
-                isActive: pathname.startsWith("/news"),
-                items: isCurrentUserAdminOrEditor ? [
-                    {title: "Manage", url: "/news/manage"},
-                    {title: "Create", url: "/news/create"},
-                ] : undefined,
-            },
-        ],
-        secondary: [
-            {
-                title: "Support",
-                url: "#",
-                icon: LifeBuoy,
-            },
-            {
-                title: "Feedback",
-                url: "#",
-                icon: Send,
-            },
-        ]
-    };
-}
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     roles: Role[];
@@ -68,9 +32,46 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 export function AppSidebar({roles, ...props}: AppSidebarProps) {
     const {data: session} = useSession();
     const pathname = usePathname();
+    const t = useTranslations();
     const [mounted, setMounted] = useState(false);
-    const navigation = useMemo(() =>
-        getNavigation(roles, pathname), [roles, pathname]);
+
+    const navigation = useMemo(() => {
+        const isCurrentUserAdmin = isAdmin(roles);
+        const isCurrentUserAdminOrEditor = isAdminOrEditor(roles);
+
+        return {
+            main: [
+                {
+                    title: t("Home.title"),
+                    url: "/",
+                    icon: House,
+                    isActive: pathname === "/",
+                },
+                {
+                    title: t("News.title"),
+                    url: "/news",
+                    icon: BookOpen,
+                    isActive: pathname.startsWith("/news"),
+                    items: isCurrentUserAdminOrEditor ? [
+                        {title: t("Common.manage"), url: "/news/manage"},
+                        {title: t("Common.create"), url: "/news/create"},
+                    ] : undefined,
+                },
+            ],
+            secondary: [
+                {
+                    title: t("Support.title"),
+                    url: "#",
+                    icon: LifeBuoy,
+                },
+                {
+                    title: t("Feedback.title"),
+                    url: "#",
+                    icon: Send,
+                },
+            ]
+        };
+    }, [roles, pathname, t]);
 
     useEffect(() => {
         setMounted(true);

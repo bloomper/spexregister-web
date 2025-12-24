@@ -15,6 +15,8 @@
     "reset": "Reset",
     "cancel": "Cancel",
     "close": "Close",
+    "manage": "Manage",
+    "create": "Create",
     "edit": "Edit",
     "save": "Save",
     "saving": "Saving...",
@@ -30,13 +32,19 @@
     "createSuccess": "Item created successfully",
     "errorOccurred": "Error occurred",
     "rowsPerPage": "Rows per page",
+    "selected": "selected",
     "openMenu": "Open menu",
     "myFgvAccount": "My FGV account",
+    "search": "Search",
+    "searchPlaceholder": "Type to search...",
     "createdAt": "Created at",
     "createdBy": "Created by",
     "lastModifiedAt": "Last modified at",
     "lastModifiedBy": "Last modified by",
-    "fieldRequired": "Field is required"
+    "fieldRequired": "Field is required",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
   },
   "Meta": {
     "title": "Chalmersspexet's Address Register",
@@ -47,6 +55,7 @@
     "toggleTheme": "Toggle theme"
   },
   "Home": {
+    "title": "Home",
     "mustBeLoggedIn": "You must be logged in to use the address register.",
     "latestNews": "Latest news",
     "showAllNews": "Show all news"
@@ -65,5 +74,11 @@
     "visibleFrom": "Visible from",
     "visibleTo": "Visible to",
     "filterSubject": "Filter subject..."
+  },
+  "Support": {
+    "title": "Support"
+  },
+  "Feedback": {
+    "title": "Feedback"
   }
 }

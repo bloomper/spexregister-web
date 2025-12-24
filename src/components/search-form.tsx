@@ -2,17 +2,20 @@ import {Search} from "lucide-react";
 
 import {Label} from "@/components/ui/label";
 import {SidebarInput} from "@/components/ui/sidebar";
+import {useTranslations} from "next-intl";
 
 export function SearchForm({...props}: React.ComponentProps<"form">) {
+    const t = useTranslations();
+
     return (
         <form {...props}>
             <div className="relative">
                 <Label htmlFor="search" className="sr-only">
-                    Search
+                    {t("Common.search")}
                 </Label>
                 <SidebarInput
                     id="search"
-                    placeholder="Type to search..."
+                    placeholder={t("Common.searchPlaceholder")}
                     className="h-8 pl-7"
                 />
                 <Search

@@ -38,7 +38,7 @@ export default async function HomePage() {
                             href="/news"
                             className={buttonVariants({variant: "outline", size: "sm"})}
                         >
-                            {t("Home.showAllNews") || "Show all news"}
+                            {t("Home.showAllNews")}
                         </Link>
                     </div>
                 </>

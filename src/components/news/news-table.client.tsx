@@ -379,8 +379,8 @@ export function NewsTable({
                                 selectedValues={publishedValues}
                                 onSelect={setPublishedValues}
                                 options={[
-                                    {label: "Published", value: "true", icon: CheckCircle2},
-                                    {label: "Draft", value: "false", icon: Circle},
+                                    {label: t("News.publishedStates.true"), value: "true", icon: CheckCircle2},
+                                    {label: t("News.publishedStates.false"), value: "false", icon: Circle},
                                 ]}
                             />
 
