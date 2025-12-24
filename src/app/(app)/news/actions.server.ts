@@ -50,6 +50,10 @@ export async function deleteNewsAction(id: string) {
     });
 }
 
+export async function bulkDeleteNewsAction(ids: string[]) {
+    await Promise.all(ids.map(id => deleteNewsAction(id)));
+}
+
 function revalidateNews() {
     revalidateTag('news', 'max');
 }

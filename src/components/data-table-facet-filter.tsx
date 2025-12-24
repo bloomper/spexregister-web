@@ -1,9 +1,9 @@
-import * as React from "react"
-import {Check, PlusCircle} from "lucide-react"
-import {cn} from "@/utils/utils"
-import {Button} from "@/components/ui/button"
-import {Separator} from "@/components/ui/separator"
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
+import * as React from "react";
+import {Check, PlusCircle} from "lucide-react";
+import {cn} from "@/utils/utils";
+import {Button} from "@/components/ui/button";
+import {Separator} from "@/components/ui/separator";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {useTranslations} from "next-intl";
 
 interface DataTableFacetedFilterProps {
@@ -99,5 +99,5 @@ export function DataTableFacetedFilter({
                 </div>
             </PopoverContent>
         </Popover>
-    )
+    );
 }

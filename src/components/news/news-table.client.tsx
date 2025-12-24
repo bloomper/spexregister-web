@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {NewsForm} from "@/components/news/news-form.client";
 import {useEffect, useRef, useState, useTransition} from "react";
-import {deleteNewsAction, fetchNewsPageAction} from "@/app/(app)/news/actions.server";
+import {bulkDeleteNewsAction, deleteNewsAction, fetchNewsPageAction} from "@/app/(app)/news/actions.server";
 import {toast} from "sonner";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
@@ -31,6 +31,7 @@ import {Input} from "@/components/ui/input";
 import {DataTableFacetedFilter} from "@/components/data-table-facet-filter";
 import Link from "next/link";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Checkbox} from "@/components/ui/checkbox";
 
 
 function Translated({id}: { id: string }) {
@@ -39,6 +40,36 @@ function Translated({id}: { id: string }) {
 }
 
 export const columns: ColumnDef<News>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                }}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.stopPropagation();
+                    }
+                }}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
     {
         accessorKey: "subject",
         header: ({column}) => {
@@ -238,6 +269,8 @@ export function NewsTable({
     const [viewItem, setViewItem] = useState<News | null>(null);
     const [editItem, setEditItem] = useState<News | null>(null);
     const [deleteItem, setDeleteItem] = useState<News | null>(null);
+    const [selectedRows, setSelectedRows] = useState<News[]>([]);
+    const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [subjectFilter, setSubjectFilter] = useState("");
     const [publishedValues, setPublishedValues] = useState<Set<string>>(new Set(defaultPublishedStates));
     const setFilterRef = useRef<((filter: string) => void) | null>(null);
@@ -256,6 +289,21 @@ export function NewsTable({
                 await deleteNewsAction(deleteItem.id);
                 setDeleteItem(null);
                 toast.success(t("Common.deleteSuccess"));
+                router.refresh();
+            } catch (error) {
+                toast.error(t("Common.errorOccurred"));
+            }
+        });
+    };
+
+    const handleBulkDelete = () => {
+        const ids = selectedRows.map(r => r.id);
+        startTransition(async () => {
+            try {
+                await bulkDeleteNewsAction(ids);
+                setIsBulkDeleting(false);
+                setSelectedRows([]);
+                toast.success(t("Common.deleteBulkSuccess"));
                 router.refresh();
             } catch (error) {
                 toast.error(t("Common.errorOccurred"));
@@ -306,6 +354,7 @@ export function NewsTable({
                 initialData={initialData}
                 initialSorting={[{id: "visibleFrom", desc: true}]}
                 onRowClick={setViewItem}
+                onSelectionChange={setSelectedRows}
                 onFetch={(args) => fetchNewsPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
@@ -348,6 +397,17 @@ export function NewsTable({
                                     <X className="ml-2 h-4 w-4"/>
                                 </Button>
                             )}
+
+                            {selectedRows.length > 0 && (
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    className="h-8"
+                                    onClick={() => setIsBulkDeleting(true)}
+                                >
+                                    {t("Common.delete")} ({selectedRows.length})
+                                </Button>
+                            )}
                         </div>
                     </div>
 
@@ -367,12 +427,12 @@ export function NewsTable({
                             <div>{viewItem?.visibleFrom ? formatDate(viewItem.visibleFrom) : ''}</div>
                             {viewItem && (
                                 <>
-                                    <div className="h-3 w-px bg-border" /> {/* Separator */}
+                                    <div className="h-3 w-px bg-border"/>
                                     <div className="flex items-center gap-1.5">
                                         {viewItem.published ? (
-                                            <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                                            <CheckCircle2 className="h-3.5 w-3.5 text-green-500"/>
                                         ) : (
-                                            <Circle className="h-3.5 w-3.5" />
+                                            <Circle className="h-3.5 w-3.5"/>
                                         )}
                                     </div>
                                 </>
@@ -435,6 +495,30 @@ export function NewsTable({
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleDelete();
+                            }}
+                            disabled={isPending}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                            {isPending ? t("Common.deleting") : t("Common.delete")}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={isBulkDeleting} onOpenChange={setIsBulkDeleting}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t("Common.deleteBulkTitle")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {t("Common.deleteBulkConfirmation")}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isPending}>{t("Common.cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleBulkDelete();
                             }}
                             disabled={isPending}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

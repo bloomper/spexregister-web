@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import {useEffect, useRef, useState} from "react";
-import {ColumnDef, flexRender, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
+import {
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    RowSelectionState,
+    SortingState,
+    useReactTable
+} from "@tanstack/react-table";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
@@ -21,6 +28,7 @@ interface DataTableProps<TData, TValue> {
     meta?: Record<string, any>
     children?: React.ReactNode
     onRowClick?: (data: TData) => void
+    onSelectionChange?: (selectedRows: TData[]) => void
     onFetch: (args: {
         first?: number;
         last?: number;
@@ -40,12 +48,14 @@ export function DataTable<TData, TValue>({
                                              onFetch,
                                              meta: extraMeta,
                                              children,
-                                             onRowClick
+                                             onRowClick,
+                                             onSelectionChange
                                          }: DataTableProps<TData, TValue>) {
     const [data, setData] = useState<TData[]>(initialData.items);
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
     const [pageSize, setPageSize] = useState(initialPageSize);
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [filter, setFilter] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const lastInitialData = useRef(initialData);
@@ -58,6 +68,7 @@ export function DataTable<TData, TValue>({
 
     const handleFetch = async (args: Parameters<typeof onFetch>[0]) => {
         setLoading(true);
+        setRowSelection({});
         const currentSort = sorting[0];
         const sort = args.sort || (currentSort ? [currentSort.id] : undefined);
         const direction = args.direction || (currentSort ? (currentSort.desc ? SortDirection.Desc : SortDirection.Asc) : undefined);
@@ -110,6 +121,7 @@ export function DataTable<TData, TValue>({
         columns,
         state: {
             sorting,
+            rowSelection,
         },
         onSortingChange: (updater) => {
             const nextSorting = typeof updater === 'function' ? updater(sorting) : updater;
@@ -122,6 +134,9 @@ export function DataTable<TData, TValue>({
                 direction: sortField ? (sortField.desc ? SortDirection.Desc : SortDirection.Asc) : undefined
             });
         },
+        enableRowSelection: true,
+        onRowSelectionChange: setRowSelection,
+        getRowId: (row: any) => row.id,
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
         manualSorting: true,
@@ -131,6 +146,13 @@ export function DataTable<TData, TValue>({
             ...extraMeta
         }
     });
+
+    useEffect(() => {
+        if (onSelectionChange) {
+            const selectedData = table.getSelectedRowModel().rows.map((row) => row.original);
+            onSelectionChange(selectedData);
+        }
+    }, [rowSelection, table, onSelectionChange]);
 
     const t = useTranslations();
 
@@ -186,7 +208,7 @@ export function DataTable<TData, TValue>({
                                                 key={cell.id}
                                                 className={meta?.className}
                                                 onClick={(e) => {
-                                                    if (cell.column.id === "actions") {
+                                                    if (cell.column.id === "select") {
                                                         e.stopPropagation();
                                                     }
                                                 }}
@@ -220,42 +242,42 @@ export function DataTable<TData, TValue>({
                             ))}
                         </SelectContent>
                     </Select>
-            </div>
-            <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                <Button
-                    variant="outline"
-                    className="hidden h-8 w-8 p-0 lg:flex"
-                    onClick={() => handlePageChange("first")}
-                    disabled={!pageInfo.hasPreviousPage || loading}
-                >
-                    <ChevronsLeft className="h-4 w-4"/>
-                </Button>
-                <Button
-                    variant="outline"
-                    className="h-8 w-8 p-0"
-                    onClick={() => handlePageChange("prev")}
-                    disabled={!pageInfo.hasPreviousPage || loading}
-                >
-                    <ChevronLeft className="h-4 w-4"/>
-                </Button>
-                <Button
-                    variant="outline"
-                    className="h-8 w-8 p-0"
-                    onClick={() => handlePageChange("next")}
-                    disabled={!pageInfo.hasNextPage || loading}
-                >
-                    <ChevronRight className="h-4 w-4"/>
-                </Button>
-                <Button
-                    variant="outline"
-                    className="hidden h-8 w-8 p-0 lg:flex"
-                    onClick={() => handlePageChange("last")}
-                    disabled={!pageInfo.hasNextPage || loading}
-                >
-                    <ChevronsRight className="h-4 w-4"/>
-                </Button>
+                </div>
+                <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                    <Button
+                        variant="outline"
+                        className="hidden h-8 w-8 p-0 lg:flex"
+                        onClick={() => handlePageChange("first")}
+                        disabled={!pageInfo.hasPreviousPage || loading}
+                    >
+                        <ChevronsLeft className="h-4 w-4"/>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                        onClick={() => handlePageChange("prev")}
+                        disabled={!pageInfo.hasPreviousPage || loading}
+                    >
+                        <ChevronLeft className="h-4 w-4"/>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                        onClick={() => handlePageChange("next")}
+                        disabled={!pageInfo.hasNextPage || loading}
+                    >
+                        <ChevronRight className="h-4 w-4"/>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="hidden h-8 w-8 p-0 lg:flex"
+                        onClick={() => handlePageChange("last")}
+                        disabled={!pageInfo.hasNextPage || loading}
+                    >
+                        <ChevronsRight className="h-4 w-4"/>
+                    </Button>
+                </div>
             </div>
         </div>
-</div>
-)
+    );
 }
