@@ -1,4 +1,4 @@
-import {News, NewsEdge} from "@/gql/graphql";
+import {News, NewsEdge, Spex, SpexCategory, SpexCategoryEdge, SpexEdge} from "@/gql/graphql";
 
 export type CursorPageInfo = {
     hasNextPage: boolean;
@@ -14,4 +14,12 @@ export type CursorPage<TItem> = {
 
 export type NewsPage = CursorPage<News> & {
     edges: Array<Omit<NewsEdge, 'node'> & { node: News }>;
+};
+
+export type SpexPage = CursorPage<Spex> & {
+    edges: Array<Omit<SpexEdge, 'node'> & { node: Spex }>;
+};
+
+export type SpexCategoryPage = CursorPage<SpexCategory> & {
+    edges: Array<Omit<SpexCategoryEdge, 'node'> & { node: SpexCategory }>;
 };

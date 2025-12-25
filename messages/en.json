@@ -24,12 +24,13 @@
     "deleting": "Deleting...",
     "deleteTitle": "Delete this item?",
     "deleteConfirmation": "This action cannot be reverted. Are you sure?",
-    "deleteSuccess": "Item deleted successfully",
+    "deleteSuccess": "Delete successful",
     "deleteBulkTitle": "Delete these items?",
     "deleteBulkConfirmation": "This action cannot be reverted. Are you sure?",
     "deleteBulkSuccess": "Items deleted successfully",
-    "updateSuccess": "Item updated successfully",
-    "createSuccess": "Item created successfully",
+    "updateSuccess": "Update successful",
+    "createSuccess": "Create successful",
+    "uploadSuccess": "Upload successful",
     "errorOccurred": "Error occurred",
     "rowsPerPage": "Rows per page",
     "selected": "selected",
@@ -37,11 +38,16 @@
     "myFgvAccount": "My FGV account",
     "search": "Search",
     "searchPlaceholder": "Type to search...",
+    "clickToUpload": "Click to upload",
+    "dragAndDrop": "or drag and drop",
+    "imageUploadHint": "PNG, JPEG or GIF (max. 15MB)",
+    "fileTooLarge": "File too large. Maximum file size is 15MB.",
     "createdAt": "Created at",
     "createdBy": "Created by",
     "lastModifiedAt": "Last modified at",
     "lastModifiedBy": "Last modified by",
     "fieldRequired": "Field is required",
+    "invalidYearRange": "Invalid year range",
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "System"
@@ -55,15 +61,15 @@
     "toggleTheme": "Toggle theme"
   },
   "Home": {
-    "title": "Home",
+    "heading": "Home",
     "mustBeLoggedIn": "You must be logged in to use the address register.",
     "latestNews": "Latest news",
     "showAllNews": "Show all news"
   },
   "News": {
-    "title": "News",
-    "editTitle": "Edit news",
-    "createTitle": "Create news",
+    "heading": "News",
+    "editHeading": "Edit news",
+    "createHeading": "Create news",
     "subject": "Subject",
     "text": "Text",
     "published": "Published?",
@@ -73,7 +79,27 @@
     },
     "visibleFrom": "Visible from",
     "visibleTo": "Visible to",
-    "filterSubject": "Filter subject..."
+    "filterPlaceholder": "Filter subject..."
+  },
+  "Spex": {
+    "heading": "Spex",
+    "editHeading": "Edit spex",
+    "createHeading": "Create spex",
+    "year": "Year",
+    "title": "Title",
+    "revival": "Revival?",
+    "posterUrl": "Poster",
+    "filterPlaceholder": "Filter year and/or title...",
+    "Category": {
+      "heading": "Spex categories",
+      "editHeading": "Edit spex category",
+      "createHeading": "Create spex category",
+      "name": "Name",
+      "firstYear": "First year",
+      "logoUrl": "Logo",
+      "filterPlaceholder": "Filter...",
+      "firstYearPlaceholder": "Select first year"
+    }
   },
   "Support": {
     "title": "Support"

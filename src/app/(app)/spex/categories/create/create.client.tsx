@@ -3,16 +3,16 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Sheet} from "@/components/ui/sheet";
-import {NewsForm} from "@/components/news";
+import {SpexCategoryForm} from "@/components/spex/category";
 
-export function NewsCreateForm() {
+export function SpexCategoryCreateForm() {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(true);
 
     const handleSuccess = () => {
         setIsOpen(false);
         setTimeout(() => {
-            router.push("/news/manage");
+            router.push("/spex/categories/manage");
             router.refresh();
         }, 150);
     };
@@ -26,7 +26,7 @@ export function NewsCreateForm() {
 
     return (
         <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-            <NewsForm onSuccess={handleSuccess}/>
+            <SpexCategoryForm onSuccess={handleSuccess}/>
         </Sheet>
     );
 }

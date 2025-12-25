@@ -1,22 +1,23 @@
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
+import {Skeleton} from "@/components/ui/skeleton";
 
 export default function NewsManageLoading() {
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-            <div className="flex flex-col gap-2">
-                <div className="h-8 w-[200px] animate-pulse rounded-md bg-muted"/>
+            <div className="flex items-center justify-between gap-2">
+                <Skeleton className="h-8 w-[180px]" />
             </div>
             <DataTableSkeleton
-                rowCount={15}
-                columnCount={7}
+                rowCount={10}
+                columnCount={6}
+                columnTypes={["checkbox", "text", "text", "text", "text", "text"]}
                 columnClasses={[
-                    "",                          // Subject
-                    "hidden md:table-cell",      // Published
-                    "hidden lg:table-cell",      // Visible From
-                    "hidden xl:table-cell",      // Visible To
-                    "hidden xl:table-cell",      // Created At
-                    "hidden xl:table-cell",      // Last Modified At
-                    ""                           // Actions
+                    "w-[40px]",                       // Select
+                    "w-[250px]",                      // Subject
+                    "hidden lg:table-cell",           // Published
+                    "hidden xl:table-cell w-[150px]", // Visible From
+                    "hidden xl:table-cell w-[150px]", // Created At
+                    "w-[50px]"                        // Actions
                 ]}
             />
         </div>

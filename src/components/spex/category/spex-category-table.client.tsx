@@ -1,12 +1,12 @@
 "use client";
 
 import {ColumnDef} from "@tanstack/react-table";
-import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, MoreHorizontal, Plus, X} from "lucide-react";
+import {ArrowDown, ArrowUp, ArrowUpDown, Image as ImageIcon, MoreHorizontal, Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import {News} from "@/gql/graphql";
+import {SpexCategory} from "@/gql/graphql";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import {formatDate, formatDateTime} from "@/utils/utils";
+import {formatDateTime} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {
@@ -19,16 +19,15 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {NewsForm} from "@/components/news";
+import {SpexCategoryForm} from "@/components/spex/category";
 import {useEffect, useRef, useState, useTransition} from "react";
-import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/news/actions.server";
+import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spex/categories/actions.server";
 import {toast} from "sonner";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
-import {DataTableFacetedFilter} from "@/components/data-table-facet-filter";
 import Link from "next/link";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -39,10 +38,10 @@ function Translated({id}: { id: string }) {
     return <>{t(id)}</>;
 }
 
-export const columns: ColumnDef<News>[] = [
+export const columns: ColumnDef<SpexCategory>[] = [
     {
         id: "select",
-        header: ({ table }) => (
+        header: ({table}) => (
             <Checkbox
                 checked={
                     table.getIsAllPageRowsSelected() ||
@@ -52,7 +51,7 @@ export const columns: ColumnDef<News>[] = [
                 aria-label="Select all"
             />
         ),
-        cell: ({ row }) => (
+        cell: ({row}) => (
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -71,8 +70,8 @@ export const columns: ColumnDef<News>[] = [
         enableHiding: false,
     },
     {
-        id: "subject",
-        accessorKey: "subject",
+        id: "name",
+        accessorKey: "name",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
             return (
@@ -81,7 +80,7 @@ export const columns: ColumnDef<News>[] = [
                     onClick={() => column.toggleSorting(isSorted === "asc")}
                     className="-ml-4 h-8 data-[state=open]:bg-accent"
                 >
-                    <Translated id="News.subject"/>
+                    <Translated id="Spex.Category.name"/>
                     {isSorted === "desc" ? (
                         <ArrowDown className="ml-2 h-4 w-4"/>
                     ) : isSorted === "asc" ? (
@@ -93,7 +92,7 @@ export const columns: ColumnDef<News>[] = [
             );
         },
         cell: ({row}) => {
-            const subject = row.getValue("subject") as string;
+            const subject = row.getValue("name") as string;
 
             return (
                 <TooltipProvider>
@@ -112,26 +111,8 @@ export const columns: ColumnDef<News>[] = [
         },
     },
     {
-        id: "published",
-        accessorKey: "published",
-        header: () => <Translated id="News.published"/>,
-        cell: ({row}) => {
-            const isPublished = !!row.getValue("published");
-            return (
-                <div className="flex items-center gap-2">
-                    {isPublished ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500"/>
-                    ) : (
-                        <Circle className="h-4 w-4 text-muted-foreground"/>
-                    )}
-                </div>
-            )
-        },
-        meta: {className: "hidden md:table-cell"}
-    },
-    {
-        id: "visibleFrom",
-        accessorKey: "visibleFrom",
+        id: "firstYear",
+        accessorKey: "firstYear",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
             return (
@@ -140,7 +121,7 @@ export const columns: ColumnDef<News>[] = [
                     onClick={() => column.toggleSorting(isSorted === "asc")}
                     className="-ml-4 h-8 data-[state=open]:bg-accent"
                 >
-                    <Translated id="News.visibleFrom"/>
+                    <Translated id="Spex.Category.firstYear"/>
                     {isSorted === "desc" ? (
                         <ArrowDown className="ml-2 h-4 w-4"/>
                     ) : isSorted === "asc" ? (
@@ -151,36 +132,34 @@ export const columns: ColumnDef<News>[] = [
                 </Button>
             );
         },
-        cell: ({row}) => formatDate(row.getValue("visibleFrom") as string) || "-",
+        cell: ({row}) => row.getValue("firstYear"),
         meta: {className: "hidden lg:table-cell"}
     },
     {
-        id: "visibleTo",
-        accessorKey: "visibleTo",
-        header: ({column}) => {
-            const isSorted = column.getIsSorted();
+        id: "logo",
+        accessorKey: "logoUrl",
+        header: () => <Translated id="Spex.Category.logoUrl"/>,
+        cell: ({row}) => {
+            const logoUrl = row.getValue("logo") as string;
+            const category = row.original;
+            const cacheBuster = category.lastModifiedAt ? `&t=${new Date(category.lastModifiedAt).getTime()}` : "";
+
             return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
-                >
-                    <Translated id="News.visibleTo"/>
-                    {isSorted === "desc" ? (
-                        <ArrowDown className="ml-2 h-4 w-4"/>
-                    ) : isSorted === "asc" ? (
-                        <ArrowUp className="ml-2 h-4 w-4"/>
+                <div className="h-10 w-10 overflow-hidden rounded border bg-muted flex items-center justify-center">
+                    {logoUrl ? (
+                        <img
+                            src={`/api/image-download-proxy?url=${encodeURIComponent(logoUrl)}${cacheBuster}`}
+                            alt=""
+                            className="h-full w-full object-contain"
+                        />
                     ) : (
-                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                        <ImageIcon className="h-5 w-5 text-muted-foreground/40 stroke-[1.5]" />
                     )}
-                </Button>
+                </div>
             );
         },
-        cell: ({row}) => formatDate(row.getValue("visibleTo") as string) || "-",
-        meta: {className: "hidden xl:table-cell"}
     },
     {
-        id: "createdAt",
         accessorKey: "createdAt",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
@@ -205,7 +184,6 @@ export const columns: ColumnDef<News>[] = [
         meta: {className: "hidden xl:table-cell"}
     },
     {
-        id: "lastModifiedAt",
         accessorKey: "lastModifiedAt",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
@@ -232,7 +210,7 @@ export const columns: ColumnDef<News>[] = [
     {
         id: "actions",
         cell: ({row, table}) => {
-            const news = row.original;
+            const spexCategory = row.original;
             const t = useTranslations();
 
             const meta = table.options.meta as any;
@@ -247,12 +225,12 @@ export const columns: ColumnDef<News>[] = [
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onSelect={() => meta?.setEditItem(news)}>
+                            <DropdownMenuItem onSelect={() => meta?.setEditItem(spexCategory)}>
                                 {t("Common.edit")}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="text-destructive"
-                                onSelect={() => meta?.setDeleteItem(news)}
+                                onSelect={() => meta?.setDeleteItem(spexCategory)}
                             >
                                 {t("Common.delete")}
                             </DropdownMenuItem>
@@ -264,23 +242,20 @@ export const columns: ColumnDef<News>[] = [
     },
 ];
 
-export function NewsTable({
-                              initialData,
-                              defaultPublishedStates = ["true"]
-                          }: {
-    initialData: CursorPage<News>,
-    defaultPublishedStates?: string[]
+export function SpexCategoryTable({
+                                      initialData,
+                                  }: {
+    initialData: CursorPage<SpexCategory>,
 }) {
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
-    const [viewItem, setViewItem] = useState<News | null>(null);
-    const [editItem, setEditItem] = useState<News | null>(null);
-    const [deleteItem, setDeleteItem] = useState<News | null>(null);
-    const [selectedRows, setSelectedRows] = useState<News[]>([]);
+    const [viewItem, setViewItem] = useState<SpexCategory | null>(null);
+    const [editItem, setEditItem] = useState<SpexCategory | null>(null);
+    const [deleteItem, setDeleteItem] = useState<SpexCategory | null>(null);
+    const [selectedRows, setSelectedRows] = useState<SpexCategory[]>([]);
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
-    const [publishedValues, setPublishedValues] = useState<Set<string>>(new Set(defaultPublishedStates));
     const setFilterRef = useRef<((filter: string) => void) | null>(null);
 
     useEffect(() => {
@@ -319,29 +294,21 @@ export function NewsTable({
         });
     };
 
-    const buildFilterString = (filterString: string, published: Set<string>) => {
+    const buildFilterString = (filterString: string) => {
         const parts: string[] = [];
         if (filterString) {
-            parts.push(`subject:*${filterString}*`);
+            parts.push(`(name:*${filterString}* OR firstYear:*${filterString}*)`);
         }
-        if (published.size > 0 && published.size < 2) {
-            const val = published.has("true") ? "TRUE" : "FALSE";
-            parts.push(`published:${val}`);
-        } else if (published.size === 2) {
-            parts.push(`(published:TRUE OR published:FALSE)`);
-        }
-        return parts.join(" AND ");
+        return parts.join("");
     };
 
-    const lastQueryRef = useRef<string>(buildFilterString("", new Set(defaultPublishedStates)));
+    const lastQueryRef = useRef<string>(buildFilterString(""));
     const [isPending, startTransition] = useTransition();
 
-    const isFilterActive = filterQuery !== "" ||
-        publishedValues.size !== defaultPublishedStates.length ||
-        ![...publishedValues].every(value => defaultPublishedStates.includes(value));
+    const isFilterActive = filterQuery !== "";
 
     useEffect(() => {
-        const query = buildFilterString(filterQuery, publishedValues);
+        const query = buildFilterString(filterQuery);
 
         const timer = setTimeout(() => {
             if (setFilterRef.current && query !== lastQueryRef.current) {
@@ -351,10 +318,10 @@ export function NewsTable({
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [filterQuery, publishedValues]);
+    }, [filterQuery]);
 
     if (!mounted) {
-        return <DataTableSkeleton columnCount={7} rowCount={15}/>;
+        return <DataTableSkeleton columnCount={5} rowCount={15}/>;
     }
 
     return (
@@ -362,7 +329,7 @@ export function NewsTable({
             <DataTable
                 columns={columns}
                 initialData={initialData}
-                initialSorting={[{id: "visibleFrom", desc: true}]}
+                initialSorting={[{id: "name", desc: false}]}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: true})}
@@ -377,29 +344,18 @@ export function NewsTable({
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                         <Input
-                            placeholder={t("News.filterPlaceholder")}
+                            placeholder={t("Spex.Category.filterPlaceholder")}
                             value={filterQuery}
                             onChange={(e) => setFilterQuery(e.target.value)}
                             className="h-8 w-full sm:w-[150px] lg:w-[250px]"
                         />
 
                         <div className="flex items-center gap-2">
-                            <DataTableFacetedFilter
-                                title={t("News.published")}
-                                selectedValues={publishedValues}
-                                onSelect={setPublishedValues}
-                                options={[
-                                    {label: t("News.publishedStates.true"), value: "true", icon: CheckCircle2},
-                                    {label: t("News.publishedStates.false"), value: "false", icon: Circle},
-                                ]}
-                            />
-
                             {isFilterActive && (
                                 <Button
                                     variant="ghost"
                                     onClick={() => {
                                         setFilterQuery("");
-                                        setPublishedValues(new Set(defaultPublishedStates));
                                     }}
                                     className="h-8 px-2 lg:px-3"
                                 >
@@ -422,9 +378,9 @@ export function NewsTable({
                     </div>
 
                     <Button asChild size="sm" className="h-8 w-full lg:w-auto">
-                        <Link href="/news/create">
+                        <Link href="/spex/categories/create">
                             <Plus className="mr-2 h-4 w-4"/>
-                            {t("News.createHeading")}
+                            {t("Spex.Category.createHeading")}
                         </Link>
                     </Button>
                 </div>
@@ -433,26 +389,31 @@ export function NewsTable({
             <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-1">
-                            <div>{viewItem?.visibleFrom ? formatDate(viewItem.visibleFrom) : ''}</div>
-                            {viewItem && (
-                                <>
-                                    <div className="h-3 w-px bg-border"/>
-                                    <div className="flex items-center gap-1.5">
-                                        {viewItem.published ? (
-                                            <CheckCircle2 className="h-3.5 w-3.5 text-green-500"/>
-                                        ) : (
-                                            <Circle className="h-3.5 w-3.5"/>
-                                        )}
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        <DialogTitle className="text-xl pr-6">{viewItem?.subject}</DialogTitle>
+                        <DialogTitle className="text-xl pr-6">{viewItem?.name}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-6">
-                        <div className="whitespace-pre-wrap text-sm text-foreground max-h-[50vh] overflow-y-auto">
-                            {viewItem?.text}
+                        <div className="grid gap-6">
+                            <div className="space-y-1">
+                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Spex.Category.firstYear")}</p>
+                                <p className="text-sm">{viewItem?.firstYear}</p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Spex.Category.logoUrl")}</p>
+                                <div className="w-32 h-32 overflow-hidden rounded-lg border bg-muted p-2 flex items-center justify-center">
+                                    {viewItem?.logoUrl ? (
+                                        <img
+                                            src={`/api/image-download-proxy?url=${encodeURIComponent(viewItem.logoUrl)}&t=${viewItem.lastModifiedAt ? new Date(viewItem.lastModifiedAt).getTime() : ''}`}
+                                            alt={viewItem.name}
+                                            className="h-full w-full object-contain"
+                                        />
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-1 text-muted-foreground/60">
+                                            <ImageIcon className="h-10 w-10 stroke-[1.5]" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
 
                         {viewItem && (
@@ -481,8 +442,8 @@ export function NewsTable({
 
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (
-                    <NewsForm
-                        news={editItem}
+                    <SpexCategoryForm
+                        spexCategory={editItem}
                         onSuccess={() => {
                             setEditItem(null);
                             router.refresh();

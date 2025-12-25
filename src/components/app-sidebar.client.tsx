@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useEffect, useMemo, useState} from "react";
-import {BookOpen, House, LifeBuoy, Send} from "lucide-react";
+import {BookOpen, Drama, House, LifeBuoy, Send, Shapes} from "lucide-react";
 
 import {NavMain} from "@/components/nav-main.client";
 import {NavSecondary} from "@/components/nav-secondary.client";
@@ -42,13 +42,13 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
         return {
             main: [
                 {
-                    title: t("Home.title"),
+                    title: t("Home.heading"),
                     url: "/",
                     icon: House,
                     isActive: pathname === "/",
                 },
                 {
-                    title: t("News.title"),
+                    title: t("News.heading"),
                     url: "/news",
                     icon: BookOpen,
                     isActive: pathname.startsWith("/news"),
@@ -56,6 +56,33 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                         {title: t("Common.manage"), url: "/news/manage"},
                         {title: t("Common.create"), url: "/news/create"},
                     ] : undefined,
+                },
+                {
+                    title: t("Spex.heading"),
+                    url: "/spex",
+                    icon: Drama,
+                    isActive: pathname.startsWith("/spex"),
+                    items: isCurrentUserAdmin ? [
+                        {title: t("Common.manage"), url: "/spex/manage"},
+                        {title: t("Common.create"), url: "/spex/create"},
+                        {
+                            title: t("Spex.Category.heading"),
+                            url: "/spex/categories",
+                            icon: Shapes,
+                            isActive: pathname.startsWith("/spex/categories"),
+                            items: [
+                                {title: t("Common.manage"), url: "/spex/categories/manage"},
+                                {title: t("Common.create"), url: "/spex/categories/create"},
+                            ]
+                        },
+                    ] : [
+                        {
+                            title: t("Spex.Category.heading"),
+                            url: "/spex/categories",
+                            icon: Shapes,
+                            isActive: pathname.startsWith("/spex/categories"),
+                        }
+                    ],
                 },
             ],
             secondary: [

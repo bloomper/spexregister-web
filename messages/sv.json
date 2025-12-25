@@ -30,6 +30,7 @@
     "deleteBulkSuccess": "Raderingen lyckades",
     "updateSuccess": "Uppdateringen lyckades",
     "createSuccess": "Skapandet lyckades",
+    "uploadSuccess": "Uppladdning lyckades",
     "errorOccurred": "Fel inträffade",
     "rowsPerPage": "Rader per sida",
     "selected": "valda",
@@ -37,11 +38,16 @@
     "myFgvAccount": "Mitt FGV-konto",
     "search": "Sök",
     "searchPlaceholder": "Skriv för att söka...",
+    "clickToUpload": "Klicka för att ladda upp",
+    "dragAndDrop": "eller dra och släpp",
+    "imageUploadHint": "PNG, JPEG eller GIF (max. 15MB)",
+    "fileTooLarge": "Filen är för stor. Max filstorlek är 15MB.",
     "createdAt": "Skapad",
     "createdBy": "Skapad av",
     "lastModifiedAt": "Senast uppdaterad",
     "lastModifiedBy": "Senast uppdaterad av",
     "fieldRequired": "Fältet är obligatoriskt",
+    "invalidYearRange": "Årsintervallet är ogiltigt",
     "themeLight": "Ljus",
     "themeDark": "Mörk",
     "themeSystem": "System"
@@ -55,15 +61,15 @@
     "toggleTheme": "Byt tema"
   },
   "Home": {
-    "title": "Hem",
+    "heading": "Hem",
     "mustBeLoggedIn": "Du behöver vara inloggad för att använda adressregistret.",
     "latestNews": "Senaste nyheterna",
     "showAllNews": "Visa alla nyheter"
   },
   "News": {
-    "title": "Nyheter",
-    "editTitle": "Ändra nyhet",
-    "createTitle": "Skapa nyhet",
+    "heading": "Nyheter",
+    "editHeading": "Ändra nyhet",
+    "createHeading": "Skapa nyhet",
     "subject": "Ämne",
     "text": "Text",
     "published": "Publicerad?",
@@ -73,7 +79,27 @@
     },
     "visibleFrom": "Synlig från",
     "visibleTo": "Synlig till",
-    "filterSubject": "Filtrera ämne..."
+    "filterPlaceholder": "Filtrera ämne..."
+  },
+  "Spex": {
+    "heading": "Spex",
+    "editHeading": "Ändra spex",
+    "createHeading": "Skapa spex",
+    "year": "År",
+    "title": "Titel",
+    "revival": "Nyuppsättning?",
+    "posterUrl": "Poster",
+    "filterPlaceholder": "Filtrera år och/eller titel...",
+    "Category": {
+      "heading": "Spexkategorier",
+      "editHeading": "Ändra spexkategori",
+      "createHeading": "Skapa spexkategori",
+      "name": "Namn",
+      "firstYear": "Första året",
+      "logoUrl": "Logo",
+      "filterPlaceholder": "Filtrera...",
+      "firstYearPlaceholder": "Välj första året"
+    }
   },
   "Support": {
     "title": "Support"

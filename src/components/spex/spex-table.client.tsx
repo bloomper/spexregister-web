@@ -71,7 +71,6 @@ export const columns: ColumnDef<News>[] = [
         enableHiding: false,
     },
     {
-        id: "subject",
         accessorKey: "subject",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
@@ -112,7 +111,6 @@ export const columns: ColumnDef<News>[] = [
         },
     },
     {
-        id: "published",
         accessorKey: "published",
         header: () => <Translated id="News.published"/>,
         cell: ({row}) => {
@@ -130,7 +128,6 @@ export const columns: ColumnDef<News>[] = [
         meta: {className: "hidden md:table-cell"}
     },
     {
-        id: "visibleFrom",
         accessorKey: "visibleFrom",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
@@ -155,7 +152,6 @@ export const columns: ColumnDef<News>[] = [
         meta: {className: "hidden lg:table-cell"}
     },
     {
-        id: "visibleTo",
         accessorKey: "visibleTo",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
@@ -180,7 +176,6 @@ export const columns: ColumnDef<News>[] = [
         meta: {className: "hidden xl:table-cell"}
     },
     {
-        id: "createdAt",
         accessorKey: "createdAt",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
@@ -205,7 +200,6 @@ export const columns: ColumnDef<News>[] = [
         meta: {className: "hidden xl:table-cell"}
     },
     {
-        id: "lastModifiedAt",
         accessorKey: "lastModifiedAt",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
@@ -238,27 +232,25 @@ export const columns: ColumnDef<News>[] = [
             const meta = table.options.meta as any;
 
             return (
-                <div onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">{t("Common.openMenu")}</span>
-                                <MoreHorizontal className="h-4 w-4"/>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem onSelect={() => meta?.setEditItem(news)}>
-                                {t("Common.edit")}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="text-destructive"
-                                onSelect={() => meta?.setDeleteItem(news)}
-                            >
-                                {t("Common.delete")}
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">{t("Common.openMenu")}</span>
+                            <MoreHorizontal className="h-4 w-4"/>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => meta?.setEditItem(news)}>
+                            {t("Common.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            className="text-destructive"
+                            onSelect={() => meta?.setDeleteItem(news)}
+                        >
+                            {t("Common.delete")}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             );
         },
     },
@@ -279,7 +271,7 @@ export function NewsTable({
     const [deleteItem, setDeleteItem] = useState<News | null>(null);
     const [selectedRows, setSelectedRows] = useState<News[]>([]);
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
-    const [filterQuery, setFilterQuery] = useState("");
+    const [subjectFilter, setSubjectFilter] = useState("");
     const [publishedValues, setPublishedValues] = useState<Set<string>>(new Set(defaultPublishedStates));
     const setFilterRef = useRef<((filter: string) => void) | null>(null);
 
@@ -319,11 +311,9 @@ export function NewsTable({
         });
     };
 
-    const buildFilterString = (filterString: string, published: Set<string>) => {
+    const buildFilterString = (subject: string, published: Set<string>) => {
         const parts: string[] = [];
-        if (filterString) {
-            parts.push(`subject:*${filterString}*`);
-        }
+        if (subject) parts.push(`subject:*${subject}*`);
         if (published.size > 0 && published.size < 2) {
             const val = published.has("true") ? "TRUE" : "FALSE";
             parts.push(`published:${val}`);
@@ -336,12 +326,12 @@ export function NewsTable({
     const lastQueryRef = useRef<string>(buildFilterString("", new Set(defaultPublishedStates)));
     const [isPending, startTransition] = useTransition();
 
-    const isFilterActive = filterQuery !== "" ||
+    const isFilterActive = subjectFilter !== "" ||
         publishedValues.size !== defaultPublishedStates.length ||
         ![...publishedValues].every(value => defaultPublishedStates.includes(value));
 
     useEffect(() => {
-        const query = buildFilterString(filterQuery, publishedValues);
+        const query = buildFilterString(subjectFilter, publishedValues);
 
         const timer = setTimeout(() => {
             if (setFilterRef.current && query !== lastQueryRef.current) {
@@ -351,7 +341,7 @@ export function NewsTable({
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [filterQuery, publishedValues]);
+    }, [subjectFilter, publishedValues]);
 
     if (!mounted) {
         return <DataTableSkeleton columnCount={7} rowCount={15}/>;
@@ -378,8 +368,8 @@ export function NewsTable({
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                         <Input
                             placeholder={t("News.filterPlaceholder")}
-                            value={filterQuery}
-                            onChange={(e) => setFilterQuery(e.target.value)}
+                            value={subjectFilter}
+                            onChange={(e) => setSubjectFilter(e.target.value)}
                             className="h-8 w-full sm:w-[150px] lg:w-[250px]"
                         />
 
@@ -398,7 +388,7 @@ export function NewsTable({
                                 <Button
                                     variant="ghost"
                                     onClick={() => {
-                                        setFilterQuery("");
+                                        setSubjectFilter("");
                                         setPublishedValues(new Set(defaultPublishedStates));
                                     }}
                                     className="h-8 px-2 lg:px-3"
@@ -424,7 +414,7 @@ export function NewsTable({
                     <Button asChild size="sm" className="h-8 w-full lg:w-auto">
                         <Link href="/news/create">
                             <Plus className="mr-2 h-4 w-4"/>
-                            {t("News.createHeading")}
+                            {t("News.createTitle")}
                         </Link>
                     </Button>
                 </div>

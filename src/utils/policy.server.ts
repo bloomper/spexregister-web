@@ -18,4 +18,32 @@ export const Policies = {
             return requireAnyRole(['EDITOR', 'ADMIN']);
         },
     },
+    spex: {
+        async requireRead(): Promise<PolicyResult> {
+            return requireAnyRole(['USER', 'EDITOR', 'ADMIN']);
+        },
+        async requireCreate(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireUpdate(): Promise<PolicyResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireDelete(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+    },
+    spexCategory: {
+        async requireRead(): Promise<PolicyResult> {
+            return requireAnyRole(['USER', 'EDITOR', 'ADMIN']);
+        },
+        async requireCreate(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireUpdate(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireDelete(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+    },
 } as const;

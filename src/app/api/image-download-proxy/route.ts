@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import axios from "@/lib/axios";
+import axios from "@/lib/axios.server";
 import {isAxiosError} from 'axios';
 
 export async function GET(request: NextRequest) {
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
             },
         });
     } catch (error) {
-        console.error('Error proxying image:', error);
+        console.error('Error proxying image download:', error);
 
         if (isAxiosError(error) && error.response) {
             return NextResponse.json(
@@ -37,6 +37,6 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        return NextResponse.json({error: 'Failed to proxy image'}, {status: 500});
+        return NextResponse.json({error: 'Failed to proxy download'}, {status: 500});
     }
 }

@@ -1,0 +1,167 @@
+"use client";
+
+import {Controller, FieldError as FormError, useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {SpexCategoryFormInput, SpexCategoryFormOutput, spexCategoryFormSchema} from "@/lib/spex/category/schema";
+import {SpexCategory} from "@/gql/graphql";
+import {useTranslations} from "next-intl";
+import {useState, useTransition} from "react";
+import {toast} from "sonner";
+import {
+    createAction,
+    deleteLogoAction,
+    updateAction,
+    uploadLogoAction
+} from "@/app/(app)/spex/categories/actions.server";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {ImageUpload} from "@/components/image-upload.client";
+
+interface SpexCategoryFormProps {
+    spexCategory?: SpexCategory;
+    onSuccess: () => void;
+}
+
+export function SpexCategoryForm({spexCategory, onSuccess}: SpexCategoryFormProps) {
+    const t = useTranslations();
+    const [isPending, startTransition] = useTransition();
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [shouldDeleteLogo, setShouldDeleteLogo] = useState(false);
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: {errors},
+    } = useForm<SpexCategoryFormInput, any, SpexCategoryFormOutput>({
+        resolver: zodResolver(spexCategoryFormSchema),
+        defaultValues: {
+            name: spexCategory?.name ?? "",
+            firstYear: spexCategory?.firstYear ?? "",
+        },
+    });
+
+    const startYear = 1948;
+    const endYear = new Date().getFullYear() + 2;
+    const years = Array.from(
+        {length: endYear - startYear + 1},
+        (_, i) => (endYear - i).toString()
+    );
+
+    const translateError = (error?: FormError) => {
+        if (!error?.message) {
+            return error;
+        }
+        return {
+            ...error,
+            message: t(error.message as any)
+        };
+    };
+
+    const onSubmit = handleSubmit((data) => {
+        startTransition(async () => {
+            try {
+                let id = spexCategory?.id;
+                if (spexCategory) {
+                    await updateAction(spexCategory.id, data);
+                } else {
+                    const newCategory = await createAction(data);
+                    id = newCategory?.id;
+                }
+
+                if (id) {
+                    if (selectedFile) {
+                        const formData = new FormData();
+                        formData.append("file", selectedFile);
+                        await uploadLogoAction(id, formData);
+                    } else if (shouldDeleteLogo) {
+                        await deleteLogoAction(id);
+                    }
+                }
+
+                toast.success(spexCategory ? t("Common.updateSuccess") : t("Common.createSuccess"));
+                onSuccess();
+            } catch (error) {
+                toast.error(t("Common.errorOccurred"));
+            }
+        });
+    });
+
+    return (
+        <SheetContent className="sm:max-w-[540px] flex flex-col gap-0 p-0">
+            <SheetHeader className="p-6 pb-2">
+                <SheetTitle>{spexCategory ? t("Spex.Category.editHeading") : t("Spex.Category.createHeading")}</SheetTitle>
+            </SheetHeader>
+            <form onSubmit={onSubmit} className="flex-1 overflow-y-auto">
+                <div className="space-y-4 px-6 py-4">
+                    <Field data-invalid={!!errors.name}>
+                        <FieldLabel>{t("Spex.Category.name")}</FieldLabel>
+                        <FieldContent>
+                            <Input {...register("name")} />
+                            <FieldError errors={[translateError(errors.name)]}/>
+                        </FieldContent>
+                    </Field>
+
+                    <Field data-invalid={!!errors.firstYear}>
+                        <FieldLabel>{t("Spex.Category.firstYear")}</FieldLabel>
+                        <FieldContent>
+                            <Controller
+                                control={control}
+                                name="firstYear"
+                                render={({field}) => (
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value?.toString()}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder={t("Spex.Category.firstYearPlaceholder")}/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {years.map((year) => (
+                                                <SelectItem key={year} value={year}>
+                                                    {year}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                            <FieldError errors={[translateError(errors.firstYear)]}/>
+                        </FieldContent>
+                    </Field>
+
+                    <Field>
+                        <FieldLabel>{t("Spex.Category.logoUrl")}</FieldLabel>
+                        <FieldContent>
+                            <ImageUpload
+                                initialImageUrl={spexCategory?.logoUrl}
+                                onFileSelect={(file) => {
+                                    setSelectedFile(file);
+                                    setShouldDeleteLogo(false);
+                                }}
+                                onFileDelete={() => {
+                                    setSelectedFile(null);
+                                    setShouldDeleteLogo(true);
+                                }}
+                            />
+                        </FieldContent>
+                    </Field>
+                </div>
+
+                <SheetFooter className="p-6 pt-2">
+                    <SheetClose asChild>
+                        <Button type="button" variant="outline" disabled={isPending}>
+                            {t("Common.cancel")}
+                        </Button>
+                    </SheetClose>
+                    <Button type="submit" disabled={isPending}>
+                        {isPending ? t("Common.saving") : t("Common.save")}
+                    </Button>
+                </SheetFooter>
+            </form>
+        </SheetContent>
+    );
+}
