@@ -13,10 +13,10 @@ import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
 
 export function SpexCategoryList({
-                             initialItems = [],
-                             initialPageInfo,
-                             maxItems,
-                         }: {
+                                     initialItems = [],
+                                     initialPageInfo,
+                                     maxItems,
+                                 }: {
     initialItems?: SpexCategory[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
@@ -64,7 +64,8 @@ export function SpexCategoryList({
                         </div>
                     ) : (
                         <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
-                            <span className="text-muted-foreground text-xs uppercase tracking-widest">{t("Common.noDataTitle")}</span>
+                            <span
+                                className="text-muted-foreground text-xs uppercase tracking-widest">{t("Common.noDataTitle")}</span>
                         </div>
                     )}
                     <CardHeader className="p-4">
@@ -82,7 +83,8 @@ export function SpexCategoryList({
                     </DialogHeader>
                     <div className="flex flex-col gap-4">
                         <div className="text-sm font-medium">
-                            {t("Spex.Category.firstYear")}: <span className="text-muted-foreground font-normal">{selected?.firstYear}</span>
+                            {t("Spex.Category.firstYear")}: <span
+                            className="text-muted-foreground font-normal">{selected?.firstYear}</span>
                         </div>
                         {selected?.logoUrl && (
                             <div className="relative aspect-square w-full overflow-hidden rounded-md bg-muted">

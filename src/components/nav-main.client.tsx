@@ -14,6 +14,7 @@ import {
     SidebarMenuSubItem
 } from "@/components/ui/sidebar";
 import {usePathname} from "next/navigation";
+import {useTranslations} from "next-intl";
 
 interface NavItem {
     title: string;
@@ -38,6 +39,7 @@ export function NavMain({items}: { items: NavItem[] }) {
 }
 
 function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
+    const t = useTranslations();
     const isInternal = item.url.startsWith("/");
     const hasSubItems = !!item.items?.length;
     const LinkComponent = isInternal ? Link : "a";
@@ -61,7 +63,7 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
                                 className="mr-1 flex size-7 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform">
                                 <ChevronRight
                                     className="size-4 transition-transform duration-200 group-data-[state=open]/menu-item:rotate-90"/>
-                                <span className="sr-only">Toggle</span>
+                                <span className="sr-only">{t("Common.toggle")}</span>
                             </button>
                         </CollapsibleTrigger>
                     </div>
@@ -89,6 +91,7 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
 }
 
 function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
+    const t = useTranslations();
     const hasInnerItems = !!item.items?.length;
     const isSubActive = pathname === item.url || item.items?.some(inner => pathname === inner.url);
 
@@ -120,7 +123,7 @@ function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
                             className="mr-1 flex size-6 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform">
                             <ChevronRight
                                 className="size-4 transition-transform duration-200 group-data-[state=open]/sub-menu-item:rotate-90"/>
-                            <span className="sr-only">Toggle</span>
+                            <span className="sr-only">{t("Common.toggle")}</span>
                         </button>
                     </CollapsibleTrigger>
                 </div>

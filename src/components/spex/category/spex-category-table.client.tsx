@@ -41,31 +41,37 @@ function Translated({id}: { id: string }) {
 export const columns: ColumnDef<SpexCategory>[] = [
     {
         id: "select",
-        header: ({table}) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({row}) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                onClick={(e) => {
-                    e.stopPropagation();
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                        e.stopPropagation();
+        header: ({table}) => {
+            const t = useTranslations();
+            return (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
                     }
-                }}
-                aria-label="Select row"
-            />
-        ),
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label={t("Common.selectAll")}
+                />
+            );
+        },
+        cell: ({row}) => {
+            const t = useTranslations();
+            return (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.stopPropagation();
+                        }
+                    }}
+                    aria-label={t("Common.select")}
+                />
+            );
+        },
         enableSorting: false,
         enableHiding: false,
     },
@@ -140,20 +146,20 @@ export const columns: ColumnDef<SpexCategory>[] = [
         accessorKey: "logoUrl",
         header: () => <Translated id="Spex.Category.logoUrl"/>,
         cell: ({row}) => {
-            const logoUrl = row.getValue("logo") as string;
-            const category = row.original;
-            const cacheBuster = category.lastModifiedAt ? `&t=${new Date(category.lastModifiedAt).getTime()}` : "";
+            const url = row.getValue("logo") as string;
+            const item = row.original;
+            const cacheBuster = item.lastModifiedAt ? `&t=${new Date(item.lastModifiedAt).getTime()}` : "";
 
             return (
                 <div className="h-10 w-10 overflow-hidden rounded border bg-muted flex items-center justify-center">
-                    {logoUrl ? (
+                    {url ? (
                         <img
-                            src={`/api/image-download-proxy?url=${encodeURIComponent(logoUrl)}${cacheBuster}`}
+                            src={`/api/image-download-proxy?url=${encodeURIComponent(url)}${cacheBuster}`}
                             alt=""
                             className="h-full w-full object-contain"
                         />
                     ) : (
-                        <ImageIcon className="h-5 w-5 text-muted-foreground/40 stroke-[1.5]" />
+                        <ImageIcon className="h-5 w-5 text-muted-foreground/40 stroke-[1.5]"/>
                     )}
                 </div>
             );
@@ -210,7 +216,7 @@ export const columns: ColumnDef<SpexCategory>[] = [
     {
         id: "actions",
         cell: ({row, table}) => {
-            const spexCategory = row.original;
+            const item = row.original;
             const t = useTranslations();
 
             const meta = table.options.meta as any;
@@ -225,12 +231,12 @@ export const columns: ColumnDef<SpexCategory>[] = [
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onSelect={() => meta?.setEditItem(spexCategory)}>
+                            <DropdownMenuItem onSelect={() => meta?.setEditItem(item)}>
                                 {t("Common.edit")}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="text-destructive"
-                                onSelect={() => meta?.setDeleteItem(spexCategory)}
+                                onSelect={() => meta?.setDeleteItem(item)}
                             >
                                 {t("Common.delete")}
                             </DropdownMenuItem>
@@ -256,7 +262,7 @@ export function SpexCategoryTable({
     const [selectedRows, setSelectedRows] = useState<SpexCategory[]>([]);
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
-    const setFilterRef = useRef<((filter: string) => void) | null>(null);
+    const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
 
     useEffect(() => {
         setMounted(true);
@@ -294,15 +300,15 @@ export function SpexCategoryTable({
         });
     };
 
-    const buildFilterString = (filterString: string) => {
+    const buildFilterString = (query: string) => {
         const parts: string[] = [];
-        if (filterString) {
-            parts.push(`(name:*${filterString}* OR firstYear:*${filterString}*)`);
+        if (query) {
+            parts.push(`(name:*${query}* OR firstYear:*${query}*)`);
         }
         return parts.join("");
     };
 
-    const lastQueryRef = useRef<string>(buildFilterString(""));
+    const lastFilterQueryRef = useRef<string>(buildFilterString(""));
     const [isPending, startTransition] = useTransition();
 
     const isFilterActive = filterQuery !== "";
@@ -311,9 +317,9 @@ export function SpexCategoryTable({
         const query = buildFilterString(filterQuery);
 
         const timer = setTimeout(() => {
-            if (setFilterRef.current && query !== lastQueryRef.current) {
-                lastQueryRef.current = query;
-                setFilterRef.current(query);
+            if (setFilterQueryRef.current && query !== lastFilterQueryRef.current) {
+                lastFilterQueryRef.current = query;
+                setFilterQueryRef.current(query);
             }
         }, 300);
 
@@ -337,7 +343,7 @@ export function SpexCategoryTable({
                     setEditItem,
                     setDeleteItem,
                     setFilter: (fn: any) => {
-                        setFilterRef.current = typeof fn === 'function' && fn.length === 0 ? fn() : fn;
+                        setFilterQueryRef.current = typeof fn === 'function' && fn.length === 0 ? fn() : fn;
                     },
                 }}
             >
@@ -400,7 +406,8 @@ export function SpexCategoryTable({
 
                             <div className="space-y-2">
                                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Spex.Category.logoUrl")}</p>
-                                <div className="w-32 h-32 overflow-hidden rounded-lg border bg-muted p-2 flex items-center justify-center">
+                                <div
+                                    className="w-32 h-32 overflow-hidden rounded-lg border bg-muted p-2 flex items-center justify-center">
                                     {viewItem?.logoUrl ? (
                                         <img
                                             src={`/api/image-download-proxy?url=${encodeURIComponent(viewItem.logoUrl)}&t=${viewItem.lastModifiedAt ? new Date(viewItem.lastModifiedAt).getTime() : ''}`}
@@ -409,7 +416,7 @@ export function SpexCategoryTable({
                                         />
                                     ) : (
                                         <div className="flex flex-col items-center gap-1 text-muted-foreground/60">
-                                            <ImageIcon className="h-10 w-10 stroke-[1.5]" />
+                                            <ImageIcon className="h-10 w-10 stroke-[1.5]"/>
                                         </div>
                                     )}
                                 </div>
@@ -443,9 +450,10 @@ export function SpexCategoryTable({
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (
                     <SpexCategoryForm
-                        spexCategory={editItem}
+                        item={editItem}
                         onSuccess={() => {
                             setEditItem(null);
+                            setFilterQuery("");
                             router.refresh();
                         }}
                     />

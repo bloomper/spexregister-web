@@ -1,4 +1,4 @@
-import {getSpexCategoryPaged} from "@/lib/spex/category";
+import {getPaged} from "@/lib/spex/category";
 import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {SpexCategoryTable} from "@/components/spex/category";
@@ -7,7 +7,7 @@ import {withPolicyPage} from "@/utils/route.server";
 export default async function SpexCategoryManagePage() {
     return withPolicyPage(Policies.spexCategory.requireUpdate, async () => {
         const defaultPageSize = 15;
-        const initialData = await getSpexCategoryPaged({
+        const initialData = await getPaged({
             first: defaultPageSize,
             full: true
         });

@@ -1,6 +1,6 @@
 "use client";
 
-import {useForm, FieldError as FormError} from "react-hook-form";
+import {FieldError as FormError, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {NewsFormInput, NewsFormOutput, newsFormSchema} from "@/lib/news/schema";
 import {News} from "@/gql/graphql";
@@ -15,11 +15,11 @@ import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 
 interface NewsFormProps {
-    news?: News;
+    item?: News;
     onSuccess: () => void;
 }
 
-export function NewsForm({news, onSuccess}: NewsFormProps) {
+export function NewsForm({item, onSuccess}: NewsFormProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
 
@@ -30,10 +30,10 @@ export function NewsForm({news, onSuccess}: NewsFormProps) {
     } = useForm<NewsFormInput, any, NewsFormOutput>({
         resolver: zodResolver(newsFormSchema),
         defaultValues: {
-            subject: news?.subject ?? "",
-            text: news?.text ?? "",
-            visibleFrom: news?.visibleFrom ?? new Date().toISOString().split("T")[0],
-            visibleTo: news?.visibleTo ?? "",
+            subject: item?.subject ?? "",
+            text: item?.text ?? "",
+            visibleFrom: item?.visibleFrom ?? new Date().toISOString().split("T")[0],
+            visibleTo: item?.visibleTo ?? "",
         },
     });
 
@@ -50,8 +50,8 @@ export function NewsForm({news, onSuccess}: NewsFormProps) {
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {
             try {
-                if (news) {
-                    await updateAction(news.id, data);
+                if (item) {
+                    await updateAction(item.id, data);
                     toast.success(t("Common.updateSuccess"));
                 } else {
                     await createAction(data);
@@ -67,7 +67,7 @@ export function NewsForm({news, onSuccess}: NewsFormProps) {
     return (
         <SheetContent className="sm:max-w-[540px] flex flex-col gap-0 p-0">
             <SheetHeader className="p-6 pb-2">
-                <SheetTitle>{news ? t("News.editHeading") : t("News.createHeading")}</SheetTitle>
+                <SheetTitle>{item ? t("News.editHeading") : t("News.createHeading")}</SheetTitle>
             </SheetHeader>
             <form onSubmit={onSubmit} className="flex-1 overflow-y-auto">
                 <div className="space-y-4 px-6 py-4">

@@ -5,19 +5,20 @@ export default function SpexManageLoading() {
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
             <div className="flex items-center justify-between gap-2">
-                <Skeleton className="h-8 w-[150px]" />
+                <Skeleton className="h-8 w-[150px]"/>
             </div>
             <DataTableSkeleton
                 rowCount={10}
-                columnCount={7}
-                columnTypes={["checkbox", "text", "text", "text", "image", "text", "text"]}
+                columnCount={8}
+                columnTypes={["checkbox", "text", "text", "text", "image", "text", "text", "text"]}
                 columnClasses={[
                     "w-[40px]",                               // Select
                     "w-[80px]",                               // Year
                     "w-[250px]",                              // Title
+                    "w-[60px]",                               // Poster
                     "hidden lg:table-cell w-[150px]",         // Category
-                    "w-[60px]",                               // Poster (Image)
                     "hidden xl:table-cell w-[150px]",         // Created At
+                    "hidden xl:table-cell w-[150px]",         // Last Modified At
                     "w-[50px]"                                // Actions
                 ]}
             />

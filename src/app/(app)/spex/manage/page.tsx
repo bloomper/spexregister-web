@@ -1,4 +1,4 @@
-import {getSpexPaged} from "@/lib/spex";
+import {getPaged} from "@/lib/spex";
 import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {SpexTable} from "@/components/spex";
@@ -7,9 +7,9 @@ import {withPolicyPage} from "@/utils/route.server";
 export default async function SpexManagePage() {
     return withPolicyPage(Policies.spex.requireUpdate, async () => {
         const defaultPageSize = 15;
-        const initialData = await getSpexPaged({
+        const initialData = await getPaged({
             first: defaultPageSize,
-            filter: "(published:TRUE OR published:FALSE)",
+            filter: "parent:NULL",
             full: true
         });
         const t = await getTranslations();
@@ -21,7 +21,6 @@ export default async function SpexManagePage() {
                 </div>
                 <SpexTable
                     initialData={initialData}
-                    defaultPublishedStates={["true", "false"]}
                 />
             </div>
         );

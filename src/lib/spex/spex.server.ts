@@ -1,17 +1,27 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {Spex, SpexEdge, SortDirection, SpexConnection} from "@/gql/graphql";
+import {SortDirection, Spex, SpexConnection, SpexEdge} from "@/gql/graphql";
 import {SpexPage} from "@/types/pagination";
+import axios from "@/lib/axios.server";
 
-const SpexSummaryFields = `
+const SummaryFields = `
     id
     year
     title
+    posterUrl
+    revivals {
+      id
+      year
+    }
+    category {
+      id
+      name
+    }
 `;
 
-const SpexFullFields = `
-    ${SpexSummaryFields}
+const FullFields = `
+    ${SummaryFields}
     revival
     createdAt
     createdBy
@@ -19,30 +29,57 @@ const SpexFullFields = `
     lastModifiedBy
 `;
 
-const SpexCreateMutation = /* GraphQL */ `
-    mutation SpexCreate($input: SpexCreate!) {
+const CreateMutation = /* GraphQL */ `
+    mutation ($input: SpexCreate!) {
         spexCreate(input: $input) {
-            ${SpexFullFields}
+            ${FullFields}
         }
     }
 `;
 
-const SpexUpdateMutation = /* GraphQL */ `
-    mutation SpexUpdate($input: SpexUpdate!) {
+const UpdateMutation = /* GraphQL */ `
+    mutation ($input: SpexUpdate!) {
         spexUpdate(input: $input) {
-            ${SpexFullFields}
+            ${FullFields}
         }
     }
 `;
 
-const SpexDeleteMutation = /* GraphQL */ `
-    mutation SpexDelete($id: ID!) {
+const DeleteMutation = /* GraphQL */ `
+    mutation ($id: ID!) {
         spexDelete(id: $id)
     }
 `;
 
+const AddCategoryMutation = /* GraphQL */ `
+    mutation ($id: ID!, $categoryId: ID!) {
+        spexCategoryAdd(spexId: $id, id: $categoryId)
+    }
+`;
+
+const RemoveCategoryMutation = /* GraphQL */ `
+    mutation ($id: ID!) {
+        spexCategoryRemove(spexId: $id)
+    }
+`;
+
+const CreateRevivalMutation = /* GraphQL */ `
+    mutation ($spexId: ID!, $year: Year!) {
+        spexRevivalCreate(spexId: $spexId, year: $year) {
+            id
+            year
+        }
+    }
+`;
+
+const DeleteRevivalMutation = /* GraphQL */ `
+    mutation ($id: ID!, $spexId: ID!) {
+        spexRevivalDelete(spexId: $spexId, id: $id)
+    }
+`;
+
 const createQuery = (fields: string) => /* GraphQL */ `
-    query SpexPaged($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+    query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges {
                 cursor
@@ -58,7 +95,7 @@ const createQuery = (fields: string) => /* GraphQL */ `
     }
 `;
 
-export async function getSpexPaged(args: {
+export async function getPaged(args: {
     first?: number;
     last?: number;
     after?: string | null;
@@ -68,7 +105,7 @@ export async function getSpexPaged(args: {
     filter?: string;
     full?: boolean
 }): Promise<SpexPage> {
-    const query = createQuery(args.full ? SpexFullFields : SpexSummaryFields);
+    const query = createQuery(args.full ? FullFields : SummaryFields);
 
     const result = await getClient()
         .query<{ spexPaged: SpexConnection }>(query, {
@@ -78,7 +115,7 @@ export async function getSpexPaged(args: {
             before: args.before ?? null,
             sort: args.sort ?? ["year"],
             direction: args.direction ?? SortDirection.Desc,
-            filter: args.filter ?? "",
+            filter: args.filter ?? "parent:NULL",
         }, {
             fetchOptions: {
                 next: {tags: ['spex']}
@@ -106,9 +143,9 @@ export async function getSpexPaged(args: {
     };
 }
 
-export async function createSpex(input: any) {
+export async function create(input: any) {
     const result = await getClient()
-        .mutation(SpexCreateMutation, {input})
+        .mutation(CreateMutation, {input})
         .toPromise();
 
     if (result.error) {
@@ -122,13 +159,14 @@ export async function createSpex(input: any) {
     return result.data?.spexCreate;
 }
 
-export async function updateSpex(id: string, input: any) {
+export async function update(id: string, input: any) {
     const result = await getClient()
-        .mutation(SpexUpdateMutation, {
+        .mutation(UpdateMutation, {
             input: {
                 ...input,
                 id
-            }})
+            }
+        })
         .toPromise();
 
     if (result.error) {
@@ -142,9 +180,9 @@ export async function updateSpex(id: string, input: any) {
     return result.data?.spexUpdate;
 }
 
-export async function deleteSpex(id: string) {
+export async function del(id: string) {
     const result = await getClient()
-        .mutation(SpexDeleteMutation, {id})
+        .mutation(DeleteMutation, {id})
         .toPromise();
 
     if (result.error) {
@@ -152,4 +190,67 @@ export async function deleteSpex(id: string) {
     }
 
     return result.data?.spexDelete;
+}
+
+export async function addCategory(id: string, categoryId: string) {
+    const result = await getClient()
+        .mutation(AddCategoryMutation, {id, categoryId})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexCategoryAdd;
+}
+
+export async function removeCategory(id: string) {
+    const result = await getClient()
+        .mutation(RemoveCategoryMutation, {id})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexCategoryRemove;
+}
+
+export async function createRevival(spexId: string, year: string) {
+    const result = await getClient()
+        .mutation(CreateRevivalMutation, {spexId, year})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexRevivalCreate;
+}
+
+export async function deleteRevival(spexId: string, id: string) {
+    const result = await getClient()
+        .mutation(DeleteRevivalMutation, {spexId, id})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexRevivalDelete;
+}
+
+export async function uploadPoster(id: string, file: File) {
+    const arrayBuffer = await file.arrayBuffer();
+    const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spex/${id}/poster`, arrayBuffer, {
+        headers: {
+            'Content-Type': file.type,
+        }
+    });
+    return response.data;
+}
+
+export async function deletePoster(id: string) {
+    await axios.delete(`${process.env.API_REST_BASE_URL}/api/spex/${id}/poster`);
+    return {success: true};
 }

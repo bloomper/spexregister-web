@@ -2,9 +2,22 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {createSpex, deleteSpex, getSpexPaged, spexFormSchema, updateSpex} from "@/lib/spex";
+import {
+    addCategory,
+    create,
+    createRevival,
+    del,
+    deletePoster,
+    deleteRevival,
+    getPaged,
+    removeCategory,
+    spexFormSchema,
+    update,
+    uploadPoster
+} from "@/lib/spex";
 import {revalidateTag} from "next/cache";
 import {SortDirection} from "@/gql/graphql";
+import {getAll} from "@/lib/spex/category";
 
 export async function getPageAction(args: {
     first?: number;
@@ -17,7 +30,7 @@ export async function getPageAction(args: {
     full?: boolean | string;
 }) {
     return withPolicyAction(Policies.spex.requireRead, async () => {
-        return getSpexPaged({
+        return getPaged({
             ...args,
             full: args.full === true || args.full === "true"
         });
@@ -27,7 +40,8 @@ export async function getPageAction(args: {
 export async function createAction(data: unknown) {
     return withPolicyAction(Policies.spex.requireCreate, async () => {
         const validated = spexFormSchema.parse(data);
-        const result = await createSpex(validated);
+        const {categoryId, revivalYears, ...createInput} = validated;
+        const result = await create(createInput);
         revalidate();
         return result;
     });
@@ -36,7 +50,8 @@ export async function createAction(data: unknown) {
 export async function updateAction(id: string, data: unknown) {
     return withPolicyAction(Policies.spex.requireUpdate, async () => {
         const validated = spexFormSchema.parse(data);
-        const result = await updateSpex(id, validated);
+        const {categoryId, revivalYears, ...updateInput} = validated;
+        const result = await update(id, updateInput);
         revalidate();
         return result;
     });
@@ -44,7 +59,7 @@ export async function updateAction(id: string, data: unknown) {
 
 export async function deleteAction(id: string) {
     return withPolicyAction(Policies.spex.requireDelete, async () => {
-        const result = await deleteSpex(id);
+        const result = await del(id);
         revalidate();
         return result;
     });
@@ -52,6 +67,65 @@ export async function deleteAction(id: string) {
 
 export async function bulkDeleteAction(ids: string[]) {
     await Promise.all(ids.map(id => deleteAction(id)));
+}
+
+export async function getAllCategoriesAction() {
+    return withPolicyAction(Policies.spexCategory.requireRead, async () => {
+        return getAll();
+    });
+}
+
+export async function addCategoryAction(id: string, categoryId: string) {
+    return withPolicyAction(Policies.spex.requireCreate, async () => {
+        const result = await addCategory(id, categoryId);
+        revalidate();
+        return result;
+    });
+}
+
+export async function removeCategoryAction(id: string) {
+    return withPolicyAction(Policies.spex.requireCreate, async () => {
+        const result = await removeCategory(id);
+        revalidate();
+        return result;
+    });
+}
+
+export async function createRevivalAction(spexId: string, year: string) {
+    return withPolicyAction(Policies.spex.requireUpdate, async () => {
+        const result = await createRevival(spexId, year);
+        revalidate();
+        return result;
+    });
+}
+
+export async function deleteRevivalAction(spexId: string, id: string) {
+    return withPolicyAction(Policies.spex.requireUpdate, async () => {
+        const result = await deleteRevival(spexId, id);
+        revalidate();
+        return result;
+    });
+}
+
+export async function uploadPosterAction(id: string, formData: FormData) {
+    return withPolicyAction(Policies.spex.requireUpdate, async () => {
+        const file = formData.get("file") as File;
+        const result = await uploadPoster(id, file);
+
+        revalidate();
+        return result;
+    });
+}
+
+export async function deletePosterAction(id: string) {
+    return withPolicyAction(Policies.spex.requireUpdate, async () => {
+        await deletePoster(id);
+
+        revalidate();
+        return {
+            success: true
+        };
+    });
 }
 
 function revalidate() {

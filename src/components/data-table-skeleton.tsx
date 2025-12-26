@@ -18,20 +18,20 @@ export function DataTableSkeleton({
         <div className="space-y-4">
             <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    <Skeleton className="h-8 w-full sm:w-[150px] lg:w-[250px]" />
+                    <Skeleton className="h-8 w-full sm:w-[150px] lg:w-[250px]"/>
                 </div>
-                <Skeleton className="h-8 w-full lg:w-[120px]" />
+                <Skeleton className="h-8 w-full lg:w-[120px]"/>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:hidden">
                 {Array.from({length: 6}).map((_, i) => (
                     <div key={i} className="flex items-center gap-4 rounded-lg border p-4">
                         {columnTypes.includes("image") && (
-                            <Skeleton className="h-12 w-12 rounded-md shrink-0" />
+                            <Skeleton className="h-12 w-12 rounded-md shrink-0"/>
                         )}
                         <div className="flex-1 space-y-2">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-3 w-1/2" />
+                            <Skeleton className="h-4 w-3/4"/>
+                            <Skeleton className="h-3 w-1/2"/>
                         </div>
                     </div>
                 ))}

@@ -70,7 +70,12 @@ export function DataTable<TData, TValue>({
         setLoading(true);
         setRowSelection({});
         const currentSort = sorting[0];
-        const sort = args.sort || (currentSort ? [currentSort.id] : undefined);
+        let sort = args.sort;
+        if (!sort && currentSort) {
+            const column = table.getColumn(currentSort.id);
+            const sortKey = (column?.columnDef.meta as any)?.sortKey;
+            sort = [sortKey ?? currentSort.id];
+        }
         const direction = args.direction || (currentSort ? (currentSort.desc ? SortDirection.Desc : SortDirection.Asc) : undefined);
         const currentFilter = args.filter !== undefined ? args.filter : filter;
 
@@ -128,9 +133,18 @@ export function DataTable<TData, TValue>({
             setSorting(nextSorting);
 
             const sortField = nextSorting[0];
+            let sortId = sortField?.id;
+            if (sortField) {
+                const column = table.getColumn(sortField.id);
+                const sortKey = (column?.columnDef.meta as any)?.sortKey;
+                if (sortKey) {
+                    sortId = sortKey;
+                }
+            }
+
             void handleFetch({
                 first: pageSize,
-                sort: sortField ? [sortField.id] : undefined,
+                sort: sortId ? [sortId] : undefined,
                 direction: sortField ? (sortField.desc ? SortDirection.Desc : SortDirection.Asc) : undefined
             });
         },

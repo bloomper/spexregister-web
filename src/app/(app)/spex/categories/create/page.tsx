@@ -3,12 +3,12 @@ import {getTranslations} from "next-intl/server";
 import {SpexCategoryTable} from "@/components/spex/category";
 import {withPolicyPage} from "@/utils/route.server";
 import {SpexCategoryCreateForm} from "./create.client";
-import {getSpexCategoryPaged} from "@/lib/spex/category";
+import {getPaged} from "@/lib/spex/category";
 
 export default async function SpexCategoryCreatePage() {
     return withPolicyPage(Policies.spexCategory.requireCreate, async () => {
         const defaultPageSize = 15;
-        const initialData = await getSpexCategoryPaged({
+        const initialData = await getPaged({
             first: defaultPageSize,
             full: true
         });

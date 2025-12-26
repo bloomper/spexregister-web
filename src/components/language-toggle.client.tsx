@@ -18,7 +18,7 @@ const languages: Array<{ code: string; label: string; icon: FlagIcon }> = [
 
 export function LanguageToggle() {
     const currentLocale = useLocale();
-    const t = useTranslations("Header");
+    const t = useTranslations();
     const {changeLocale} = useLocaleContext();
 
     const currentLanguage = languages.find((l) => l.code === currentLocale);
@@ -37,7 +37,7 @@ export function LanguageToggle() {
                     ) : (
                         <Languages className="h-[1.2rem] w-[1.2rem]"/>
                     )}
-                    <span className="sr-only">{t("toggleLanguage")}</span>
+                    <span className="sr-only">{t("Header.toggleLanguage")}</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

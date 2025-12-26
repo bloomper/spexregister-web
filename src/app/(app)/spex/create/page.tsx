@@ -1,4 +1,4 @@
-import {getSpexPaged} from "@/lib/spex";
+import {getPaged} from "@/lib/spex";
 import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {SpexTable} from "@/components/spex";
@@ -8,7 +8,11 @@ import {SpexCreateForm} from "./create.client";
 export default async function SpexCreatePage() {
     return withPolicyPage(Policies.spex.requireCreate, async () => {
         const defaultPageSize = 15;
-        const initialData = await getSpexPaged({first: defaultPageSize, full: true});
+        const initialData = await getPaged({
+            first: defaultPageSize,
+            filter: "parent:NULL",
+            full: true
+        });
         const t = await getTranslations();
 
         return (
@@ -18,7 +22,6 @@ export default async function SpexCreatePage() {
                 </div>
                 <SpexTable
                     initialData={initialData}
-                    defaultPublishedStates={["true", "false"]}
                 />
                 <SpexCreateForm/>
             </div>

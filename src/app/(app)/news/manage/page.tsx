@@ -1,4 +1,4 @@
-import {getNewsPaged} from "@/lib/news";
+import {getPaged} from "@/lib/news";
 import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {NewsTable} from "@/components/news";
@@ -7,7 +7,7 @@ import {withPolicyPage} from "@/utils/route.server";
 export default async function NewsManagePage() {
     return withPolicyPage(Policies.news.requireUpdate, async () => {
         const defaultPageSize = 15;
-        const initialData = await getNewsPaged({
+        const initialData = await getPaged({
             first: defaultPageSize,
             filter: "(published:TRUE OR published:FALSE)",
             full: true
@@ -21,7 +21,6 @@ export default async function NewsManagePage() {
                 </div>
                 <NewsTable
                     initialData={initialData}
-                    defaultPublishedStates={["true", "false"]}
                 />
             </div>
         );

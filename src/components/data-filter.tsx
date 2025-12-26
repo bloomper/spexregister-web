@@ -1,12 +1,12 @@
 import * as React from "react";
-import {Check, PlusCircle} from "lucide-react";
+import {Check, Funnel} from "lucide-react";
 import {cn} from "@/utils/utils";
 import {Button} from "@/components/ui/button";
 import {Separator} from "@/components/ui/separator";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {useTranslations} from "next-intl";
 
-interface DataTableFacetedFilterProps {
+interface DataFilterProps {
     title?: string
     options: {
         label: string
@@ -15,38 +15,31 @@ interface DataTableFacetedFilterProps {
     }[]
     selectedValues: Set<string>
     onSelect: (values: Set<string>) => void
+    onClear?: () => void
 }
 
-export function DataTableFacetedFilter({
-                                           title,
-                                           options,
-                                           selectedValues,
-                                           onSelect,
-                                       }: DataTableFacetedFilterProps) {
+export function DataFilter({
+                               title,
+                               options,
+                               selectedValues,
+                               onSelect,
+                               onClear,
+                           }: DataFilterProps) {
     const t = useTranslations();
 
     return (
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 border-dashed">
-                    <PlusCircle className="mr-2 h-4 w-4"/>
+                    <Funnel className="mr-2 h-4 w-4"/>
                     {title}
                     {selectedValues?.size > 0 && (
                         <>
                             <Separator orientation="vertical" className="mx-2 h-4"/>
                             <div className="flex space-x-1">
-                                {selectedValues.size > 2 ? (
-                                    <span className="text-xs">{selectedValues.size} {t("Common.selected")}</span>
-                                ) : (
-                                    options
-                                        .filter((option) => selectedValues.has(option.value))
-                                        .map((option) => (
-                                            <span key={option.value}
-                                                  className="bg-secondary text-secondary-foreground px-1 rounded text-xs">
-                        {option.label}
-                      </span>
-                                        ))
-                                )}
+                                <span className="text-xs">
+                                   {t("Common.selected", {count: selectedValues.size})}
+                                </span>
                             </div>
                         </>
                     )}
@@ -90,7 +83,7 @@ export function DataTableFacetedFilter({
                                 variant="ghost"
                                 size="sm"
                                 className="justify-center text-xs"
-                                onClick={() => onSelect(new Set())}
+                                onClick={() => onClear ? onClear() : onSelect(new Set())}
                             >
                                 {t("Common.clearFilters")}
                             </Button>

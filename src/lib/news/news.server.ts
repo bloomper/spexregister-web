@@ -4,15 +4,15 @@ import {getClient} from '@/lib/urql.server';
 import {News, NewsConnection, NewsEdge, SortDirection} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
 
-const NewsSummaryFields = `
+const SummaryFields = `
     id
     subject
     text
     visibleFrom
 `;
 
-const NewsFullFields = `
-    ${NewsSummaryFields}
+const FullFields = `
+    ${SummaryFields}
     published
     visibleTo
     createdAt
@@ -21,30 +21,30 @@ const NewsFullFields = `
     lastModifiedBy
 `;
 
-const NewsCreateMutation = /* GraphQL */ `
-    mutation NewsCreate($input: NewsCreate!) {
+const CreateMutation = /* GraphQL */ `
+    mutation ($input: NewsCreate!) {
         newsCreate(input: $input) {
-            ${NewsFullFields}
+            ${FullFields}
         }
     }
 `;
 
-const NewsUpdateMutation = /* GraphQL */ `
-    mutation NewsUpdate($input: NewsUpdate!) {
+const UpdateMutation = /* GraphQL */ `
+    mutation ($input: NewsUpdate!) {
         newsUpdate(input: $input) {
-            ${NewsFullFields}
+            ${FullFields}
         }
     }
 `;
 
-const NewsDeleteMutation = /* GraphQL */ `
-    mutation NewsDelete($id: ID!) {
+const DeleteMutation = /* GraphQL */ `
+    mutation ($id: ID!) {
         newsDelete(id: $id)
     }
 `;
 
 const createQuery = (fields: string) => /* GraphQL */ `
-    query NewsPaged($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+    query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges {
                 cursor
@@ -60,7 +60,7 @@ const createQuery = (fields: string) => /* GraphQL */ `
     }
 `;
 
-export async function getNewsPaged(args: {
+export async function getPaged(args: {
     first?: number;
     last?: number;
     after?: string | null;
@@ -70,7 +70,7 @@ export async function getNewsPaged(args: {
     filter?: string;
     full?: boolean
 }): Promise<NewsPage> {
-    const query = createQuery(args.full ? NewsFullFields : NewsSummaryFields);
+    const query = createQuery(args.full ? FullFields : SummaryFields);
 
     const result = await getClient()
         .query<{ newsPaged: NewsConnection }>(query, {
@@ -108,9 +108,9 @@ export async function getNewsPaged(args: {
     };
 }
 
-export async function createNews(input: any) {
+export async function create(input: any) {
     const result = await getClient()
-        .mutation(NewsCreateMutation, {input})
+        .mutation(CreateMutation, {input})
         .toPromise();
 
     if (result.error) {
@@ -124,13 +124,14 @@ export async function createNews(input: any) {
     return result.data?.newsCreate;
 }
 
-export async function updateNews(id: string, input: any) {
+export async function update(id: string, input: any) {
     const result = await getClient()
-        .mutation(NewsUpdateMutation, {
+        .mutation(UpdateMutation, {
             input: {
                 ...input,
                 id
-            }})
+            }
+        })
         .toPromise();
 
     if (result.error) {
@@ -144,9 +145,9 @@ export async function updateNews(id: string, input: any) {
     return result.data?.newsUpdate;
 }
 
-export async function deleteNews(id: string) {
+export async function del(id: string) {
     const result = await getClient()
-        .mutation(NewsDeleteMutation, {id})
+        .mutation(DeleteMutation, {id})
         .toPromise();
 
     if (result.error) {

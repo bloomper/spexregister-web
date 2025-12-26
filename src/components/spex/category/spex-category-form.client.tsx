@@ -21,11 +21,11 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {ImageUpload} from "@/components/image-upload.client";
 
 interface SpexCategoryFormProps {
-    spexCategory?: SpexCategory;
+    item?: SpexCategory;
     onSuccess: () => void;
 }
 
-export function SpexCategoryForm({spexCategory, onSuccess}: SpexCategoryFormProps) {
+export function SpexCategoryForm({item, onSuccess}: SpexCategoryFormProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -39,8 +39,8 @@ export function SpexCategoryForm({spexCategory, onSuccess}: SpexCategoryFormProp
     } = useForm<SpexCategoryFormInput, any, SpexCategoryFormOutput>({
         resolver: zodResolver(spexCategoryFormSchema),
         defaultValues: {
-            name: spexCategory?.name ?? "",
-            firstYear: spexCategory?.firstYear ?? "",
+            name: item?.name ?? "",
+            firstYear: item?.firstYear ?? "",
         },
     });
 
@@ -64,12 +64,12 @@ export function SpexCategoryForm({spexCategory, onSuccess}: SpexCategoryFormProp
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {
             try {
-                let id = spexCategory?.id;
-                if (spexCategory) {
-                    await updateAction(spexCategory.id, data);
+                let id = item?.id;
+                if (item) {
+                    await updateAction(item.id, data);
                 } else {
-                    const newCategory = await createAction(data);
-                    id = newCategory?.id;
+                    const newItem = await createAction(data);
+                    id = newItem?.id;
                 }
 
                 if (id) {
@@ -82,7 +82,7 @@ export function SpexCategoryForm({spexCategory, onSuccess}: SpexCategoryFormProp
                     }
                 }
 
-                toast.success(spexCategory ? t("Common.updateSuccess") : t("Common.createSuccess"));
+                toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
                 onSuccess();
             } catch (error) {
                 toast.error(t("Common.errorOccurred"));
@@ -93,7 +93,7 @@ export function SpexCategoryForm({spexCategory, onSuccess}: SpexCategoryFormProp
     return (
         <SheetContent className="sm:max-w-[540px] flex flex-col gap-0 p-0">
             <SheetHeader className="p-6 pb-2">
-                <SheetTitle>{spexCategory ? t("Spex.Category.editHeading") : t("Spex.Category.createHeading")}</SheetTitle>
+                <SheetTitle>{item ? t("Spex.Category.editHeading") : t("Spex.Category.createHeading")}</SheetTitle>
             </SheetHeader>
             <form onSubmit={onSubmit} className="flex-1 overflow-y-auto">
                 <div className="space-y-4 px-6 py-4">
@@ -137,7 +137,7 @@ export function SpexCategoryForm({spexCategory, onSuccess}: SpexCategoryFormProp
                         <FieldLabel>{t("Spex.Category.logoUrl")}</FieldLabel>
                         <FieldContent>
                             <ImageUpload
-                                initialImageUrl={spexCategory?.logoUrl}
+                                initialImageUrl={item?.logoUrl}
                                 onFileSelect={(file) => {
                                     setSelectedFile(file);
                                     setShouldDeleteLogo(false);

@@ -28,7 +28,7 @@ import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
-import {DataTableFacetedFilter} from "@/components/data-table-facet-filter";
+import {DataFilter} from "@/components/data-filter";
 import Link from "next/link";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -42,31 +42,37 @@ function Translated({id}: { id: string }) {
 export const columns: ColumnDef<News>[] = [
     {
         id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                onClick={(e) => {
-                    e.stopPropagation();
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                        e.stopPropagation();
+        header: ({table}) => {
+            const t = useTranslations();
+            return (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
                     }
-                }}
-                aria-label="Select row"
-            />
-        ),
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label={t("Common.selectAll")}
+                />
+            );
+        },
+        cell: ({row}) => {
+            const t = useTranslations();
+            return (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.stopPropagation();
+                        }
+                    }}
+                    aria-label={t("Common.select")}
+                />
+            );
+        },
         enableSorting: false,
         enableHiding: false,
     },
@@ -232,7 +238,7 @@ export const columns: ColumnDef<News>[] = [
     {
         id: "actions",
         cell: ({row, table}) => {
-            const news = row.original;
+            const item = row.original;
             const t = useTranslations();
 
             const meta = table.options.meta as any;
@@ -247,12 +253,12 @@ export const columns: ColumnDef<News>[] = [
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onSelect={() => meta?.setEditItem(news)}>
+                            <DropdownMenuItem onSelect={() => meta?.setEditItem(item)}>
                                 {t("Common.edit")}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="text-destructive"
-                                onSelect={() => meta?.setDeleteItem(news)}
+                                onSelect={() => meta?.setDeleteItem(item)}
                             >
                                 {t("Common.delete")}
                             </DropdownMenuItem>
@@ -266,10 +272,8 @@ export const columns: ColumnDef<News>[] = [
 
 export function NewsTable({
                               initialData,
-                              defaultPublishedStates = ["true"]
                           }: {
     initialData: CursorPage<News>,
-    defaultPublishedStates?: string[]
 }) {
     const t = useTranslations();
     const router = useRouter();
@@ -280,8 +284,8 @@ export function NewsTable({
     const [selectedRows, setSelectedRows] = useState<News[]>([]);
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
-    const [publishedValues, setPublishedValues] = useState<Set<string>>(new Set(defaultPublishedStates));
-    const setFilterRef = useRef<((filter: string) => void) | null>(null);
+    const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
+    const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
 
     useEffect(() => {
         setMounted(true);
@@ -319,10 +323,10 @@ export function NewsTable({
         });
     };
 
-    const buildFilterString = (filterString: string, published: Set<string>) => {
+    const buildFilterString = (query: string, published: Set<string>) => {
         const parts: string[] = [];
-        if (filterString) {
-            parts.push(`subject:*${filterString}*`);
+        if (query) {
+            parts.push(`subject:*${query}*`);
         }
         if (published.size > 0 && published.size < 2) {
             const val = published.has("true") ? "TRUE" : "FALSE";
@@ -333,25 +337,23 @@ export function NewsTable({
         return parts.join(" AND ");
     };
 
-    const lastQueryRef = useRef<string>(buildFilterString("", new Set(defaultPublishedStates)));
+    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(["true", "false"])));
     const [isPending, startTransition] = useTransition();
 
-    const isFilterActive = filterQuery !== "" ||
-        publishedValues.size !== defaultPublishedStates.length ||
-        ![...publishedValues].every(value => defaultPublishedStates.includes(value));
+    const isFilterActive = filterQuery !== "" || selectedPublishedValues.size < 2;
 
     useEffect(() => {
-        const query = buildFilterString(filterQuery, publishedValues);
+        const query = buildFilterString(filterQuery, selectedPublishedValues);
 
         const timer = setTimeout(() => {
-            if (setFilterRef.current && query !== lastQueryRef.current) {
-                lastQueryRef.current = query;
-                setFilterRef.current(query);
+            if (setFilterQueryRef.current && query !== lastFilterQueryRef.current) {
+                lastFilterQueryRef.current = query;
+                setFilterQueryRef.current(query);
             }
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [filterQuery, publishedValues]);
+    }, [filterQuery, selectedPublishedValues]);
 
     if (!mounted) {
         return <DataTableSkeleton columnCount={7} rowCount={15}/>;
@@ -370,7 +372,7 @@ export function NewsTable({
                     setEditItem,
                     setDeleteItem,
                     setFilter: (fn: any) => {
-                        setFilterRef.current = typeof fn === 'function' && fn.length === 0 ? fn() : fn;
+                        setFilterQueryRef.current = typeof fn === 'function' && fn.length === 0 ? fn() : fn;
                     },
                 }}
             >
@@ -384,10 +386,11 @@ export function NewsTable({
                         />
 
                         <div className="flex items-center gap-2">
-                            <DataTableFacetedFilter
+                            <DataFilter
                                 title={t("News.published")}
-                                selectedValues={publishedValues}
-                                onSelect={setPublishedValues}
+                                selectedValues={selectedPublishedValues}
+                                onSelect={setSelectedPublishedValues}
+                                onClear={() => setSelectedPublishedValues(new Set(["true", "false"]))}
                                 options={[
                                     {label: t("News.publishedStates.true"), value: "true", icon: CheckCircle2},
                                     {label: t("News.publishedStates.false"), value: "false", icon: Circle},
@@ -399,7 +402,7 @@ export function NewsTable({
                                     variant="ghost"
                                     onClick={() => {
                                         setFilterQuery("");
-                                        setPublishedValues(new Set(defaultPublishedStates));
+                                        setSelectedPublishedValues(new Set(["true", "false"]));
                                     }}
                                     className="h-8 px-2 lg:px-3"
                                 >
@@ -482,9 +485,11 @@ export function NewsTable({
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (
                     <NewsForm
-                        news={editItem}
+                        item={editItem}
                         onSuccess={() => {
                             setEditItem(null);
+                            setFilterQuery("");
+                            setSelectedPublishedValues(new Set(["true", "false"]))
                             router.refresh();
                         }}
                     />

@@ -1,48 +1,49 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {SpexCategory, SpexCategoryEdge, SortDirection, SpexCategoryConnection} from "@/gql/graphql";
+import {SortDirection, SpexCategory, SpexCategoryConnection, SpexCategoryEdge} from "@/gql/graphql";
 import {SpexCategoryPage} from "@/types/pagination";
+import axios from "@/lib/axios.server";
 
-const SpexCategorySummaryFields = `
+const SummaryFields = `
     id
     name
     logoUrl
     firstYear
 `;
 
-const SpexCategoryFullFields = `
-    ${SpexCategorySummaryFields}
+const FullFields = `
+    ${SummaryFields}
     createdAt
     createdBy
     lastModifiedAt
     lastModifiedBy
 `;
 
-const SpexCategoryCreateMutation = /* GraphQL */ `
-    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {
+const CreateMutation = /* GraphQL */ `
+    mutation ($input: SpexCategoryCreate!) {
         spexCategoryCreate(input: $input) {
-            ${SpexCategoryFullFields}
+            ${FullFields}
         }
     }
 `;
 
-const SpexCategoryUpdateMutation = /* GraphQL */ `
-    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {
+const UpdateMutation = /* GraphQL */ `
+    mutation ($input: SpexCategoryUpdate!) {
         spexCategoryUpdate(input: $input) {
-            ${SpexCategoryFullFields}
+            ${FullFields}
         }
     }
 `;
 
-const SpexCategoryDeleteMutation = /* GraphQL */ `
-    mutation SpexCategoryDelete($id: ID!) {
+const DeleteMutation = /* GraphQL */ `
+    mutation ($id: ID!) {
         spexCategoryDelete(id: $id)
     }
 `;
 
 const createQuery = (fields: string) => /* GraphQL */ `
-    query SpexCategoryPaged($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+    query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges {
                 cursor
@@ -58,7 +59,7 @@ const createQuery = (fields: string) => /* GraphQL */ `
     }
 `;
 
-export async function getSpexCategoryPaged(args: {
+export async function getPaged(args: {
     first?: number;
     last?: number;
     after?: string | null;
@@ -68,7 +69,7 @@ export async function getSpexCategoryPaged(args: {
     filter?: string;
     full?: boolean
 }): Promise<SpexCategoryPage> {
-    const query = createQuery(args.full ? SpexCategoryFullFields : SpexCategorySummaryFields);
+    const query = createQuery(args.full ? FullFields : SummaryFields);
 
     const result = await getClient()
         .query<{ spexCategoryPaged: SpexCategoryConnection }>(query, {
@@ -106,9 +107,29 @@ export async function getSpexCategoryPaged(args: {
     };
 }
 
-export async function createSpexCategory(input: any) {
+export async function getAll(args?: { full?: boolean }): Promise<SpexCategory[]> {
+    const items: SpexCategory[] = [];
+    let hasNextPage = true;
+    let after: string | null = null;
+
+    while (hasNextPage) {
+        const page = await getPaged({
+            first: 100,
+            after,
+            full: args?.full
+        });
+
+        items.push(...page.items);
+        hasNextPage = page.pageInfo.hasNextPage;
+        after = page.pageInfo.endCursor;
+    }
+
+    return items;
+}
+
+export async function create(input: any) {
     const result = await getClient()
-        .mutation(SpexCategoryCreateMutation, {input})
+        .mutation(CreateMutation, {input})
         .toPromise();
 
     if (result.error) {
@@ -122,13 +143,14 @@ export async function createSpexCategory(input: any) {
     return result.data?.spexCategoryCreate;
 }
 
-export async function updateSpexCategory(id: string, input: any) {
+export async function update(id: string, input: any) {
     const result = await getClient()
-        .mutation(SpexCategoryUpdateMutation, {
+        .mutation(UpdateMutation, {
             input: {
                 ...input,
                 id
-            }})
+            }
+        })
         .toPromise();
 
     if (result.error) {
@@ -142,9 +164,9 @@ export async function updateSpexCategory(id: string, input: any) {
     return result.data?.spexCategoryUpdate;
 }
 
-export async function deleteSpexCategory(id: string) {
+export async function del(id: string) {
     const result = await getClient()
-        .mutation(SpexCategoryDeleteMutation, {id})
+        .mutation(DeleteMutation, {id})
         .toPromise();
 
     if (result.error) {
@@ -152,4 +174,19 @@ export async function deleteSpexCategory(id: string) {
     }
 
     return result.data?.spexCategoryDelete;
+}
+
+export async function uploadLogo(id: string, file: File) {
+    const arrayBuffer = await file.arrayBuffer();
+    const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spex/categories/${id}/logo`, arrayBuffer, {
+        headers: {
+            'Content-Type': file.type,
+        }
+    });
+    return response.data;
+}
+
+export async function deleteLogo(id: string) {
+    await axios.delete(`${process.env.API_REST_BASE_URL}/api/spex/categories/${id}/logo`);
+    return {success: true};
 }

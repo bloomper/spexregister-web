@@ -1,14 +1,14 @@
 import {NewsList} from "@/components/news";
 import {Separator} from "@/components/ui/separator";
 import {getTranslations} from "next-intl/server";
-import {getNewsPaged} from "@/lib/news";
+import {getPaged} from "@/lib/news";
 import Link from "next/link";
 import {buttonVariants} from "@/components/ui/button";
 import {DataEmpty} from "@/components/data-empty";
 
 export default async function HomePage() {
     const t = await getTranslations();
-    const page = await getNewsPaged({first: 6});
+    const page = await getPaged({first: 6});
     const initialItems = page.edges.map(e => e.node);
     const hasNews = initialItems.length > 0;
 

@@ -1,5 +1,5 @@
 import {SpexCategoryList} from "@/components/spex/category";
-import {getSpexCategoryPaged} from "@/lib/spex/category";
+import {getPaged} from "@/lib/spex/category";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
@@ -7,7 +7,7 @@ import {Policies} from "@/utils/policy.server";
 export default async function SpexCategoryPage() {
     return withPolicyPage(Policies.spexCategory.requireRead, async () => {
         const first = 24;
-        const page = await getSpexCategoryPaged({first, after: null});
+        const page = await getPaged({first, after: null});
         const initialItems = page.edges.map((e) => e.node);
 
         return (

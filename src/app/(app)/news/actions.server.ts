@@ -2,7 +2,7 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {createNews, deleteNews, getNewsPaged, newsFormSchema, updateNews} from "@/lib/news";
+import {create, del, getPaged, newsFormSchema, update} from "@/lib/news";
 import {revalidateTag} from "next/cache";
 import {SortDirection} from "@/gql/graphql";
 
@@ -17,7 +17,7 @@ export async function getPageAction(args: {
     full?: boolean | string;
 }) {
     return withPolicyAction(Policies.news.requireRead, async () => {
-        return getNewsPaged({
+        return getPaged({
             ...args,
             full: args.full === true || args.full === "true"
         });
@@ -27,7 +27,7 @@ export async function getPageAction(args: {
 export async function createAction(data: unknown) {
     return withPolicyAction(Policies.news.requireCreate, async () => {
         const validated = newsFormSchema.parse(data);
-        const result = await createNews(validated);
+        const result = await create(validated);
         revalidate();
         return result;
     });
@@ -36,7 +36,7 @@ export async function createAction(data: unknown) {
 export async function updateAction(id: string, data: unknown) {
     return withPolicyAction(Policies.news.requireUpdate, async () => {
         const validated = newsFormSchema.parse(data);
-        const result = await updateNews(id, validated);
+        const result = await update(id, validated);
         revalidate();
         return result;
     });
@@ -44,7 +44,7 @@ export async function updateAction(id: string, data: unknown) {
 
 export async function deleteAction(id: string) {
     return withPolicyAction(Policies.news.requireDelete, async () => {
-        const result = await deleteNews(id);
+        const result = await del(id);
         revalidate();
         return result;
     });

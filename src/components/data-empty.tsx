@@ -2,8 +2,8 @@ import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/co
 import {Newspaper} from "lucide-react";
 import {useTranslations} from "next-intl";
 
-export function DataEmpty() {
-    const t = useTranslations("Common");
+export function DataEmpty({title, description}: { title?: string, description?: string }) {
+    const t = useTranslations();
 
     return (
         <Empty className="col-span-full">
@@ -11,9 +11,9 @@ export function DataEmpty() {
                 <EmptyMedia variant="icon">
                     <Newspaper/>
                 </EmptyMedia>
-                <EmptyTitle>{t("noDataTitle")}</EmptyTitle>
+                <EmptyTitle>{title ?? t("Common.noDataTitle")}</EmptyTitle>
                 <EmptyDescription>
-                    {t("noDataDescription")}
+                    {description ?? t("Common.noDataDescription")}
                 </EmptyDescription>
             </EmptyHeader>
         </Empty>
