@@ -16,6 +16,8 @@ import {DataFilter} from "@/components/data-filter";
 import {X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
+import Image from "next/image";
+import {getProxiedImageUrl} from "@/utils/utils";
 
 export function SpexGrid({
                              initialItems = [],
@@ -179,13 +181,15 @@ export function SpexGrid({
                         className="group h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0"
                         onClick={() => setSelected(n)}
                     >
-                        {/* ... existing card content ... */}
                         {n.posterUrl ? (
                             <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
-                                <img
-                                    src={`/api/image-download-proxy?url=${encodeURIComponent(n.posterUrl)}`}
+                                <Image
+                                    src={getProxiedImageUrl(n.posterUrl, n.lastModifiedAt)}
                                     alt={n.title}
-                                    className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                                    fill
+                                    unoptimized
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover transition-transform group-hover:scale-105"
                                 />
                             </div>
                         ) : (
@@ -225,9 +229,11 @@ export function SpexGrid({
                 <DialogContent className="sm:max-w-xl p-0 overflow-hidden">
                     <div className="relative aspect-video w-full bg-muted border-b">
                         {selected?.posterUrl ? (
-                            <img
-                                src={`/api/image-download-proxy?url=${encodeURIComponent(selected.posterUrl)}`}
+                            <Image
+                                src={getProxiedImageUrl(selected.posterUrl, selected.lastModifiedAt)}
                                 alt={selected.title}
+                                fill
+                                unoptimized
                                 className="object-contain w-full h-full"
                             />
                         ) : (

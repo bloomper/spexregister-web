@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import {useState, useTransition} from "react";
+import {toast} from "sonner";
+import {useRouter} from "next/navigation";
+import {useTranslations} from "next-intl";
 
 export function useDataTableActions<T extends { id: string }>(
     deleteAction: (id: string) => Promise<any>,

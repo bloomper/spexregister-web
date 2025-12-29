@@ -6,7 +6,7 @@ import {Sheet} from "@/components/ui/sheet";
 import {SpexForm} from "@/components/spex";
 import {SpexCategory} from "@/gql/graphql";
 
-export function SpexCreateForm({ categories }: { categories: SpexCategory[] }) {
+export function SpexCreateForm({categories}: { categories: SpexCategory[] }) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(true);
 

@@ -29,6 +29,17 @@ export function formatDateTime(date: string) {
     return `${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}`;
 }
 
+export function getProxiedImageUrl(url?: string | null, lastModifiedAt?: string | null) {
+    if (!url) {
+        return "";
+    }
+    const base = `/api/image-download-proxy?url=${encodeURIComponent(url)}`;
+    if (!lastModifiedAt) {
+        return base;
+    }
+    return `${base}&t=${new Date(lastModifiedAt).getTime()}`;
+}
+
 export function translateError(t: any, error?: { message?: string }) {
     if (!error?.message) {
         return error;

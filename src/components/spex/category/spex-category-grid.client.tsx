@@ -11,6 +11,8 @@ import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
+import {getProxiedImageUrl} from "@/utils/utils";
+import Image from "next/image";
 
 export function SpexCategoryGrid({
                                      initialItems = [],
@@ -56,10 +58,12 @@ export function SpexCategoryGrid({
                 >
                     {n.logoUrl ? (
                         <div className="relative aspect-video w-full bg-muted border-b">
-                            <img
-                                src={`/api/image-download-proxy?url=${encodeURIComponent(n.logoUrl)}`}
+                            <Image
+                                src={getProxiedImageUrl(n.logoUrl, n.lastModifiedAt)}
                                 alt={n.name}
-                                className="object-contain w-full h-full p-4 transition-transform group-hover:scale-105"
+                                fill
+                                unoptimized
+                                className="object-contain p-4 transition-transform group-hover:scale-105"
                             />
                         </div>
                     ) : (
@@ -88,10 +92,12 @@ export function SpexCategoryGrid({
                         </div>
                         {selected?.logoUrl && (
                             <div className="relative aspect-square w-full overflow-hidden rounded-md bg-muted">
-                                <img
-                                    src={`/api/image-download-proxy?url=${encodeURIComponent(selected.logoUrl)}`}
+                                <Image
+                                    src={getProxiedImageUrl(selected.logoUrl, selected.lastModifiedAt)}
                                     alt={selected.name}
-                                    className="object-contain w-full h-full p-6"
+                                    fill
+                                    unoptimized
+                                    className="object-contain p-6"
                                 />
                             </div>
                         )}

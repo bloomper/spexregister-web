@@ -20,9 +20,8 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {NewsForm} from "@/components/news";
-import {useEffect, useRef, useState, useTransition} from "react";
+import {useEffect, useRef, useState} from "react";
 import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/news/actions.server";
-import {toast} from "sonner";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";

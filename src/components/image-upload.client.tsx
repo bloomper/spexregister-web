@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {ImagePlus, Loader2, X} from "lucide-react";
 import {toast} from "sonner";
 import {useDropzone} from "react-dropzone";
+import {getProxiedImageUrl} from "@/utils/utils";
 
 interface ImageUploadProps {
     initialImageUrl?: string | null;
@@ -19,10 +20,7 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
     const [preview, setPreview] = useState<string | null>(() => {
-        if (!initialImageUrl) {
-            return null;
-        }
-        return `/api/image-download-proxy?url=${encodeURIComponent(initialImageUrl)}&t=${Date.now()}`;
+        return getProxiedImageUrl(initialImageUrl, Date.now().toString());
     });
 
     const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {

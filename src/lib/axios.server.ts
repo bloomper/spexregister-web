@@ -13,10 +13,14 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
     async (config) => {
-        const session = await auth();
+        try {
+            const session = await auth();
 
-        if (session?.access_token) {
-            config.headers.Authorization = `Bearer ${session.access_token}`;
+            if (session?.access_token) {
+                config.headers.Authorization = `Bearer ${session.access_token}`;
+            }
+        } catch (e) {
+            console.warn("Axios server: Could not retrieve session for auth header");
         }
 
         return config;
@@ -29,10 +33,6 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
     (response) => response,
     async (error) => {
-        if (error.response?.status === 401) {
-            return Promise.reject(error);
-        }
-
         return Promise.reject(error);
     }
 );

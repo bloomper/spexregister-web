@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {SpexCategory} from "@/gql/graphql";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import {formatDateTime} from "@/utils/utils";
+import {formatDateTime, getProxiedImageUrl} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {
@@ -20,9 +20,8 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {SpexCategoryForm} from "@/components/spex/category";
-import {useEffect, useRef, useState, useTransition} from "react";
+import {useEffect, useRef, useState} from "react";
 import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spex/categories/actions.server";
-import {toast} from "sonner";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
@@ -33,7 +32,7 @@ import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/
 import {Checkbox} from "@/components/ui/checkbox";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {Translated} from "@/components/translated.client";
-
+import Image from "next/image";
 
 export const columns: ColumnDef<SpexCategory>[] = [
     {
@@ -145,14 +144,16 @@ export const columns: ColumnDef<SpexCategory>[] = [
         cell: ({row}) => {
             const url = row.getValue("logo") as string;
             const item = row.original;
-            const cacheBuster = item.lastModifiedAt ? `&t=${new Date(item.lastModifiedAt).getTime()}` : "";
 
             return (
-                <div className="h-10 w-10 overflow-hidden rounded border bg-muted flex items-center justify-center">
+                <div
+                    className="h-10 w-10 overflow-hidden rounded border bg-muted flex items-center justify-center relative">
                     {url ? (
-                        <img
-                            src={`/api/image-download-proxy?url=${encodeURIComponent(url)}${cacheBuster}`}
+                        <Image
+                            src={getProxiedImageUrl(url, item.lastModifiedAt)}
                             alt=""
+                            fill
+                            unoptimized
                             className="h-full w-full object-contain"
                         />
                     ) : (
@@ -376,12 +377,14 @@ export function SpexCategoryTable({
                             <div className="space-y-2">
                                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Spex.Category.logoUrl")}</p>
                                 <div
-                                    className="w-32 h-32 overflow-hidden rounded-lg border bg-muted p-2 flex items-center justify-center">
+                                    className="w-32 h-32 overflow-hidden rounded-lg border bg-muted p-2 flex items-center justify-center relative">
                                     {viewItem?.logoUrl ? (
-                                        <img
-                                            src={`/api/image-download-proxy?url=${encodeURIComponent(viewItem.logoUrl)}&t=${viewItem.lastModifiedAt ? new Date(viewItem.lastModifiedAt).getTime() : ''}`}
+                                        <Image
+                                            src={getProxiedImageUrl(viewItem.logoUrl, viewItem.lastModifiedAt)}
                                             alt={viewItem.name}
-                                            className="h-full w-full object-contain"
+                                            fill
+                                            unoptimized
+                                            className="h-full w-full object-contain p-2"
                                         />
                                     ) : (
                                         <div className="flex flex-col items-center gap-1 text-muted-foreground/60">

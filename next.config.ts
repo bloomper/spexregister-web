@@ -8,6 +8,13 @@ const nextConfig: NextConfig = {
             bodySizeLimit: "15mb",
         },
     },
+    images: {
+        localPatterns: [
+            {
+                pathname: '/api/image-download-proxy',
+            },
+        ],
+    },
 };
 
 const withNextIntl = createNextIntlPlugin();

@@ -1,8 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import {useTranslations} from "next-intl";
 
-export function Translated({ id }: { id: string }) {
+export function Translated({id}: { id: string }) {
     const t = useTranslations();
     return <>{t(id as any)}</>;
 }
