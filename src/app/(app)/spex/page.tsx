@@ -1,16 +1,19 @@
 import {SpexGrid} from "@/components/spex";
-import {getAll} from "@/lib/spex/category";
 import {getPaged} from "@/lib/spex";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {getAll as getAllCategories} from "@/lib/spex/category";
 
 export default async function SpexPage() {
     return withPolicyPage(Policies.spex.requireRead, async () => {
         const first = 24;
-        const page = await getPaged({first, after: null});
+        const [page, categories] = await Promise.all([
+            getPaged({first, after: null}),
+            getAllCategories()
+        ]);
+
         const initialItems = page.edges.map((e) => e.node);
-        const categories = await getAll();
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">

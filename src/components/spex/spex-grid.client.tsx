@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
@@ -29,10 +29,19 @@ export function SpexGrid({
     categories?: SpexCategory[];
 }) {
     const t = useTranslations();
+    const [searchValue, setSearchValue] = useState("");
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
         new Set(categories.map((c) => c.id))
     );
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setFilterQuery(searchValue);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchValue]);
 
     const fetchPageWithFilters = React.useCallback((args: { after: string | null; pageSize: number }) => {
         const filterParts = ["parent:NULL"];
@@ -74,6 +83,10 @@ export function SpexGrid({
         initialPageInfo,
     });
 
+    useEffect(() => {
+        reset();
+    }, [filterQuery, selectedCategories, reset]);
+
     const handleCategorySelect = (newValues: Set<string>) => {
         setSelectedCategories(newValues);
         reset();
@@ -86,8 +99,7 @@ export function SpexGrid({
     };
 
     const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFilterQuery(e.target.value);
-        reset();
+        setSearchValue(e.target.value);
     };
 
     const [selected, setSelected] = useState<Spex | null>(null);
@@ -107,18 +119,17 @@ export function SpexGrid({
                         <div className="relative w-full sm:w-[300px]">
                             <Input
                                 placeholder={t("Spex.filterPlaceholder")}
-                                value={filterQuery}
+                                value={searchValue}
                                 onChange={handleQueryChange}
                                 className="h-8 text-xs pr-8"
                             />
-                            {filterQuery && (
+                            {searchValue && (
                                 <Button
                                     variant="ghost"
                                     size="icon"
                                     className="absolute right-0 top-0 h-8 w-8 hover:bg-transparent"
                                     onClick={() => {
-                                        setFilterQuery("");
-                                        reset();
+                                        setSearchValue("");
                                     }}
                                 >
                                     <X className="h-3 w-3"/>
@@ -137,11 +148,11 @@ export function SpexGrid({
                                 onClear={handleClearCategories}
                             />
                         )}
-                        {(filterQuery || selectedCategories.size < categories.length) && (
+                        {(searchValue || selectedCategories.size < categories.length) && (
                             <Button
                                 variant="ghost"
                                 onClick={() => {
-                                    setFilterQuery("");
+                                    setSearchValue("");
                                     handleClearCategories();
                                 }}
                                 className="h-8 px-2 lg:px-3 text-xs"

@@ -3,15 +3,19 @@ import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {SpexTable} from "@/components/spex";
 import {withPolicyPage} from "@/utils/route.server";
+import {getAll as getAllCategories} from "@/lib/spex/category";
 
 export default async function SpexManagePage() {
     return withPolicyPage(Policies.spex.requireUpdate, async () => {
         const defaultPageSize = 15;
-        const initialData = await getPaged({
-            first: defaultPageSize,
-            filter: "parent:NULL",
-            full: true
-        });
+        const [initialData, categories] = await Promise.all([
+            getPaged({
+                first: defaultPageSize,
+                filter: "parent:NULL",
+                full: true
+            }),
+            getAllCategories()
+        ]);
         const t = await getTranslations();
 
         return (
@@ -21,6 +25,7 @@ export default async function SpexManagePage() {
                 </div>
                 <SpexTable
                     initialData={initialData}
+                    categories={categories}
                 />
             </div>
         );

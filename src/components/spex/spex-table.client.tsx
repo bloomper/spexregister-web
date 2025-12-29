@@ -19,9 +19,8 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {SpexForm} from "@/components/spex";
-import {useEffect, useRef, useState, useTransition} from "react";
-import {bulkDeleteAction, deleteAction, getAllCategoriesAction, getPageAction} from "@/app/(app)/spex/actions.server";
-import {toast} from "sonner";
+import {useEffect, useRef, useState} from "react";
+import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spex/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
@@ -294,15 +293,18 @@ export const columns: ColumnDef<Spex>[] = [
 
 export function SpexTable({
                               initialData,
+                              categories,
                           }: {
     initialData: CursorPage<Spex>,
+    categories: SpexCategory[],
 }) {
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
-    const [categories, setCategories] = useState<SpexCategory[]>([]);
-    const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+    const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
+        new Set(categories.map(c => c.id))
+    );
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
 
     const {
@@ -318,10 +320,6 @@ export function SpexTable({
 
     useEffect(() => {
         setMounted(true);
-        getAllCategoriesAction().then((cats) => {
-            setCategories(cats);
-            setSelectedCategories(new Set(cats.map(c => c.id)));
-        });
     }, []);
 
     const buildFilterString = (query: string, selectedCategories: Set<string>, categories: SpexCategory[]) => {
@@ -338,7 +336,7 @@ export function SpexTable({
         return parts.join(" AND ");
     };
 
-    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(), []));
+    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(categories.map(c => c.id)), categories));
     const isFilterActive = filterQuery !== "" || (categories.length > 0 && selectedCategories.size < categories.length);
 
     useEffect(() => {
@@ -516,6 +514,7 @@ export function SpexTable({
                 {editItem && (
                     <SpexForm
                         item={editItem}
+                        categories={categories}
                         onSuccess={() => {
                             setEditItem(null);
                             setFilterQuery("");

@@ -5,7 +5,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {SpexFormInput, SpexFormOutput, spexFormSchema} from "@/lib/spex/schema";
 import {Spex, SpexCategory} from "@/gql/graphql";
 import {useTranslations} from "next-intl";
-import {useEffect, useState, useTransition} from "react";
+import {useState, useTransition} from "react";
 import {toast} from "sonner";
 import {
     addCategoryAction,
@@ -13,7 +13,6 @@ import {
     createRevivalAction,
     deletePosterAction,
     deleteRevivalAction,
-    getAllCategoriesAction,
     removeCategoryAction,
     updateAction,
     uploadPosterAction
@@ -29,20 +28,20 @@ import {translateError} from "@/utils/utils";
 
 interface SpexFormProps {
     item?: Spex;
+    categories: SpexCategory[];
     onSuccess: () => void;
 }
 
-export function SpexForm({item, onSuccess}: SpexFormProps) {
+export function SpexForm({
+                             item,
+                             categories = [],
+                             onSuccess,
+                         }: SpexFormProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [shouldDeletePoster, setShouldDeletePoster] = useState(false);
-    const [categories, setCategories] = useState<SpexCategory[]>([]);
     const [newRevivalYear, setNewRevivalYear] = useState<string>("");
-
-    useEffect(() => {
-        getAllCategoriesAction().then(setCategories);
-    }, []);
 
     const {
         register,

@@ -4,8 +4,9 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexForm} from "@/components/spex";
+import {SpexCategory} from "@/gql/graphql";
 
-export function SpexCreateForm() {
+export function SpexCreateForm({ categories }: { categories: SpexCategory[] }) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(true);
 
@@ -26,7 +27,7 @@ export function SpexCreateForm() {
 
     return (
         <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-            <SpexForm onSuccess={handleSuccess}/>
+            <SpexForm categories={categories} onSuccess={handleSuccess}/>
         </Sheet>
     );
 }

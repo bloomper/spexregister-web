@@ -51,7 +51,10 @@ export async function deleteAction(id: string) {
 }
 
 export async function bulkDeleteAction(ids: string[]) {
-    await Promise.all(ids.map(id => deleteAction(id)));
+    await withPolicyAction(Policies.spexCategory.requireDelete, async () => {
+        await Promise.all(ids.map(id => del(id)));
+        revalidate();
+    });
 }
 
 export async function uploadLogoAction(id: string, formData: FormData) {

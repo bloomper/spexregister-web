@@ -4,6 +4,7 @@ import {getClient} from '@/lib/urql.server';
 import {SortDirection, SpexCategory, SpexCategoryConnection, SpexCategoryEdge} from "@/gql/graphql";
 import {SpexCategoryPage} from "@/types/pagination";
 import axios from "@/lib/axios.server";
+import {mapConnection} from "@/utils/utils.server";
 
 const SummaryFields = `
     id
@@ -91,20 +92,7 @@ export async function getPaged(args: {
         throw result.error;
     }
 
-    const conn = result.data?.spexCategoryPaged;
-    const validEdges = (conn?.edges ?? [])
-        .filter((e): e is SpexCategoryEdge & { node: SpexCategory } => Boolean(e?.cursor && e?.node?.id));
-
-    return {
-        items: validEdges.map(e => e.node),
-        edges: validEdges,
-        pageInfo: {
-            hasNextPage: Boolean(conn?.pageInfo?.hasNextPage),
-            hasPreviousPage: Boolean(conn?.pageInfo?.hasPreviousPage),
-            startCursor: conn?.pageInfo?.startCursor ?? null,
-            endCursor: conn?.pageInfo?.endCursor ?? null,
-        },
-    };
+    return mapConnection<SpexCategory, SpexCategoryEdge>(result.data?.spexCategoryPaged);
 }
 
 export async function getAll(args?: { full?: boolean }): Promise<SpexCategory[]> {

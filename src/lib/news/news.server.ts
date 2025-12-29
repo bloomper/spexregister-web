@@ -3,6 +3,7 @@ import 'server-only';
 import {getClient} from '@/lib/urql.server';
 import {News, NewsConnection, NewsEdge, SortDirection} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
+import {mapConnection} from "@/utils/utils.server";
 
 const SummaryFields = `
     id
@@ -92,20 +93,7 @@ export async function getPaged(args: {
         throw result.error;
     }
 
-    const conn = result.data?.newsPaged;
-    const validEdges = (conn?.edges ?? [])
-        .filter((e): e is NewsEdge & { node: News } => Boolean(e?.cursor && e?.node?.id));
-
-    return {
-        items: validEdges.map(e => e.node),
-        edges: validEdges,
-        pageInfo: {
-            hasNextPage: Boolean(conn?.pageInfo?.hasNextPage),
-            hasPreviousPage: Boolean(conn?.pageInfo?.hasPreviousPage),
-            startCursor: conn?.pageInfo?.startCursor ?? null,
-            endCursor: conn?.pageInfo?.endCursor ?? null,
-        },
-    };
+    return mapConnection<News, NewsEdge>(result.data?.newsPaged);
 }
 
 export async function create(input: any) {
