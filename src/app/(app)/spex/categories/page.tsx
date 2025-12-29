@@ -1,4 +1,4 @@
-import {SpexCategoryList} from "@/components/spex/category";
+import {SpexCategoryGrid} from "@/components/spex/category";
 import {getPaged} from "@/lib/spex/category";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
@@ -14,7 +14,7 @@ export default async function SpexCategoryPage() {
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {initialItems.length > 0 ? (
-                        <SpexCategoryList initialItems={initialItems} initialPageInfo={page.pageInfo}/>
+                        <SpexCategoryGrid initialItems={initialItems} initialPageInfo={page.pageInfo}/>
                     ) : (
                         <DataEmpty/>
                     )}

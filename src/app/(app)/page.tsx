@@ -1,4 +1,4 @@
-import {NewsList} from "@/components/news";
+import {NewsGrid} from "@/components/news";
 import {Separator} from "@/components/ui/separator";
 import {getTranslations} from "next-intl/server";
 import {getPaged} from "@/lib/news";
@@ -28,7 +28,7 @@ export default async function HomePage() {
             {hasNews && (
                 <>
                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                        <NewsList
+                        <NewsGrid
                             initialItems={initialItems}
                             maxItems={6}
                         />

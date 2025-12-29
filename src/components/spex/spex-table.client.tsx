@@ -33,12 +33,9 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {DataFilter} from "@/components/data-filter";
 import {Badge} from "@/components/ui/badge";
+import {useDataTableActions} from "@/hooks/use-data-table-actions";
+import {Translated} from "@/components/translated.client";
 
-
-function Translated({id}: { id: string }) {
-    const t = useTranslations();
-    return <>{t(id)}</>;
-}
 
 export const columns: ColumnDef<Spex>[] = [
     {
@@ -303,15 +300,21 @@ export function SpexTable({
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
-    const [viewItem, setViewItem] = useState<Spex | null>(null);
-    const [editItem, setEditItem] = useState<Spex | null>(null);
-    const [deleteItem, setDeleteItem] = useState<Spex | null>(null);
-    const [selectedRows, setSelectedRows] = useState<Spex[]>([]);
-    const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
     const [categories, setCategories] = useState<SpexCategory[]>([]);
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
+
+    const {
+        viewItem, setViewItem,
+        editItem, setEditItem,
+        deleteItem, setDeleteItem,
+        selectedRows, setSelectedRows,
+        isBulkDeleting, setIsBulkDeleting,
+        isPending,
+        handleDelete,
+        handleBulkDelete
+    } = useDataTableActions<Spex>(deleteAction, bulkDeleteAction);
 
     useEffect(() => {
         setMounted(true);
@@ -320,38 +323,6 @@ export function SpexTable({
             setSelectedCategories(new Set(cats.map(c => c.id)));
         });
     }, []);
-
-    const handleDelete = () => {
-        if (!deleteItem) {
-            return;
-        }
-
-        startTransition(async () => {
-            try {
-                await deleteAction(deleteItem.id);
-                setDeleteItem(null);
-                toast.success(t("Common.deleteSuccess"));
-                router.refresh();
-            } catch (error) {
-                toast.error(t("Common.errorOccurred"));
-            }
-        });
-    };
-
-    const handleBulkDelete = () => {
-        const ids = selectedRows.map(r => r.id);
-        startTransition(async () => {
-            try {
-                await bulkDeleteAction(ids);
-                setIsBulkDeleting(false);
-                setSelectedRows([]);
-                toast.success(t("Common.deleteBulkSuccess"));
-                router.refresh();
-            } catch (error) {
-                toast.error(t("Common.errorOccurred"));
-            }
-        });
-    };
 
     const buildFilterString = (query: string, selectedCategories: Set<string>, categories: SpexCategory[]) => {
         const parts: string[] = ["parent:NULL"];
@@ -368,8 +339,6 @@ export function SpexTable({
     };
 
     const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(), []));
-    const [isPending, startTransition] = useTransition();
-
     const isFilterActive = filterQuery !== "" || (categories.length > 0 && selectedCategories.size < categories.length);
 
     useEffect(() => {

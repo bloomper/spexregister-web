@@ -13,7 +13,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/news/actions.server";
 
-export function NewsList({
+export function NewsGrid({
                              initialItems = [],
                              initialPageInfo,
                              maxItems,

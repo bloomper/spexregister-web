@@ -31,12 +31,9 @@ import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Checkbox} from "@/components/ui/checkbox";
+import {useDataTableActions} from "@/hooks/use-data-table-actions";
+import {Translated} from "@/components/translated.client";
 
-
-function Translated({id}: { id: string }) {
-    const t = useTranslations();
-    return <>{t(id)}</>;
-}
 
 export const columns: ColumnDef<SpexCategory>[] = [
     {
@@ -256,49 +253,23 @@ export function SpexCategoryTable({
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
-    const [viewItem, setViewItem] = useState<SpexCategory | null>(null);
-    const [editItem, setEditItem] = useState<SpexCategory | null>(null);
-    const [deleteItem, setDeleteItem] = useState<SpexCategory | null>(null);
-    const [selectedRows, setSelectedRows] = useState<SpexCategory[]>([]);
-    const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
+
+    const {
+        viewItem, setViewItem,
+        editItem, setEditItem,
+        deleteItem, setDeleteItem,
+        selectedRows, setSelectedRows,
+        isBulkDeleting, setIsBulkDeleting,
+        isPending,
+        handleDelete,
+        handleBulkDelete
+    } = useDataTableActions<SpexCategory>(deleteAction, bulkDeleteAction);
 
     useEffect(() => {
         setMounted(true);
     }, []);
-
-    const handleDelete = () => {
-        if (!deleteItem) {
-            return;
-        }
-
-        startTransition(async () => {
-            try {
-                await deleteAction(deleteItem.id);
-                setDeleteItem(null);
-                toast.success(t("Common.deleteSuccess"));
-                router.refresh();
-            } catch (error) {
-                toast.error(t("Common.errorOccurred"));
-            }
-        });
-    };
-
-    const handleBulkDelete = () => {
-        const ids = selectedRows.map(r => r.id);
-        startTransition(async () => {
-            try {
-                await bulkDeleteAction(ids);
-                setIsBulkDeleting(false);
-                setSelectedRows([]);
-                toast.success(t("Common.deleteBulkSuccess"));
-                router.refresh();
-            } catch (error) {
-                toast.error(t("Common.errorOccurred"));
-            }
-        });
-    };
 
     const buildFilterString = (query: string) => {
         const parts: string[] = [];
@@ -309,8 +280,6 @@ export function SpexCategoryTable({
     };
 
     const lastFilterQueryRef = useRef<string>(buildFilterString(""));
-    const [isPending, startTransition] = useTransition();
-
     const isFilterActive = filterQuery !== "";
 
     useEffect(() => {

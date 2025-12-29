@@ -17,7 +17,7 @@ import {X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
 
-export function SpexList({
+export function SpexGrid({
                              initialItems = [],
                              initialPageInfo,
                              maxItems,

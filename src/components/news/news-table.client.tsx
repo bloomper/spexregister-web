@@ -32,12 +32,9 @@ import {DataFilter} from "@/components/data-filter";
 import Link from "next/link";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Checkbox} from "@/components/ui/checkbox";
+import {useDataTableActions} from "@/hooks/use-data-table-actions";
+import {Translated} from "@/components/translated.client";
 
-
-function Translated({id}: { id: string }) {
-    const t = useTranslations();
-    return <>{t(id)}</>;
-}
 
 export const columns: ColumnDef<News>[] = [
     {
@@ -278,50 +275,25 @@ export function NewsTable({
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
-    const [viewItem, setViewItem] = useState<News | null>(null);
-    const [editItem, setEditItem] = useState<News | null>(null);
-    const [deleteItem, setDeleteItem] = useState<News | null>(null);
-    const [selectedRows, setSelectedRows] = useState<News[]>([]);
-    const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
+
+    const {
+        viewItem, setViewItem,
+        editItem, setEditItem,
+        deleteItem, setDeleteItem,
+        selectedRows, setSelectedRows,
+        isBulkDeleting, setIsBulkDeleting,
+        isPending,
+        handleDelete,
+        handleBulkDelete
+    } = useDataTableActions<News>(deleteAction, bulkDeleteAction);
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    const handleDelete = () => {
-        if (!deleteItem) {
-            return;
-        }
-
-        startTransition(async () => {
-            try {
-                await deleteAction(deleteItem.id);
-                setDeleteItem(null);
-                toast.success(t("Common.deleteSuccess"));
-                router.refresh();
-            } catch (error) {
-                toast.error(t("Common.errorOccurred"));
-            }
-        });
-    };
-
-    const handleBulkDelete = () => {
-        const ids = selectedRows.map(r => r.id);
-        startTransition(async () => {
-            try {
-                await bulkDeleteAction(ids);
-                setIsBulkDeleting(false);
-                setSelectedRows([]);
-                toast.success(t("Common.deleteBulkSuccess"));
-                router.refresh();
-            } catch (error) {
-                toast.error(t("Common.errorOccurred"));
-            }
-        });
-    };
 
     const buildFilterString = (query: string, published: Set<string>) => {
         const parts: string[] = [];
@@ -338,8 +310,6 @@ export function NewsTable({
     };
 
     const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(["true", "false"])));
-    const [isPending, startTransition] = useTransition();
-
     const isFilterActive = filterQuery !== "" || selectedPublishedValues.size < 2;
 
     useEffect(() => {

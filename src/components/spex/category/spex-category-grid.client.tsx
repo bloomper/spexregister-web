@@ -12,7 +12,7 @@ import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
 
-export function SpexCategoryList({
+export function SpexCategoryGrid({
                                      initialItems = [],
                                      initialPageInfo,
                                      maxItems,
