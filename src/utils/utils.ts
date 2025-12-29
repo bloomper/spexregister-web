@@ -28,3 +28,13 @@ export function formatDateTime(date: string) {
 
     return `${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}`;
 }
+
+export function translateError(t: any, error?: { message?: string }) {
+    if (!error?.message) {
+        return error;
+    }
+    return {
+        ...error,
+        message: t(error.message as any)
+    };
+}

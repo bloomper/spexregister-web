@@ -1,6 +1,6 @@
 "use client";
 
-import {FieldError as FormError, useForm} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {NewsFormInput, NewsFormOutput, newsFormSchema} from "@/lib/news/schema";
 import {News} from "@/gql/graphql";
@@ -13,6 +13,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
+import {translateError} from "@/utils/utils";
 
 interface NewsFormProps {
     item?: News;
@@ -36,16 +37,6 @@ export function NewsForm({item, onSuccess}: NewsFormProps) {
             visibleTo: item?.visibleTo ?? "",
         },
     });
-
-    const translateError = (error?: FormError) => {
-        if (!error?.message) {
-            return error;
-        }
-        return {
-            ...error,
-            message: t(error.message as any)
-        };
-    };
 
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {

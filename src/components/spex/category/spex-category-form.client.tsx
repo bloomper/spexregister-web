@@ -1,6 +1,6 @@
 "use client";
 
-import {Controller, FieldError as FormError, useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SpexCategoryFormInput, SpexCategoryFormOutput, spexCategoryFormSchema} from "@/lib/spex/category/schema";
 import {SpexCategory} from "@/gql/graphql";
@@ -19,6 +19,7 @@ import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {ImageUpload} from "@/components/image-upload.client";
+import {translateError} from "@/utils/utils";
 
 interface SpexCategoryFormProps {
     item?: SpexCategory;
@@ -50,16 +51,6 @@ export function SpexCategoryForm({item, onSuccess}: SpexCategoryFormProps) {
         {length: endYear - startYear + 1},
         (_, i) => (endYear - i).toString()
     );
-
-    const translateError = (error?: FormError) => {
-        if (!error?.message) {
-            return error;
-        }
-        return {
-            ...error,
-            message: t(error.message as any)
-        };
-    };
 
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {

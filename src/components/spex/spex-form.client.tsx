@@ -1,6 +1,6 @@
 "use client";
 
-import {Controller, FieldError as FormError, useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SpexFormInput, SpexFormOutput, spexFormSchema} from "@/lib/spex/schema";
 import {Spex, SpexCategory} from "@/gql/graphql";
@@ -25,6 +25,7 @@ import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field
 import {ImageUpload} from "@/components/image-upload.client";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Plus, X} from "lucide-react";
+import {translateError} from "@/utils/utils";
 
 interface SpexFormProps {
     item?: Spex;
@@ -80,16 +81,6 @@ export function SpexForm({item, onSuccess}: SpexFormProps) {
     const availableRevivalYears = availableYears.filter(y =>
         parseInt(y) > parseInt(selectedYear) && !revivalYears.includes(y)
     );
-
-    const translateError = (error?: FormError) => {
-        if (!error?.message) {
-            return error;
-        }
-        return {
-            ...error,
-            message: t(error.message as any)
-        };
-    };
 
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {
