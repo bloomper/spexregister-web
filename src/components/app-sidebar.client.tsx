@@ -84,6 +84,33 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                         }
                     ],
                 },
+                {
+                    title: t("Task.heading"),
+                    url: "/tasks",
+                    icon: Drama,
+                    isActive: pathname.startsWith("/tasks"),
+                    items: isCurrentUserAdmin ? [
+                        {title: t("Common.manage"), url: "/tasks/manage"},
+                        {title: t("Common.create"), url: "/tasks/create"},
+                        {
+                            title: t("Task.Category.heading"),
+                            url: "/tasks/categories",
+                            icon: Shapes,
+                            isActive: pathname.startsWith("/tasks/categories"),
+                            items: [
+                                {title: t("Common.manage"), url: "/tasks/categories/manage"},
+                                {title: t("Common.create"), url: "/tasks/categories/create"},
+                            ]
+                        },
+                    ] : [
+                        {
+                            title: t("Task.Category.heading"),
+                            url: "/tasks/categories",
+                            icon: Shapes,
+                            isActive: pathname.startsWith("/tasks/categories"),
+                        }
+                    ],
+                },
             ],
             secondary: [
                 {

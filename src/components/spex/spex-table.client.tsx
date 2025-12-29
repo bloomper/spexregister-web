@@ -319,7 +319,14 @@ export function SpexTable({
         isPending,
         handleDelete,
         handleBulkDelete
-    } = useDataTableActions<Spex>(deleteAction, bulkDeleteAction);
+    } = useDataTableActions<Spex>(
+        deleteAction,
+        bulkDeleteAction,
+        () => {
+            setFilterQuery("");
+            setSelectedCategories(new Set(categories.map(c => c.id)));
+        }
+    );
 
     useEffect(() => {
         setMounted(true);
@@ -340,7 +347,7 @@ export function SpexTable({
     };
 
     const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(categories.map(c => c.id)), categories));
-    const isFilterActive = filterQuery !== "" || (categories.length > 0 && selectedCategories.size < categories.length);
+    const isFilterActive = filterQuery !== "" || selectedCategories.size !== categories.length;
 
     useEffect(() => {
         const query = buildFilterString(filterQuery, selectedCategories, categories);
@@ -533,7 +540,7 @@ export function SpexTable({
             <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{t("Common.deleteTitle")}</AlertDialogTitle>
+                        <AlertDialogTitle>{t("Common.deleteHeading")}</AlertDialogTitle>
                         <AlertDialogDescription>
                             {t("Common.deleteConfirmation")}
                         </AlertDialogDescription>
@@ -557,7 +564,7 @@ export function SpexTable({
             <AlertDialog open={isBulkDeleting} onOpenChange={setIsBulkDeleting}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{t("Common.deleteBulkTitle")}</AlertDialogTitle>
+                        <AlertDialogTitle>{t("Common.deleteBulkHeading")}</AlertDialogTitle>
                         <AlertDialogDescription>
                             {t("Common.deleteBulkConfirmation")}
                         </AlertDialogDescription>

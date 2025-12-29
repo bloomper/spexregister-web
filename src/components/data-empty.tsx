@@ -11,7 +11,7 @@ export function DataEmpty({title, description}: { title?: string, description?: 
                 <EmptyMedia variant="icon">
                     <Newspaper/>
                 </EmptyMedia>
-                <EmptyTitle>{title ?? t("Common.noDataTitle")}</EmptyTitle>
+                <EmptyTitle>{title ?? t("Common.noDataHeading")}</EmptyTitle>
                 <EmptyDescription>
                     {description ?? t("Common.noDataDescription")}
                 </EmptyDescription>

@@ -46,4 +46,32 @@ export const Policies = {
             return requireAnyRole(['ADMIN']);
         },
     },
+    task: {
+        async requireRead(): Promise<PolicyResult> {
+            return requireAnyRole(['USER', 'EDITOR', 'ADMIN']);
+        },
+        async requireCreate(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireUpdate(): Promise<PolicyResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireDelete(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+    },
+    taskCategory: {
+        async requireRead(): Promise<PolicyResult> {
+            return requireAnyRole(['USER', 'EDITOR', 'ADMIN']);
+        },
+        async requireCreate(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireUpdate(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireDelete(): Promise<PolicyResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+    },
 } as const;

@@ -76,16 +76,16 @@ export function DataFilter({
                             </Button>
                         )
                     })}
-                    {selectedValues.size > 0 && (
+                    {selectedValues.size !== options.length && (
                         <>
                             <Separator className="my-1"/>
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 className="justify-center text-xs"
-                                onClick={() => onClear ? onClear() : onSelect(new Set())}
+                                onClick={() => onClear ? onClear() : onSelect(new Set(options.map(o => o.value)))}
                             >
-                                {t("Common.clearFilters")}
+                                {t("Common.resetFilters")}
                             </Button>
                         </>
                     )}

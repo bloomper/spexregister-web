@@ -287,7 +287,13 @@ export function NewsTable({
         isPending,
         handleDelete,
         handleBulkDelete
-    } = useDataTableActions<News>(deleteAction, bulkDeleteAction);
+    } = useDataTableActions<News>(
+        deleteAction,
+        bulkDeleteAction,
+        () => {
+            setFilterQuery("");
+        }
+    );
 
     useEffect(() => {
         setMounted(true);
@@ -468,7 +474,7 @@ export function NewsTable({
             <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{t("Common.deleteTitle")}</AlertDialogTitle>
+                        <AlertDialogTitle>{t("Common.deleteHeading")}</AlertDialogTitle>
                         <AlertDialogDescription>
                             {t("Common.deleteConfirmation")}
                         </AlertDialogDescription>
@@ -492,7 +498,7 @@ export function NewsTable({
             <AlertDialog open={isBulkDeleting} onOpenChange={setIsBulkDeleting}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{t("Common.deleteBulkTitle")}</AlertDialogTitle>
+                        <AlertDialogTitle>{t("Common.deleteBulkHeading")}</AlertDialogTitle>
                         <AlertDialogDescription>
                             {t("Common.deleteBulkConfirmation")}
                         </AlertDialogDescription>

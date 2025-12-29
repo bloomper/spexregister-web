@@ -1,12 +1,11 @@
 "use client";
 
 import {ColumnDef} from "@tanstack/react-table";
-import {ArrowDown, ArrowUp, ArrowUpDown, Image as ImageIcon, MoreHorizontal, Plus, X} from "lucide-react";
+import {ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal, Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import {SpexCategory} from "@/gql/graphql";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import {formatDateTime, getProxiedImageUrl} from "@/utils/utils";
+import {Task, TaskCategory} from "@/gql/graphql";
+import {formatDateTime} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {
@@ -19,9 +18,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {SpexCategoryForm} from "@/components/spex/category";
+import {TaskForm} from "@/components/task";
 import {useEffect, useRef, useState} from "react";
-import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spex/categories/actions.server";
+import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/tasks/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
@@ -30,11 +29,13 @@ import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Checkbox} from "@/components/ui/checkbox";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {DataFilter} from "@/components/data-filter";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {Translated} from "@/components/translated.client";
-import Image from "next/image";
 
-export const columns: ColumnDef<SpexCategory>[] = [
+
+export const columns: ColumnDef<Task>[] = [
     {
         id: "select",
         header: ({table}) => {
@@ -82,7 +83,7 @@ export const columns: ColumnDef<SpexCategory>[] = [
                     onClick={() => column.toggleSorting(isSorted === "asc")}
                     className="-ml-4 h-8 data-[state=open]:bg-accent"
                 >
-                    <Translated id="Spex.Category.name"/>
+                    <Translated id="Task.name"/>
                     {isSorted === "desc" ? (
                         <ArrowDown className="ml-2 h-4 w-4"/>
                     ) : isSorted === "asc" ? (
@@ -113,8 +114,8 @@ export const columns: ColumnDef<SpexCategory>[] = [
         },
     },
     {
-        id: "firstYear",
-        accessorKey: "firstYear",
+        id: "categoryName",
+        accessorKey: "category.name",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
             return (
@@ -123,7 +124,7 @@ export const columns: ColumnDef<SpexCategory>[] = [
                     onClick={() => column.toggleSorting(isSorted === "asc")}
                     className="-ml-4 h-8 data-[state=open]:bg-accent"
                 >
-                    <Translated id="Spex.Category.firstYear"/>
+                    <Translated id="Task.category"/>
                     {isSorted === "desc" ? (
                         <ArrowDown className="ml-2 h-4 w-4"/>
                     ) : isSorted === "asc" ? (
@@ -134,34 +135,8 @@ export const columns: ColumnDef<SpexCategory>[] = [
                 </Button>
             );
         },
-        cell: ({row}) => row.getValue("firstYear"),
-        meta: {className: "hidden lg:table-cell"}
-    },
-    {
-        id: "logo",
-        accessorKey: "logoUrl",
-        header: () => <Translated id="Spex.Category.logoUrl"/>,
-        cell: ({row}) => {
-            const url = row.getValue("logo") as string;
-            const item = row.original;
-
-            return (
-                <div
-                    className="h-10 w-10 overflow-hidden rounded border bg-muted flex items-center justify-center relative">
-                    {url ? (
-                        <Image
-                            src={getProxiedImageUrl(url, item.lastModifiedAt)}
-                            alt=""
-                            fill
-                            unoptimized
-                            className="h-full w-full object-contain"
-                        />
-                    ) : (
-                        <ImageIcon className="h-5 w-5 text-muted-foreground/40 stroke-[1.5]"/>
-                    )}
-                </div>
-            );
-        },
+        cell: ({row}) => row.original.category?.name || "-",
+        meta: {className: "hidden md:table-cell"}
     },
     {
         accessorKey: "createdAt",
@@ -214,7 +189,7 @@ export const columns: ColumnDef<SpexCategory>[] = [
     {
         id: "actions",
         cell: ({row, table}) => {
-            const item = row.original;
+            const task = row.original;
             const t = useTranslations();
 
             const meta = table.options.meta as any;
@@ -229,12 +204,12 @@ export const columns: ColumnDef<SpexCategory>[] = [
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onSelect={() => meta?.setEditItem(item)}>
+                            <DropdownMenuItem onSelect={() => meta?.setEditItem(task)}>
                                 {t("Common.edit")}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="text-destructive"
-                                onSelect={() => meta?.setDeleteItem(item)}
+                                onSelect={() => meta?.setDeleteItem(task)}
                             >
                                 {t("Common.delete")}
                             </DropdownMenuItem>
@@ -246,15 +221,20 @@ export const columns: ColumnDef<SpexCategory>[] = [
     },
 ];
 
-export function SpexCategoryTable({
-                                      initialData,
-                                  }: {
-    initialData: CursorPage<SpexCategory>,
+export function TaskTable({
+                              initialData,
+                              categories,
+                          }: {
+    initialData: CursorPage<Task>,
+    categories: TaskCategory[],
 }) {
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
+    const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
+        new Set([...categories.map(c => c.id), "none"])
+    );
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
 
     const {
@@ -266,11 +246,12 @@ export function SpexCategoryTable({
         isPending,
         handleDelete,
         handleBulkDelete
-    } = useDataTableActions<SpexCategory>(
+    } = useDataTableActions<Task>(
         deleteAction,
         bulkDeleteAction,
         () => {
             setFilterQuery("");
+            setSelectedCategories(new Set([...categories.map(c => c.id), "none"]));
         }
     );
 
@@ -278,19 +259,38 @@ export function SpexCategoryTable({
         setMounted(true);
     }, []);
 
-    const buildFilterString = (query: string) => {
+    const buildFilterString = (query: string, selectedCategories: Set<string>, categories: TaskCategory[]) => {
         const parts: string[] = [];
         if (query) {
-            parts.push(`(name:*${query}* OR firstYear:*${query}*)`);
+            parts.push(`(name:*${query}*)`);
         }
-        return parts.join("");
+
+        const totalOptionCount = categories.length + 1;
+
+        if (selectedCategories.size < totalOptionCount) {
+            if (selectedCategories.size === 0) {
+                parts.push(`id:NULL`);
+            } else {
+                const categoryParts: string[] = [];
+                selectedCategories.forEach(id => {
+                    if (id === "none") {
+                        categoryParts.push(`category:NULL`);
+                    } else {
+                        categoryParts.push(`category.id:${id}`);
+                    }
+                });
+                parts.push(`(${categoryParts.join(" OR ")})`);
+            }
+        }
+        return parts.join(" AND ");
     };
 
-    const lastFilterQueryRef = useRef<string>(buildFilterString(""));
-    const isFilterActive = filterQuery !== "";
+    const totalOptionCount = categories.length + 1;
+    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set([...categories.map(c => c.id), "none"]), categories));
+    const isFilterActive = filterQuery !== "" || selectedCategories.size !== totalOptionCount;
 
     useEffect(() => {
-        const query = buildFilterString(filterQuery);
+        const query = buildFilterString(filterQuery, selectedCategories, categories);
 
         const timer = setTimeout(() => {
             if (setFilterQueryRef.current && query !== lastFilterQueryRef.current) {
@@ -300,10 +300,10 @@ export function SpexCategoryTable({
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [filterQuery]);
+    }, [filterQuery, selectedCategories, categories]);
 
     if (!mounted) {
-        return <DataTableSkeleton columnCount={7} rowCount={15}/>;
+        return <DataTableSkeleton columnCount={6} rowCount={15}/>;
     }
 
     return (
@@ -326,18 +326,35 @@ export function SpexCategoryTable({
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                         <Input
-                            placeholder={t("Spex.Category.filterPlaceholder")}
+                            placeholder={t("Task.filterPlaceholder")}
                             value={filterQuery}
                             onChange={(e) => setFilterQuery(e.target.value)}
                             className="h-8 w-full sm:w-[150px] lg:w-[250px]"
                         />
 
                         <div className="flex items-center gap-2">
+                            {categories.length > 0 && (
+                                <DataFilter
+                                    title={t("Task.category")}
+                                    options={[
+                                        ...categories.map((c) => ({
+                                            label: c.name,
+                                            value: c.id,
+                                        })),
+                                        {label: t("Common.none"), value: "none"}
+                                    ]}
+                                    selectedValues={selectedCategories}
+                                    onSelect={setSelectedCategories}
+                                    onClear={() => setSelectedCategories(new Set([...categories.map(c => c.id), "none"]))}
+                                />
+                            )}
+
                             {isFilterActive && (
                                 <Button
                                     variant="ghost"
                                     onClick={() => {
                                         setFilterQuery("");
+                                        setSelectedCategories(new Set([...categories.map(c => c.id), "none"]));
                                     }}
                                     className="h-8 px-2 lg:px-3"
                                 >
@@ -360,9 +377,9 @@ export function SpexCategoryTable({
                     </div>
 
                     <Button asChild size="sm" className="h-8 w-full lg:w-auto">
-                        <Link href="/spex/categories/create">
+                        <Link href="/tasks/create">
                             <Plus className="mr-2 h-4 w-4"/>
-                            {t("Spex.Category.createHeading")}
+                            {t("Task.createHeading")}
                         </Link>
                     </Button>
                 </div>
@@ -375,30 +392,12 @@ export function SpexCategoryTable({
                     </DialogHeader>
                     <div className="space-y-6">
                         <div className="grid gap-6">
-                            <div className="space-y-1">
-                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Spex.Category.firstYear")}</p>
-                                <p className="text-sm">{viewItem?.firstYear}</p>
-                            </div>
-
-                            <div className="space-y-2">
-                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Spex.Category.logoUrl")}</p>
-                                <div
-                                    className="w-32 h-32 overflow-hidden rounded-lg border bg-muted p-2 flex items-center justify-center relative">
-                                    {viewItem?.logoUrl ? (
-                                        <Image
-                                            src={getProxiedImageUrl(viewItem.logoUrl, viewItem.lastModifiedAt)}
-                                            alt={viewItem.name}
-                                            fill
-                                            unoptimized
-                                            className="h-full w-full object-contain p-2"
-                                        />
-                                    ) : (
-                                        <div className="flex flex-col items-center gap-1 text-muted-foreground/60">
-                                            <ImageIcon className="h-10 w-10 stroke-[1.5]"/>
-                                        </div>
-                                    )}
+                            {viewItem?.category && (
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Task.category")}</p>
+                                    <p className="text-sm">{viewItem.category.name}</p>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
                         {viewItem && (
@@ -427,11 +426,13 @@ export function SpexCategoryTable({
 
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (
-                    <SpexCategoryForm
+                    <TaskForm
                         item={editItem}
+                        categories={categories}
                         onSuccess={() => {
                             setEditItem(null);
                             setFilterQuery("");
+                            setSelectedCategories(new Set(categories.map(c => c.id)));
                             router.refresh();
                         }}
                     />

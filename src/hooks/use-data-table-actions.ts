@@ -7,7 +7,8 @@ import {useTranslations} from "next-intl";
 
 export function useDataTableActions<T extends { id: string }>(
     deleteAction: (id: string) => Promise<any>,
-    bulkDeleteAction?: (ids: string[]) => Promise<any>
+    bulkDeleteAction?: (ids: string[]) => Promise<any>,
+    onSuccess?: () => void,
 ) {
     const t = useTranslations();
     const router = useRouter();
@@ -28,6 +29,7 @@ export function useDataTableActions<T extends { id: string }>(
                 await deleteAction(deleteItem.id);
                 setDeleteItem(null);
                 toast.success(t("Common.deleteSuccess"));
+                onSuccess?.();
                 router.refresh();
             } catch (error) {
                 toast.error(t("Common.errorOccurred"));
@@ -46,6 +48,7 @@ export function useDataTableActions<T extends { id: string }>(
                 setIsBulkDeleting(false);
                 setSelectedRows([]);
                 toast.success(t("Common.deleteBulkSuccess"));
+                onSuccess?.();
                 router.refresh();
             } catch (error) {
                 toast.error(t("Common.errorOccurred"));

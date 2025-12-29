@@ -2,7 +2,6 @@
   "Common": {
     "add": "Add",
     "cancel": "Cancel",
-    "clearFilters": "Clear filters",
     "clickToUpload": "Click to upload",
     "close": "Close",
     "couldNotLoadData": "Something went wrong while loading data.",
@@ -13,10 +12,10 @@
     "delete": "Delete",
     "deleteBulkConfirmation": "This action cannot be reverted. Are you sure?",
     "deleteBulkSuccess": "Items deleted successfully",
-    "deleteBulkTitle": "Delete these items?",
+    "deleteBulkHeading": "Delete these items?",
     "deleteConfirmation": "This action cannot be reverted. Are you sure?",
     "deleteSuccess": "Delete successful",
-    "deleteTitle": "Delete this item?",
+    "deleteHeading": "Delete this item?",
     "deleting": "Deleting...",
     "dragAndDrop": "or drag and drop",
     "edit": "Edit",
@@ -36,13 +35,16 @@
     "logout": "Log out",
     "manage": "Manage",
     "myFgvAccount": "My FGV account",
+    "no": "No",
+    "none": "None",
     "noDataDescription": "Couldn't find any data at the moment. Please check back later.",
-    "noDataTitle": "No data found",
+    "noDataHeading": "No data found",
     "noFilterMatchDescription": "Try adjusting your filters or search query to find what you're looking for.",
-    "noFilterMatchTitle": "No data found",
+    "noFilterMatchHeading": "No data found",
     "noMoreDataFound": "No more data found.",
     "openMenu": "Open menu",
     "reset": "Reset",
+    "resetFilters": "Reset filters",
     "rowsPerPage": "Rows per page",
     "save": "Save",
     "saving": "Saving...",
@@ -57,7 +59,8 @@
     "toggle": "Toggle",
     "tryAgain": "Try again",
     "updateSuccess": "Update successful",
-    "uploadSuccess": "Upload successful"
+    "uploadSuccess": "Upload successful",
+    "yes": "Yes"
   },
   "Feedback": {
     "title": "Feedback"
@@ -115,6 +118,23 @@
     "selectYear": "Select year",
     "title": "Title",
     "year": "Year"
+  },
+  "Task": {
+    "Category": {
+      "createHeading": "Create task category",
+      "editHeading": "Edit task category",
+      "filterPlaceholder": "Filter by name...",
+      "actorPresent": "Has role/vocal?",
+      "heading": "Task categories",
+      "name": "Name"
+    },
+    "category": "Category",
+    "createHeading": "Create task",
+    "editHeading": "Edit task",
+    "filterPlaceholder": "Filter by name...",
+    "heading": "Task",
+    "selectCategory": "Select category",
+    "name": "Name"
   },
   "Support": {
     "title": "Support"

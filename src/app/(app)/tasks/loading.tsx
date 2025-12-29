@@ -1,6 +1,6 @@
 import {DataGridSkeleton} from "@/components/data-grid-skeleton";
 
-export default function SpexCategoryGridLoading() {
+export default function TaskGridLoading() {
     return (
         <DataGridSkeleton/>
     );

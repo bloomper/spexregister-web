@@ -5,36 +5,33 @@ import {useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
-import {Spex, SpexCategory} from "@/gql/graphql";
+import {Task, TaskCategory} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getPageAction} from "@/app/(app)/spex/actions.server";
-import {Badge} from "@/components/ui/badge";
+import {getPageAction} from "@/app/(app)/tasks/actions.server";
 import {DataFilter} from "@/components/data-filter";
 import {X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
-import Image from "next/image";
-import {getProxiedImageUrl} from "@/utils/utils";
 
-export function SpexGrid({
+export function TaskGrid({
                              initialItems = [],
                              initialPageInfo,
                              maxItems,
                              categories = [],
                          }: {
-    initialItems?: Spex[];
+    initialItems?: Task[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
-    categories?: SpexCategory[];
+    categories?: TaskCategory[];
 }) {
     const t = useTranslations();
     const [searchValue, setSearchValue] = useState("");
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
-        new Set(categories.map((c) => c.id))
+        new Set([...categories.map((c) => c.id), "none"])
     );
 
     useEffect(() => {
@@ -46,18 +43,29 @@ export function SpexGrid({
     }, [searchValue]);
 
     const fetchPageWithFilters = React.useCallback((args: { after: string | null; pageSize: number }) => {
-        const filterParts = ["parent:NULL"];
+        const filterParts = [];
 
         if (filterQuery.trim()) {
             const escapedQuery = filterQuery.trim();
-            filterParts.push(`(details.title:*${escapedQuery}* OR year:*${escapedQuery}*)`);
+            filterParts.push(`(name:*${escapedQuery}*)`);
         }
 
-        if (categories.length > 0 && selectedCategories.size < categories.length) {
-            const categoryFilters = Array.from(selectedCategories)
-                .map(id => `details.category.id:${id}`)
-                .join(" OR ");
-            filterParts.push(`(${categoryFilters})`);
+        const totalOptionCount = categories.length + 1;
+
+        if (selectedCategories.size < totalOptionCount) {
+            if (selectedCategories.size === 0) {
+                filterParts.push(`id:NULL`);
+            } else {
+                const categoryParts: string[] = [];
+                selectedCategories.forEach(id => {
+                    if (id === "none") {
+                        categoryParts.push(`category:NULL`);
+                    } else {
+                        categoryParts.push(`category.id:${id}`);
+                    }
+                });
+                filterParts.push(`(${categoryParts.join(" OR ")})`);
+            }
         }
 
         return getPageAction({
@@ -76,7 +84,7 @@ export function SpexGrid({
         sentinelRef,
         loadMore,
         reset
-    } = useInfiniteCursor<Spex>({
+    } = useInfiniteCursor<Task>({
         fetchPageAction: fetchPageWithFilters,
         pageSize: 24,
         rootMargin: '600px',
@@ -95,7 +103,7 @@ export function SpexGrid({
     };
 
     const handleClearCategories = () => {
-        const allIds = new Set(categories.map(c => c.id));
+        const allIds = new Set([...categories.map(c => c.id), "none"]);
         setSelectedCategories(allIds);
         reset();
     };
@@ -104,23 +112,24 @@ export function SpexGrid({
         setSearchValue(e.target.value);
     };
 
-    const [selected, setSelected] = useState<Spex | null>(null);
+    const [selected, setSelected] = useState<Task | null>(null);
     const items = maxItems ? allItems.slice(0, maxItems) : allItems;
     const isInfiniteMode = !maxItems;
     const noResults = !loading && items.length === 0;
-    const isFiltered = filterQuery.trim() !== "" || (categories.length > 0 && selectedCategories.size < categories.length);
+    const totalOptionCount = categories.length + 1;
+    const isFiltered = filterQuery.trim() !== "" || (categories.length > 0 && selectedCategories.size < totalOptionCount);
 
     return (
         <>
             {isInfiniteMode && (
                 <div className="col-span-full mb-6 flex flex-col gap-4 border-b pb-6">
                     <div>
-                        <h3 className="text-lg font-bold tracking-tight">{t("Spex.heading")}</h3>
+                        <h3 className="text-lg font-bold tracking-tight">{t("Task.heading")}</h3>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                         <div className="relative w-full sm:w-[300px]">
                             <Input
-                                placeholder={t("Spex.filterPlaceholder")}
+                                placeholder={t("Task.filterPlaceholder")}
                                 value={searchValue}
                                 onChange={handleQueryChange}
                                 className="h-8 text-xs pr-8"
@@ -140,17 +149,20 @@ export function SpexGrid({
                         </div>
                         {categories.length > 0 && (
                             <DataFilter
-                                title={t("Spex.category")}
-                                options={categories.map((c) => ({
-                                    label: c.name,
-                                    value: c.id,
-                                }))}
+                                title={t("Task.category")}
+                                options={[
+                                    ...categories.map((c) => ({
+                                        label: c.name,
+                                        value: c.id,
+                                    })),
+                                    {label: t("Common.none"), value: "none"}
+                                ]}
                                 selectedValues={selectedCategories}
                                 onSelect={handleCategorySelect}
                                 onClear={handleClearCategories}
                             />
                         )}
-                        {(searchValue || selectedCategories.size < categories.length) && (
+                        {(searchValue || selectedCategories.size < totalOptionCount) && (
                             <Button
                                 variant="ghost"
                                 onClick={() => {
@@ -181,102 +193,32 @@ export function SpexGrid({
                         className="group h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0"
                         onClick={() => setSelected(n)}
                     >
-                        {n.posterUrl ? (
-                            <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
-                                <Image
-                                    src={getProxiedImageUrl(n.posterUrl, n.lastModifiedAt)}
-                                    alt={n.title}
-                                    fill
-                                    unoptimized
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    className="object-cover transition-transform group-hover:scale-105"
-                                />
-                            </div>
-                        ) : (
-                            <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
-                                    <span
-                                        className="text-muted-foreground text-[10px] uppercase tracking-widest">{t("Common.noDataHeading")}</span>
-                            </div>
-                        )}
                         <CardHeader className="space-y-0.5 p-3">
                             <div className="flex items-center justify-between gap-2">
-                                <CardDescription className="text-[10px]">{n.year}</CardDescription>
-                                {n.revivals && n.revivals.length > 0 && (
-                                    <div className="flex items-center gap-1 text-primary">
-                                                <span className="text-[9px] font-bold uppercase tracking-tighter">
-                                                    {t("Spex.revivals")}
-                                                </span>
-                                        <Badge variant="default"
-                                               className="text-[9px] px-1 py-0 h-3.5 font-bold min-w-3.5 justify-center">
-                                            {n.revivals.length}
-                                        </Badge>
-                                    </div>
-                                )}
+                                <CardDescription className="text-[10px]">
+                                    {n.category?.name ?? t("Common.none")}
+                                </CardDescription>
                             </div>
-                            <CardTitle className="line-clamp-1 text-sm font-bold leading-tight">{n.title}</CardTitle>
+                            <CardTitle className="line-clamp-1 text-sm font-bold leading-tight">{n.name}</CardTitle>
                         </CardHeader>
-                        {n.category && (
-                            <CardContent className="px-4 pb-4 pt-0">
-                                <p className="text-xs text-muted-foreground truncate">{n.category.name}</p>
-                            </CardContent>
-                        )}
                     </Card>
                 ))
             )}
 
             <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
                 <DialogContent className="sm:max-w-xl p-0 overflow-hidden">
-                    <div className="relative aspect-video w-full bg-muted border-b">
-                        {selected?.posterUrl ? (
-                            <Image
-                                src={getProxiedImageUrl(selected.posterUrl, selected.lastModifiedAt)}
-                                alt={selected.title}
-                                fill
-                                unoptimized
-                                className="object-contain w-full h-full"
-                            />
-                        ) : (
-                            <div className="flex h-full items-center justify-center">
-                                    <span
-                                        className="text-muted-foreground text-xs uppercase tracking-widest">{t("Common.noDataHeading")}</span>
-                            </div>
-                        )}
-                    </div>
                     <div className="p-6">
                         <DialogHeader>
-                            <div className="text-xs text-muted-foreground">
-                                {selected?.year}
-                            </div>
-                            <DialogTitle className="text-2xl">{selected?.title}</DialogTitle>
+                            <DialogTitle className="text-2xl">{selected?.name}</DialogTitle>
                         </DialogHeader>
                         <div className="mt-6 flex flex-col gap-4 text-sm">
-                            {selected?.category && (
-                                <div>
-                                    <div
-                                        className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider mb-1">
-                                        {t("Spex.category")}
-                                    </div>
-                                    <div className="text-base">{selected.category.name}</div>
+                            <div>
+                                <div
+                                    className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider mb-1">
+                                    {t("Task.category")}
                                 </div>
-                            )}
-                            {selected?.revivals && selected.revivals.length > 0 && (
-                                <div>
-                                    <div
-                                        className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider mb-1">
-                                        {t("Spex.revivals")}
-                                    </div>
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {[...selected.revivals]
-                                            .filter((r) => r !== null && r !== undefined)
-                                            .sort((a, b) => Number(a.year) - Number(b.year))
-                                            .map((revival) => (
-                                                <Badge key={revival.id} variant="secondary" className="text-xs">
-                                                    {revival.year}
-                                                </Badge>
-                                            ))}
-                                    </div>
-                                </div>
-                            )}
+                                <div className="text-base">{selected?.category?.name ?? t("Common.none")}</div>
+                            </div>
                         </div>
                     </div>
                     <DialogFooter className="p-6 pt-0">

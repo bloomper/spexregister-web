@@ -1,0 +1,183 @@
+import 'server-only';
+
+import {getClient} from '@/lib/urql.server';
+import {SortDirection, Task, TaskConnection, TaskEdge} from "@/gql/graphql";
+import {TaskPage} from "@/types/pagination";
+import {mapConnection} from "@/utils/utils.server";
+
+const SummaryFields = `
+    id
+    name
+    category {
+      id
+      name
+      actorPresent
+    }
+`;
+
+const FullFields = `
+    ${SummaryFields}
+    createdAt
+    createdBy
+    lastModifiedAt
+    lastModifiedBy
+`;
+
+const CreateMutation = /* GraphQL */ `
+    mutation ($input: TaskCreate!) {
+        taskCreate(input: $input) {
+            ${FullFields}
+        }
+    }
+`;
+
+const UpdateMutation = /* GraphQL */ `
+    mutation ($input: TaskUpdate!) {
+        taskUpdate(input: $input) {
+            ${FullFields}
+        }
+    }
+`;
+
+const DeleteMutation = /* GraphQL */ `
+    mutation ($id: ID!) {
+        taskDelete(id: $id)
+    }
+`;
+
+const AddCategoryMutation = /* GraphQL */ `
+    mutation ($id: ID!, $categoryId: ID!) {
+        taskCategoryAdd(taskId: $id, id: $categoryId)
+    }
+`;
+
+const RemoveCategoryMutation = /* GraphQL */ `
+    mutation ($id: ID!) {
+        taskCategoryRemove(taskId: $id)
+    }
+`;
+
+const createQuery = (fields: string) => /* GraphQL */ `
+    query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges {
+                cursor
+                node { ${fields} }
+            }
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+            }
+        }
+    }
+`;
+
+export async function getPaged(args: {
+    first?: number;
+    last?: number;
+    after?: string | null;
+    before?: string | null;
+    sort?: string[];
+    direction?: SortDirection;
+    filter?: string;
+    full?: boolean
+}): Promise<TaskPage> {
+    const query = createQuery(args.full ? FullFields : SummaryFields);
+
+    const result = await getClient()
+        .query<{ taskPaged: TaskConnection }>(query, {
+            first: args.first,
+            last: args.last,
+            after: args.after ?? null,
+            before: args.before ?? null,
+            sort: args.sort ?? ["name"],
+            direction: args.direction ?? SortDirection.Asc,
+            filter: args.filter ?? "",
+        }, {
+            fetchOptions: {
+                next: {tags: ['task']}
+            }
+        })
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return mapConnection<Task, TaskEdge>(result.data?.taskPaged);
+}
+
+export async function create(input: any) {
+    const result = await getClient()
+        .mutation(CreateMutation, {input})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    if (!result.data?.taskCreate) {
+        throw new Error("No data created");
+    }
+
+    return result.data?.taskCreate;
+}
+
+export async function update(id: string, input: any) {
+    const result = await getClient()
+        .mutation(UpdateMutation, {
+            input: {
+                ...input,
+                id
+            }
+        })
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    if (!result.data?.taskUpdate) {
+        throw new Error("No data updated");
+    }
+
+    return result.data?.taskUpdate;
+}
+
+export async function del(id: string) {
+    const result = await getClient()
+        .mutation(DeleteMutation, {id})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.taskDelete;
+}
+
+export async function addCategory(id: string, categoryId: string) {
+    const result = await getClient()
+        .mutation(AddCategoryMutation, {id, categoryId})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.taskCategoryAdd;
+}
+
+export async function removeCategory(id: string) {
+    const result = await getClient()
+        .mutation(RemoveCategoryMutation, {id})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.taskCategoryRemove;
+}

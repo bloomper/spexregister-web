@@ -5,21 +5,19 @@ import {useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
-import {SpexCategory} from "@/gql/graphql";
+import {TaskCategory} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
-import {getProxiedImageUrl} from "@/utils/utils";
-import Image from "next/image";
+import {getPageAction} from "@/app/(app)/tasks/categories/actions.server";
 
-export function SpexCategoryGrid({
+export function TaskCategoryGrid({
                                      initialItems = [],
                                      initialPageInfo,
                                      maxItems,
                                  }: {
-    initialItems?: SpexCategory[];
+    initialItems?: TaskCategory[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
 }) {
@@ -32,7 +30,7 @@ export function SpexCategoryGrid({
         hasNextPage,
         sentinelRef,
         loadMore
-    } = useInfiniteCursor<SpexCategory>({
+    } = useInfiniteCursor<TaskCategory>({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
             first: args.pageSize
@@ -44,7 +42,7 @@ export function SpexCategoryGrid({
         initialPageInfo,
     });
 
-    const [selected, setSelected] = useState<SpexCategory | null>(null);
+    const [selected, setSelected] = useState<TaskCategory | null>(null);
     const items = maxItems ? allItems.slice(0, maxItems) : allItems;
     const isInfiniteMode = !maxItems;
 
@@ -56,22 +54,6 @@ export function SpexCategoryGrid({
                     className="h-full overflow-hidden transition-all hover:bg-muted/50 cursor-pointer p-0 gap-0"
                     onClick={() => setSelected(n)}
                 >
-                    {n.logoUrl ? (
-                        <div className="relative aspect-video w-full bg-muted border-b">
-                            <Image
-                                src={getProxiedImageUrl(n.logoUrl, n.lastModifiedAt)}
-                                alt={n.name}
-                                fill
-                                unoptimized
-                                className="object-contain p-4 transition-transform group-hover:scale-105"
-                            />
-                        </div>
-                    ) : (
-                        <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
-                            <span
-                                className="text-muted-foreground text-xs uppercase tracking-widest">{t("Common.noDataHeading")}</span>
-                        </div>
-                    )}
                     <CardHeader className="p-4">
                         <CardTitle className="text-sm font-bold line-clamp-2 text-center leading-tight">
                             {n.name}
@@ -86,21 +68,12 @@ export function SpexCategoryGrid({
                         <DialogTitle>{selected?.name}</DialogTitle>
                     </DialogHeader>
                     <div className="flex flex-col gap-4">
-                        <div className="text-sm font-medium">
-                            {t("Spex.Category.firstYear")}: <span
-                            className="text-muted-foreground font-normal">{selected?.firstYear}</span>
+                        <div className="space-y-1">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Task.Category.actorPresent")}</p>
+                            <p className="text-sm">
+                                {selected?.actorPresent ? t("Common.yes") : t("Common.no")}
+                            </p>
                         </div>
-                        {selected?.logoUrl && (
-                            <div className="relative aspect-square w-full overflow-hidden rounded-md bg-muted">
-                                <Image
-                                    src={getProxiedImageUrl(selected.logoUrl, selected.lastModifiedAt)}
-                                    alt={selected.name}
-                                    fill
-                                    unoptimized
-                                    className="object-contain p-6"
-                                />
-                            </div>
-                        )}
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setSelected(null)}>
