@@ -1,0 +1,22 @@
+{
+    local_certs
+}
+
+register.fgv.local.nu {
+    tls internal
+    encode zstd gzip
+
+    root * /app
+
+    handle /_next/static/* {
+        file_server
+    }
+
+    handle /public/* {
+        file_server
+    }
+
+    handle {
+        reverse_proxy app:3000
+    }
+}

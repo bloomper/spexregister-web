@@ -1,0 +1,74 @@
+name: spexregister-web
+
+services:
+  app:
+    container_name: web-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_AUTH_URL=https://register.fgv.local.nu
+        - NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=https://keycloak.fgv.local.nu:8443/auth/realms/fgv
+        - NEXT_PUBLIC_AUTH_KEYCLOAK_ID=spexregister
+    environment:
+      - NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/caddy-root.crt
+      - AUTH_TRUST_HOST=true
+      - AUTH_URL=https://register.fgv.local.nu
+      - API_GRAPHQL_ENDPOINT=https://api.register.fgv.local.nu:8443/api/graphql
+      - API_REST_BASE_URL=https://api.register.fgv.local.nu:8443
+      - AUTH_KEYCLOAK_ISSUER=https://keycloak.fgv.local.nu:8443/auth/realms/fgv
+    env_file:
+      - .env
+      - .env.local
+    extra_hosts:
+      - "register.fgv.local.nu:host-gateway"
+      - "keycloak.fgv.local.nu:host-gateway"
+      - "api.register.fgv.local.nu:host-gateway"
+    restart: always
+    volumes:
+      - ./.docker/caddy/root.crt:/usr/local/share/ca-certificates/caddy-root.crt:ro
+      - web_app_static:/app/.next/static
+      - web_app_public:/app/public
+    networks:
+      - app_network
+
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    depends_on:
+      app:
+        condition: service_started
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+      - web_app_static:/app/_next/static:ro
+      - web_app_public:/app/public:ro
+    networks:
+      app_network:
+        aliases:
+          - register.fgv.local.nu
+
+volumes:
+  caddy_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: .docker/caddy/data
+      o: bind
+  caddy_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: .docker/caddy/config
+      o: bind
+  web_app_static:
+  web_app_public:
+
+networks:
+  app_network:
+    driver: bridge
