@@ -49,7 +49,7 @@
     "save": "Spara",
     "saving": "Sparar...",
     "search": "Sök",
-    "searchPlaceholder": "Skriv för att söka efter spexare...",
+    "searchPlaceholder": "Sök efter spexare...",
     "select": "Välj",
     "selectAll": "Välj alla",
     "selected": "{count, plural, =1 {# vald} other {# valda}}",
@@ -117,6 +117,13 @@
     "selectYear": "Välj år",
     "title": "Titel",
     "year": "År"
+  },
+  "Tag": {
+    "createHeading": "Skapa tagg",
+    "editHeading": "Ändra tagg",
+    "filterPlaceholder": "Filtrera på namn...",
+    "heading": "Taggar",
+    "name": "Namn"
   },
   "Task": {
     "Category": {

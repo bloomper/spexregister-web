@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useEffect, useMemo, useState} from "react";
-import {BookOpen, Drama, House, LifeBuoy, Send, Shapes} from "lucide-react";
+import {BookOpen, Drama, House, LifeBuoy, Send, Shapes, Tag} from "lucide-react";
 
 import {NavMain} from "@/components/nav-main.client";
 import {NavSecondary} from "@/components/nav-secondary.client";
@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/sidebar";
 import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
-import {useSession} from "next-auth/react";
 import {Role} from "@/types/auth";
 import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {usePathname} from "next/navigation";
@@ -109,6 +108,16 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                             isActive: pathname.startsWith("/tasks/categories"),
                         }
                     ],
+                },
+                {
+                    title: t("Tag.heading"),
+                    url: "/tags",
+                    icon: Tag,
+                    isActive: pathname.startsWith("/tags"),
+                    items: isCurrentUserAdminOrEditor ? [
+                        {title: t("Common.manage"), url: "/tags/manage"},
+                        {title: t("Common.create"), url: "/tags/create"},
+                    ] : undefined,
                 },
             ],
             secondary: [

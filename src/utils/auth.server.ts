@@ -8,7 +8,7 @@ export async function requireUser() {
     const session = await auth();
 
     if (!session || session.error === "RefreshTokenError") {
-        return { session: null, roles: [] as Role[] };
+        return {session: null, roles: [] as Role[]};
     }
 
     return {session, roles: session.roles || []};

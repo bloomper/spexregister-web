@@ -5,6 +5,8 @@ import {
     SpexCategory,
     SpexCategoryEdge,
     SpexEdge,
+    Tag,
+    TagEdge,
     Task,
     TaskCategory,
     TaskCategoryEdge,
@@ -33,6 +35,10 @@ export type SpexPage = CursorPage<Spex> & {
 
 export type SpexCategoryPage = CursorPage<SpexCategory> & {
     edges: Array<Omit<SpexCategoryEdge, 'node'> & { node: SpexCategory }>;
+};
+
+export type TagPage = CursorPage<Tag> & {
+    edges: Array<Omit<TagEdge, 'node'> & { node: Tag }>;
 };
 
 export type TaskPage = CursorPage<Task> & {
