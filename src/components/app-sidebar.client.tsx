@@ -30,7 +30,6 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({roles, ...props}: AppSidebarProps) {
-    const {data: session} = useSession();
     const pathname = usePathname();
     const t = useTranslations();
     const [mounted, setMounted] = useState(false);
@@ -131,12 +130,6 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
         setMounted(true);
     }, []);
 
-    const user = {
-        name: session?.user?.name ?? "",
-        email: session?.user?.email ?? "",
-        avatar: session?.user?.image ?? "",
-    };
-
     return (
         <Sidebar collapsible="icon"
                  className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
@@ -177,7 +170,7 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                 )}
             </SidebarContent>
             <SidebarFooter>
-                {mounted && <NavUser user={user}/>}
+                {mounted && <NavUser/>}
             </SidebarFooter>
         </Sidebar>
     );

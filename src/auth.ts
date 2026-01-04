@@ -3,15 +3,32 @@ import 'server-only';
 import nextAuth, {DefaultSession} from 'next-auth';
 import Keycloak from 'next-auth/providers/keycloak';
 import {createHash} from "node:crypto";
+import {AccessTokenClaims, Role} from "@/types/auth";
+import {jwtDecode} from "jwt-decode";
 
 declare module 'next-auth' {
     interface Session extends DefaultSession {
         error?: "RefreshTokenError"
         access_token: string
-        id_token?: string
-        expires_at: number
-        refresh_token?: string
+        roles: Role[]
     }
+}
+
+function extractRolesFromClaims(claims: AccessTokenClaims): Role[] {
+    const rawRoles = claims.resource_access?.spexregister?.roles ?? [];
+    const roles = rawRoles
+        .map(normalizeRole)
+        .filter((r): r is Role => r !== null);
+
+    return Array.from(new Set(roles));
+}
+
+function normalizeRole(value: string): Role | null {
+    const v = value.trim().toUpperCase();
+    if (v === 'ADMIN' || v === 'EDITOR' || v === 'USER') {
+        return v;
+    }
+    return null;
 }
 
 export const {handlers, auth, signIn, signOut} = nextAuth({
@@ -19,18 +36,17 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
     providers: [Keycloak],
     callbacks: {
         async jwt({token, account, user}) {
-            if (account?.expires_at) {
-                token.expires_at = account.expires_at;
-            }
-
             if (account && user) {
+                const claims = jwtDecode<AccessTokenClaims>(account.access_token!);
+
                 return {
-                    ...token,
                     access_token: account.access_token,
-                    id_token: account.id_token,
                     expires_at: account.expires_at,
                     refresh_token: account.refresh_token,
-                    user
+                    roles: extractRolesFromClaims(claims),
+                    sub: user.id,
+                    name: user.name,
+                    email: user.email,
                 };
             }
 
@@ -68,11 +84,14 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
                     refresh_token?: string
                 };
 
+                const claims = jwtDecode<AccessTokenClaims>(newTokens.access_token);
+
                 return {
                     ...token,
                     access_token: newTokens.access_token,
                     expires_at: Math.floor(Date.now() / 1000 + newTokens.expires_in),
                     refresh_token: newTokens.refresh_token ? newTokens.refresh_token : token.refresh_token,
+                    roles: extractRolesFromClaims(claims),
                 };
             } catch (error) {
                 console.error("Error refreshing access_token", error);
@@ -82,26 +101,18 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
         },
         async session({session, token}) {
             session.access_token = token.access_token as string;
-            //session.id_token = token.id_token as string;
-            //session.expires_at = token.expires_at as number;
-            //session.refresh_token = token.refresh_token as string;
+            session.roles = (token.roles as Role[]) || [];
+            session.error = token.error as any;
 
-            if (token.sub && token.email) {
-                const email = String(token.email).trim().toLowerCase();
-                const emailHash = createHash("md5").update(email).digest("hex");
-                const gravatarUrl = `https://www.gravatar.com/avatar/${emailHash}?d=404&s=128`;
+            if (session.user) {
+                session.user.id = token.sub as string;
 
-                session.user = {
-                    id: token.sub as string,
-                    email: token.email as string,
-                    emailVerified: null,
-                    name: token.name as string,
-                    image: gravatarUrl,
-                };
-            }
+                const email = token.email?.trim().toLowerCase();
 
-            if (token.error) {
-                session.error = token.error as "RefreshTokenError";
+                if (email) {
+                    const emailHash = createHash("md5").update(email).digest("hex");
+                    session.user.image = `https://www.gravatar.com/avatar/${emailHash}?d=404&s=128`;
+                }
             }
 
             return session;

@@ -4,6 +4,7 @@ import "./globals.css";
 import {getTranslations} from "next-intl/server";
 import {cookies} from "next/headers";
 import Provider from "@/app/provider.client";
+import {AuthCheck} from "@/components/auth-check.client";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -37,7 +38,9 @@ export default async function RootLayout({
         <html lang={locale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Provider locale={locale} messages={messages}>
-            {children}
+            <AuthCheck>
+                {children}
+            </AuthCheck>
         </Provider>
         </body>
         </html>

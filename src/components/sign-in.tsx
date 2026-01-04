@@ -1,6 +1,6 @@
 'use client';
 
-import {signIn} from '@/lib/sign-in';
+import {signIn} from '@/lib/sign-in.server';
 
 export default function SignIn() {
     return (

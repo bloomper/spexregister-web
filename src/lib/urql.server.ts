@@ -34,6 +34,12 @@ const makeClient = () => {
 
                     async refreshAuth() {
                         const session = await auth();
+
+                        if (session?.error === "RefreshTokenError") {
+                            token = null;
+                            return;
+                        }
+
                         token = session?.access_token || null;
                     },
 

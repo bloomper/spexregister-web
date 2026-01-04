@@ -16,6 +16,10 @@ instance.interceptors.request.use(
         try {
             const session = await auth();
 
+            if (session?.error === "RefreshTokenError") {
+                return config;
+            }
+
             if (session?.access_token) {
                 config.headers.Authorization = `Bearer ${session.access_token}`;
             }

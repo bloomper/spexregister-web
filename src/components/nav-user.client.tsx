@@ -20,7 +20,7 @@ import {toast} from "sonner";
 import {useSession} from "next-auth/react";
 import {generateKeycloakLogoutUrl} from "@/utils/auth";
 
-function getInitials(name: string, email: string) {
+function getInitials(name?: string | null | undefined, email?: string | null | undefined) {
     const base = (name?.trim() || email?.trim() || "").trim();
     if (!base) {
         return "?";
@@ -33,22 +33,15 @@ function getInitials(name: string, email: string) {
     return (first + last).toUpperCase();
 }
 
-export function NavUser({
-                            user,
-                        }: {
-    user: {
-        name: string
-        email: string
-        avatar: string
-    }
-}) {
+export function NavUser() {
     const {isMobile} = useSidebar();
     const t = useTranslations();
     const {data: session} = useSession();
+    const user = session?.user ?? {};
 
     const initials = useMemo(() => getInitials(user.name, user.email), [user.name, user.email]);
     const [avatarFailed, setAvatarFailed] = React.useState(false);
-    const avatarSrc = !avatarFailed && user.avatar ? user.avatar : undefined;
+    const avatarSrc = !avatarFailed && user.image ? user.image : undefined;
 
     const accountUrl = `${process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}/account`;
 
@@ -62,7 +55,7 @@ export function NavUser({
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage src={avatarSrc} alt={user.name} onError={() => setAvatarFailed(true)}/>
+                                <AvatarImage src={avatarSrc} alt={user.name ?? ""} onError={() => setAvatarFailed(true)}/>
                                 <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -81,7 +74,7 @@ export function NavUser({
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={avatarSrc} alt={user.name} onError={() => setAvatarFailed(true)}/>
+                                    <AvatarImage src={avatarSrc} alt={user.name ?? ""} onError={() => setAvatarFailed(true)}/>
                                     <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -110,8 +103,7 @@ export function NavUser({
                             className="flex items-center gap-2"
                             onSelect={() => {
                                 const logoutUrl = generateKeycloakLogoutUrl(
-                                    process.env.NEXT_PUBLIC_AUTH_URL ?? '',
-                                    session?.id_token
+                                    process.env.NEXT_PUBLIC_AUTH_URL ?? ''
                                 );
 
                                 toast.message(t("Common.loggedOut"));
