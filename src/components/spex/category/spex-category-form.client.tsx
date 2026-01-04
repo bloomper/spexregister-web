@@ -92,7 +92,7 @@ export function SpexCategoryForm({item, onSuccess}: SpexCategoryFormProps) {
                         <FieldLabel>{t("Spex.Category.name")}</FieldLabel>
                         <FieldContent>
                             <Input {...register("name")} />
-                            <FieldError errors={[translateError(errors.name)]}/>
+                            <FieldError errors={[translateError(t, errors.name)]}/>
                         </FieldContent>
                     </Field>
 
@@ -120,7 +120,7 @@ export function SpexCategoryForm({item, onSuccess}: SpexCategoryFormProps) {
                                     </Select>
                                 )}
                             />
-                            <FieldError errors={[translateError(errors.firstYear)]}/>
+                            <FieldError errors={[translateError(t, errors.firstYear)]}/>
                         </FieldContent>
                     </Field>
 

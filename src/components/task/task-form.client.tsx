@@ -113,7 +113,7 @@ export function TaskForm({
                                     </Select>
                                 )}
                             />
-                            <FieldError errors={[translateError(errors.categoryId)]}/>
+                            <FieldError errors={[translateError(t, errors.categoryId)]}/>
                         </FieldContent>
                     </Field>
 
@@ -121,7 +121,7 @@ export function TaskForm({
                         <FieldLabel>{t("Task.name")}</FieldLabel>
                         <FieldContent>
                             <Input {...register("name")} />
-                            <FieldError errors={[translateError(errors.name)]}/>
+                            <FieldError errors={[translateError(t, errors.name)]}/>
                         </FieldContent>
                     </Field>
                 </div>

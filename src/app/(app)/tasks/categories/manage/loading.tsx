@@ -8,7 +8,7 @@ export default function TaskCategoryManageLoading() {
                 <Skeleton className="h-8 w-[200px]"/>
             </div>
             <DataTableSkeleton
-                rowCount={10}
+                rowCount={15}
                 columnCount={6}
                 columnTypes={["checkbox", "text", "text", "text", "text", "text"]}
                 columnClasses={[

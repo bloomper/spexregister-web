@@ -53,14 +53,16 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
                 {hasSubItems ? (
                     <div
                         className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent group-data-[state=open]/menu-item:bg-sidebar-accent/50 ${isActive ? 'bg-sidebar-accent' : ''}`}>
-                        <LinkComponent {...linkProps}
-                                       className="flex flex-1 items-center gap-2 px-2 py-1.5 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring">
-                            {item.icon && <item.icon className="size-4"/>}
-                            <span className="truncate">{item.title}</span>
-                        </LinkComponent>
+                        <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}
+                                           className="hover:bg-transparent! active:bg-transparent!">
+                            <LinkComponent {...linkProps}>
+                                {item.icon && <item.icon/>}
+                                <span>{item.title}</span>
+                            </LinkComponent>
+                        </SidebarMenuButton>
                         <CollapsibleTrigger asChild>
                             <button
-                                className="mr-1 flex size-7 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform">
+                                className="mr-1 flex size-7 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform group-data-[collapsible=icon]:hidden">
                                 <ChevronRight
                                     className="size-4 transition-transform duration-200 group-data-[state=open]/menu-item:rotate-90"/>
                                 <span className="sr-only">{t("Common.toggle")}</span>

@@ -60,6 +60,7 @@
     "search": "Search",
     "searchPlaceholder": "Search for spexare...",
     "select": "Select",
+    "selectDate": "Select date",
     "selectAll": "Select all",
     "selected": "{count, plural, =1 {# selected} other {# selected}}",
     "themeDark": "Dark",
@@ -120,10 +121,47 @@
     "posterUrl": "Poster",
     "revival": "Revival?",
     "revivals": "Revivals",
+    "noRevivals": "None",
     "selectCategory": "Select category",
     "selectYear": "Select year",
     "title": "Title",
     "year": "Year"
+  },
+  "Spexare": {
+    "createHeading": "Create spexare",
+    "editHeading": "Edit spexare",
+    "filterPlaceholder": "Filter by first name, last name and/or nick name...",
+    "heading": "Spexare",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "nickName": "Nick name",
+    "imageUrl": "Image",
+    "deceased": "Deceased?",
+    "deceasedStates": {
+      "false": "No",
+      "true": "Yes"
+    },
+    "deceasedBadges": {
+      "false": "Not deceased",
+      "true": "Deceased"
+    },
+    "published": "Published?",
+    "publishedStates": {
+      "false": "No",
+      "true": "Yes"
+    },
+    "publishedBadges": {
+      "false": "Not published",
+      "true": "Published"
+    },
+    "socialSecurityNumber": "Social security number",
+    "birthDate": "Birth date",
+    "birthNumber": "Birth number",
+    "birthNumberPlaceholder": "The last four",
+    "invalidSocialSecurityNumber": "Invalid social security number",
+    "invalidBirthNumber": "Invalid birth number",
+    "graduation": "Graduation",
+    "comment": "Comment"
   },
   "Tag": {
     "createHeading": "Create tag",

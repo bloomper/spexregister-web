@@ -159,7 +159,7 @@ export function SpexForm({
                                     </Select>
                                 )}
                             />
-                            <FieldError errors={[translateError(errors.categoryId)]}/>
+                            <FieldError errors={[translateError(t, errors.categoryId)]}/>
                         </FieldContent>
                     </Field>
 
@@ -188,7 +188,7 @@ export function SpexForm({
                                     </Select>
                                 )}
                             />
-                            <FieldError errors={[translateError(errors.year)]}/>
+                            <FieldError errors={[translateError(t, errors.year)]}/>
                         </FieldContent>
                     </Field>
 
@@ -196,7 +196,7 @@ export function SpexForm({
                         <FieldLabel>{t("Spex.title")}</FieldLabel>
                         <FieldContent>
                             <Input {...register("title")} />
-                            <FieldError errors={[translateError(errors.title)]}/>
+                            <FieldError errors={[translateError(t, errors.title)]}/>
                         </FieldContent>
                     </Field>
 

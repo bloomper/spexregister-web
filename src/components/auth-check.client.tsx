@@ -8,7 +8,7 @@ export function AuthCheck({children}: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (session?.error === "RefreshTokenError") {
-            signOut({callbackUrl: "/"});
+            signOut({redirectTo: "/"});
         }
     }, [session]);
 

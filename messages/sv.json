@@ -60,6 +60,7 @@
     "search": "Sök",
     "searchPlaceholder": "Sök efter spexare...",
     "select": "Välj",
+    "selectDate": "Välj datum",
     "selectAll": "Välj alla",
     "selected": "{count, plural, =1 {# vald} other {# valda}}",
     "themeDark": "Mörk",
@@ -119,10 +120,47 @@
     "posterUrl": "Poster",
     "revival": "Nyuppsättning?",
     "revivals": "Nyuppsättningar",
+    "noRevivals": "Inga",
     "selectCategory": "Välj kategori",
     "selectYear": "Välj år",
     "title": "Titel",
     "year": "År"
+  },
+  "Spexare": {
+    "createHeading": "Skapa spexare",
+    "editHeading": "Ändra spexare",
+    "filterPlaceholder": "Filtrera på förnamn, efternamn och/eller smeknamn...",
+    "heading": "Spexare",
+    "firstName": "Förnamn",
+    "lastName": "Efternamn",
+    "nickName": "Smeknamn",
+    "imageUrl": "Bild",
+    "deceased": "Avliden?",
+    "deceasedStates": {
+      "false": "Nej",
+      "true": "Ja"
+    },
+    "deceasedBadges": {
+      "false": "Ej avliden",
+      "true": "Avliden"
+    },
+    "published": "Publicerad?",
+    "publishedStates": {
+      "false": "Nej",
+      "true": "Ja"
+    },
+    "publishedBadges": {
+      "false": "Ej publicerad",
+      "true": "Publicerad"
+    },
+    "socialSecurityNumber": "Personnummer",
+    "birthDate": "Födelsedatum",
+    "birthNumber": "Födelsenummer",
+    "birthNumberPlaceholder": "De sista fyra",
+    "invalidSocialSecurityNumber": "Ogiltigt personnummer",
+    "invalidBirthNumber": "Ogiltigt födelsenummer",
+    "graduation": "Examen",
+    "comment": "Kommentar"
   },
   "Tag": {
     "createHeading": "Skapa tagg",

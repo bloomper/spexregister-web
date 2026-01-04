@@ -62,7 +62,7 @@ export function TagForm({item, onSuccess}: TagFormProps) {
                         <FieldLabel>{t("Tag.name")}</FieldLabel>
                         <FieldContent>
                             <Input {...register("name")} />
-                            <FieldError errors={[translateError(errors.name)]}/>
+                            <FieldError errors={[translateError(t, errors.name)]}/>
                         </FieldContent>
                     </Field>
                 </div>

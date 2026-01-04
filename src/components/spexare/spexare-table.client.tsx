@@ -1,12 +1,12 @@
 "use client";
 
 import {ColumnDef} from "@tanstack/react-table";
-import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, MoreHorizontal, Plus, X} from "lucide-react";
+import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, MoreHorizontal, Plus, User, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import {News} from "@/gql/graphql";
+import {Spexare} from "@/gql/graphql";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import {formatDate, formatDateTime} from "@/utils/utils";
+import {formatDateTime, getProxiedImageUrl} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {
@@ -19,23 +19,26 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {NewsForm} from "@/components/news";
+import {SpexareForm} from "@/components/spexare";
 import {useEffect, useRef, useState} from "react";
-import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/news/actions.server";
+import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spexare/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
-import {DataFilter} from "@/components/data-filter";
 import Link from "next/link";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Checkbox} from "@/components/ui/checkbox";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {Translated} from "@/components/translated.client";
+import {DataFilter} from "@/components/data-filter";
+import Image from "next/image";
+import {Badge} from "@/components/ui/badge";
+import {format, parse} from "date-fns";
 
 
-export const columns: ColumnDef<News>[] = [
+export const columns: ColumnDef<Spexare>[] = [
     {
         id: "select",
         header: ({table}) => {
@@ -73,8 +76,8 @@ export const columns: ColumnDef<News>[] = [
         enableHiding: false,
     },
     {
-        id: "subject",
-        accessorKey: "subject",
+        id: "firstName",
+        accessorKey: "firstName",
         header: ({column}) => {
             const isSorted = column.getIsSorted();
             return (
@@ -83,7 +86,7 @@ export const columns: ColumnDef<News>[] = [
                     onClick={() => column.toggleSorting(isSorted === "asc")}
                     className="-ml-4 h-8 data-[state=open]:bg-accent"
                 >
-                    <Translated id="News.subject"/>
+                    <Translated id="Spexare.firstName"/>
                     {isSorted === "desc" ? (
                         <ArrowDown className="ml-2 h-4 w-4"/>
                     ) : isSorted === "asc" ? (
@@ -95,18 +98,18 @@ export const columns: ColumnDef<News>[] = [
             );
         },
         cell: ({row}) => {
-            const subject = row.getValue("subject") as string;
+            const firstName = row.getValue("firstName") as string;
 
             return (
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div className="max-w-[300px] truncate font-medium cursor-default">
-                                {subject}
+                                {firstName}
                             </div>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-[400px] wrap-break-word">
-                            {subject}
+                            {firstName}
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
@@ -114,9 +117,118 @@ export const columns: ColumnDef<News>[] = [
         },
     },
     {
+        id: "lastName",
+        accessorKey: "lastName",
+        header: ({column}) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                >
+                    <Translated id="Spexare.lastName"/>
+                    {isSorted === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4"/>
+                    ) : isSorted === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4"/>
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    )}
+                </Button>
+            );
+        },
+        cell: ({row}) => {
+            const lastName = row.getValue("lastName") as string;
+
+            return (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="max-w-[300px] truncate font-medium cursor-default">
+                                {lastName}
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-[400px] wrap-break-word">
+                            {lastName}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            );
+        },
+    },
+    {
+        id: "nickName",
+        accessorKey: "nickName",
+        header: ({column}) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                >
+                    <Translated id="Spexare.nickName"/>
+                    {isSorted === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4"/>
+                    ) : isSorted === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4"/>
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    )}
+                </Button>
+            );
+        },
+        cell: ({row}) => {
+            const nickName = row.getValue("nickName") as string;
+
+            return (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="max-w-[300px] truncate font-medium cursor-default">
+                                {nickName}
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-[400px] wrap-break-word">
+                            {nickName}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            );
+        },
+        meta: {className: "hidden md:table-cell"}
+    },
+    {
+        id: "image",
+        accessorKey: "imageUrl",
+        header: () => <Translated id="Spexare.imageUrl"/>,
+        cell: ({row}) => {
+            const url = row.getValue("image") as string;
+            const item = row.original;
+
+            return (
+                <div
+                    className="h-10 w-10 overflow-hidden rounded border bg-muted flex items-center justify-center relative">
+                    {url ? (
+                        <Image
+                            src={getProxiedImageUrl(url, item.lastModifiedAt)}
+                            alt=""
+                            fill
+                            unoptimized
+                            className="h-full w-full object-contain"
+                        />
+                    ) : (
+                        <User className="h-5 w-5 text-muted-foreground/40 stroke-[1.5]"/>
+                    )}
+                </div>
+            );
+        },
+    },
+    {
         id: "published",
         accessorKey: "published",
-        header: () => <Translated id="News.published"/>,
+        header: () => <Translated id="Spexare.published"/>,
         cell: ({row}) => {
             const isPublished = !!row.getValue("published");
             return (
@@ -132,54 +244,22 @@ export const columns: ColumnDef<News>[] = [
         meta: {className: "hidden md:table-cell"}
     },
     {
-        id: "visibleFrom",
-        accessorKey: "visibleFrom",
-        header: ({column}) => {
-            const isSorted = column.getIsSorted();
+        id: "deceased",
+        accessorKey: "deceased",
+        header: () => <Translated id="Spexare.deceased"/>,
+        cell: ({row}) => {
+            const isDeceased = !!row.getValue("deceased");
             return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
-                >
-                    <Translated id="News.visibleFrom"/>
-                    {isSorted === "desc" ? (
-                        <ArrowDown className="ml-2 h-4 w-4"/>
-                    ) : isSorted === "asc" ? (
-                        <ArrowUp className="ml-2 h-4 w-4"/>
+                <div className="flex items-center gap-2">
+                    {isDeceased ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500"/>
                     ) : (
-                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                        <Circle className="h-4 w-4 text-muted-foreground"/>
                     )}
-                </Button>
-            );
+                </div>
+            )
         },
-        cell: ({row}) => formatDate(row.getValue("visibleFrom") as string) || "-",
-        meta: {className: "hidden lg:table-cell"}
-    },
-    {
-        id: "visibleTo",
-        accessorKey: "visibleTo",
-        header: ({column}) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
-                >
-                    <Translated id="News.visibleTo"/>
-                    {isSorted === "desc" ? (
-                        <ArrowDown className="ml-2 h-4 w-4"/>
-                    ) : isSorted === "asc" ? (
-                        <ArrowUp className="ml-2 h-4 w-4"/>
-                    ) : (
-                        <ArrowUpDown className="ml-2 h-4 w-4"/>
-                    )}
-                </Button>
-            );
-        },
-        cell: ({row}) => formatDate(row.getValue("visibleTo") as string) || "-",
-        meta: {className: "hidden xl:table-cell"}
+        meta: {className: "hidden md:table-cell"}
     },
     {
         id: "createdAt",
@@ -266,16 +346,17 @@ export const columns: ColumnDef<News>[] = [
     },
 ];
 
-export function NewsTable({
-                              initialData,
-                          }: {
-    initialData: CursorPage<News>,
+export function SpexareTable({
+                                 initialData,
+                             }: {
+    initialData: CursorPage<Spexare>,
 }) {
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
+    const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
 
     const {
@@ -287,11 +368,13 @@ export function NewsTable({
         isPending,
         handleDelete,
         handleBulkDelete
-    } = useDataTableActions<News>(
+    } = useDataTableActions<Spexare>(
         deleteAction,
         bulkDeleteAction,
         () => {
             setFilterQuery("");
+            setSelectedPublishedValues(new Set(["true", "false"]));
+            setSelectedDeceasedValues(new Set(["true", "false"]));
         }
     );
 
@@ -300,10 +383,10 @@ export function NewsTable({
     }, []);
 
 
-    const buildFilterString = (query: string, published: Set<string>) => {
+    const buildFilterString = (query: string, published: Set<string>, deceased: Set<string>) => {
         const parts: string[] = [];
         if (query) {
-            parts.push(`subject:*${query}*`);
+            parts.push(`(firstName:*${query}* OR lastName:*${query}* OR nickName:*${query}*)`);
         }
         if (published.size < 2) {
             if (published.size === 0) {
@@ -313,14 +396,22 @@ export function NewsTable({
                 parts.push(`published:${val}`);
             }
         }
+        if (deceased.size < 2) {
+            if (deceased.size === 0) {
+                parts.push(`deceased:NULL`);
+            } else {
+                const val = deceased.has("true") ? "TRUE" : "FALSE";
+                parts.push(`deceased:${val}`);
+            }
+        }
         return parts.join(" AND ");
     };
 
-    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(["true", "false"])));
-    const isFilterActive = filterQuery !== "" || selectedPublishedValues.size < 2;
+    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(["true", "false"]), new Set(["true", "false"])));
+    const isFilterActive = filterQuery !== "" || selectedPublishedValues.size < 2 || selectedDeceasedValues.size < 2;
 
     useEffect(() => {
-        const query = buildFilterString(filterQuery, selectedPublishedValues);
+        const query = buildFilterString(filterQuery, selectedPublishedValues, selectedDeceasedValues);
 
         const timer = setTimeout(() => {
             if (setFilterQueryRef.current && query !== lastFilterQueryRef.current) {
@@ -330,10 +421,10 @@ export function NewsTable({
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [filterQuery, selectedPublishedValues]);
+    }, [filterQuery, selectedPublishedValues, selectedDeceasedValues]);
 
     if (!mounted) {
-        return <DataTableSkeleton columnCount={7} rowCount={15}/>;
+        return <DataTableSkeleton columnCount={9} rowCount={15}/>;
     }
 
     return (
@@ -341,7 +432,7 @@ export function NewsTable({
             <DataTable
                 columns={columns}
                 initialData={initialData}
-                initialSorting={[{id: "visibleFrom", desc: true}]}
+                initialSorting={[{id: "firstName", desc: true}]}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: true})}
@@ -356,7 +447,7 @@ export function NewsTable({
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                         <Input
-                            placeholder={t("News.filterPlaceholder")}
+                            placeholder={t("Spexare.filterPlaceholder")}
                             value={filterQuery}
                             onChange={(e) => setFilterQuery(e.target.value)}
                             className="h-8 w-full sm:w-[150px] lg:w-[250px]"
@@ -364,13 +455,24 @@ export function NewsTable({
 
                         <div className="flex items-center gap-2">
                             <DataFilter
-                                title={t("News.published")}
+                                title={t("Spexare.published")}
                                 selectedValues={selectedPublishedValues}
                                 onSelect={setSelectedPublishedValues}
                                 onClear={() => setSelectedPublishedValues(new Set(["true", "false"]))}
                                 options={[
-                                    {label: t("News.publishedStates.true"), value: "true", icon: CheckCircle2},
-                                    {label: t("News.publishedStates.false"), value: "false", icon: Circle},
+                                    {label: t("Spexare.publishedStates.true"), value: "true", icon: CheckCircle2},
+                                    {label: t("Spexare.publishedStates.false"), value: "false", icon: Circle},
+                                ]}
+                            />
+
+                            <DataFilter
+                                title={t("Spexare.deceased")}
+                                selectedValues={selectedDeceasedValues}
+                                onSelect={setSelectedDeceasedValues}
+                                onClear={() => setSelectedDeceasedValues(new Set(["true", "false"]))}
+                                options={[
+                                    {label: t("Spexare.deceasedStates.true"), value: "true", icon: CheckCircle2},
+                                    {label: t("Spexare.deceasedStates.false"), value: "false", icon: Circle},
                                 ]}
                             />
 
@@ -380,6 +482,7 @@ export function NewsTable({
                                     onClick={() => {
                                         setFilterQuery("");
                                         setSelectedPublishedValues(new Set(["true", "false"]));
+                                        setSelectedDeceasedValues(new Set(["true", "false"]));
                                     }}
                                     className="h-8 px-2 lg:px-3"
                                 >
@@ -402,56 +505,118 @@ export function NewsTable({
                     </div>
 
                     <Button asChild size="sm" className="h-8 w-full lg:w-auto">
-                        <Link href="/news/create">
+                        <Link href="/spexare/create">
                             <Plus className="mr-2 h-4 w-4"/>
-                            {t("News.createHeading")}
+                            {t("Spexare.createHeading")}
                         </Link>
                     </Button>
                 </div>
             </DataTable>
 
             <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
-                <DialogContent className="sm:max-w-2xl">
-                    <DialogHeader>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-1">
-                            <div>{viewItem?.visibleFrom ? formatDate(viewItem.visibleFrom) : ''}</div>
-                            {viewItem && (
-                                <>
-                                    <div className="h-3 w-px bg-border"/>
-                                    <div className="flex items-center gap-1.5">
-                                        {viewItem.published ? (
-                                            <CheckCircle2 className="h-3.5 w-3.5 text-green-500"/>
-                                        ) : (
-                                            <Circle className="h-3.5 w-3.5"/>
-                                        )}
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        <DialogTitle className="text-xl pr-6">{viewItem?.subject}</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-6">
-                        <div className="whitespace-pre-wrap text-sm text-foreground max-h-[50vh] overflow-y-auto">
-                            {viewItem?.text}
-                        </div>
-
-                        {viewItem && (
-                            <div
-                                className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/30 p-3 text-[11px] text-muted-foreground">
-                                <div className="space-y-1">
-                                    <p className="font-semibold text-foreground/70 uppercase tracking-wider">{t("Common.createdAt")}</p>
-                                    <p>{formatDateTime(viewItem.createdAt)} ({viewItem.createdBy})</p>
-                                </div>
-                                {viewItem.lastModifiedAt && (
-                                    <div className="space-y-1">
-                                        <p className="font-semibold text-foreground/70 uppercase tracking-wider">{t("Common.lastModifiedAt")}</p>
-                                        <p>{formatDateTime(viewItem.lastModifiedAt)} ({viewItem.lastModifiedBy})</p>
-                                    </div>
-                                )}
+                <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
+                    <div className="relative aspect-video w-full bg-muted border-b">
+                        {viewItem?.imageUrl ? (
+                            <Image
+                                src={getProxiedImageUrl(viewItem.imageUrl, viewItem.lastModifiedAt)}
+                                alt={`${viewItem.firstName} ${viewItem.lastName}`}
+                                fill
+                                unoptimized
+                                className="object-contain w-full h-full"
+                            />
+                        ) : (
+                            <div className="flex h-full items-center justify-center">
+                                <User className="h-24 w-24 text-muted-foreground/20 stroke-1"/>
                             </div>
                         )}
                     </div>
-                    <DialogFooter>
+                    <div className="p-6">
+                        <DialogHeader>
+                            <div className="flex items-start justify-between gap-2">
+                                <div className="flex flex-col gap-1">
+                                    <DialogTitle className="text-2xl leading-none">
+                                        {viewItem?.firstName} {viewItem?.lastName}
+                                    </DialogTitle>
+                                    {viewItem?.nickName && (
+                                        <div className="text-muted-foreground italic text-lg leading-none">
+                                            {viewItem.nickName}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex flex-wrap justify-end gap-2 mt-1 shrink-0">
+                                    {viewItem?.deceased &&
+                                        <Badge variant="outline"
+                                               className="text-[10px] uppercase tracking-wider shrink-0 mt-1">
+                                            {t("Spexare.deceasedBadges.true")}
+                                        </Badge>
+                                    }
+                                    {!viewItem?.published &&
+                                        <Badge variant="outline"
+                                               className="text-[10px] uppercase tracking-wider shrink-0 mt-1">
+                                            {t("Spexare.publishedBadges.false")}
+                                        </Badge>
+                                    }
+                                </div>
+                            </div>
+                        </DialogHeader>
+
+                        <div className="mt-6 space-y-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                                {viewItem?.socialSecurityNumber && (
+                                    <div className="space-y-1">
+                                        <div
+                                            className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">
+                                            {viewItem.socialSecurityNumber.includes("-") ? t("Spexare.socialSecurityNumber") : t("Spexare.birthDate")}
+                                        </div>
+                                        <div className="text-sm font-medium text-foreground">
+                                            {viewItem.socialSecurityNumber.includes("-")
+                                                ? viewItem.socialSecurityNumber
+                                                : format(parse(viewItem.socialSecurityNumber, "yyyyMMdd", new Date()), "yyyy-MM-dd")
+                                            }
+                                        </div>
+                                    </div>
+                                )}
+                                {viewItem?.graduation && (
+                                    <div className="space-y-1">
+                                        <div
+                                            className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">
+                                            {t("Spexare.graduation")}
+                                        </div>
+                                        <div className="text-sm font-medium text-foreground">{viewItem.graduation}</div>
+                                    </div>
+                                )}
+                                {viewItem?.comment && (
+                                    <div className="sm:col-span-2 space-y-1">
+                                        <div
+                                            className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">
+                                            {t("Spexare.comment")}
+                                        </div>
+                                        <div
+                                            className="text-sm text-foreground whitespace-pre-wrap leading-relaxed bg-muted/30 p-3 rounded-md border border-muted">
+                                            {viewItem.comment}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {viewItem && (
+                                <div
+                                    className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/30 p-3 text-[11px] text-muted-foreground">
+                                    <div className="space-y-1">
+                                        <p className="font-semibold text-foreground/70 uppercase tracking-wider">{t("Common.createdAt")}</p>
+                                        <p>{formatDateTime(viewItem.createdAt)} ({viewItem.createdBy})</p>
+                                    </div>
+                                    {viewItem.lastModifiedAt && (
+                                        <div className="space-y-1">
+                                            <p className="font-semibold text-foreground/70 uppercase tracking-wider">{t("Common.lastModifiedAt")}</p>
+                                            <p>{formatDateTime(viewItem.lastModifiedAt)} ({viewItem.lastModifiedBy})</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <DialogFooter className="p-6 pt-0">
                         <Button variant="outline" onClick={() => setViewItem(null)}>
                             {t("Common.close")}
                         </Button>
@@ -461,12 +626,13 @@ export function NewsTable({
 
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (
-                    <NewsForm
+                    <SpexareForm
                         item={editItem}
                         onSuccess={() => {
                             setEditItem(null);
                             setFilterQuery("");
-                            setSelectedPublishedValues(new Set(["true", "false"]))
+                            setSelectedPublishedValues(new Set(["true", "false"]));
+                            setSelectedDeceasedValues(new Set(["true", "false"]));
                             router.refresh();
                         }}
                     />

@@ -2,6 +2,8 @@ import {
     News,
     NewsEdge,
     Spex,
+    Spexare,
+    SpexareEdge,
     SpexCategory,
     SpexCategoryEdge,
     SpexEdge,
@@ -35,6 +37,10 @@ export type SpexPage = CursorPage<Spex> & {
 
 export type SpexCategoryPage = CursorPage<SpexCategory> & {
     edges: Array<Omit<SpexCategoryEdge, 'node'> & { node: SpexCategory }>;
+};
+
+export type SpexarePage = CursorPage<Spexare> & {
+    edges: Array<Omit<SpexareEdge, 'node'> & { node: Spexare }>;
 };
 
 export type TagPage = CursorPage<Tag> & {

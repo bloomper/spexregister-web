@@ -66,7 +66,7 @@ export function NewsForm({item, onSuccess}: NewsFormProps) {
                         <FieldLabel>{t("News.subject")}</FieldLabel>
                         <FieldContent>
                             <Input {...register("subject")} />
-                            <FieldError errors={[translateError(errors.subject)]}/>
+                            <FieldError errors={[translateError(t, errors.subject)]}/>
                         </FieldContent>
                     </Field>
 
@@ -74,7 +74,7 @@ export function NewsForm({item, onSuccess}: NewsFormProps) {
                         <FieldLabel>{t("News.text")}</FieldLabel>
                         <FieldContent>
                             <Textarea {...register("text")} rows={10}/>
-                            <FieldError errors={[translateError(errors.text)]}/>
+                            <FieldError errors={[translateError(t, errors.text)]}/>
                         </FieldContent>
                     </Field>
 
@@ -83,7 +83,7 @@ export function NewsForm({item, onSuccess}: NewsFormProps) {
                             <FieldLabel>{t("News.visibleFrom")}</FieldLabel>
                             <FieldContent>
                                 <Input type="date" {...register("visibleFrom")} />
-                                <FieldError errors={[translateError(errors.visibleFrom)]}/>
+                                <FieldError errors={[translateError(t, errors.visibleFrom)]}/>
                             </FieldContent>
                         </Field>
 
@@ -91,7 +91,7 @@ export function NewsForm({item, onSuccess}: NewsFormProps) {
                             <FieldLabel>{t("News.visibleTo")}</FieldLabel>
                             <FieldContent>
                                 <Input type="date" {...register("visibleTo")} />
-                                <FieldError errors={[translateError(errors.visibleTo)]}/>
+                                <FieldError errors={[translateError(t, errors.visibleTo)]}/>
                             </FieldContent>
                         </Field>
                     </div>

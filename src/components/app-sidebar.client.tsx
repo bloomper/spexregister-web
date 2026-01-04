@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useEffect, useMemo, useState} from "react";
-import {BookOpen, Clapperboard, ClipboardList, Drama, House, Shapes, Tag, Wrench} from "lucide-react";
+import {BookOpen, Clapperboard, ClipboardList, Drama, House, Shapes, Tag, UserRound, Wrench} from "lucide-react";
 
 import {NavMain} from "@/components/nav-main.client";
 import {NavSecondary} from "@/components/nav-secondary.client";
@@ -56,10 +56,20 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                     ] : undefined,
                 },
                 {
+                    title: t("Spexare.heading"),
+                    url: "/spexare",
+                    icon: UserRound,
+                    isActive: pathname.startsWith("/spexare"),
+                    items: isCurrentUserAdminOrEditor ? [
+                        {title: t("Common.manage"), url: "/spexare/manage"},
+                        {title: t("Common.create"), url: "/spexare/create"},
+                    ] : undefined,
+                },
+                {
                     title: t("Spex.heading"),
                     url: "/spex",
                     icon: Clapperboard,
-                    isActive: pathname.startsWith("/spex"),
+                    isActive: pathname === "/spex" || pathname.startsWith("/spex/"),
                     items: isCurrentUserAdmin ? [
                         {title: t("Common.manage"), url: "/spex/manage"},
                         {title: t("Common.create"), url: "/spex/create"},

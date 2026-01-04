@@ -8,7 +8,7 @@ export default function SpexManageLoading() {
                 <Skeleton className="h-8 w-[150px]"/>
             </div>
             <DataTableSkeleton
-                rowCount={10}
+                rowCount={15}
                 columnCount={8}
                 columnTypes={["checkbox", "text", "text", "text", "image", "text", "text", "text"]}
                 columnClasses={[

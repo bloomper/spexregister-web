@@ -8,8 +8,8 @@ export default function TagManageLoading() {
                 <Skeleton className="h-8 w-[180px]"/>
             </div>
             <DataTableSkeleton
-                rowCount={10}
-                columnCount={3}
+                rowCount={15}
+                columnCount={4}
                 columnTypes={["checkbox", "text", "text", "text"]}
                 columnClasses={[
                     "w-[40px]",                       // Select

@@ -65,7 +65,7 @@ export function TaskCategoryForm({item, onSuccess}: TaskCategoryFormProps) {
                         <FieldLabel>{t("Task.Category.name")}</FieldLabel>
                         <FieldContent>
                             <Input {...register("name")} />
-                            <FieldError errors={[translateError(errors.name)]}/>
+                            <FieldError errors={[translateError(t, errors.name)]}/>
                         </FieldContent>
                     </Field>
 
@@ -90,7 +90,7 @@ export function TaskCategoryForm({item, onSuccess}: TaskCategoryFormProps) {
                                     {t("Task.Category.actorPresent")}
                                 </label>
                             </div>
-                            <FieldError errors={[translateError(errors.actorPresent)]}/>
+                            <FieldError errors={[translateError(t, errors.actorPresent)]}/>
                         </FieldContent>
                     </Field>
                 </div>

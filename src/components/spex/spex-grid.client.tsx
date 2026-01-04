@@ -13,7 +13,7 @@ import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/spex/actions.server";
 import {Badge} from "@/components/ui/badge";
 import {DataFilter} from "@/components/data-filter";
-import {X} from "lucide-react";
+import {ImageIcon, X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
 import Image from "next/image";
@@ -194,8 +194,7 @@ export function SpexGrid({
                             </div>
                         ) : (
                             <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
-                                    <span
-                                        className="text-muted-foreground text-[10px] uppercase tracking-widest">{t("Common.noDataHeading")}</span>
+                                <ImageIcon className="h-12 w-12 text-muted-foreground/20 stroke-[1.5]"/>
                             </div>
                         )}
                         <CardHeader className="space-y-0.5 p-3">
