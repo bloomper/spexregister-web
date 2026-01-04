@@ -8,7 +8,7 @@ import {useTranslations} from "next-intl";
 import {Tag} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/tags/actions.server";
 

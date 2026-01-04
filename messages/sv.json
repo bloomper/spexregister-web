@@ -1,4 +1,13 @@
 {
+  "About": {
+    "behindTheScenes": "Bakom kulisserna",
+    "description": "Denna applikation tillhandahålls av FGV som en tjänst till alla våra medlemmar. Här ges möjligheten att söka bland alla som har varit aktiva i Chalmersspexet på ett eller annat sätt ända sedan starten 1948.",
+    "feedback": "Tyck till",
+    "feedbackAction": "Skicka ett e-postmeddelande",
+    "feedbackDescription": "Vi värdesätter dina åsikter. Har du förslag på förbättringar eller har du hittat en bugg? Hör gärna av dig på {email}.",
+    "heading": "Om registret",
+    "title": "Om"
+  },
   "Common": {
     "add": "Lägg till",
     "cancel": "Avbryt",
@@ -60,9 +69,6 @@
     "updateSuccess": "Uppdateringen lyckades",
     "uploadSuccess": "Uppladdning lyckades",
     "yes": "Ja"
-  },
-  "Feedback": {
-    "title": "Återkoppling"
   },
   "Header": {
     "toggleLanguage": "Byt språk",
@@ -143,6 +149,11 @@
     "name": "Namn"
   },
   "Support": {
-    "title": "Support"
+    "title": "Support",
+    "heading": "Hur kan vi hjälpa till?",
+    "description": "Har du hittat ett tekniskt fel, har problem med att logga in eller upptäckt felaktig data i registret? Vi hjälper dig gärna att reda ut det.",
+    "contact": "Kontakta supporten",
+    "contactAction": "Skicka ett supportärende",
+    "contactDescription": "Beskriv ditt problem eller den felaktiga datan så tydligt som möjligt. Hör av dig till oss på {email}."
   }
 }

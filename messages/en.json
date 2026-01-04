@@ -1,4 +1,13 @@
 {
+  "About": {
+    "behindTheScenes": "Behind the scenes",
+    "description": "This application is provided by FGV as a service to all our members. It offers a comprehensive way to search for everyone who has been active in Chalmersspexet since its very beginning in 1948.",
+    "feedback": "Give us feedback",
+    "feedbackAction": "Send an email",
+    "feedbackDescription": "We value your feedback. Do you have suggestions for improvements or did you find a bug? Please reach out to us at {email}.",
+    "heading": "About the register",
+    "title": "About"
+  },
   "Common": {
     "add": "Add",
     "cancel": "Cancel",
@@ -61,9 +70,6 @@
     "updateSuccess": "Update successful",
     "uploadSuccess": "Upload successful",
     "yes": "Yes"
-  },
-  "Feedback": {
-    "title": "Feedback"
   },
   "Header": {
     "toggleLanguage": "Toggle language",
@@ -144,6 +150,11 @@
     "name": "Name"
   },
   "Support": {
-    "title": "Support"
+    "title": "Support",
+    "heading": "How can we help?",
+    "description": "Found a technical bug, having trouble logging in, or noticed incorrect data in the register? We are here to help you get it sorted.",
+    "contact": "Contact Support",
+    "contactAction": "Send a support request",
+    "contactDescription": "Please describe your issue or the faulty data as clearly as possible. Reach out to us at {email}."
   }
 }

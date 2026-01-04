@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useEffect, useMemo, useState} from "react";
-import {BookOpen, Drama, House, LifeBuoy, Send, Shapes, Tag} from "lucide-react";
+import {BookOpen, Clapperboard, ClipboardList, Drama, House, Shapes, Tag, Wrench} from "lucide-react";
 
 import {NavMain} from "@/components/nav-main.client";
 import {NavSecondary} from "@/components/nav-secondary.client";
@@ -58,7 +58,7 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                 {
                     title: t("Spex.heading"),
                     url: "/spex",
-                    icon: Drama,
+                    icon: Clapperboard,
                     isActive: pathname.startsWith("/spex"),
                     items: isCurrentUserAdmin ? [
                         {title: t("Common.manage"), url: "/spex/manage"},
@@ -85,7 +85,7 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                 {
                     title: t("Task.heading"),
                     url: "/tasks",
-                    icon: Drama,
+                    icon: ClipboardList,
                     isActive: pathname.startsWith("/tasks"),
                     items: isCurrentUserAdmin ? [
                         {title: t("Common.manage"), url: "/tasks/manage"},
@@ -123,13 +123,13 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
             secondary: [
                 {
                     title: t("Support.title"),
-                    url: "#",
-                    icon: LifeBuoy,
+                    url: "/support",
+                    icon: Wrench,
                 },
                 {
-                    title: t("Feedback.title"),
-                    url: "#",
-                    icon: Send,
+                    title: t("About.title"),
+                    url: "/about",
+                    icon: Drama,
                 },
             ]
         };
