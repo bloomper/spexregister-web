@@ -52,7 +52,7 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
             <SidebarMenuItem>
                 {hasSubItems ? (
                     <div
-                        className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent group-data-[state=open]/menu-item:bg-sidebar-accent/50 ${isActive ? 'bg-sidebar-accent' : ''}`}>
+                        className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isActive ? 'bg-sidebar-accent' : ''}`}>
                         <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}
                                            className="hover:bg-transparent! active:bg-transparent!">
                             <LinkComponent {...linkProps}>
@@ -114,7 +114,7 @@ function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
         <SidebarMenuSubItem>
             <Collapsible defaultOpen={isSubActive} className="group/sub-menu-item">
                 <div
-                    className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isSubActive ? 'bg-sidebar-accent/50' : ''}`}>
+                    className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isSubActive ? 'bg-sidebar-accent' : ''}`}>
                     <Link href={item.url}
                           className="flex flex-1 items-center gap-2 px-2 py-1.5 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring">
                         {item.icon && <item.icon className="size-4"/>}
