@@ -1,7 +1,7 @@
 import 'server-only';
 
 import {auth} from '@/auth';
-import {type AuthzFail, type AuthzOk, type Role} from '@/types/auth';
+import {type AuthzFail, AuthzResult, type Role} from '@/types/auth';
 
 
 export async function requireUser() {
@@ -22,22 +22,28 @@ function notAuthorized(): AuthzFail {
     return {ok: false, status: 403, message: 'Not authorized'};
 }
 
-export async function requireAnyRole(required: Role[]): Promise<AuthzOk | AuthzFail> {
+export async function requireAnyRole(required: Role[]): Promise<AuthzResult> {
     const {session, roles} = await requireUser();
+
     if (!session) {
         return notAuthenticated();
     }
 
-    const allowed = required.some((r) => roles.includes(r));
-    if (!allowed) {
+    const hasRole = required.some(role => roles.includes(role));
+
+    if (!hasRole) {
         return notAuthorized();
     }
 
-    return {ok: true, roles};
+    return {
+        ok: true,
+        roles
+    };
 }
 
-export async function requireAllRoles(required: Role[]): Promise<AuthzOk | AuthzFail> {
+export async function requireAllRoles(required: Role[]): Promise<AuthzResult> {
     const {session, roles} = await requireUser();
+
     if (!session) {
         return notAuthenticated();
     }
@@ -47,5 +53,8 @@ export async function requireAllRoles(required: Role[]): Promise<AuthzOk | Authz
         return notAuthorized();
     }
 
-    return {ok: true, roles};
+    return {
+        ok: true,
+        roles
+    };
 }

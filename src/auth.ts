@@ -5,6 +5,7 @@ import Keycloak from 'next-auth/providers/keycloak';
 import {createHash} from "node:crypto";
 import {AccessTokenClaims, Role} from "@/types/auth";
 import {jwtDecode} from "jwt-decode";
+import {extractRolesFromClaims} from "@/utils/auth";
 
 declare module 'next-auth' {
     interface Session extends DefaultSession {
@@ -12,23 +13,6 @@ declare module 'next-auth' {
         access_token: string
         roles: Role[]
     }
-}
-
-function extractRolesFromClaims(claims: AccessTokenClaims): Role[] {
-    const rawRoles = claims.resource_access?.spexregister?.roles ?? [];
-    const roles = rawRoles
-        .map(normalizeRole)
-        .filter((r): r is Role => r !== null);
-
-    return Array.from(new Set(roles));
-}
-
-function normalizeRole(value: string): Role | null {
-    const v = value.trim().toUpperCase();
-    if (v === 'ADMIN' || v === 'EDITOR' || v === 'USER') {
-        return v;
-    }
-    return null;
 }
 
 export const {handlers, auth, signIn, signOut} = nextAuth({

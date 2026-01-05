@@ -2,11 +2,8 @@ import 'server-only';
 
 import type {NextRequest} from 'next/server';
 import {NextResponse} from 'next/server';
-import type {Role} from '@/types/auth';
-
-export type AuthzOk = { ok: true; roles: Role[] };
-export type AuthzFail = { ok: false; status: 401 | 403; message: string };
-export type AuthzResult = AuthzOk | AuthzFail;
+import type {AuthzFail, AuthzOk, AuthzResult} from '@/types/auth';
+import {redirect} from 'next/navigation';
 
 type RouteContext = unknown;
 
@@ -26,6 +23,9 @@ export function withPolicyRoute(policy: () => Promise<AuthzResult>, handler: Aut
     return async (request, context) => {
         const authz = await policy();
         if (!authz.ok) {
+            if (authz.status === 401) {
+                redirect("/");
+            }
             return authzFailureResponse(authz);
         }
         return handler(request, context, authz);
@@ -38,6 +38,9 @@ export async function withPolicyAction<T>(
 ): Promise<T> {
     const authz = await policy();
     if (!authz.ok) {
+        if (authz.status === 401) {
+            redirect("/");
+        }
         throw new Error(authz.message);
     }
     return handler(authz);
@@ -49,6 +52,9 @@ export async function withPolicyPage<T>(
 ): Promise<T> {
     const authz = await policy();
     if (!authz.ok) {
+        if (authz.status === 401) {
+            redirect("/");
+        }
         throw new Error(authz.message);
     }
     return handler(authz);
