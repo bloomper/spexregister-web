@@ -2,6 +2,7 @@ import 'server-only';
 
 import axios from 'axios';
 import {auth} from "@/auth";
+import {getLocale} from "next-intl/server";
 
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
@@ -23,6 +24,8 @@ instance.interceptors.request.use(
             if (session?.access_token) {
                 config.headers.Authorization = `Bearer ${session.access_token}`;
             }
+
+            config.headers.AcceptLanguage = await getLocale();
         } catch (e) {
             console.warn("Axios server: Could not retrieve session for auth header");
         }

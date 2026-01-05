@@ -4,6 +4,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {getAll as getAllCategories} from "@/lib/spex/category";
+import {Clapperboard} from "lucide-react";
 
 export default async function SpexPage() {
     return withPolicyPage(Policies.spex.requireRead, async () => {
@@ -25,7 +26,7 @@ export default async function SpexPage() {
                             categories={categories}
                         />
                     ) : (
-                        <DataEmpty/>
+                        <DataEmpty icon={Clapperboard}/>
                     )}
                 </div>
             </div>

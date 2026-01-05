@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useEffect, useMemo, useState} from "react";
-import {BookOpen, Clapperboard, ClipboardList, Drama, House, Shapes, Tag, UserRound, Wrench} from "lucide-react";
+import {Clapperboard, ClipboardList, Drama, House, Newspaper, Shapes, Tag, UserRound, Wrench} from "lucide-react";
 
 import {NavMain} from "@/components/nav-main.client";
 import {NavSecondary} from "@/components/nav-secondary.client";
@@ -48,7 +48,7 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                 {
                     title: t("News.heading"),
                     url: "/news",
-                    icon: BookOpen,
+                    icon: Newspaper,
                     isActive: pathname.startsWith("/news"),
                     items: isCurrentUserAdminOrEditor ? [
                         {title: t("Common.manage"), url: "/news/manage"},

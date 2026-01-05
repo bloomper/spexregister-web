@@ -1,15 +1,23 @@
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty";
-import {Newspaper} from "lucide-react";
+import {Icon, LucideIcon, Search} from "lucide-react";
 import {useTranslations} from "next-intl";
 
-export function DataEmpty({title, description}: { title?: string, description?: string }) {
+export function DataEmpty({
+                              title,
+                              description,
+                              icon: Icon = Search
+                          }: {
+    title?: string,
+    description?: string,
+    icon?: LucideIcon
+}) {
     const t = useTranslations();
 
     return (
         <Empty className="col-span-full">
             <EmptyHeader>
                 <EmptyMedia variant="icon">
-                    <Newspaper/>
+                    <Icon/>
                 </EmptyMedia>
                 <EmptyTitle>{title ?? t("Common.noDataHeading")}</EmptyTitle>
                 <EmptyDescription>

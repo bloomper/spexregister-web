@@ -5,6 +5,7 @@ import {getTranslations} from "next-intl/server";
 import {cookies} from "next/headers";
 import Provider from "@/app/provider.client";
 import {AuthCheck} from "@/components/auth-check.client";
+import {Suspense} from "react";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -15,6 +16,20 @@ const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
     subsets: ["latin"],
 });
+
+async function RootProvider({children}: { children: React.ReactNode }) {
+    const store = await cookies();
+    const locale = store.get('locale')?.value || 'sv';
+    const messages = (await import(`../../messages/${locale}.json`)).default;
+
+    return (
+        <Provider locale={locale} messages={messages}>
+            <AuthCheck>
+                {children}
+            </AuthCheck>
+        </Provider>
+    );
+}
 
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getTranslations('Meta');
@@ -30,18 +45,14 @@ export default async function RootLayout({
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const store = await cookies();
-    const locale = store.get('locale')?.value || 'sv';
-    const messages = (await import(`../../messages/${locale}.json`)).default;
-
     return (
-        <html lang={locale} suppressHydrationWarning>
+        <html lang="sv" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Provider locale={locale} messages={messages}>
-            <AuthCheck>
+        <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center">Loading...</div>}>
+            <RootProvider>
                 {children}
-            </AuthCheck>
-        </Provider>
+            </RootProvider>
+        </Suspense>
         </body>
         </html>
     );

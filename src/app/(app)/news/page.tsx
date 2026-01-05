@@ -3,6 +3,7 @@ import {getPaged} from "@/lib/news";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {Newspaper} from "lucide-react";
 
 export default async function NewsPage() {
     return withPolicyPage(Policies.news.requireRead, async () => {
@@ -16,7 +17,7 @@ export default async function NewsPage() {
                     {initialItems.length > 0 ? (
                         <NewsGrid initialItems={initialItems} initialPageInfo={page.pageInfo}/>
                     ) : (
-                        <DataEmpty/>
+                        <DataEmpty icon={Newspaper}/>
                     )}
                 </div>
             </div>

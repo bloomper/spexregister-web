@@ -4,6 +4,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const nextConfig: NextConfig = {
     output: 'standalone',
     reactCompiler: true,
+    cacheComponents: true,
     experimental: {
         serverActions: {
             bodySizeLimit: "15mb",

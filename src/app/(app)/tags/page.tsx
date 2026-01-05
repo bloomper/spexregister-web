@@ -3,6 +3,7 @@ import {getPaged} from "@/lib/tag";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {Tag} from "lucide-react";
 
 export default async function TagPage() {
     return withPolicyPage(Policies.tag.requireRead, async () => {
@@ -16,7 +17,7 @@ export default async function TagPage() {
                     {initialItems.length > 0 ? (
                         <TagGrid initialItems={initialItems} initialPageInfo={page.pageInfo}/>
                     ) : (
-                        <DataEmpty/>
+                        <DataEmpty icon={Tag}/>
                     )}
                 </div>
             </div>

@@ -4,6 +4,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {getAll as getAllCategories} from "@/lib/task/category";
+import {ClipboardList} from "lucide-react";
 
 export default async function TaskPage() {
     return withPolicyPage(Policies.task.requireRead, async () => {
@@ -25,7 +26,7 @@ export default async function TaskPage() {
                             categories={categories}
                         />
                     ) : (
-                        <DataEmpty/>
+                        <DataEmpty icon={ClipboardList}/>
                     )}
                 </div>
             </div>

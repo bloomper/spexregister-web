@@ -12,7 +12,7 @@ import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/tasks/actions.server";
 import {DataFilter} from "@/components/data-filter";
-import {X} from "lucide-react";
+import {ClipboardList, X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
 
@@ -184,6 +184,7 @@ export function TaskGrid({
                     <DataEmpty
                         title={isFiltered ? t("Common.noFilterMatchHeading") : t("Common.noDataHeading")}
                         description={isFiltered ? t("Common.noFilterMatchDescription") : t("Common.noDataDescription")}
+                        icon={ClipboardList}
                     />
                 </div>
             ) : (

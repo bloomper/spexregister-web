@@ -50,7 +50,8 @@
     "noDataHeading": "No data found",
     "noFilterMatchDescription": "Try adjusting your filters or search query to find what you're looking for.",
     "noFilterMatchHeading": "No data found",
-    "noMoreDataFound": "No more data found.",
+    "noMoreDataFound": "No more data found",
+    "noDataFound": "No data found",
     "openMenu": "Open menu",
     "reset": "Reset",
     "resetFilters": "Reset filters",
@@ -70,7 +71,8 @@
     "tryAgain": "Try again",
     "updateSuccess": "Update successful",
     "uploadSuccess": "Upload successful",
-    "yes": "Yes"
+    "yes": "Yes",
+    "general": "General"
   },
   "Header": {
     "toggleLanguage": "Toggle language",
@@ -161,7 +163,12 @@
     "invalidSocialSecurityNumber": "Invalid social security number",
     "invalidBirthNumber": "Invalid birth number",
     "graduation": "Graduation",
-    "comment": "Comment"
+    "comment": "Comment",
+    "addresses": "Addresses",
+    "consents": "Consents",
+    "memberships": "Memberships",
+    "taggings": "Tags",
+    "toggles": "Toggles"
   },
   "Tag": {
     "createHeading": "Create tag",

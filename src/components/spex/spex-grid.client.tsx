@@ -13,7 +13,7 @@ import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/spex/actions.server";
 import {Badge} from "@/components/ui/badge";
 import {DataFilter} from "@/components/data-filter";
-import {ImageIcon, X} from "lucide-react";
+import {Clapperboard, ImageIcon, X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
 import Image from "next/image";
@@ -172,6 +172,7 @@ export function SpexGrid({
                     <DataEmpty
                         title={isFiltered ? t("Common.noFilterMatchHeading") : t("Common.noDataHeading")}
                         description={isFiltered ? t("Common.noFilterMatchDescription") : t("Common.noDataDescription")}
+                        icon={Clapperboard}
                     />
                 </div>
             ) : (

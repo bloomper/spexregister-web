@@ -5,6 +5,7 @@ import {getPaged} from "@/lib/news";
 import Link from "next/link";
 import {buttonVariants} from "@/components/ui/button";
 import {DataEmpty} from "@/components/data-empty";
+import {Newspaper} from "lucide-react";
 
 export default async function HomePage() {
     const t = await getTranslations();
@@ -45,7 +46,7 @@ export default async function HomePage() {
             )}
             {!hasNews && (
                 <div className="mt-8">
-                    <DataEmpty/>
+                    <DataEmpty icon={Newspaper}/>
                 </div>
             )}
         </div>

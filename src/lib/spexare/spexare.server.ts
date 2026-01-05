@@ -5,27 +5,90 @@ import {SortDirection, Spexare, SpexareConnection, SpexareEdge} from "@/gql/grap
 import {SpexarePage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
+import {FullFragment as AddressFullFragment, SummaryFragment as AddressSummaryFragment} from "@/lib/spexare/address";
+import {FullFragment as ConsentFullFragment, SummaryFragment as ConsentSummaryFragment} from "@/lib/spexare/consent";
+import {
+    FullFragment as MembershipFullFragment,
+    SummaryFragment as MembershipSummaryFragment
+} from "@/lib/spexare/membership";
+import {FullFragment as TaggingFullFragment, SummaryFragment as TaggingSummaryFragment} from "@/lib/spexare/tagging";
+import {FullFragment as ToggleFullFragment, SummaryFragment as ToggleSummaryFragment} from "@/lib/spexare/toggle";
 
-const SummaryFields = `
-    id
-    firstName
-    lastName
-    nickName
-    socialSecurityNumber
-    deceased
-    published
-    graduation
-    comment
-    imageUrl
+const BaseFragment = /* GraphQL */ `
+    fragment SpexareBase on Spexare {
+        id
+        firstName
+        lastName
+        nickName
+        socialSecurityNumber
+        deceased
+        published
+        graduation
+        comment
+        imageUrl
+    }
 `;
 
-const FullFields = `
-    ${SummaryFields}
-    createdAt
-    createdBy
-    lastModifiedAt
-    lastModifiedBy
+const SummaryFragment = /* GraphQL */ `
+    fragment SpexareSummary on Spexare {
+        ...SpexareBase
+        addresses {
+            ...AddressSummary
+        }
+        consents {
+            ...ConsentSummary
+        }
+        memberships {
+            ...MembershipSummary
+        }
+        taggings {
+            ...TaggingSummary
+        }
+        toggles {
+            ...ToggleSummary
+        }
+    }
+    ${BaseFragment}
+    ${AddressSummaryFragment}
+    ${ConsentSummaryFragment}
+    ${MembershipSummaryFragment}
+    ${TaggingSummaryFragment}
+    ${ToggleSummaryFragment}
 `;
+
+const FullFragment = /* GraphQL */ `
+    fragment SpexareFull on Spexare {
+        ...SpexareBase
+        addresses {
+            ...AddressFull
+        }
+        consents {
+            ...ConsentFull
+        }
+        memberships {
+            ...MembershipFull
+        }
+        taggings {
+            ...TaggingFull
+        }
+        toggles {
+            ...ToggleFull
+        }
+        createdAt
+        createdBy
+        lastModifiedAt
+        lastModifiedBy
+    }
+    ${BaseFragment}
+    ${AddressFullFragment}
+    ${ConsentFullFragment}
+    ${MembershipFullFragment}
+    ${TaggingFullFragment}
+    ${ToggleFullFragment}
+`;
+
+export const SummaryFields = `...SpexareSummary`;
+export const FullFields = `...SpexareFull`;
 
 const CreateMutation = /* GraphQL */ `
     mutation ($input: SpexareCreate!) {
@@ -33,6 +96,7 @@ const CreateMutation = /* GraphQL */ `
             ${FullFields}
         }
     }
+    ${FullFragment}
 `;
 
 const UpdateMutation = /* GraphQL */ `
@@ -41,6 +105,7 @@ const UpdateMutation = /* GraphQL */ `
             ${FullFields}
         }
     }
+    ${FullFragment}
 `;
 
 const DeleteMutation = /* GraphQL */ `
@@ -49,7 +114,7 @@ const DeleteMutation = /* GraphQL */ `
     }
 `;
 
-const createQuery = (fields: string) => /* GraphQL */ `
+const createQuery = (fields: string, fragment: string) => /* GraphQL */ `
     query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         spexarePaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges {
@@ -64,6 +129,7 @@ const createQuery = (fields: string) => /* GraphQL */ `
             }
         }
     }
+    ${fragment}
 `;
 
 export async function getPaged(args: {
@@ -76,7 +142,10 @@ export async function getPaged(args: {
     filter?: string;
     full?: boolean
 }): Promise<SpexarePage> {
-    const query = createQuery(args.full ? FullFields : SummaryFields);
+    const query = createQuery(
+        args.full ? FullFields : SummaryFields,
+        args.full ? FullFragment : SummaryFragment
+    );
 
     const result = await getClient()
         .query<{ spexarePaged: SpexareConnection }>(query, {

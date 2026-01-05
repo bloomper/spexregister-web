@@ -3,6 +3,7 @@ import {getPaged} from "@/lib/spexare";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {UserRound} from "lucide-react";
 
 export default async function SpexarePage() {
     return withPolicyPage(Policies.spexare.requireRead, async () => {
@@ -16,7 +17,7 @@ export default async function SpexarePage() {
                     {initialItems.length > 0 ? (
                         <SpexareGrid initialItems={initialItems} initialPageInfo={page.pageInfo}/>
                     ) : (
-                        <DataEmpty/>
+                        <DataEmpty icon={UserRound}/>
                     )}
                 </div>
             </div>

@@ -1,4 +1,10 @@
 import {
+    Address,
+    AddressEdge,
+    Consent,
+    ConsentEdge,
+    Membership,
+    MembershipEdge,
     News,
     NewsEdge,
     Spex,
@@ -12,7 +18,9 @@ import {
     Task,
     TaskCategory,
     TaskCategoryEdge,
-    TaskEdge
+    TaskEdge,
+    Toggle,
+    ToggleEdge
 } from "@/gql/graphql";
 
 export type CursorPageInfo = {
@@ -25,6 +33,18 @@ export type CursorPageInfo = {
 export type CursorPage<TItem> = {
     items: TItem[];
     pageInfo: CursorPageInfo;
+};
+
+export type AddressPage = CursorPage<Address> & {
+    edges: Array<Omit<AddressEdge, 'node'> & { node: Address }>;
+};
+
+export type ConsentPage = CursorPage<Consent> & {
+    edges: Array<Omit<ConsentEdge, 'node'> & { node: Consent }>;
+};
+
+export type MembershipPage = CursorPage<Membership> & {
+    edges: Array<Omit<MembershipEdge, 'node'> & { node: Membership }>;
 };
 
 export type NewsPage = CursorPage<News> & {
@@ -53,4 +73,8 @@ export type TaskPage = CursorPage<Task> & {
 
 export type TaskCategoryPage = CursorPage<TaskCategory> & {
     edges: Array<Omit<TaskCategoryEdge, 'node'> & { node: TaskCategory }>;
+};
+
+export type TogglePage = CursorPage<Toggle> & {
+    edges: Array<Omit<ToggleEdge, 'node'> & { node: Toggle }>;
 };

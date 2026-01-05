@@ -50,7 +50,8 @@
     "noDataHeading": "Ingen data hittades",
     "noFilterMatchDescription": "Prova att ändra din filtrering eller sökord för att hitta det du letar efter.",
     "noFilterMatchHeading": "Ingen data hittades",
-    "noMoreDataFound": "Ingen mer data hittades.",
+    "noMoreDataFound": "Ingen mer data hittades",
+    "noDataFound": "Ingen data hittades",
     "openMenu": "Öppna meny",
     "reset": "Återställ",
     "resetFilters": "Återställ filter",
@@ -69,7 +70,8 @@
     "tryAgain": "Försök igen",
     "updateSuccess": "Uppdateringen lyckades",
     "uploadSuccess": "Uppladdning lyckades",
-    "yes": "Ja"
+    "yes": "Ja",
+    "general": "Allmänt"
   },
   "Header": {
     "toggleLanguage": "Byt språk",
@@ -160,7 +162,12 @@
     "invalidSocialSecurityNumber": "Ogiltigt personnummer",
     "invalidBirthNumber": "Ogiltigt födelsenummer",
     "graduation": "Examen",
-    "comment": "Kommentar"
+    "comment": "Kommentar",
+    "addresses": "Adresser",
+    "consents": "Medgivanden",
+    "memberships": "Medlemskap",
+    "taggings": "Taggar",
+    "toggles": "Inställningar"
   },
   "Tag": {
     "createHeading": "Skapa tagg",

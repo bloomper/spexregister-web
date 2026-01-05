@@ -3,6 +3,7 @@ import {getPaged} from "@/lib/spex/category";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {Shapes} from "lucide-react";
 
 export default async function SpexCategoryPage() {
     return withPolicyPage(Policies.spexCategory.requireRead, async () => {
@@ -16,7 +17,7 @@ export default async function SpexCategoryPage() {
                     {initialItems.length > 0 ? (
                         <SpexCategoryGrid initialItems={initialItems} initialPageInfo={page.pageInfo}/>
                     ) : (
-                        <DataEmpty/>
+                        <DataEmpty icon={Shapes}/>
                     )}
                 </div>
             </div>

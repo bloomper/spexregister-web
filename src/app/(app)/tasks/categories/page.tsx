@@ -3,6 +3,7 @@ import {getPaged} from "@/lib/task/category";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {Shapes} from "lucide-react";
 
 export default async function TaskCategoryPage() {
     return withPolicyPage(Policies.taskCategory.requireRead, async () => {
@@ -16,7 +17,7 @@ export default async function TaskCategoryPage() {
                     {initialItems.length > 0 ? (
                         <TaskCategoryGrid initialItems={initialItems} initialPageInfo={page.pageInfo}/>
                     ) : (
-                        <DataEmpty/>
+                        <DataEmpty icon={Shapes}/>
                     )}
                 </div>
             </div>
