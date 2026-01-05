@@ -25,9 +25,9 @@ import {columnHelper} from "@/components/data-table-columns.client";
 
 
 export const columns: ColumnDef<News>[] = [
-    columnHelper.select<News>(),
-    columnHelper.text<News>("title", "News.title"),
-    columnHelper.boolean<News>("published", "News.published"),
+    columnHelper.select(),
+    columnHelper.text("subject", "News.subject"),
+    columnHelper.boolean("published", "News.published"),
     ...columnHelper.audit<News>(),
     columnHelper.actions<News>(),
 ];
