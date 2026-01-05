@@ -531,14 +531,14 @@ export function SpexareTable({
                         )}
                     </div>
                     <div className="p-6">
-                        <DialogHeader>
-                            <div className="flex items-start justify-between gap-2">
+                        <DialogHeader className="text-left">
+                            <div className="flex items-start justify-between gap-2 text-left">
                                 <div className="flex flex-col gap-1">
-                                    <DialogTitle className="text-2xl leading-none">
+                                    <DialogTitle className="text-2xl leading-none text-left">
                                         {viewItem?.firstName} {viewItem?.lastName}
                                     </DialogTitle>
                                     {viewItem?.nickName && (
-                                        <div className="text-muted-foreground italic text-lg leading-none">
+                                        <div className="text-muted-foreground italic text-lg leading-none text-left">
                                             {viewItem.nickName}
                                         </div>
                                     )}
