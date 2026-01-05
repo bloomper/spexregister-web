@@ -192,12 +192,14 @@ export function SpexareGrid({
                                     </CardTitle>
                                     <div className="flex items-center gap-1 shrink-0">
                                         {!n.published && (
-                                            <Badge variant="outline" className="text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-normal">
+                                            <Badge variant="outline"
+                                                   className="text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-normal">
                                                 {t("Spexare.publishedBadges.false")}
                                             </Badge>
                                         )}
                                         {n.deceased && (
-                                            <Badge variant="outline" className="text-[9px] uppercase px-1 py-0 h-3.5 leading-none shrink-0 font-normal">
+                                            <Badge variant="outline"
+                                                   className="text-[9px] uppercase px-1 py-0 h-3.5 leading-none shrink-0 font-normal">
                                                 {t("Spexare.deceasedBadges.true")}
                                             </Badge>
                                         )}
@@ -264,7 +266,8 @@ export function SpexareGrid({
                         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
                             {selected?.socialSecurityNumber && (
                                 <div className="space-y-1">
-                                    <div className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">
+                                    <div
+                                        className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">
                                         {selected.socialSecurityNumber.includes("-") ? t("Spexare.socialSecurityNumber") : t("Spexare.birthDate")}
                                     </div>
                                     <div className="text-sm font-medium text-foreground">

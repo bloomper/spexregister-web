@@ -1,24 +1,12 @@
 "use client";
 
 import {ColumnDef} from "@tanstack/react-table";
-import {ArrowDown, ArrowUp, ArrowUpDown, Image as ImageIcon, MoreHorizontal, Plus, X} from "lucide-react";
+import {Image as ImageIcon, Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {SpexCategory} from "@/gql/graphql";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import {formatDateTime, getProxiedImageUrl} from "@/utils/utils";
+import {getProxiedImageUrl} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle
-} from "@/components/ui/alert-dialog";
 import {SpexCategoryForm} from "@/components/spex/category";
 import {useEffect, useRef, useState} from "react";
 import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spex/categories/actions.server";
@@ -29,221 +17,17 @@ import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Checkbox} from "@/components/ui/checkbox";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
-import {Translated} from "@/components/translated.client";
 import Image from "next/image";
+import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
+import {AuditInfo} from "@/components/data-table-audit-info.client";
+import {columnHelper} from "@/components/data-table-columns.client";
 
 export const columns: ColumnDef<SpexCategory>[] = [
-    {
-        id: "select",
-        header: ({table}) => {
-            const t = useTranslations();
-            return (
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label={t("Common.selectAll")}
-                />
-            );
-        },
-        cell: ({row}) => {
-            const t = useTranslations();
-            return (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                    }}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                            e.stopPropagation();
-                        }
-                    }}
-                    aria-label={t("Common.select")}
-                />
-            );
-        },
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        id: "name",
-        accessorKey: "name",
-        header: ({column}) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
-                >
-                    <Translated id="Spex.Category.name"/>
-                    {isSorted === "desc" ? (
-                        <ArrowDown className="ml-2 h-4 w-4"/>
-                    ) : isSorted === "asc" ? (
-                        <ArrowUp className="ml-2 h-4 w-4"/>
-                    ) : (
-                        <ArrowUpDown className="ml-2 h-4 w-4"/>
-                    )}
-                </Button>
-            );
-        },
-        cell: ({row}) => {
-            const name = row.getValue("name") as string;
-
-            return (
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div className="max-w-[300px] truncate font-medium cursor-default">
-                                {name}
-                            </div>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-[400px] wrap-break-word">
-                            {name}
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            );
-        },
-    },
-    {
-        id: "firstYear",
-        accessorKey: "firstYear",
-        header: ({column}) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
-                >
-                    <Translated id="Spex.Category.firstYear"/>
-                    {isSorted === "desc" ? (
-                        <ArrowDown className="ml-2 h-4 w-4"/>
-                    ) : isSorted === "asc" ? (
-                        <ArrowUp className="ml-2 h-4 w-4"/>
-                    ) : (
-                        <ArrowUpDown className="ml-2 h-4 w-4"/>
-                    )}
-                </Button>
-            );
-        },
-        cell: ({row}) => row.getValue("firstYear"),
-        meta: {className: "hidden lg:table-cell"}
-    },
-    {
-        id: "logo",
-        accessorKey: "logoUrl",
-        header: () => <Translated id="Spex.Category.logoUrl"/>,
-        cell: ({row}) => {
-            const url = row.getValue("logo") as string;
-            const item = row.original;
-
-            return (
-                <div
-                    className="h-10 w-10 overflow-hidden rounded border bg-muted flex items-center justify-center relative">
-                    {url ? (
-                        <Image
-                            src={getProxiedImageUrl(url, item.lastModifiedAt)}
-                            alt=""
-                            fill
-                            unoptimized
-                            className="h-full w-full object-contain"
-                        />
-                    ) : (
-                        <ImageIcon className="h-5 w-5 text-muted-foreground/40 stroke-[1.5]"/>
-                    )}
-                </div>
-            );
-        },
-    },
-    {
-        accessorKey: "createdAt",
-        header: ({column}) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
-                >
-                    <Translated id="Common.createdAt"/>
-                    {isSorted === "desc" ? (
-                        <ArrowDown className="ml-2 h-4 w-4"/>
-                    ) : isSorted === "asc" ? (
-                        <ArrowUp className="ml-2 h-4 w-4"/>
-                    ) : (
-                        <ArrowUpDown className="ml-2 h-4 w-4"/>
-                    )}
-                </Button>
-            );
-        },
-        cell: ({row}) => formatDateTime(row.getValue("createdAt") as string) || "-",
-        meta: {className: "hidden xl:table-cell"}
-    },
-    {
-        accessorKey: "lastModifiedAt",
-        header: ({column}) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
-                >
-                    <Translated id="Common.lastModifiedAt"/>
-                    {isSorted === "desc" ? (
-                        <ArrowDown className="ml-2 h-4 w-4"/>
-                    ) : isSorted === "asc" ? (
-                        <ArrowUp className="ml-2 h-4 w-4"/>
-                    ) : (
-                        <ArrowUpDown className="ml-2 h-4 w-4"/>
-                    )}
-                </Button>
-            );
-        },
-        cell: ({row}) => formatDateTime(row.getValue("lastModifiedAt") as string) || "-",
-        meta: {className: "hidden xl:table-cell"}
-    },
-    {
-        id: "actions",
-        cell: ({row, table}) => {
-            const item = row.original;
-            const t = useTranslations();
-
-            const meta = table.options.meta as any;
-
-            return (
-                <div onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">{t("Common.openMenu")}</span>
-                                <MoreHorizontal className="h-4 w-4"/>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem onSelect={() => meta?.setEditItem(item)}>
-                                {t("Common.edit")}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="text-destructive"
-                                onSelect={() => meta?.setDeleteItem(item)}
-                            >
-                                {t("Common.delete")}
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            );
-        },
-    },
+    columnHelper.select<SpexCategory>(),
+    columnHelper.text<SpexCategory>("name", "Spex.Category.name"),
+    ...columnHelper.audit<SpexCategory>(),
+    columnHelper.actions<SpexCategory>(),
 ];
 
 export function SpexCategoryTable({
@@ -402,19 +186,7 @@ export function SpexCategoryTable({
                         </div>
 
                         {viewItem && (
-                            <div
-                                className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/30 p-3 text-[11px] text-muted-foreground">
-                                <div className="space-y-1">
-                                    <p className="font-semibold text-foreground/70 uppercase tracking-wider">{t("Common.createdAt")}</p>
-                                    <p>{formatDateTime(viewItem.createdAt)} ({viewItem.createdBy})</p>
-                                </div>
-                                {viewItem.lastModifiedAt && (
-                                    <div className="space-y-1">
-                                        <p className="font-semibold text-foreground/70 uppercase tracking-wider">{t("Common.lastModifiedAt")}</p>
-                                        <p>{formatDateTime(viewItem.lastModifiedAt)} ({viewItem.lastModifiedBy})</p>
-                                    </div>
-                                )}
-                            </div>
+                            <AuditInfo item={viewItem}/>
                         )}
                     </div>
                     <DialogFooter>
@@ -438,53 +210,15 @@ export function SpexCategoryTable({
                 )}
             </Sheet>
 
-            <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t("Common.deleteHeading")}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {t("Common.deleteConfirmation")}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isPending}>{t("Common.cancel")}</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleDelete();
-                            }}
-                            disabled={isPending}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                            {isPending ? t("Common.deleting") : t("Common.delete")}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-
-            <AlertDialog open={isBulkDeleting} onOpenChange={setIsBulkDeleting}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t("Common.deleteBulkHeading")}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {t("Common.deleteBulkConfirmation")}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isPending}>{t("Common.cancel")}</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleBulkDelete();
-                            }}
-                            disabled={isPending}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                            {isPending ? t("Common.deleting") : t("Common.delete")}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <DataTableDeleteDialogs
+                deleteItem={deleteItem}
+                setDeleteItem={setDeleteItem}
+                isBulkDeleting={isBulkDeleting}
+                setIsBulkDeleting={setIsBulkDeleting}
+                isPending={isPending}
+                handleDelete={handleDelete}
+                handleBulkDelete={handleBulkDelete}
+            />
         </>
     );
 }
