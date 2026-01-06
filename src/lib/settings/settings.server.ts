@@ -1,8 +1,6 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
 import {Country, Type} from "@/gql/graphql";
-import {getLocale} from "next-intl/server";
 
 const CountryFields = `
     isoCode
@@ -31,30 +29,33 @@ const TypesQuery = /* GraphQL */ `
     }
 `;
 
-export async function getCountries(): Promise<Country[]> {
-    "use cache";
-    const locale = await getLocale();
+async function fetchStatic<T>(query: string, locale: string): Promise<T> {
+    const response = await fetch(process.env.API_GRAPHQL_ENDPOINT || '', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept-Language': locale,
+        },
+        body: JSON.stringify({query}),
+    });
 
-    const result = await getClient()
-        .query<{ countries: Country[] }>(CountriesQuery, {})
-        .toPromise();
+    const result = await response.json();
 
-    if (result.error) {
-        throw result.error;
+    if (result.errors) {
+        throw new Error(result.errors[0].message);
     }
-    return result.data?.countries ?? [];
+
+    return result.data;
 }
 
-export async function getTypes(): Promise<Type[]> {
+export async function getCountries(locale: string): Promise<Country[]> {
     "use cache";
-    const locale = await getLocale();
+    const data = await fetchStatic<{ countries: Country[] }>(CountriesQuery, locale);
+    return data.countries ?? [];
+}
 
-    const result = await getClient()
-        .query<{ types: Type[] }>(TypesQuery, {})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-    return result.data?.types ?? [];
+export async function getTypes(locale: string): Promise<Type[]> {
+    "use cache";
+    const data = await fetchStatic<{ types: Type[] }>(TypesQuery, locale);
+    return data.types ?? [];
 }

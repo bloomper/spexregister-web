@@ -49,10 +49,6 @@ export async function create(spexareId: string, tagId: string) {
         throw result.error;
     }
 
-    if (!result.data?.taggingCreate) {
-        throw new Error("No data created");
-    }
-
     return result.data?.taggingCreate;
 }
 

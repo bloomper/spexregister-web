@@ -25,6 +25,8 @@ import {ImageUpload} from "@/components/image-upload.client";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Plus, X} from "lucide-react";
 import {translateError} from "@/utils/utils";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 interface SpexFormProps {
     item?: Spex;
@@ -132,150 +134,176 @@ export function SpexForm({
     });
 
     return (
-        <SheetContent className="sm:max-w-[540px] flex flex-col gap-0 p-0">
-            <SheetHeader className="p-6 pb-2">
+        <SheetContent className="sm:max-w-[600px] flex flex-col gap-0 p-0 h-full">
+            <SheetHeader className="p-6 pb-2 shrink-0">
                 <SheetTitle>{item ? t("Spex.editHeading") : t("Spex.createHeading")}</SheetTitle>
             </SheetHeader>
-            <form onSubmit={onSubmit} className="flex-1 overflow-y-auto">
-                <div className="space-y-4 px-6 py-4">
-                    <Field data-invalid={!!errors.categoryId}>
-                        <FieldLabel>{t("Spex.category")}</FieldLabel>
-                        <FieldContent>
-                            <Controller
-                                control={control}
-                                name="categoryId"
-                                render={({field}) => (
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder={t("Spex.selectCategory")}/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {categories.map((category) => (
-                                                <SelectItem key={category.id} value={category.id}>
-                                                    {category.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                )}
-                            />
-                            <FieldError errors={[translateError(t, errors.categoryId)]}/>
-                        </FieldContent>
-                    </Field>
-
-                    <Field data-invalid={!!errors.year}>
-                        <FieldLabel>{t("Spex.year")}</FieldLabel>
-                        <FieldContent>
-                            <Controller
-                                control={control}
-                                name="year"
-                                render={({field}) => (
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        value={field.value?.toString()}
-                                        disabled={!selectedCategory}
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder={t("Spex.selectYear")}/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {availableYears.map((year) => (
-                                                <SelectItem key={year} value={year}>
-                                                    {year}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                )}
-                            />
-                            <FieldError errors={[translateError(t, errors.year)]}/>
-                        </FieldContent>
-                    </Field>
-
-                    <Field data-invalid={!!errors.title}>
-                        <FieldLabel>{t("Spex.title")}</FieldLabel>
-                        <FieldContent>
-                            <Input {...register("title")} />
-                            <FieldError errors={[translateError(t, errors.title)]}/>
-                        </FieldContent>
-                    </Field>
-
-                    <Field>
-                        <FieldLabel>{t("Spex.posterUrl")}</FieldLabel>
-                        <FieldContent>
-                            <ImageUpload
-                                initialImageUrl={item?.posterUrl}
-                                onFileSelect={(file) => {
-                                    setSelectedFile(file);
-                                    setShouldDeletePoster(false);
-                                }}
-                                onFileDelete={() => {
-                                    setSelectedFile(null);
-                                    setShouldDeletePoster(true);
-                                }}
-                            />
-                        </FieldContent>
-                    </Field>
-
-                    <div className="pt-4 space-y-4">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-medium">{t("Spex.revivals")}</h3>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                            {revivalYears.map(year => (
-                                <div key={year}
-                                     className="flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm">
-                                    {year}
-                                    <button
-                                        type="button"
-                                        onClick={() => setValue("revivalYears", revivalYears.filter(y => y !== year))}
-                                        className="hover:text-destructive transition-colors"
-                                    >
-                                        <X className="h-3 w-3"/>
-                                    </button>
-                                </div>
-                            ))}
-                            {revivalYears.length === 0 && (
-                                <p className="text-sm text-muted-foreground italic">{t("Spex.noRevivals")}</p>
-                            )}
-                        </div>
-
-                        <div className="flex gap-2">
-                            <Select value={newRevivalYear} onValueChange={setNewRevivalYear}
-                                    disabled={!selectedYear}>
-                                <SelectTrigger className="h-9 w-[120px]">
-                                    <SelectValue placeholder={t("Spex.year")}/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {availableRevivalYears.map(year => (
-                                        <SelectItem key={year} value={year}>{year}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="h-9"
-                                onClick={() => {
-                                    if (newRevivalYear) {
-                                        setValue("revivalYears", [...revivalYears, newRevivalYear].sort((a, b) => a.localeCompare(b)));
-                                        setNewRevivalYear("");
-                                    }
-                                }}
-                                disabled={!newRevivalYear}
-                            >
-                                <Plus className="h-4 w-4 mr-1"/>
-                                {t("Common.add")}
-                            </Button>
-                        </div>
+            <form onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                <Tabs defaultValue="general" className="flex-1 flex flex-col min-h-0">
+                    <div className="px-6 pb-4 shrink-0">
+                        <TabsList className="grid w-full h-auto p-1 bg-muted/50 grid-cols-2">
+                            <TabsTrigger value="general" className="py-2 text-xs sm:text-sm">
+                                {t("Common.general")}
+                            </TabsTrigger>
+                            <TabsTrigger value="revivals" className="py-2 text-xs sm:text-sm">
+                                {t("Spex.revivals")}
+                            </TabsTrigger>
+                        </TabsList>
                     </div>
-                </div>
 
-                <SheetFooter className="p-6 pt-2">
+                    <ScrollArea className="flex-1 border-t min-h-0">
+                        <div className="px-6 py-4">
+                            <TabsContent value="general" className="mt-0 space-y-4 outline-none pb-8">
+                                <Field data-invalid={!!errors.categoryId}>
+                                    <FieldLabel>{t("Spex.category")}</FieldLabel>
+                                    <FieldContent>
+                                        <Controller
+                                            control={control}
+                                            name="categoryId"
+                                            render={({field}) => (
+                                                <Select onValueChange={field.onChange} value={field.value}>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder={t("Spex.selectCategory")}/>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {categories.map((category) => (
+                                                            <SelectItem key={category.id} value={category.id}>
+                                                                {category.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            )}
+                                        />
+                                        <FieldError errors={[translateError(t, errors.categoryId)]}/>
+                                    </FieldContent>
+                                </Field>
+
+                                <Field data-invalid={!!errors.year}>
+                                    <FieldLabel>{t("Spex.year")}</FieldLabel>
+                                    <FieldContent>
+                                        <Controller
+                                            control={control}
+                                            name="year"
+                                            render={({field}) => (
+                                                <Select
+                                                    onValueChange={field.onChange}
+                                                    value={field.value?.toString()}
+                                                    disabled={!selectedCategory}
+                                                >
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder={t("Spex.selectYear")}/>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {availableYears.map((year) => (
+                                                            <SelectItem key={year} value={year}>
+                                                                {year}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            )}
+                                        />
+                                        <FieldError errors={[translateError(t, errors.year)]}/>
+                                    </FieldContent>
+                                </Field>
+
+                                <Field data-invalid={!!errors.title}>
+                                    <FieldLabel>{t("Spex.title")}</FieldLabel>
+                                    <FieldContent>
+                                        <Input {...register("title")} />
+                                        <FieldError errors={[translateError(t, errors.title)]}/>
+                                    </FieldContent>
+                                </Field>
+
+                                <Field>
+                                    <FieldLabel>{t("Spex.posterUrl")}</FieldLabel>
+                                    <FieldContent>
+                                        <ImageUpload
+                                            initialImageUrl={item?.posterUrl}
+                                            onFileSelect={(file) => {
+                                                setSelectedFile(file);
+                                                setShouldDeletePoster(false);
+                                            }}
+                                            onFileDelete={() => {
+                                                setSelectedFile(null);
+                                                setShouldDeletePoster(true);
+                                            }}
+                                        />
+                                    </FieldContent>
+                                </Field>
+                            </TabsContent>
+
+                            <TabsContent value="revivals" className="mt-0 space-y-6 outline-none pb-8">
+                                <div className="space-y-4">
+                                    <div className="flex flex-wrap gap-2">
+                                        {revivalYears.map(year => (
+                                            <div key={year}
+                                                 className="flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm">
+                                                {year}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setValue("revivalYears", revivalYears.filter(y => y !== year))}
+                                                    className="hover:text-destructive transition-colors"
+                                                >
+                                                    <X className="h-3 w-3"/>
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {selectedYear && revivalYears.length === 0 && (
+                                            <p className="text-sm text-muted-foreground italic">{t("Spex.noRevivals")}</p>
+                                        )}
+                                    </div>
+
+                                    {availableRevivalYears.length > 0 && selectedYear ? (
+                                        <div className="flex gap-2 p-4 border rounded-lg bg-muted/20">
+                                            <div className="flex-1 space-y-1">
+                                                <span
+                                                    className="text-xs font-medium text-muted-foreground uppercase">{t("Spex.year")}</span>
+                                                <Select value={newRevivalYear} onValueChange={setNewRevivalYear}>
+                                                    <SelectTrigger className="h-10 w-full bg-background">
+                                                        <SelectValue placeholder={t("Spex.year")}/>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {availableRevivalYears.map(year => (
+                                                            <SelectItem key={year} value={year}>{year}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="flex items-end">
+                                                <Button
+                                                    type="button"
+                                                    variant="secondary"
+                                                    className="h-10"
+                                                    onClick={() => {
+                                                        if (newRevivalYear) {
+                                                            setValue("revivalYears", [...revivalYears, newRevivalYear].sort((a, b) => a.localeCompare(b)));
+                                                            setNewRevivalYear("");
+                                                        }
+                                                    }}
+                                                    disabled={!newRevivalYear}
+                                                >
+                                                    <Plus className="h-4 w-4 mr-2"/>
+                                                    {t("Common.add")}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ) : !selectedYear && (
+                                        <p className="text-sm text-muted-foreground italic text-center py-4">
+                                            {t("Spex.selectYearFirst")}
+                                        </p>
+                                    )}
+                                </div>
+                            </TabsContent>
+                        </div>
+                    </ScrollArea>
+                </Tabs>
+
+                <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
                     <SheetClose asChild>
                         <Button type="button" variant="outline" disabled={isPending}>
-                            {t("Common.cancel")}
+                            {item ? t("Common.close") : t("Common.cancel")}
                         </Button>
                     </SheetClose>
                     <Button type="submit" disabled={isPending}>

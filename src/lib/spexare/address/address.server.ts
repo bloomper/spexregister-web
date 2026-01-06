@@ -81,10 +81,10 @@ export async function create(spexareId: string, typeId: string, input: any) {
 export async function update(spexareId: string, typeId: string, id: string, input: any) {
     const result = await getClient()
         .mutation(UpdateMutation, {
+            spexareId,
+            typeId,
             input: {
                 ...input,
-                spexareId,
-                typeId,
                 id
             }
         })

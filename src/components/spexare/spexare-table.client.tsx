@@ -17,8 +17,8 @@ import {
     X
 } from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Spexare} from "@/gql/graphql";
-import {getProxiedImageUrl} from "@/utils/utils";
+import {Spexare, Tag as TagType, Type} from "@/gql/graphql";
+import {cn, getProxiedImageUrl} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {SpexareForm} from "@/components/spexare";
@@ -57,8 +57,12 @@ export const columns: ColumnDef<Spexare>[] = [
 ];
 
 export function SpexareTable({
+                                 types,
+                                 tags = [],
                                  initialData,
                              }: {
+    types: Type[],
+    tags?: TagType[],
     initialData: CursorPage<Spexare>,
 }) {
     const t = useTranslations();
@@ -92,6 +96,21 @@ export function SpexareTable({
         setMounted(true);
     }, []);
 
+
+    useEffect(() => {
+        if (viewItem) {
+            const updated = initialData.items.find(i => i.id === viewItem.id);
+            if (updated) {
+                setViewItem(updated);
+            }
+        }
+        if (editItem) {
+            const updated = initialData.items.find(i => i.id === editItem.id);
+            if (updated) {
+                setEditItem(updated);
+            }
+        }
+    }, [initialData, setViewItem, setEditItem]);
 
     const buildFilterString = (query: string, published: Set<string>, deceased: Set<string>) => {
         const parts: string[] = [];
@@ -271,7 +290,10 @@ export function SpexareTable({
                         </DialogHeader>
 
                         <Tabs defaultValue="general" className="mt-6">
-                            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+                            <TabsList className={cn(
+                                "grid w-full h-auto p-1 bg-muted/50",
+                                viewItem ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-1"
+                            )}>
                                 <TabsTrigger value="general">{t("Common.general")}</TabsTrigger>
                                 <TabsTrigger value="addresses">{t("Spexare.addresses")}</TabsTrigger>
                                 <TabsTrigger value="consents">{t("Spexare.consents")}</TabsTrigger>
@@ -392,12 +414,12 @@ export function SpexareTable({
                                                 {consent?.value ? (
                                                     <Badge
                                                         className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
-                                                        {t("Common.yes")}
+                                                        {t("Spexare.Consent.granted")}
                                                     </Badge>
                                                 ) : (
                                                     <Badge variant="outline"
                                                            className="uppercase text-[10px] text-muted-foreground">
-                                                        {t("Common.no")}
+                                                        {t("Spexare.Consent.withdrawn")}
                                                     </Badge>
                                                 )}
                                             </div>
@@ -508,6 +530,8 @@ export function SpexareTable({
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (
                     <SpexareForm
+                        types={types}
+                        tags={tags}
                         item={editItem}
                         onSuccess={() => {
                             setEditItem(null);

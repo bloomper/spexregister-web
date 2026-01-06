@@ -1,6 +1,9 @@
 import {z} from "zod";
 
 export const addressFormSchema = z.object({
+    typeId: z
+        .string()
+        .min(1, "Common.fieldRequired"),
     streetAddress: z
         .string()
         .max(255, "Common.fieldTooLong")
@@ -26,8 +29,9 @@ export const addressFormSchema = z.object({
         .max(255, "Common.fieldTooLong")
         .optional(),
     emailAddress: z
-        .string()
+        .email("Spexare.Address.invalidEmailAddress")
         .max(255, "Common.fieldTooLong")
+        .or(z.literal(""))
         .optional(),
 });
 

@@ -1,6 +1,9 @@
 import {z} from "zod";
 
 export const toggleFormSchema = z.object({
+    typeId: z
+        .string()
+        .min(1, "Common.fieldRequired"),
     value: z
         .boolean(),
 });

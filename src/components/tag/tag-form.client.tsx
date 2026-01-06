@@ -13,6 +13,7 @@ import {Input} from "@/components/ui/input";
 import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {translateError} from "@/utils/utils";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 interface TagFormProps {
     item?: Tag;
@@ -52,25 +53,28 @@ export function TagForm({item, onSuccess}: TagFormProps) {
     });
 
     return (
-        <SheetContent className="sm:max-w-[540px] flex flex-col gap-0 p-0">
-            <SheetHeader className="p-6 pb-2">
+        <SheetContent className="sm:max-w-[600px] flex flex-col gap-0 p-0 h-full">
+            <SheetHeader className="p-6 pb-4 shrink-0">
                 <SheetTitle>{item ? t("Tag.editHeading") : t("Tag.createHeading")}</SheetTitle>
             </SheetHeader>
-            <form onSubmit={onSubmit} className="flex-1 overflow-y-auto">
-                <div className="space-y-4 px-6 py-4">
-                    <Field data-invalid={!!errors.name}>
-                        <FieldLabel>{t("Tag.name")}</FieldLabel>
-                        <FieldContent>
-                            <Input {...register("name")} />
-                            <FieldError errors={[translateError(t, errors.name)]}/>
-                        </FieldContent>
-                    </Field>
-                </div>
 
-                <SheetFooter className="p-6 pt-2">
+            <form onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                <ScrollArea className="flex-1 border-t min-h-0">
+                    <div className="space-y-4 px-6 py-6 pb-12">
+                        <Field data-invalid={!!errors.name}>
+                            <FieldLabel>{t("Tag.name")}</FieldLabel>
+                            <FieldContent>
+                                <Input {...register("name")} disabled={isPending}/>
+                                <FieldError errors={[translateError(t, errors.name)]}/>
+                            </FieldContent>
+                        </Field>
+                    </div>
+                </ScrollArea>
+
+                <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
                     <SheetClose asChild>
                         <Button type="button" variant="outline" disabled={isPending}>
-                            {t("Common.cancel")}
+                            {item ? t("Common.close") : t("Common.cancel")}
                         </Button>
                     </SheetClose>
                     <Button type="submit" disabled={isPending}>

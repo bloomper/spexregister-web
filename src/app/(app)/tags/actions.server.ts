@@ -2,7 +2,7 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {create, del, getPaged, tagFormSchema, update} from "@/lib/tag";
+import {create, del, getAll, getPaged, tagFormSchema, update} from "@/lib/tag";
 import {revalidateTag} from "next/cache";
 import {SortDirection} from "@/gql/graphql";
 
@@ -54,6 +54,12 @@ export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.tag.requireDelete, async () => {
         await Promise.all(ids.map(id => del(id)));
         revalidate();
+    });
+}
+
+export async function getAllTagsAction() {
+    return withPolicyAction(Policies.tag.requireRead, async () => {
+        return getAll();
     });
 }
 

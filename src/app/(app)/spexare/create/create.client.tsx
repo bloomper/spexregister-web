@@ -4,8 +4,15 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexareForm} from "@/components/spexare";
+import {Tag, Type} from "@/gql/graphql";
 
-export function SpexareCreateForm() {
+export function SpexareCreateForm({
+                                      types,
+                                      tags
+                                  }: {
+    types: Type[],
+    tags: Tag[]
+}) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(true);
 
@@ -26,7 +33,11 @@ export function SpexareCreateForm() {
 
     return (
         <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-            <SpexareForm onSuccess={handleSuccess}/>
+            <SpexareForm
+                types={types}
+                tags={tags}
+                onSuccess={handleSuccess}
+            />
         </Sheet>
     );
 }

@@ -30,7 +30,7 @@ import {
 import {DataFilter} from "@/components/data-filter";
 import {Input} from "@/components/ui/input";
 import Image from "next/image";
-import {getProxiedImageUrl} from "@/utils/utils";
+import {cn, getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {format, parse} from "date-fns";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -280,7 +280,10 @@ export function SpexareGrid({
                         </DialogHeader>
 
                         <Tabs defaultValue="general" className="mt-6">
-                            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+                            <TabsList className={cn(
+                                "grid w-full h-auto p-1 bg-muted/50",
+                                selected ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-1"
+                            )}>
                                 <TabsTrigger value="general">{t("Common.general")}</TabsTrigger>
                                 <TabsTrigger value="addresses">{t("Spexare.addresses")}</TabsTrigger>
                                 <TabsTrigger value="consents">{t("Spexare.consents")}</TabsTrigger>
@@ -398,12 +401,12 @@ export function SpexareGrid({
                                                 {consent?.value ? (
                                                     <Badge
                                                         className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
-                                                        {t("Common.yes")}
+                                                        {t("Spexare.Consent.granted")}
                                                     </Badge>
                                                 ) : (
                                                     <Badge variant="outline"
                                                            className="uppercase text-[10px] text-muted-foreground">
-                                                        {t("Common.no")}
+                                                        {t("Spexare.Consent.withdrawn")}
                                                     </Badge>
                                                 )}
                                             </div>

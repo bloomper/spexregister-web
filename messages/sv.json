@@ -20,11 +20,11 @@
     "createdBy": "Skapad av",
     "delete": "Radera",
     "deleteBulkConfirmation": "Detta går inte att ångra. Är du säker?",
-    "deleteBulkSuccess": "Raderingen lyckades",
     "deleteBulkHeading": "Radera dessa?",
+    "deleteBulkSuccess": "Raderingen lyckades",
     "deleteConfirmation": "Detta går inte att ångra. Är du säker?",
-    "deleteSuccess": "Raderingen lyckades",
     "deleteHeading": "Radera denna?",
+    "deleteSuccess": "Raderingen lyckades",
     "deleting": "Raderar...",
     "dragAndDrop": "eller dra och släpp",
     "edit": "Ändra",
@@ -34,6 +34,7 @@
     "fieldRequired": "Fältet är obligatoriskt",
     "fieldTooLong": "Fälter är för långt",
     "fileTooLarge": "Filen är för stor. Max filstorlek är 15MB.",
+    "general": "Allmänt",
     "imageUploadHint": "PNG, JPEG eller GIF (max. 15MB)",
     "insufficientPermissions": "Otillräckliga rättigheter",
     "lastModifiedAt": "Senast uppdaterad",
@@ -45,13 +46,13 @@
     "manage": "Hantera",
     "myFgvAccount": "Mitt FGV-konto",
     "no": "Nej",
-    "none": "Ingen",
     "noDataDescription": "Kunde inte hitta någon data för tillfället. Vänligen kolla senare.",
+    "noDataFound": "Ingen data hittades",
     "noDataHeading": "Ingen data hittades",
     "noFilterMatchDescription": "Prova att ändra din filtrering eller sökord för att hitta det du letar efter.",
     "noFilterMatchHeading": "Ingen data hittades",
     "noMoreDataFound": "Ingen mer data hittades",
-    "noDataFound": "Ingen data hittades",
+    "none": "Ingen",
     "openMenu": "Öppna meny",
     "reset": "Återställ",
     "resetFilters": "Återställ filter",
@@ -61,8 +62,8 @@
     "search": "Sök",
     "searchPlaceholder": "Sök efter spexare...",
     "select": "Välj",
-    "selectDate": "Välj datum",
     "selectAll": "Välj alla",
+    "selectDate": "Välj datum",
     "selected": "{count, plural, =1 {# vald} other {# valda}}",
     "themeDark": "Mörk",
     "themeLight": "Ljus",
@@ -70,8 +71,7 @@
     "tryAgain": "Försök igen",
     "updateSuccess": "Uppdateringen lyckades",
     "uploadSuccess": "Uppladdning lyckades",
-    "yes": "Ja",
-    "general": "Allmänt"
+    "yes": "Ja"
   },
   "Header": {
     "toggleLanguage": "Byt språk",
@@ -119,55 +119,94 @@
     "filterPlaceholder": "Filtrera på år och/eller titel...",
     "firstPossibleYear": "Första möjliga år",
     "heading": "Spex",
+    "noRevivals": "Inga nyuppsättningar",
     "posterUrl": "Poster",
     "revival": "Nyuppsättning?",
     "revivals": "Nyuppsättningar",
-    "noRevivals": "Inga",
     "selectCategory": "Välj kategori",
     "selectYear": "Välj år",
+    "selectYearFirst": "Välj ett ursprungsår i fliken 'Allmänt' för att kunna lägga till nyuppsättningar.",
     "title": "Titel",
     "year": "År"
   },
   "Spexare": {
-    "createHeading": "Skapa spexare",
-    "editHeading": "Ändra spexare",
-    "filterPlaceholder": "Filtrera på förnamn, efternamn och/eller smeknamn...",
-    "heading": "Spexare",
-    "firstName": "Förnamn",
-    "lastName": "Efternamn",
-    "nickName": "Smeknamn",
-    "imageUrl": "Bild",
-    "deceased": "Avliden?",
-    "deceasedStates": {
-      "false": "Nej",
-      "true": "Ja"
+    "Address": {
+      "city": "Stad",
+      "country": "Land",
+      "emailAddress": "Emailadress",
+      "invalidEmailAddress": "Ogiltig emailadress",
+      "phone": "Telefonnummer",
+      "phoneMobile": "Mobiltelefonnummer",
+      "postalCode": "Postnummer",
+      "streetAddress": "Gatuadress",
+      "type": "Adresstyp"
     },
+    "Consent": {
+      "granted": "Givet",
+      "type": "Medgivandetyp",
+      "withdrawn": "Ej givet"
+    },
+    "Membership": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "selectYear": "Välj år",
+      "type": "Medlemskapstyp",
+      "year": "År"
+    },
+    "Tagging": {
+      "searchPlaceholder": "Sök på taggnamn...",
+      "type": "Taggtyp"
+    },
+    "Toggle": {
+      "type": "Inställningstyp"
+    },
+    "addresses": "Adresser",
+    "birthDate": "Födelsedatum",
+    "birthNumber": "Födelsenummer",
+    "birthNumberPlaceholder": "De sista fyra",
+    "comment": "Kommentar",
+    "consents": "Medgivanden",
+    "createHeading": "Skapa spexare",
+    "deceased": "Avliden?",
     "deceasedBadges": {
       "false": "Ej avliden",
       "true": "Avliden"
     },
-    "published": "Publicerad?",
-    "publishedStates": {
+    "deceasedStates": {
       "false": "Nej",
       "true": "Ja"
     },
+    "editHeading": "Ändra spexare",
+    "filterPlaceholder": "Filtrera på förnamn, efternamn och/eller smeknamn...",
+    "firstName": "Förnamn",
+    "graduation": "Examen",
+    "heading": "Spexare",
+    "imageUrl": "Bild",
+    "invalidBirthNumber": "Ogiltigt födelsenummer",
+    "invalidSocialSecurityNumber": "Ogiltigt personnummer",
+    "lastName": "Efternamn",
+    "memberships": "Medlemskap",
+    "nickName": "Smeknamn",
+    "published": "Publicerad?",
     "publishedBadges": {
       "false": "Ej publicerad",
       "true": "Publicerad"
     },
+    "publishedStates": {
+      "false": "Nej",
+      "true": "Ja"
+    },
     "socialSecurityNumber": "Personnummer",
-    "birthDate": "Födelsedatum",
-    "birthNumber": "Födelsenummer",
-    "birthNumberPlaceholder": "De sista fyra",
-    "invalidSocialSecurityNumber": "Ogiltigt personnummer",
-    "invalidBirthNumber": "Ogiltigt födelsenummer",
-    "graduation": "Examen",
-    "comment": "Kommentar",
-    "addresses": "Adresser",
-    "consents": "Medgivanden",
-    "memberships": "Medlemskap",
     "taggings": "Taggar",
     "toggles": "Inställningar"
+  },
+  "Support": {
+    "contact": "Kontakta supporten",
+    "contactAction": "Skicka ett supportärende",
+    "contactDescription": "Beskriv ditt problem eller den felaktiga datan så tydligt som möjligt. Hör av dig till oss på {email}.",
+    "description": "Har du hittat ett tekniskt fel, har problem med att logga in eller upptäckt felaktig data i registret? Vi hjälper dig gärna att reda ut det.",
+    "heading": "Hur kan vi hjälpa till?",
+    "title": "Support"
   },
   "Tag": {
     "createHeading": "Skapa tagg",
@@ -178,10 +217,10 @@
   },
   "Task": {
     "Category": {
+      "actorPresent": "Har roll/stämma?",
       "createHeading": "Skapa funktionskategori",
       "editHeading": "Ändra funktionskategori",
       "filterPlaceholder": "Filtrera på namn...",
-      "actorPresent": "Har roll/stämma?",
       "heading": "Funktionskategorier",
       "name": "Namn"
     },
@@ -190,15 +229,7 @@
     "editHeading": "Ändra funktion",
     "filterPlaceholder": "Filtrera på namn...",
     "heading": "Funktioner",
-    "selectCategory": "Välj kategori",
-    "name": "Namn"
-  },
-  "Support": {
-    "title": "Support",
-    "heading": "Hur kan vi hjälpa till?",
-    "description": "Har du hittat ett tekniskt fel, har problem med att logga in eller upptäckt felaktig data i registret? Vi hjälper dig gärna att reda ut det.",
-    "contact": "Kontakta supporten",
-    "contactAction": "Skicka ett supportärende",
-    "contactDescription": "Beskriv ditt problem eller den felaktiga datan så tydligt som möjligt. Hör av dig till oss på {email}."
+    "name": "Namn",
+    "selectCategory": "Välj kategori"
   }
 }

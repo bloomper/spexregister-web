@@ -20,11 +20,11 @@
     "createdBy": "Created by",
     "delete": "Delete",
     "deleteBulkConfirmation": "This action cannot be reverted. Are you sure?",
-    "deleteBulkSuccess": "Items deleted successfully",
     "deleteBulkHeading": "Delete these items?",
+    "deleteBulkSuccess": "Items deleted successfully",
     "deleteConfirmation": "This action cannot be reverted. Are you sure?",
-    "deleteSuccess": "Delete successful",
     "deleteHeading": "Delete this item?",
+    "deleteSuccess": "Delete successful",
     "deleting": "Deleting...",
     "dragAndDrop": "or drag and drop",
     "edit": "Edit",
@@ -34,6 +34,7 @@
     "fieldRequired": "Field is required",
     "fieldTooLong": "Field is too long",
     "fileTooLarge": "File too large. Maximum file size is 15MB.",
+    "general": "General",
     "imageUploadHint": "PNG, JPEG or GIF (max. 15MB)",
     "insufficientPermissions": "Insufficient permissions",
     "lastModifiedAt": "Last modified at",
@@ -45,13 +46,13 @@
     "manage": "Manage",
     "myFgvAccount": "My FGV account",
     "no": "No",
-    "none": "None",
     "noDataDescription": "Couldn't find any data at the moment. Please check back later.",
+    "noDataFound": "No data found",
     "noDataHeading": "No data found",
     "noFilterMatchDescription": "Try adjusting your filters or search query to find what you're looking for.",
     "noFilterMatchHeading": "No data found",
     "noMoreDataFound": "No more data found",
-    "noDataFound": "No data found",
+    "none": "None",
     "openMenu": "Open menu",
     "reset": "Reset",
     "resetFilters": "Reset filters",
@@ -61,8 +62,8 @@
     "search": "Search",
     "searchPlaceholder": "Search for spexare...",
     "select": "Select",
-    "selectDate": "Select date",
     "selectAll": "Select all",
+    "selectDate": "Select date",
     "selected": "{count, plural, =1 {# selected} other {# selected}}",
     "themeDark": "Dark",
     "themeLight": "Light",
@@ -71,8 +72,7 @@
     "tryAgain": "Try again",
     "updateSuccess": "Update successful",
     "uploadSuccess": "Upload successful",
-    "yes": "Yes",
-    "general": "General"
+    "yes": "Yes"
   },
   "Header": {
     "toggleLanguage": "Toggle language",
@@ -120,55 +120,94 @@
     "filterPlaceholder": "Filter by year and/or title...",
     "firstPossibleYear": "First possible year",
     "heading": "Spex",
+    "noRevivals": "No revivals",
     "posterUrl": "Poster",
     "revival": "Revival?",
     "revivals": "Revivals",
-    "noRevivals": "None",
     "selectCategory": "Select category",
     "selectYear": "Select year",
+    "selectYearFirst": "Please select a production year in the 'General' tab to manage revivals.",
     "title": "Title",
     "year": "Year"
   },
   "Spexare": {
-    "createHeading": "Create spexare",
-    "editHeading": "Edit spexare",
-    "filterPlaceholder": "Filter by first name, last name and/or nick name...",
-    "heading": "Spexare",
-    "firstName": "First name",
-    "lastName": "Last name",
-    "nickName": "Nick name",
-    "imageUrl": "Image",
-    "deceased": "Deceased?",
-    "deceasedStates": {
-      "false": "No",
-      "true": "Yes"
+    "Address": {
+      "city": "City",
+      "country": "Country",
+      "emailAddress": "Email address",
+      "invalidEmailAddress": "Invalid email address",
+      "phone": "Phone",
+      "phoneMobile": "Mobile phone",
+      "postalCode": "Postal code",
+      "streetAddress": "Street address",
+      "type": "Address type"
     },
+    "Consent": {
+      "granted": "Granted",
+      "type": "Consent type",
+      "withdrawn": "Withdrawn"
+    },
+    "Membership": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "selectYear": "Select year",
+      "type": "Membership type",
+      "year": "Year"
+    },
+    "Tagging": {
+      "searchPlaceholder": "Search by tag name...",
+      "type": "Tagging type"
+    },
+    "Toggle": {
+      "type": "Toggle type"
+    },
+    "addresses": "Addresses",
+    "birthDate": "Birth date",
+    "birthNumber": "Birth number",
+    "birthNumberPlaceholder": "The last four",
+    "comment": "Comment",
+    "consents": "Consents",
+    "createHeading": "Create spexare",
+    "deceased": "Deceased?",
     "deceasedBadges": {
       "false": "Not deceased",
       "true": "Deceased"
     },
-    "published": "Published?",
-    "publishedStates": {
+    "deceasedStates": {
       "false": "No",
       "true": "Yes"
     },
+    "editHeading": "Edit spexare",
+    "filterPlaceholder": "Filter by first name, last name and/or nick name...",
+    "firstName": "First name",
+    "graduation": "Graduation",
+    "heading": "Spexare",
+    "imageUrl": "Image",
+    "invalidBirthNumber": "Invalid birth number",
+    "invalidSocialSecurityNumber": "Invalid social security number",
+    "lastName": "Last name",
+    "memberships": "Memberships",
+    "nickName": "Nick name",
+    "published": "Published?",
     "publishedBadges": {
       "false": "Not published",
       "true": "Published"
     },
+    "publishedStates": {
+      "false": "No",
+      "true": "Yes"
+    },
     "socialSecurityNumber": "Social security number",
-    "birthDate": "Birth date",
-    "birthNumber": "Birth number",
-    "birthNumberPlaceholder": "The last four",
-    "invalidSocialSecurityNumber": "Invalid social security number",
-    "invalidBirthNumber": "Invalid birth number",
-    "graduation": "Graduation",
-    "comment": "Comment",
-    "addresses": "Addresses",
-    "consents": "Consents",
-    "memberships": "Memberships",
     "taggings": "Tags",
     "toggles": "Toggles"
+  },
+  "Support": {
+    "contact": "Contact Support",
+    "contactAction": "Send a support request",
+    "contactDescription": "Please describe your issue or the faulty data as clearly as possible. Reach out to us at {email}.",
+    "description": "Found a technical bug, having trouble logging in, or noticed incorrect data in the register? We are here to help you get it sorted.",
+    "heading": "How can we help?",
+    "title": "Support"
   },
   "Tag": {
     "createHeading": "Create tag",
@@ -179,10 +218,10 @@
   },
   "Task": {
     "Category": {
+      "actorPresent": "Has role/vocal?",
       "createHeading": "Create task category",
       "editHeading": "Edit task category",
       "filterPlaceholder": "Filter by name...",
-      "actorPresent": "Has role/vocal?",
       "heading": "Task categories",
       "name": "Name"
     },
@@ -191,15 +230,7 @@
     "editHeading": "Edit task",
     "filterPlaceholder": "Filter by name...",
     "heading": "Tasks",
-    "selectCategory": "Select category",
-    "name": "Name"
-  },
-  "Support": {
-    "title": "Support",
-    "heading": "How can we help?",
-    "description": "Found a technical bug, having trouble logging in, or noticed incorrect data in the register? We are here to help you get it sorted.",
-    "contact": "Contact Support",
-    "contactAction": "Send a support request",
-    "contactDescription": "Please describe your issue or the faulty data as clearly as possible. Reach out to us at {email}."
+    "name": "Name",
+    "selectCategory": "Select category"
   }
 }
