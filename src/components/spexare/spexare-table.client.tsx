@@ -17,7 +17,7 @@ import {
     X
 } from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Spexare, Tag as TagType, Type} from "@/gql/graphql";
+import {Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/graphql";
 import {cn, getProxiedImageUrl} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
@@ -42,6 +42,7 @@ import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {DataEmpty} from "@/components/data-empty";
+import {ActivityTimeline} from "@/components/spexare/activity/activity-timeline.client";
 
 
 export const columns: ColumnDef<Spexare>[] = [
@@ -56,15 +57,25 @@ export const columns: ColumnDef<Spexare>[] = [
     columnHelper.actions<Spexare>(),
 ];
 
+interface SpexareTableProps {
+    types: Type[],
+    tags?: TagType[],
+    tasks?: Task[],
+    taskCategories?: TaskCategory[],
+    spex?: Spex[],
+    spexCategories?: SpexCategory[],
+    initialData: CursorPage<Spexare>,
+}
+
 export function SpexareTable({
                                  types,
                                  tags = [],
+                                 tasks = [],
+                                 taskCategories = [],
+                                 spex = [],
+                                 spexCategories = [],
                                  initialData,
-                             }: {
-    types: Type[],
-    tags?: TagType[],
-    initialData: CursorPage<Spexare>,
-}) {
+                             }: SpexareTableProps) {
     const t = useTranslations();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
@@ -295,6 +306,7 @@ export function SpexareTable({
                                 viewItem ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-1"
                             )}>
                                 <TabsTrigger value="general">{t("Common.general")}</TabsTrigger>
+                                <TabsTrigger value="activities">{t("Spexare.activities")}</TabsTrigger>
                                 <TabsTrigger value="addresses">{t("Spexare.addresses")}</TabsTrigger>
                                 <TabsTrigger value="consents">{t("Spexare.consents")}</TabsTrigger>
                                 <TabsTrigger value="memberships">{t("Spexare.memberships")}</TabsTrigger>
@@ -344,6 +356,12 @@ export function SpexareTable({
                                 {viewItem && (
                                     <AuditInfo item={viewItem}/>
                                 )}
+                            </TabsContent>
+
+                            <TabsContent value="activities" className="pt-2">
+                                <ActivityTimeline
+                                    activities={viewItem?.activities || []}
+                                />
                             </TabsContent>
 
                             <TabsContent value="addresses" className="pt-4 space-y-4">
@@ -532,6 +550,10 @@ export function SpexareTable({
                     <SpexareForm
                         types={types}
                         tags={tags}
+                        tasks={tasks}
+                        taskCategories={taskCategories}
+                        spex={spex}
+                        spexCategories={spexCategories}
                         item={editItem}
                         onSuccess={() => {
                             setEditItem(null);

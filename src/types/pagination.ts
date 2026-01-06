@@ -1,4 +1,8 @@
 import {
+    Activity,
+    ActivityEdge,
+    Actor,
+    ActorEdge,
     Address,
     AddressEdge,
     Consent,
@@ -16,6 +20,8 @@ import {
     Tag,
     TagEdge,
     Task,
+    TaskActivity,
+    TaskActivityEdge,
     TaskCategory,
     TaskCategoryEdge,
     TaskEdge,
@@ -33,6 +39,14 @@ export type CursorPageInfo = {
 export type CursorPage<TItem> = {
     items: TItem[];
     pageInfo: CursorPageInfo;
+};
+
+export type ActivityPage = CursorPage<Activity> & {
+    edges: Array<Omit<ActivityEdge, 'node'> & { node: Activity }>;
+};
+
+export type ActorPage = CursorPage<Actor> & {
+    edges: Array<Omit<ActorEdge, 'node'> & { node: Actor }>;
 };
 
 export type AddressPage = CursorPage<Address> & {
@@ -65,6 +79,10 @@ export type SpexarePage = CursorPage<Spexare> & {
 
 export type TagPage = CursorPage<Tag> & {
     edges: Array<Omit<TagEdge, 'node'> & { node: Tag }>;
+};
+
+export type TaskActivityPage = CursorPage<TaskActivity> & {
+    edges: Array<Omit<TaskActivityEdge, 'node'> & { node: TaskActivity }>;
 };
 
 export type TaskPage = CursorPage<Task> & {

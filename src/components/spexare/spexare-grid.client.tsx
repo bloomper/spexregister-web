@@ -34,6 +34,7 @@ import {cn, getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {format, parse} from "date-fns";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {ActivityTimeline} from "@/components/spexare/activity/activity-timeline.client";
 
 export function SpexareGrid({
                                 initialItems = [],
@@ -285,6 +286,7 @@ export function SpexareGrid({
                                 selected ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-1"
                             )}>
                                 <TabsTrigger value="general">{t("Common.general")}</TabsTrigger>
+                                <TabsTrigger value="activities">{t("Spexare.activities")}</TabsTrigger>
                                 <TabsTrigger value="addresses">{t("Spexare.addresses")}</TabsTrigger>
                                 <TabsTrigger value="consents">{t("Spexare.consents")}</TabsTrigger>
                                 <TabsTrigger value="memberships">{t("Spexare.memberships")}</TabsTrigger>
@@ -331,6 +333,12 @@ export function SpexareGrid({
                                         </div>
                                     )}
                                 </div>
+                            </TabsContent>
+
+                            <TabsContent value="activities" className="pt-2">
+                                <ActivityTimeline
+                                    activities={selected?.activities || []}
+                                />
                             </TabsContent>
 
                             <TabsContent value="addresses" className="pt-4 space-y-4">

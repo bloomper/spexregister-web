@@ -9,6 +9,7 @@ import {
     del,
     deletePoster,
     deleteRevival,
+    getAll as getAllSpex,
     getPaged,
     removeCategory,
     spexFormSchema,
@@ -17,7 +18,7 @@ import {
 } from "@/lib/spex";
 import {revalidateTag} from "next/cache";
 import {SortDirection} from "@/gql/graphql";
-import {getAll} from "@/lib/spex/category";
+import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
 export async function getPageAction(args: {
     first?: number;
@@ -34,6 +35,12 @@ export async function getPageAction(args: {
             ...args,
             full: args.full === true || args.full === "true"
         });
+    });
+}
+
+export async function getAllAction() {
+    return withPolicyAction(Policies.spex.requireRead, async () => {
+        return getAllSpex();
     });
 }
 
@@ -74,7 +81,7 @@ export async function bulkDeleteAction(ids: string[]) {
 
 export async function getAllCategoriesAction() {
     return withPolicyAction(Policies.spexCategory.requireRead, async () => {
-        return getAll();
+        return getAllSpexCategories();
     });
 }
 

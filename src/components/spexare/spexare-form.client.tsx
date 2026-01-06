@@ -3,7 +3,19 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SpexareFormInput, SpexareFormOutput, spexareFormSchema} from "@/lib/spexare/schema";
-import {Address, Consent, Membership, Spexare, Tag, Toggle, Type} from "@/gql/graphql";
+import {
+    Address,
+    Consent,
+    Membership,
+    Spex,
+    Spexare,
+    SpexCategory,
+    Tag,
+    Task,
+    TaskCategory,
+    Toggle,
+    Type
+} from "@/gql/graphql";
 import {useLocale, useTranslations} from "next-intl";
 import {useState, useTransition} from "react";
 import {toast} from "sonner";
@@ -29,15 +41,29 @@ import {ConsentManager} from "@/components/spexare/consent/consent-manager.clien
 import {MembershipManager} from "@/components/spexare/membership/membership-manager.client";
 import {TaggingManager} from "@/components/spexare/tagging/tagging-manager.client";
 import {ToggleManager} from "@/components/spexare/toggle/toggle-manager.client";
+import {ActivityManager} from "@/components/spexare/activity/activity-manager.client";
 
 interface SpexareFormProps {
     item?: Spexare;
     types: Type[];
     tags?: Tag[];
+    tasks?: Task[],
+    taskCategories?: TaskCategory[],
+    spex?: Spex[],
+    spexCategories?: SpexCategory[],
     onSuccess: () => void;
 }
 
-export function SpexareForm({item, types, tags = [], onSuccess}: SpexareFormProps) {
+export function SpexareForm({
+                                item,
+                                types,
+                                tags = [],
+                                tasks = [],
+                                taskCategories = [],
+                                spex = [],
+                                spexCategories = [],
+                                onSuccess
+                            }: SpexareFormProps) {
     const t = useTranslations();
     const currentLocale = useLocale();
     const locale = currentLocale === "sv" ? sv : enUS;
@@ -132,6 +158,13 @@ export function SpexareForm({item, types, tags = [], onSuccess}: SpexareFormProp
                                 {t("Common.general")}
                             </TabsTrigger>
 
+                            <TabsTrigger
+                                value="activities"
+                                disabled={!item}
+                                className="py-2 text-xs sm:text-sm data-disabled:opacity-50"
+                            >
+                                {t("Spexare.activities")}
+                            </TabsTrigger>
                             <TabsTrigger
                                 value="addresses"
                                 disabled={!item}
@@ -356,6 +389,19 @@ export function SpexareForm({item, types, tags = [], onSuccess}: SpexareFormProp
 
                             {item && (
                                 <>
+                                    <TabsContent value="activities" className="mt-0 outline-none pb-8">
+                                        <div className="py-4">
+                                            <ActivityManager
+                                                spexareId={item.id}
+                                                types={types}
+                                                tasks={tasks}
+                                                taskCategories={taskCategories}
+                                                spex={spex}
+                                                spexCategories={spexCategories}
+                                                initialActivities={item.activities || []}
+                                            />
+                                        </div>
+                                    </TabsContent>
                                     <TabsContent value="addresses" className="mt-0 outline-none pb-8">
                                         <div className="py-4">
                                             <AddressManager

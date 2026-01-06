@@ -131,6 +131,28 @@
     "year": "Year"
   },
   "Spexare": {
+    "Activity": {
+      "SpexActivity": {
+        "category": "Category",
+        "revival": "Revival",
+        "selectCategory": "Select spex category",
+        "selectYear": "Select year",
+        "spex": "Spex"
+      },
+      "TaskActivity": {
+        "Actor": {
+          "vocal": "Vocal",
+          "role": "Role",
+          "noRolesAvailable": "No roles available for this task"
+        },
+        "category": "Category",
+        "selectCategory": "Select task category",
+        "selectTask": "Select task",
+        "task": "Task"
+      },
+      "addActivity": "Add activity",
+      "newActivity": "New activity"
+    },
     "Address": {
       "city": "City",
       "country": "Country",
@@ -161,6 +183,7 @@
     "Toggle": {
       "type": "Toggle type"
     },
+    "activities": "Activities",
     "addresses": "Addresses",
     "birthDate": "Birth date",
     "birthNumber": "Birth number",

@@ -11,6 +11,7 @@ const SummaryFields = `
     year
     title
     posterUrl
+    revival
     revivals {
       id
       year
@@ -129,6 +130,27 @@ export async function getPaged(args: {
     }
 
     return mapConnection<Spex, SpexEdge>(result.data?.spexPaged);
+}
+
+export async function getAll(args?: { full?: boolean }): Promise<Spex[]> {
+    const items: Spex[] = [];
+    let hasNextPage = true;
+    let after: string | null = null;
+
+    while (hasNextPage) {
+        const page = await getPaged({
+            first: 100,
+            after,
+            full: args?.full,
+            filter: ""
+        });
+
+        items.push(...page.items);
+        hasNextPage = page.pageInfo.hasNextPage;
+        after = page.pageInfo.endCursor;
+    }
+
+    return items;
 }
 
 export async function create(input: any) {

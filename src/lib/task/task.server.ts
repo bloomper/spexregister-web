@@ -109,6 +109,26 @@ export async function getPaged(args: {
     return mapConnection<Task, TaskEdge>(result.data?.taskPaged);
 }
 
+export async function getAll(args?: { full?: boolean }): Promise<Task[]> {
+    const items: Task[] = [];
+    let hasNextPage = true;
+    let after: string | null = null;
+
+    while (hasNextPage) {
+        const page = await getPaged({
+            first: 100,
+            after,
+            full: args?.full
+        });
+
+        items.push(...page.items);
+        hasNextPage = page.pageInfo.hasNextPage;
+        after = page.pageInfo.endCursor;
+    }
+
+    return items;
+}
+
 export async function create(input: any) {
     const result = await getClient()
         .mutation(CreateMutation, {input})

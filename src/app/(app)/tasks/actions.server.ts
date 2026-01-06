@@ -2,10 +2,19 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {addCategory, create, del, getPaged, removeCategory, taskFormSchema, update} from "@/lib/task";
+import {
+    addCategory,
+    create,
+    del,
+    getAll as getAllTasks,
+    getPaged,
+    removeCategory,
+    taskFormSchema,
+    update
+} from "@/lib/task";
 import {revalidateTag} from "next/cache";
 import {SortDirection} from "@/gql/graphql";
-import {getAll} from "@/lib/task/category";
+import {getAll as getAllTaskCategories} from "@/lib/task/category";
 
 export async function getPageAction(args: {
     first?: number;
@@ -22,6 +31,12 @@ export async function getPageAction(args: {
             ...args,
             full: args.full === true || args.full === "true"
         });
+    });
+}
+
+export async function getAllAction() {
+    return withPolicyAction(Policies.task.requireRead, async () => {
+        return getAllTasks();
     });
 }
 
@@ -62,7 +77,7 @@ export async function bulkDeleteAction(ids: string[]) {
 
 export async function getAllCategoriesAction() {
     return withPolicyAction(Policies.taskCategory.requireRead, async () => {
-        return getAll();
+        return getAllTaskCategories();
     });
 }
 

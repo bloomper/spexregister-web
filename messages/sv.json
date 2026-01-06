@@ -130,6 +130,28 @@
     "year": "År"
   },
   "Spexare": {
+    "Activity": {
+      "SpexActivity": {
+        "category": "Kategori",
+        "revival": "Nyuppsättning",
+        "selectCategory": "Välj spexkategori",
+        "selectYear": "Välj år",
+        "spex": "Spex"
+      },
+      "TaskActivity": {
+        "Actor": {
+          "vocal": "Stämma",
+          "role": "Roll",
+          "noRolesAvailable": "Inga roller tillgängliga för denna funktion"
+        },
+        "category": "Kategori",
+        "selectCategory": "Välj funktionskategori",
+        "selectTask": "Välj funktion",
+        "task": "Funktion"
+      },
+      "addActivity": "Lägg till aktivitet",
+      "newActivity": "Ny aktivitet"
+    },
     "Address": {
       "city": "Stad",
       "country": "Land",
@@ -160,6 +182,7 @@
     "Toggle": {
       "type": "Inställningstyp"
     },
+    "activities": "Aktiviteter",
     "addresses": "Adresser",
     "birthDate": "Födelsedatum",
     "birthNumber": "Födelsenummer",

@@ -5,11 +5,15 @@ import {SpexareTable} from "@/components/spexare";
 import {withPolicyPage} from "@/utils/route.server";
 import {getTypes} from "@/lib/settings";
 import {getAll as getAllTags} from "@/lib/tag";
+import {getAll as getAllTasks} from "@/lib/task";
+import {getAll as getAllTaskCategories} from "@/lib/task/category";
+import {getAll as getAllSpex} from "@/lib/spex";
+import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
 export default async function SpexareManagePage() {
     return withPolicyPage(Policies.spexare.requireUpdate, async () => {
         const defaultPageSize = 15;
-        const [initialData, types, tags, t] = await Promise.all([
+        const [initialData, types, tags, tasks, taskCategories, spex, spexCategories, t] = await Promise.all([
             getPaged({
                 first: defaultPageSize,
                 filter: "(published:TRUE OR published:FALSE)",
@@ -17,6 +21,10 @@ export default async function SpexareManagePage() {
             }),
             getLocale().then(locale => getTypes(locale)),
             getAllTags(),
+            getAllTasks(),
+            getAllTaskCategories(),
+            getAllSpex(),
+            getAllSpexCategories(),
             getTranslations()
         ]);
 
@@ -28,6 +36,10 @@ export default async function SpexareManagePage() {
                 <SpexareTable
                     types={types}
                     tags={tags}
+                    tasks={tasks}
+                    taskCategories={taskCategories}
+                    spex={spex}
+                    spexCategories={spexCategories}
                     initialData={initialData}
                 />
             </div>

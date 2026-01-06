@@ -111,33 +111,36 @@ export function AddressManager({
                             />
                         ) : (
                             <div key={address.id}
-                                 className="group flex items-center justify-between p-3 rounded-lg border bg-muted/10">
-                                <div className="flex gap-3">
-                                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-1"/>
-                                    <div className="text-sm">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium">{address.streetAddress}</span>
-                                            <span
-                                                className="text-[10px] uppercase bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-                                                {address.type.label}
-                                            </span>
-                                        </div>
-                                        <div className="text-muted-foreground">
-                                            {address.postalCode} {address.city}
+                                 className="group p-3 rounded-lg border bg-muted/10">
+                                <div className="grid grid-cols-[1fr_auto] gap-3 items-start">
+                                    <div className="flex gap-3 min-w-0">
+                                        <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-1"/>
+                                        <div className="text-sm min-w-0 flex-1">
+                                            <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                                                <span className="font-medium truncate">{address.streetAddress}</span>
+                                                <span
+                                                    className="text-[10px] uppercase bg-muted px-1.5 py-0.5 rounded text-muted-foreground shrink-0">
+                                                        {address.type.label}
+                                                    </span>
+                                            </div>
+                                            <div className="text-muted-foreground truncate">
+                                                {address.postalCode} {address.city}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button size="icon" variant="ghost" className="h-8 w-8"
-                                            disabled={isPending}
-                                            onClick={() => setEditingId(address.id)}>
-                                        <Edit2 className="h-4 w-4"/>
-                                    </Button>
-                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive"
-                                            disabled={isPending}
-                                            onClick={() => handleDelete(address.id, address.type.id)}>
-                                        <Trash2 className="h-4 w-4"/>
-                                    </Button>
+                                    <div
+                                        className="flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
+                                        <Button size="icon" variant="ghost" className="h-8 w-8"
+                                                disabled={isPending}
+                                                onClick={() => setEditingId(address.id)}>
+                                            <Edit2 className="h-4 w-4"/>
+                                        </Button>
+                                        <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive"
+                                                disabled={isPending}
+                                                onClick={() => handleDelete(address.id, address.type.id)}>
+                                            <Trash2 className="h-4 w-4"/>
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         )

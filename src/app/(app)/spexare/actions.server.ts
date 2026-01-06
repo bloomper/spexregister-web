@@ -25,6 +25,23 @@ import {
 } from "@/lib/spexare/membership";
 import {create as createTagging, del as delTagging} from "@/lib/spexare/tagging";
 import {create as createToggle, del as delToggle, toggleFormSchema, update as updateToggle} from "@/lib/spexare/toggle";
+import {create as createActivity, del as delActivity,} from "@/lib/spexare/activity";
+import {
+    create as createSpexActivity,
+    del as delSpexActivity,
+    update as updateSpexActivity
+} from "@/lib/spexare/activity/spex-activity";
+import {
+    create as createTaskActivity,
+    del as delTaskActivity,
+    update as updateTaskActivity
+} from "@/lib/spexare/activity/task-activity";
+import {
+    actorFormSchema,
+    create as createActor,
+    del as delActor,
+    update as updateActor
+} from "@/lib/spexare/activity/task-activity/actor";
 
 export async function getPageAction(args: {
     first?: number;
@@ -223,6 +240,98 @@ export async function updateToggleAction(spexareId: string, _typeId: string, id:
 export async function deleteToggleAction(spexareId: string, typeId: string, id: string) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const result = await delToggle(spexareId, typeId, id);
+        revalidate();
+        return result;
+    });
+}
+
+export async function createActivityAction(spexareId: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await createActivity(spexareId);
+        revalidate();
+        return result;
+    });
+}
+
+export async function deleteActivityAction(spexareId: string, id: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await delActivity(spexareId, id);
+        revalidate();
+        return result;
+    });
+}
+
+export async function createSpexActivityAction(spexareId: string, activityId: string, spexId: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await createSpexActivity(spexareId, activityId, spexId);
+        revalidate();
+        return result;
+    });
+}
+
+export async function updateSpexActivityAction(spexareId: string, activityId: string, spexId: string, id: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await updateSpexActivity(spexareId, activityId, spexId, id);
+        revalidate();
+        return result;
+    });
+}
+
+export async function deleteSpexActivityAction(spexareId: string, activityId: string, id: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await delSpexActivity(spexareId, activityId, id);
+        revalidate();
+        return result;
+    });
+}
+
+export async function createTaskActivityAction(spexareId: string, activityId: string, taskId: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await createTaskActivity(spexareId, activityId, taskId);
+        revalidate();
+        return result;
+    });
+}
+
+export async function updateTaskActivityAction(spexareId: string, activityId: string, taskId: string, id: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await updateTaskActivity(spexareId, activityId, taskId, id);
+        revalidate();
+        return result;
+    });
+}
+
+export async function deleteTaskActivityAction(spexareId: string, activityId: string, id: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await delTaskActivity(spexareId, activityId, id);
+        revalidate();
+        return result;
+    });
+}
+
+export async function createActorAction(spexareId: string, activityId: string, taskActivityId: string, _vocalId: string, data: unknown) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const validated = actorFormSchema.parse(data);
+        const {vocalId, ...createInput} = validated;
+        const result = await createActor(spexareId, activityId, taskActivityId, _vocalId, createInput);
+        revalidate();
+        return result;
+    });
+}
+
+export async function updateActorAction(spexareId: string, activityId: string, taskActivityId: string, _vocalId: string, id: string, data: unknown) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const validated = actorFormSchema.parse(data);
+        const {vocalId, ...updateInput} = validated;
+        const result = await updateActor(spexareId, activityId, taskActivityId, vocalId, id, updateInput);
+        revalidate();
+        return result;
+    });
+}
+
+export async function deleteActorAction(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await delActor(spexareId, activityId, taskActivityId, vocalId, id);
         revalidate();
         return result;
     });

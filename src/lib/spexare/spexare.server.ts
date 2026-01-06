@@ -5,6 +5,7 @@ import {SortDirection, Spexare, SpexareConnection, SpexareEdge} from "@/gql/grap
 import {SpexarePage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
+import {FullFragment as ActivityFullFragment, SummaryFragment as ActivitySummaryFragment} from "@/lib/spexare/activity";
 import {FullFragment as AddressFullFragment, SummaryFragment as AddressSummaryFragment} from "@/lib/spexare/address";
 import {FullFragment as ConsentFullFragment, SummaryFragment as ConsentSummaryFragment} from "@/lib/spexare/consent";
 import {
@@ -13,6 +14,15 @@ import {
 } from "@/lib/spexare/membership";
 import {FullFragment as TaggingFullFragment, SummaryFragment as TaggingSummaryFragment} from "@/lib/spexare/tagging";
 import {FullFragment as ToggleFullFragment, SummaryFragment as ToggleSummaryFragment} from "@/lib/spexare/toggle";
+
+export const SummaryFields = `
+    ...SpexareSummary
+`;
+
+export const FullFields = `
+    ...SpexareFull
+`;
+
 
 const BaseFragment = /* GraphQL */ `
     fragment SpexareBase on Spexare {
@@ -32,6 +42,9 @@ const BaseFragment = /* GraphQL */ `
 const SummaryFragment = /* GraphQL */ `
     fragment SpexareSummary on Spexare {
         ...SpexareBase
+        activities {
+            ...ActivitySummary
+        }
         addresses {
             ...AddressSummary
         }
@@ -49,6 +62,7 @@ const SummaryFragment = /* GraphQL */ `
         }
     }
     ${BaseFragment}
+    ${ActivitySummaryFragment}
     ${AddressSummaryFragment}
     ${ConsentSummaryFragment}
     ${MembershipSummaryFragment}
@@ -59,6 +73,9 @@ const SummaryFragment = /* GraphQL */ `
 const FullFragment = /* GraphQL */ `
     fragment SpexareFull on Spexare {
         ...SpexareBase
+        activities {
+            ...ActivityFull
+        }
         addresses {
             ...AddressFull
         }
@@ -80,15 +97,13 @@ const FullFragment = /* GraphQL */ `
         lastModifiedBy
     }
     ${BaseFragment}
+    ${ActivityFullFragment}
     ${AddressFullFragment}
     ${ConsentFullFragment}
     ${MembershipFullFragment}
     ${TaggingFullFragment}
     ${ToggleFullFragment}
 `;
-
-export const SummaryFields = `...SpexareSummary`;
-export const FullFields = `...SpexareFull`;
 
 const CreateMutation = /* GraphQL */ `
     mutation ($input: SpexareCreate!) {
