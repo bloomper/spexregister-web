@@ -9,6 +9,7 @@ import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field
 import {translateError} from "@/utils/utils";
 import {Type, TypeType} from "@/gql/graphql";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {useMemo} from "react";
 
 interface MembershipFormProps {
     defaultValues?: Partial<MembershipFormInput>;
@@ -45,16 +46,18 @@ export function MembershipForm({
 
     const selectedTypeId = watch("typeId");
 
-    const currentYear = new Date().getFullYear();
-    const years = Array.from({length: currentYear - 1900 + 1}, (_, i) => (currentYear - i).toString());
+    const availableYears = useMemo(() => {
+        const currentYear = new Date().getFullYear();
+        const years = Array.from({length: currentYear - 1900 + 1}, (_, i) => (currentYear - i).toString());
 
-    const usedYears = new Set(
-        existingMemberships
-            .filter(m => m.typeId === selectedTypeId && m.year !== defaultValues?.year)
-            .map(m => m.year)
-    );
+        const usedYears = new Set(
+            existingMemberships
+                .filter(m => m.typeId === selectedTypeId && m.year !== defaultValues?.year)
+                .map(m => m.year)
+        );
 
-    const availableYears = years.filter(year => !usedYears.has(year));
+        return years.filter(year => !usedYears.has(year));
+    }, [selectedTypeId, existingMemberships, defaultValues?.year]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 border rounded-lg bg-muted/20">

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {
     ColumnDef,
     flexRender,
@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
         void handleFetch({first: pageSize});
     };
 
-    const handleFilterChange = React.useCallback((newFilter: string) => {
+    const handleFilterChange = useCallback((newFilter: string) => {
         setFilter(newFilter);
         void handleFetch({first: pageSize, filter: newFilter});
     }, [pageSize, filter]);

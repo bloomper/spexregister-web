@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
@@ -42,7 +42,7 @@ export function TaskGrid({
         return () => clearTimeout(timer);
     }, [searchValue]);
 
-    const fetchPageWithFilters = React.useCallback((args: { after: string | null; pageSize: number }) => {
+    const fetchPageWithFilters = useCallback((args: { after: string | null; pageSize: number }) => {
         const filterParts = [];
 
         if (filterQuery.trim()) {

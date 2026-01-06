@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@/components/ui/sidebar";
 import * as React from "react";
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
 import {useTranslations} from "next-intl";
 import {toast} from "sonner";
 import {useSession} from "next-auth/react";
@@ -40,7 +40,7 @@ export function NavUser() {
     const user = session?.user ?? {};
 
     const initials = useMemo(() => getInitials(user.name, user.email), [user.name, user.email]);
-    const [avatarFailed, setAvatarFailed] = React.useState(false);
+    const [avatarFailed, setAvatarFailed] = useState(false);
     const avatarSrc = !avatarFailed && user.image ? user.image : undefined;
 
     const accountUrl = `${process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}/account`;

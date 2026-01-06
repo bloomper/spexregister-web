@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
 
 export type UseInfiniteCursorOptions<TItem> = {
@@ -15,10 +15,10 @@ export type UseInfiniteCursorOptions<TItem> = {
 };
 
 function useInView<T extends Element>(options?: IntersectionObserverInit) {
-    const ref = React.useRef<T | null>(null);
-    const [inView, setInView] = React.useState(false);
+    const ref = useRef<T | null>(null);
+    const [inView, setInView] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!ref.current) {
             return;
         }
@@ -45,17 +45,17 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         initialAfter,
     } = options;
 
-    const [items, setItems] = React.useState<TItem[]>(initialItems);
-    const [after, setAfter] = React.useState<string | null>(
+    const [items, setItems] = useState<TItem[]>(initialItems);
+    const [after, setAfter] = useState<string | null>(
         initialAfter ?? initialPageInfo?.endCursor ?? null
     );
-    const [hasNextPage, setHasNextPage] = React.useState<boolean>(
+    const [hasNextPage, setHasNextPage] = useState<boolean>(
         initialPageInfo ? Boolean(initialPageInfo.hasNextPage) : true
     );
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (initialPageInfo) {
             setAfter(initialPageInfo.endCursor ?? null);
             setHasNextPage(Boolean(initialPageInfo.hasNextPage));
@@ -64,7 +64,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
 
     const {ref: sentinelRef, inView} = useInView<HTMLDivElement>({rootMargin});
 
-    const loadMore = React.useCallback(async (force = false) => {
+    const loadMore = useCallback(async (force = false) => {
         if (loading || !hasNextPage || (error && !force)) {
             return;
         }
@@ -101,20 +101,20 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         }
     }, [after, fetchPageAction, getKeyAction, hasNextPage, loading, pageSize]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (initialItems.length === 0 && items.length === 0 && !loading && error === null) {
             void loadMore();
         }
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!inView) {
             return;
         }
         void loadMore();
     }, [inView, loadMore]);
 
-    const reset = React.useCallback(() => {
+    const reset = useCallback(() => {
         setItems([]);
         setAfter(null);
         setHasNextPage(true);
@@ -122,7 +122,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         setError(null);
     }, []);
 
-    const clearError = React.useCallback(() => {
+    const clearError = useCallback(() => {
         setError(null);
     }, []);
 

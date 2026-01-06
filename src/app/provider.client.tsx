@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import {createContext, useCallback, useContext, useEffect, useState} from "react";
 import {NextIntlClientProvider} from "next-intl";
 import {ThemeProvider} from "@/components/theme-provider.client";
 import {ConsentManager} from "@/components/consent-manager.client";
@@ -18,10 +19,10 @@ export default function Provider({
     messages: any;
 }>) {
     const router = useRouter();
-    const [locale, setLocale] = React.useState(initialLocale);
-    const [messages, setMessages] = React.useState(initialMessages);
+    const [locale, setLocale] = useState(initialLocale);
+    const [messages, setMessages] = useState(initialMessages);
 
-    const changeLocale = React.useCallback(async (newLocale: string) => {
+    const changeLocale = useCallback(async (newLocale: string) => {
         document.cookie = `locale=${newLocale}; path=/; max-age=31536000`;
 
         const newMessages = (await import(`../../messages/${newLocale}.json`)).default;
@@ -31,7 +32,7 @@ export default function Provider({
         router.refresh();
     }, [router]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         document.documentElement.lang = locale;
     }, [locale]);
 
@@ -57,7 +58,7 @@ export default function Provider({
     );
 }
 
-const LocaleContext = React.createContext<{
+const LocaleContext = createContext<{
     locale: string;
     changeLocale: (locale: string) => Promise<void>;
 }>({
@@ -66,4 +67,4 @@ const LocaleContext = React.createContext<{
     },
 })
 
-export const useLocaleContext = () => React.useContext(LocaleContext)
+export const useLocaleContext = () => useContext(LocaleContext)
