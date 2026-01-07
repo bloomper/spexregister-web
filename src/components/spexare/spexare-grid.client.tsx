@@ -5,7 +5,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
-import {Spexare} from "@/gql/graphql";
+import {Country, Spexare} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
@@ -18,13 +18,15 @@ import {Input} from "@/components/ui/input";
 import Image from "next/image";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
-import {SpexareViewContent} from "@/components/spexare/spexare-view.client";
+import {SpexareView} from "@/components/spexare/spexare-view.client";
 
 export function SpexareGrid({
+                                countries = [],
                                 initialItems = [],
                                 initialPageInfo,
                                 maxItems,
                             }: {
+    countries: Country[];
     initialItems?: Spexare[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
@@ -219,7 +221,7 @@ export function SpexareGrid({
 
             <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    {selected && <SpexareViewContent spexare={selected}/>}
+                    {selected && <SpexareView spexare={selected} countries={countries}/>}
 
                     <DialogFooter className="p-6 pt-0">
                         <Button variant="outline" onClick={() => setSelected(null)}>

@@ -4,10 +4,11 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexareForm} from "@/components/spexare";
-import {Spex, SpexCategory, Tag, Task, TaskCategory, Type} from "@/gql/graphql";
+import {Country, Spex, SpexCategory, Tag, Task, TaskCategory, Type} from "@/gql/graphql";
 
 interface SpexareCreateFormProps {
     types: Type[],
+    countries: Country[];
     tags: Tag[],
     tasks: Task[];
     taskCategories: TaskCategory[];
@@ -17,6 +18,7 @@ interface SpexareCreateFormProps {
 
 export function SpexareCreateForm({
                                       types,
+                                      countries,
                                       tags,
                                       tasks,
                                       taskCategories,
@@ -45,6 +47,7 @@ export function SpexareCreateForm({
         <Sheet open={isOpen} onOpenChange={handleOpenChange}>
             <SpexareForm
                 types={types}
+                countries={countries}
                 tags={tags}
                 tasks={tasks}
                 taskCategories={taskCategories}

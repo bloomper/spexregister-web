@@ -159,6 +159,7 @@
       "phone": "Telefonnummer",
       "phoneMobile": "Mobiltelefonnummer",
       "postalCode": "Postnummer",
+      "selectCountry": "Välj land",
       "streetAddress": "Gatuadress",
       "type": "Adresstyp"
     },

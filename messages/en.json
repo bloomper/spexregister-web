@@ -160,6 +160,7 @@
       "phone": "Phone",
       "phoneMobile": "Mobile phone",
       "postalCode": "Postal code",
+      "selectCountry": "Select country",
       "streetAddress": "Street address",
       "type": "Address type"
     },

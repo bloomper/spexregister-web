@@ -4,7 +4,7 @@ import {getLocale, getTranslations} from "next-intl/server";
 import {SpexareTable} from "@/components/spexare";
 import {withPolicyPage} from "@/utils/route.server";
 import {SpexareCreateForm} from "./create.client";
-import {getTypes} from "@/lib/settings";
+import {getCountries, getTypes} from "@/lib/settings";
 import {getAll as getAllTags} from "@/lib/tag";
 import {getAll as getAllTasks} from "@/lib/task";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
@@ -14,14 +14,16 @@ import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 export default async function SpexareCreatePage() {
     return withPolicyPage(Policies.spexare.requireCreate, async () => {
         const defaultPageSize = 15;
+        const locale = await getLocale();
 
-        const [initialData, types, tags, tasks, taskCategories, spex, spexCategories, t] = await Promise.all([
+        const [initialData, types, countries, tags, tasks, taskCategories, spex, spexCategories, t] = await Promise.all([
             getPaged({
                 first: defaultPageSize,
                 filter: "(published:TRUE OR published:FALSE)",
                 full: true
             }),
-            getLocale().then(locale => getTypes(locale)),
+            getTypes(locale),
+            getCountries(locale),
             getAllTags(),
             getAllTasks(),
             getAllTaskCategories(),
@@ -37,6 +39,7 @@ export default async function SpexareCreatePage() {
                 </div>
                 <SpexareTable
                     types={types}
+                    countries={countries}
                     tags={tags}
                     tasks={tasks}
                     taskCategories={taskCategories}
@@ -46,6 +49,7 @@ export default async function SpexareCreatePage() {
                 />
                 <SpexareCreateForm
                     types={types}
+                    countries={countries}
                     tags={tags}
                     tasks={tasks}
                     taskCategories={taskCategories}

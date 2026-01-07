@@ -1,7 +1,7 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {Address, Type, TypeType} from "@/gql/graphql";
+import {Address, Country, Type, TypeType} from "@/gql/graphql";
 import {Button} from "@/components/ui/button";
 import {Edit2, MapPin, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
@@ -15,11 +15,13 @@ import {useRouter} from "next/navigation";
 export function AddressManager({
                                    spexareId,
                                    initialAddresses = [],
-                                   types = []
+                                   types = [],
+                                   countries = [],
                                }: {
     spexareId: string;
     initialAddresses: Address[];
-    types: Type[]
+    types: Type[];
+    countries: Country[];
 }) {
     const t = useTranslations();
     const router = useRouter();
@@ -82,6 +84,7 @@ export function AddressManager({
             {isAdding && (
                 <AddressForm
                     types={allAddressTypes.filter(t => !usedTypeIds.has(t.id))}
+                    countries={countries}
                     onSubmit={handleCreate}
                     onCancel={() => setIsAdding(false)}
                     isPending={isPending}
@@ -95,6 +98,7 @@ export function AddressManager({
                             <AddressForm
                                 key={address.id}
                                 types={allAddressTypes.filter(t => !usedTypeIds.has(t.id) || t.id === address.type.id)}
+                                countries={countries}
                                 defaultValues={{
                                     typeId: address.type.id,
                                     streetAddress: address.streetAddress ?? "",

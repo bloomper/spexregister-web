@@ -6,6 +6,7 @@ import {SpexareFormInput, SpexareFormOutput, spexareFormSchema} from "@/lib/spex
 import {
     Address,
     Consent,
+    Country,
     Membership,
     Spex,
     Spexare,
@@ -46,6 +47,7 @@ import {ActivityManager} from "@/components/spexare/activity/activity-manager.cl
 interface SpexareFormProps {
     item?: Spexare;
     types: Type[];
+    countries: Country[];
     tags?: Tag[];
     tasks?: Task[],
     taskCategories?: TaskCategory[],
@@ -57,6 +59,7 @@ interface SpexareFormProps {
 export function SpexareForm({
                                 item,
                                 types,
+                                countries,
                                 tags = [],
                                 tasks = [],
                                 taskCategories = [],
@@ -414,6 +417,7 @@ export function SpexareForm({
                                                 spexareId={item.id}
                                                 initialAddresses={(item.addresses || []).filter((a): a is Address => !!a)}
                                                 types={types}
+                                                countries={countries}
                                             />
                                         </div>
                                     </TabsContent>

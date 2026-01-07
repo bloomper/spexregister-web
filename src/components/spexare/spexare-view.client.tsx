@@ -5,7 +5,7 @@ import Image from "next/image";
 import {format, parse} from "date-fns";
 import {useTranslations} from "next-intl";
 import {Fingerprint, IdCard, Mail, MapPin, Phone, ShieldCheck, Tag, ToggleLeft, User,} from "lucide-react";
-import {Spexare} from "@/gql/graphql";
+import {Country, Spexare} from "@/gql/graphql";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -14,13 +14,21 @@ import {ActivityTimeline} from "@/components/spexare/activity/activity-timeline.
 import {DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 
-interface SpexareViewContentProps {
+interface SpexareViewProps {
     spexare: Spexare;
+    countries: Country[];
     showAudit?: boolean;
 }
 
-export function SpexareViewContent({spexare, showAudit}: SpexareViewContentProps) {
+export function SpexareView({
+                                spexare,
+                                countries,
+                                showAudit
+                            }: SpexareViewProps) {
     const t = useTranslations();
+    const getCountryLabel = (isoCode: string) => {
+        return countries.find(c => c.isoCode === isoCode)?.label || isoCode;
+    };
 
     return (
         <>
@@ -141,10 +149,13 @@ export function SpexareViewContent({spexare, showAudit}: SpexareViewContentProps
                                                     <div className="flex flex-col">
                                                         <span className="font-medium">{address.streetAddress}</span>
                                                         <span className="text-muted-foreground">
-                              {address.postalCode} {address.city}
-                            </span>
-                                                        {address.country && <span
-                                                            className="text-muted-foreground">{address.country}</span>}
+                                                            {address.postalCode} {address.city}
+                                                        </span>
+                                                        {address.country && (
+                                                            <span className="text-muted-foreground">
+                                                                {getCountryLabel(address.country)}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             )}

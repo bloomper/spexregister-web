@@ -3,10 +3,10 @@
 import {ColumnDef} from "@tanstack/react-table";
 import {CheckCircle2, Circle, Plus, User, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/graphql";
+import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/graphql";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
-import {SpexareForm, SpexareViewContent} from "@/components/spexare";
+import {SpexareForm, SpexareView} from "@/components/spexare";
 import * as React from "react";
 import {useEffect, useRef, useState} from "react";
 import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spexare/actions.server";
@@ -37,6 +37,7 @@ export const columns: ColumnDef<Spexare>[] = [
 
 interface SpexareTableProps {
     types: Type[],
+    countries: Country[];
     tags?: TagType[],
     tasks?: Task[],
     taskCategories?: TaskCategory[],
@@ -48,6 +49,7 @@ interface SpexareTableProps {
 export function SpexareTable({
                                  types,
                                  tags = [],
+                                 countries = [],
                                  tasks = [],
                                  taskCategories = [],
                                  spex = [],
@@ -233,7 +235,7 @@ export function SpexareTable({
 
             <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    {viewItem && <SpexareViewContent spexare={viewItem} showAudit/>}
+                    {viewItem && <SpexareView spexare={viewItem} countries={countries} showAudit/>}
                     <DialogFooter className="p-6 pt-0">
                         <Button variant="outline" onClick={() => setViewItem(null)}>
                             {t("Common.close")}
@@ -246,6 +248,7 @@ export function SpexareTable({
                 {editItem && (
                     <SpexareForm
                         types={types}
+                        countries={countries}
                         tags={tags}
                         tasks={tasks}
                         taskCategories={taskCategories}

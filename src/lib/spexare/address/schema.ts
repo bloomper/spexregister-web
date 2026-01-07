@@ -18,7 +18,7 @@ export const addressFormSchema = z.object({
         .optional(),
     country: z
         .string()
-        .max(255, "Common.fieldTooLong")
+        .max(2, "Common.fieldTooLong")
         .optional(),
     phone: z
         .string()

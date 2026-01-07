@@ -7,13 +7,17 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useTranslations} from "next-intl";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
-import {translateError} from "@/utils/utils";
-import {Type, TypeType} from "@/gql/graphql";
+import {cn, translateError} from "@/utils/utils";
+import {Country, Type, TypeType} from "@/gql/graphql";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {Check, ChevronsUpDown} from "lucide-react";
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 
 interface AddressFormProps {
     defaultValues?: Partial<AddressFormInput>;
     types: Type[];
+    countries: Country[];
     onSubmit: (data: AddressFormOutput) => void;
     onCancel: () => void;
     isPending?: boolean;
@@ -22,6 +26,7 @@ interface AddressFormProps {
 export function AddressForm({
                                 defaultValues,
                                 types,
+                                countries,
                                 onSubmit,
                                 onCancel,
                                 isPending
@@ -104,7 +109,57 @@ export function AddressForm({
             <Field data-invalid={!!errors.country}>
                 <FieldLabel>{t("Spexare.Address.country")}</FieldLabel>
                 <FieldContent>
-                    <Input {...register("country")} disabled={isPending}/>
+                    <Controller
+                        control={control}
+                        name="country"
+                        render={({field}) => (
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        className={cn(
+                                            "w-full justify-between font-normal",
+                                            !field.value && "text-muted-foreground"
+                                        )}
+                                        disabled={isPending}
+                                    >
+                                        {field.value
+                                            ? countries.find((c) => c.isoCode === field.value)?.label
+                                            : t("Spexare.Address.selectCountry")}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-full p-0">
+                                    <Command>
+                                        <CommandInput placeholder={t("Common.search")}/>
+                                        <CommandList>
+                                            <CommandEmpty>{t("Common.noDataFound")}</CommandEmpty>
+                                            <CommandGroup>
+                                                {countries.map((country) => (
+                                                    <CommandItem
+                                                        key={country.isoCode}
+                                                        value={country.label ?? ""}
+                                                        onSelect={() => {
+                                                            field.onChange(country.isoCode);
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                country.isoCode === field.value ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {country.label}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
+                        )}
+                    />
                     <FieldError errors={[translateError(t, errors.country)]}/>
                 </FieldContent>
             </Field>
