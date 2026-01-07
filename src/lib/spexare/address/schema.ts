@@ -32,6 +32,7 @@ export const addressFormSchema = z.object({
         .email("Spexare.Address.invalidEmailAddress")
         .max(255, "Common.fieldTooLong")
         .or(z.literal(""))
+        .transform((val) => (val === "" ? undefined : val))
         .optional(),
 });
 

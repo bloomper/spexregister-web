@@ -77,7 +77,7 @@ export function ActivityManager({
             <div className="flex items-center justify-between">
                 <Button onClick={handleAddActivity} disabled={isPending} size="sm">
                     <Plus className="mr-2 h-4 w-4"/>
-                    {t("Spexare.Activity.addActivity")}
+                    {t("Common.add")}
                 </Button>
             </div>
 
