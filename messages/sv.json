@@ -223,6 +223,18 @@
     "taggings": "Taggar",
     "toggles": "Inställningar"
   },
+  "Statistics": {
+    "accumulatedCount": "Ackumulerat antal",
+    "count": "Antal",
+    "lastThreeYears": "Visar data för de senaste tre åren",
+    "spex": "Spex",
+    "spexare": "Spexare",
+    "spexRevivals": "Nyuppsättningar",
+    "spexRevivalsCount": "Antal nyuppsättningar",
+    "spexRevivalsAccumulatedCount": "Ackumulerat antal nyuppsättningar",
+    "tasks": "Funktioner",
+    "users": "Användare"
+  },
   "Support": {
     "contact": "Kontakta supporten",
     "contactAction": "Skicka ett supportärende",

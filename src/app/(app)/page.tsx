@@ -6,20 +6,21 @@ import Link from "next/link";
 import {buttonVariants} from "@/components/ui/button";
 import {DataEmpty} from "@/components/data-empty";
 import {Newspaper} from "lucide-react";
+import * as Statistics from "@/lib/statistics";
+import {StatisticsCharts} from "@/components/statistics/statistics-charts.client";
 
 export default async function HomePage() {
-    const t = await getTranslations();
-    const page = await getPaged({first: 6});
+    const [page, statistics, t] = await Promise.all([
+        getPaged({first: 6}),
+        Statistics.get(),
+        getTranslations()
+    ]);
     const initialItems = page.edges.map(e => e.node);
     const hasNews = initialItems.length > 0;
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-4">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                <div className="bg-muted/50 aspect-video rounded-xl"/>
-                <div className="bg-muted/50 aspect-video rounded-xl"/>
-                <div className="bg-muted/50 aspect-video rounded-xl"/>
-            </div>
+            {statistics && <StatisticsCharts data={statistics}/>}
             <div className="space-y-1 mt-4">
                 <Separator className="my-4"/>
                 <h2 className="text-2xl text-center font-semibold tracking-tight">

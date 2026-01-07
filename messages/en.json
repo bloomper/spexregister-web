@@ -224,6 +224,18 @@
     "taggings": "Tags",
     "toggles": "Toggles"
   },
+  "Statistics": {
+    "accumulatedCount": "",
+    "count": "Count",
+    "lastThreeYears": "Showing data for the last 3 years",
+    "spex": "Spex",
+    "spexare": "Spexare",
+    "spexRevivals": "Revivals",
+    "spexRevivalsCount": "Revival count",
+    "spexRevivalsAccumulatedCount": "Revival accumulated count",
+    "tasks": "Tasks",
+    "users": "Users"
+  },
   "Support": {
     "contact": "Contact Support",
     "contactAction": "Send a support request",
