@@ -266,5 +266,18 @@
     "heading": "Funktioner",
     "name": "Namn",
     "selectCategory": "Välj kategori"
+  },
+  "User": {
+    "authorities": "Rättigheter",
+    "createHeading": "Skapa användare",
+    "editHeading": "Ändra användare",
+    "email": "Emailadress",
+    "externalId": "Externt ID",
+    "filterPlaceholder": "Filtrera på externt ID...",
+    "heading": "Användare",
+    "invalidEmailAddress": "Ogiltig emailadress",
+    "spexare": "Spexare?",
+    "spexareHeading": "Spexare",
+    "state": "Status"
   }
 }

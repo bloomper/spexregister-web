@@ -267,5 +267,18 @@
     "heading": "Tasks",
     "name": "Name",
     "selectCategory": "Select category"
+  },
+  "User": {
+    "authorities": "Authorities",
+    "createHeading": "Create user",
+    "editHeading": "Edit user",
+    "email": "Email address",
+    "externalId": "External ID",
+    "filterPlaceholder": "Filter by external ID...",
+    "heading": "Users",
+    "invalidEmailAddress": "Invalid email address",
+    "spexare": "Spexare?",
+    "spexareHeading": "Spexare",
+    "state": "State"
   }
 }

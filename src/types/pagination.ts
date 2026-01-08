@@ -26,7 +26,9 @@ import {
     TaskCategoryEdge,
     TaskEdge,
     Toggle,
-    ToggleEdge
+    ToggleEdge,
+    User,
+    UserEdge
 } from "@/gql/graphql";
 
 export type CursorPageInfo = {
@@ -95,4 +97,8 @@ export type TaskCategoryPage = CursorPage<TaskCategory> & {
 
 export type TogglePage = CursorPage<Toggle> & {
     edges: Array<Omit<ToggleEdge, 'node'> & { node: Toggle }>;
+};
+
+export type UserPage = CursorPage<User> & {
+    edges: Array<Omit<UserEdge, 'node'> & { node: User }>;
 };

@@ -1547,11 +1547,13 @@ export type User = {
     createdAt: Scalars['Instant']['output'];
     createdBy: Scalars['String']['output'];
     email: Scalars['Email']['output'];
+    externalId: Scalars['ID']['output'];
     id: Scalars['ID']['output'];
     lastModifiedAt?: Maybe<Scalars['Instant']['output']>;
     lastModifiedBy?: Maybe<Scalars['String']['output']>;
     spexare?: Maybe<Spexare>;
     state?: Maybe<State>;
+    temporaryPassword?: Maybe<Scalars['String']['output']>;
 };
 
 export type UserConnection = {

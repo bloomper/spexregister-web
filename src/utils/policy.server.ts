@@ -102,4 +102,21 @@ export const Policies = {
             return requireAnyRole(['ADMIN']);
         },
     },
+    user: {
+        async requireReadMe(): Promise<AuthzResult> {
+            return requireAnyRole(['USER', 'EDITOR', 'ADMIN']);
+        },
+        async requireRead(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireCreate(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireUpdate(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireDelete(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+    },
 } as const;
