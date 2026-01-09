@@ -60,6 +60,12 @@ export function DataTable<TData, TValue>({
     const [loading, setLoading] = useState(false);
     const lastInitialData = useRef(initialData);
 
+    useEffect(() => {
+        if (filter) {
+            void handleFetch({ first: pageSize, filter });
+        }
+    }, []);
+
     if (lastInitialData.current !== initialData) {
         setData(initialData.items);
         setPageInfo(initialData.pageInfo);
