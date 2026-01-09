@@ -36,6 +36,15 @@ const BaseFragment = /* GraphQL */ `
         graduation
         comment
         imageUrl
+        partner {
+            id
+            firstName
+            lastName
+            nickName
+            deceased
+            published
+            imageUrl
+        }
     }
 `;
 
@@ -126,6 +135,18 @@ const UpdateMutation = /* GraphQL */ `
 const DeleteMutation = /* GraphQL */ `
     mutation ($id: ID!) {
         spexareDelete(id: $id)
+    }
+`;
+
+const AddPartnerMutation = /* GraphQL */ `
+    mutation ($spexareId: ID!, $id: ID!) {
+        spexarePartnerAdd(spexareId: $spexareId, id: $id)
+    }
+`;
+
+const RemovePartnerMutation = /* GraphQL */ `
+    mutation ($spexareId: ID!) {
+        spexarePartnerRemove(spexareId: $spexareId)
     }
 `;
 
@@ -232,6 +253,30 @@ export async function del(id: string) {
     }
 
     return result.data?.spexareDelete;
+}
+
+export async function addPartner(spexareId: string, id: string) {
+    const result = await getClient()
+        .mutation(AddPartnerMutation, {spexareId, id})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexarePartnerAdd;
+}
+
+export async function removePartner(spexareId: string) {
+    const result = await getClient()
+        .mutation(RemovePartnerMutation, {spexareId})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexarePartnerRemove;
 }
 
 export async function uploadImage(id: string, file: File) {

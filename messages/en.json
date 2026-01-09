@@ -211,6 +211,7 @@
     "lastName": "Last name",
     "memberships": "Memberships",
     "nickName": "Nick name",
+    "partner": "Partner",
     "published": "Published?",
     "publishedBadges": {
       "false": "Not published",

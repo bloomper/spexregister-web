@@ -210,6 +210,7 @@
     "lastName": "Efternamn",
     "memberships": "Medlemskap",
     "nickName": "Smeknamn",
+    "partner": "Partner",
     "published": "Publicerad?",
     "publishedBadges": {
       "false": "Ej publicerad",

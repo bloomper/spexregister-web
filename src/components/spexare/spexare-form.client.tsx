@@ -43,6 +43,7 @@ import {MembershipManager} from "@/components/spexare/membership/membership-mana
 import {TaggingManager} from "@/components/spexare/tagging/tagging-manager.client";
 import {ToggleManager} from "@/components/spexare/toggle/toggle-manager.client";
 import {ActivityManager} from "@/components/spexare/activity/activity-manager.client";
+import {PartnerManager} from "@/components/spexare/partner/partner-manager.client";
 
 interface SpexareFormProps {
     item?: Spexare;
@@ -168,6 +169,15 @@ export function SpexareForm({
                             >
                                 {t("Spexare.activities")}
                             </TabsTrigger>
+
+                            <TabsTrigger
+                                value="partner"
+                                disabled={!item}
+                                className="py-2 text-xs sm:text-sm data-disabled:opacity-50"
+                            >
+                                {t("Spexare.partner")}
+                            </TabsTrigger>
+
                             <TabsTrigger
                                 value="addresses"
                                 disabled={!item}
@@ -402,6 +412,14 @@ export function SpexareForm({
                                                 spex={spex}
                                                 spexCategories={spexCategories}
                                                 initialActivities={item.activities || []}
+                                            />
+                                        </div>
+                                    </TabsContent>
+                                    <TabsContent value="partner" className="mt-0 outline-none pb-8">
+                                        <div className="py-4">
+                                            <PartnerManager
+                                                spexareId={item.id}
+                                                initialPartner={item.partner}
                                             />
                                         </div>
                                     </TabsContent>

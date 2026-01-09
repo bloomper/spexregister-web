@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import {format, parse} from "date-fns";
 import {useTranslations} from "next-intl";
-import {Fingerprint, IdCard, Mail, MapPin, Phone, ShieldCheck, Tag, ToggleLeft, User,} from "lucide-react";
+import {Fingerprint, Heart, IdCard, Mail, MapPin, Phone, ShieldCheck, Tag, ToggleLeft, User,} from "lucide-react";
 import {Country, Spexare} from "@/gql/graphql";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
@@ -79,6 +79,7 @@ export function SpexareView({
                     <TabsList className="grid w-full h-auto p-1 bg-muted/50 grid-cols-2 sm:grid-cols-3">
                         <TabsTrigger value="general">{t("Common.general")}</TabsTrigger>
                         <TabsTrigger value="activities">{t("Spexare.activities")}</TabsTrigger>
+                        <TabsTrigger value="partner">{t("Spexare.partner")}</TabsTrigger>
                         <TabsTrigger value="addresses">{t("Spexare.addresses")}</TabsTrigger>
                         <TabsTrigger value="consents">{t("Spexare.consents")}</TabsTrigger>
                         <TabsTrigger value="memberships">{t("Spexare.memberships")}</TabsTrigger>
@@ -130,6 +131,61 @@ export function SpexareView({
 
                     <TabsContent value="activities" className="pt-2">
                         <ActivityTimeline activities={spexare.activities || []}/>
+                    </TabsContent>
+
+                    <TabsContent value="partner" className="pt-4 space-y-4">
+                        {spexare.partner ? (
+                            <div className="rounded-lg border p-4 bg-muted/30 relative overflow-hidden">
+                                <div
+                                    className={`flex items-center gap-4 ${!spexare.partner.published ? "blur-sm select-none pointer-events-none opacity-50" : ""}`}>
+                                    <div
+                                        className="relative h-16 w-16 overflow-hidden rounded-full border bg-background shrink-0">
+                                        {spexare.partner.imageUrl ? (
+                                            <Image
+                                                src={getProxiedImageUrl(spexare.partner.imageUrl, spexare.partner.lastModifiedAt)}
+                                                alt={`${spexare.partner.firstName} ${spexare.partner.lastName}`}
+                                                fill
+                                                unoptimized
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            <div className="flex h-full items-center justify-center">
+                                                <User className="h-8 w-8 text-muted-foreground/20"/>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col min-w-0">
+                                                <span className="text-lg font-bold truncate">
+                                                    {spexare.partner.firstName} {spexare.partner.lastName}
+                                                </span>
+                                        {spexare.partner.nickName && (
+                                            <span className="text-sm text-muted-foreground italic">
+                                                    {spexare.partner.nickName}
+                                                </span>
+                                        )}
+                                        <div className="flex gap-2 mt-1">
+                                            {spexare.partner.deceased && (
+                                                <Badge variant="outline" className="text-[10px] uppercase">
+                                                    {t("Spexare.deceasedBadges.true")}
+                                                </Badge>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                {!spexare.partner.published && (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <Badge variant="secondary" className="shadow-sm">
+                                            <ShieldCheck className="mr-1 h-3 w-3"/>
+                                            {t("Spexare.publishedBadges.false")}
+                                        </Badge>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="py-6">
+                                <DataEmpty icon={Heart}/>
+                            </div>
+                        )}
                     </TabsContent>
 
                     <TabsContent value="addresses" className="pt-4 space-y-4">
