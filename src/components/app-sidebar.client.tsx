@@ -33,13 +33,15 @@ import {Role} from "@/types/auth";
 import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {usePathname} from "next/navigation";
 import {useTranslations} from "next-intl";
+import {Spexare} from "@/gql/graphql";
 
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     roles: Role[];
+    spexare?: Spexare | null;
 }
 
-export function AppSidebar({roles, ...props}: AppSidebarProps) {
+export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
     const pathname = usePathname();
     const t = useTranslations();
     const [mounted, setMounted] = useState(false);
@@ -208,14 +210,18 @@ export function AppSidebar({roles, ...props}: AppSidebarProps) {
                         <NavSecondary items={navigation.secondary} className="mt-auto"/>
                     </>
                 ) : (
-                    <div className="flex flex-col gap-4 p-4">
-                        <div className="h-8 w-full animate-pulse rounded bg-sidebar-accent/50"/>
-                        <div className="h-8 w-full animate-pulse rounded bg-sidebar-accent/50"/>
+                    <div className="flex flex-col gap-2 p-4">
+                        {Array.from({length: 6}).map((_, i) => (
+                            <div key={i} className="flex items-center gap-3 px-2 py-1.5">
+                                <div className="size-4 shrink-0 animate-pulse rounded bg-sidebar-accent/50" />
+                                <div className="h-3 w-24 animate-pulse rounded bg-sidebar-accent/50 group-data-[collapsible=icon]:hidden" />
+                            </div>
+                        ))}
                     </div>
                 )}
             </SidebarContent>
             <SidebarFooter>
-                {mounted && <NavUser/>}
+                {mounted && <NavUser spexare={spexare}/>}
             </SidebarFooter>
         </Sidebar>
     );

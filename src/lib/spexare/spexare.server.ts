@@ -79,7 +79,7 @@ const SummaryFragment = /* GraphQL */ `
     ${ToggleSummaryFragment}
 `;
 
-const FullFragment = /* GraphQL */ `
+export const FullFragment = /* GraphQL */ `
     fragment SpexareFull on Spexare {
         ...SpexareBase
         activities {

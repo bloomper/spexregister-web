@@ -4,6 +4,7 @@ import {getClient} from '@/lib/urql.server';
 import {Authority, SortDirection, State, User, UserConnection, UserEdge} from "@/gql/graphql";
 import {UserPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
+import {FullFragment as SpexareFullFragment} from "@/lib/spexare";
 
 const SummaryFields = `
     id
@@ -142,9 +143,12 @@ export async function me(): Promise<User | null | undefined> {
     const query = /* GraphQL */ `
         query {
             me {
-                ${FullFields}
+                spexare {
+                    ...SpexareFull
+                }
             }
         }
+        ${SpexareFullFragment}
     `;
 
     const result = await getClient()

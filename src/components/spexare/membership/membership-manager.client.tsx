@@ -43,7 +43,7 @@ export function MembershipManager({
         startTransition(async () => {
             try {
                 await createMembershipAction(spexareId, data.typeId, data);
-                toast.success(t("Common.createSuccess"));
+                toast.success(t("Common.updateSuccess"));
                 setIsAdding(false);
                 router.refresh();
             } catch (error) {

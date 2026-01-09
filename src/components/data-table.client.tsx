@@ -62,7 +62,7 @@ export function DataTable<TData, TValue>({
 
     useEffect(() => {
         if (filter) {
-            void handleFetch({ first: pageSize, filter });
+            void handleFetch({first: pageSize, filter});
         }
     }, []);
 

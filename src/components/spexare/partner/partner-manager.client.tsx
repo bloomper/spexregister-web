@@ -1,24 +1,24 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
-import { Heart, Search, User, X, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import {useEffect, useState, useTransition} from "react";
+import {useTranslations} from "next-intl";
+import {Heart, Loader2, Search, User, X} from "lucide-react";
+import {toast} from "sonner";
 import Image from "next/image";
-import { Spexare, SpexarePartner } from "@/gql/graphql";
-import { addPartnerAction, getPageAction, removePartnerAction } from "@/app/(app)/spexare/actions.server";
-import { Button } from "@/components/ui/button";
-import { DataEmpty } from "@/components/data-empty";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { getProxiedImageUrl } from "@/utils/utils";
+import {Spexare, SpexarePartner} from "@/gql/graphql";
+import {addPartnerAction, getPageAction, removePartnerAction} from "@/app/(app)/spexare/actions.server";
+import {Button} from "@/components/ui/button";
+import {DataEmpty} from "@/components/data-empty";
+import {Input} from "@/components/ui/input";
+import {Badge} from "@/components/ui/badge";
+import {getProxiedImageUrl} from "@/utils/utils";
 
 interface PartnerManagerProps {
     spexareId: string;
     initialPartner?: SpexarePartner | null;
 }
 
-export function PartnerManager({ spexareId, initialPartner }: PartnerManagerProps) {
+export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
     const [partner, setPartner] = useState<SpexarePartner | null>(initialPartner || null);
@@ -149,9 +149,9 @@ export function PartnerManager({ spexareId, initialPartner }: PartnerManagerProp
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                             {isSearching ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <Loader2 className="h-4 w-4 animate-spin"/>
                             ) : (
-                                <Search className="h-4 w-4" />
+                                <Search className="h-4 w-4"/>
                             )}
                         </div>
                     </div>

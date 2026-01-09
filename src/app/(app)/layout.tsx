@@ -10,6 +10,8 @@ import {LogoText} from "@/components/logo-text";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
 import {requireUser} from "@/utils/auth.server";
+import {Suspense} from "react";
+import {me} from "@/lib/user";
 
 export default async function AppLayout({children}: { children: React.ReactNode }) {
     const {session, roles} = await requireUser();
@@ -71,12 +73,27 @@ export default async function AppLayout({children}: { children: React.ReactNode 
             <SidebarProvider className="flex flex-col">
                 <SiteHeader/>
                 <div className="flex flex-1">
-                    <AppSidebar roles={roles}/>
+                    <Suspense fallback={<AppSidebar roles={roles} spexare={undefined} />}>
+                        <SidebarWithUser roles={roles} />
+                    </Suspense>
                     <SidebarInset>
                         {children}
                     </SidebarInset>
                 </div>
             </SidebarProvider>
         </div>
+    );
+}
+
+async function SidebarWithUser({roles}: { roles: any[] }) {
+    const currentUser = await me();
+
+    console.log("EHPP", currentUser);
+
+    return (
+        <AppSidebar
+            roles={roles}
+            spexare={currentUser?.spexare ?? null}
+        />
     );
 }

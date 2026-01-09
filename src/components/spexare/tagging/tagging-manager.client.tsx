@@ -33,7 +33,7 @@ export function TaggingManager({
         startTransition(async () => {
             try {
                 await createTaggingAction(spexareId, tagId);
-                toast.success(t("Common.createSuccess"));
+                toast.success(t("Common.updateSuccess"));
                 router.refresh();
             } catch (error) {
                 toast.error(t("Common.errorOccurred"));

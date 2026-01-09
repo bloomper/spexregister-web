@@ -36,7 +36,7 @@ export function AddressManager({
         startTransition(async () => {
             try {
                 await createAddressAction(spexareId, data.typeId, data);
-                toast.success(t("Common.createSuccess"));
+                toast.success(t("Common.updateSuccess"));
                 setIsAdding(false);
                 router.refresh();
             } catch (error) {

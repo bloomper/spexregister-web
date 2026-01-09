@@ -35,7 +35,7 @@ export function ConsentManager({
         startTransition(async () => {
             try {
                 await createConsentAction(spexareId, data.typeId, data);
-                toast.success(t("Common.createSuccess"));
+                toast.success(t("Common.updateSuccess"));
                 setIsAdding(false);
                 router.refresh();
             } catch (error) {
