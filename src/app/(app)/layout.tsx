@@ -88,8 +88,6 @@ export default async function AppLayout({children}: { children: React.ReactNode 
 async function SidebarWithUser({roles}: { roles: any[] }) {
     const currentUser = await me();
 
-    console.log("EHPP", currentUser);
-
     return (
         <AppSidebar
             roles={roles}

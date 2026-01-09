@@ -5,12 +5,12 @@ import {useCallback, useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
-import {Country, Spexare} from "@/gql/graphql";
-import {CursorPageInfo} from "@/types/pagination";
+import {Country, Facet, Spexare} from "@/gql/graphql";
+import {CursorPageInfo, SpexarePage} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getPageAction} from "@/app/(app)/spexare/actions.server";
+import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
 import {DataEmpty} from "@/components/data-empty";
 import {CheckCircle2, Circle, User, UserRound, X} from "lucide-react";
 import {DataFilter} from "@/components/data-filter";
@@ -19,32 +19,82 @@ import Image from "next/image";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {SpexareView} from "@/components/spexare/spexare-view.client";
+import {usePathname, useRouter} from "next/navigation";
 
 export function SpexareGrid({
                                 countries = [],
                                 initialItems = [],
                                 initialPageInfo,
                                 maxItems,
+                                mode = "filter",
+                                initialSearchQuery = "",
+                                facets = [],
                             }: {
     countries: Country[];
     initialItems?: Spexare[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
+    mode?: "filter" | "search";
+    initialSearchQuery?: string;
+    facets?: Facet[];
 }) {
     const t = useTranslations();
-    const [searchValue, setSearchValue] = useState("");
-    const [filterQuery, setFilterQuery] = useState("");
+    const router = useRouter();
+    const pathname = usePathname();
+    const [searchValue, setSearchValue] = useState(initialSearchQuery);
+    const [filterQuery, setFilterQuery] = useState(initialSearchQuery);
     const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
+    const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>({});
+    const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setFilterQuery(searchValue);
-        }, 300);
+        if (mode !== "search") {
+            return;
+        }
 
-        return () => clearTimeout(timer);
-    }, [searchValue]);
+        const params = new URLSearchParams();
+        if (filterQuery) {
+            params.set("q", filterQuery);
+        }
 
-    const fetchPageWithFilters = useCallback((args: { after: string | null; pageSize: number }) => {
+        const url = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+        window.history.replaceState(null, '', url);
+    }, [filterQuery, pathname, mode]);
+
+    const fetchPage = useCallback(async (args: { after: string | null; pageSize: number }): Promise<SpexarePage> => {
+        const isFirstPage = args.after === null;
+
+        if (mode === "search") {
+            const aggregationFilters: { name: string; value: string }[] = [];
+
+            Object.entries(selectedFacets).forEach(([name, values]) => {
+                values.forEach(value => {
+                    aggregationFilters.push({ name, value });
+                });
+            });
+
+            const currentOffset = isFirstPage ? 0 : parseInt(args.after || "0");
+
+            const res = await searchAction({
+                q: filterQuery.trim() || "*",
+                limit: args.pageSize,
+                offset: currentOffset,
+                aggregationFilters,
+            });
+
+            if (isFirstPage && res.facets) {
+                setCurrentFacets(res.facets);
+            }
+
+            return {
+                ...res,
+                pageInfo: {
+                    ...res.pageInfo,
+                    endCursor: (currentOffset + res.items.length).toString()
+                }
+            };
+        }
+
         const parts: string[] = [];
 
         if (filterQuery.trim()) {
@@ -66,7 +116,7 @@ export function SpexareGrid({
             first: args.pageSize,
             filter: parts.join(" AND ")
         });
-    }, [filterQuery, selectedDeceasedValues]);
+    }, [filterQuery, selectedDeceasedValues, selectedFacets]);
 
     const {
         items: allItems,
@@ -77,7 +127,7 @@ export function SpexareGrid({
         loadMore,
         reset
     } = useInfiniteCursor<Spexare>({
-        fetchPageAction: fetchPageWithFilters,
+        fetchPageAction: fetchPage,
         pageSize: 24,
         rootMargin: '600px',
         getKeyAction: (n) => n.id,
@@ -86,8 +136,22 @@ export function SpexareGrid({
     });
 
     useEffect(() => {
+        setSearchValue(initialSearchQuery);
+        setFilterQuery(initialSearchQuery);
         reset();
-    }, [filterQuery, selectedDeceasedValues, reset]);
+    }, [initialSearchQuery, reset]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setFilterQuery(searchValue);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchValue]);
+
+    useEffect(() => {
+        reset();
+    }, [filterQuery, selectedDeceasedValues, selectedFacets]);
 
     const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(e.target.value);
@@ -97,19 +161,24 @@ export function SpexareGrid({
     const items = maxItems ? allItems.slice(0, maxItems) : allItems;
     const isInfiniteMode = !maxItems;
     const noResults = !loading && items.length === 0;
-    const isFiltered = filterQuery.trim() !== "" || selectedDeceasedValues.size < 2;
+    const hasActiveFacets = Object.values(selectedFacets).some(s => s.size > 0);
+    const isFiltered = mode === "search"
+        ? filterQuery.trim() !== "" || hasActiveFacets
+        : filterQuery.trim() !== "" || selectedDeceasedValues.size < 2;
 
     return (
         <>
             {isInfiniteMode && (
                 <div className="col-span-full mb-6 flex flex-col gap-4 border-b pb-6">
                     <div>
-                        <h3 className="text-lg font-bold tracking-tight">{t("Spexare.heading")}</h3>
+                        <h3 className="text-lg font-bold tracking-tight">
+                            {mode === "search" ? t("Common.searchResults") : t("Spexare.heading")}
+                        </h3>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                         <div className="relative w-full sm:w-[300px]">
                             <Input
-                                placeholder={t("Spexare.filterPlaceholder")}
+                                placeholder={mode === "search" ? t("Spexare.searchPlaceholder") : t("Spexare.filterPlaceholder")}
                                 value={searchValue}
                                 onChange={handleQueryChange}
                                 className="h-8 text-xs pr-8"
@@ -128,23 +197,58 @@ export function SpexareGrid({
                             )}
                         </div>
 
-                        <DataFilter
-                            title={t("Spexare.deceased")}
-                            selectedValues={selectedDeceasedValues}
-                            onSelect={setSelectedDeceasedValues}
-                            onClear={() => setSelectedDeceasedValues(new Set(["true", "false"]))}
-                            options={[
-                                {label: t("Spexare.deceasedStates.true"), value: "true", icon: CheckCircle2},
-                                {label: t("Spexare.deceasedStates.false"), value: "false", icon: Circle},
-                            ]}
-                        />
+                        {mode === "filter" && (
+                            <DataFilter
+                                title={t("Spexare.deceased")}
+                                selectedValues={selectedDeceasedValues}
+                                onSelect={setSelectedDeceasedValues}
+                                onClear={() => setSelectedDeceasedValues(new Set(["true", "false"]))}
+                                options={[
+                                    {label: t("Spexare.deceasedStates.true"), value: "true", icon: CheckCircle2},
+                                    {label: t("Spexare.deceasedStates.false"), value: "false", icon: Circle},
+                                ]}
+                            />
+                        )}
+
+                        {mode === "search" && currentFacets.map((facet) => {
+                            const selectedValues = selectedFacets[facet.id] || new Set();
+                            return (
+                                <DataFilter
+                                    key={facet.id}
+                                    title={facet.label}
+                                    selectedValues={selectedValues}
+                                    onSelect={(values) => setSelectedFacets(prev => ({
+                                        ...prev,
+                                        [facet.id]: values
+                                    }))}
+                                    onClear={selectedValues.size > 0 ? () => setSelectedFacets(prev => ({
+                                        ...prev,
+                                        [facet.id]: new Set()
+                                    })) : undefined}
+                                    options={facet.groups.flatMap(group =>
+                                        group?.values.map(v => {
+                                            const label = group.label
+                                                ? `${group.label}: ${v?.label}`
+                                                : v?.label;
+
+                                            return {
+                                                label: `${label} (${v?.count})`,
+                                                value: v?.id ?? "",
+                                            };
+                                        }) ?? []
+                                    )}
+                                />
+                            );
+                        })}
 
                         {isFiltered && (
                             <Button
                                 variant="ghost"
                                 onClick={() => {
                                     setSearchValue("");
+                                    setFilterQuery("");
                                     setSelectedDeceasedValues(new Set(["true", "false"]));
+                                    setSelectedFacets({});
                                 }}
                                 className="h-8 px-2 lg:px-3 text-xs"
                             >

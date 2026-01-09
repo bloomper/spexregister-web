@@ -1,8 +1,15 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {SortDirection, Spexare, SpexareConnection, SpexareEdge} from "@/gql/graphql";
-import {SpexarePage} from "@/types/pagination";
+import {
+    AggregationFilterInput,
+    SortDirection,
+    Spexare,
+    SpexareConnection,
+    SpexareEdge,
+    SpexareWithFacetsConnection
+} from "@/gql/graphql";
+import {SpexarePage, SpexareWithFacetsPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
 import {FullFragment as ActivityFullFragment, SummaryFragment as ActivitySummaryFragment} from "@/lib/spexare/activity";
@@ -150,6 +157,37 @@ const RemovePartnerMutation = /* GraphQL */ `
     }
 `;
 
+const SearchQuery = /* GraphQL */ `
+    query ($q: String!, $aggregationFilters: [AggregationFilterInput], $limit: Int, $offset: Int, $sort: [String], $direction: SortDirection) {
+        spexareSearchPaged(q: $q, aggregationFilters: $aggregationFilters, limit: $limit, offset: $offset, sort: $sort, direction: $direction) {
+            edges {
+                cursor
+                node { ${SummaryFields} }
+            }
+            facets {
+                id
+                label
+                groups {
+                    id
+                    label
+                    values {
+                        id
+                        label
+                        count
+                    }
+                }
+            }
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+            }
+        }
+    }
+    ${SummaryFragment}
+`;
+
 const createQuery = (fields: string, fragment: string) => /* GraphQL */ `
     query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         spexarePaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
@@ -204,6 +242,38 @@ export async function getPaged(args: {
     }
 
     return mapConnection<Spexare, SpexareEdge>(result.data?.spexarePaged);
+}
+
+export async function search(args: {
+    q: string;
+    aggregationFilters: AggregationFilterInput[];
+    limit?: number;
+    offset?: number;
+    sort?: string[];
+    direction?: SortDirection;
+}): Promise<SpexareWithFacetsPage> {
+    const result = await getClient()
+        .query<{ spexareSearchPaged: SpexareWithFacetsConnection }>(SearchQuery, {
+            q: args.q,
+            aggregationFilters: args.aggregationFilters ?? [],
+            limit: args.limit ?? 24,
+            offset: args.offset ?? 0,
+            sort: args.sort ?? ["score"],
+            direction: args.direction ?? SortDirection.Desc,
+        })
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    const connection = result.data?.spexareSearchPaged;
+    const page = mapConnection<Spexare, SpexareEdge>(connection as any);
+
+    return {
+        ...page,
+        facets: (connection?.facets ?? []).filter((f): f is any => Boolean(f))
+    };
 }
 
 export async function create(input: any) {

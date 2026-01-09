@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Separator} from "@/components/ui/separator";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {useTranslations} from "next-intl";
+import {Input} from "@/components/ui/input";
 
 interface DataFilterProps {
     title?: string
@@ -26,9 +27,14 @@ export function DataFilter({
                                onClear,
                            }: DataFilterProps) {
     const t = useTranslations();
+    const [searchTerm, setSearchTerm] = React.useState("");
+
+    const filteredOptions = options.filter(option =>
+        option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
-        <Popover>
+        <Popover onOpenChange={(open) => !open && setSearchTerm("")}>
             <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 border-dashed">
                     <Funnel className="mr-2 h-4 w-4"/>
@@ -45,16 +51,27 @@ export function DataFilter({
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0" align="start">
+            <PopoverContent className="w-auto min-w-[200px] max-w-[300px] p-0" align="start">
                 <div className="flex flex-col p-1">
-                    {options.map((option) => {
+                    {options.length > 5 && (
+                        <div className="px-2 py-2">
+                            <Input
+                                placeholder={t("Common.search")}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="h-8 text-xs"
+                                autoFocus
+                            />
+                        </div>
+                    )}
+                    {filteredOptions.map((option) => {
                         const isSelected = selectedValues.has(option.value)
                         return (
                             <Button
                                 key={option.value}
                                 variant="ghost"
                                 size="sm"
-                                className="justify-start font-normal"
+                                className="justify-start font-normal h-auto py-1.5 px-2"
                                 onClick={() => {
                                     const next = new Set(selectedValues)
                                     if (isSelected) {
@@ -71,12 +88,12 @@ export function DataFilter({
                                 )}>
                                     <Check className="h-4 w-4"/>
                                 </div>
-                                {option.icon && <option.icon className="mr-2 h-4 w-4 text-muted-foreground"/>}
-                                <span>{option.label}</span>
+                                {option.icon && <option.icon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground"/>}
+                                <span className="text-left wrap-break-word">{option.label}</span>
                             </Button>
                         )
                     })}
-                    {selectedValues.size !== options.length && (
+                    {selectedValues.size > 0 && (
                         <>
                             <Separator className="my-1"/>
                             <Button

@@ -61,7 +61,7 @@
     "save": "Save",
     "saving": "Saving...",
     "search": "Search",
-    "searchPlaceholder": "Search for spexare...",
+    "searchResults": "Search results",
     "select": "Select",
     "selectAll": "Select all",
     "selectDate": "Select date",
@@ -222,6 +222,7 @@
       "false": "No",
       "true": "Yes"
     },
+    "searchPlaceholder": "Search for spexare...",
     "socialSecurityNumber": "Social security number",
     "taggings": "Tags",
     "toggles": "Toggles"

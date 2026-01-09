@@ -148,6 +148,11 @@ export type AddressUpdate = {
     streetAddress?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AggregationFilterInput = {
+    name: Scalars['String']['input'];
+    value: Scalars['String']['input'];
+};
+
 export type Authority = {
     __typename?: 'Authority';
     createdAt: Scalars['Instant']['output'];
@@ -207,14 +212,23 @@ export type Event = {
 
 export type Facet = {
     __typename?: 'Facet';
-    name: Scalars['String']['output'];
+    groups: Array<Maybe<FacetGroup>>;
+    id: Scalars['String']['output'];
+    label: Scalars['String']['output'];
+};
+
+export type FacetGroup = {
+    __typename?: 'FacetGroup';
+    id: Scalars['String']['output'];
+    label: Scalars['String']['output'];
     values: Array<Maybe<FacetValue>>;
 };
 
 export type FacetValue = {
     __typename?: 'FacetValue';
     count: Scalars['Int']['output'];
-    value: Scalars['String']['output'];
+    id: Scalars['String']['output'];
+    label: Scalars['String']['output'];
 };
 
 export type History = {
@@ -943,6 +957,7 @@ export type QuerySpexarePagedArgs = {
 
 
 export type QuerySpexareSearchPagedArgs = {
+    aggregationFilters?: InputMaybe<Array<InputMaybe<AggregationFilterInput>>>;
     direction?: InputMaybe<SortDirection>;
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;

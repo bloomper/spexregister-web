@@ -61,7 +61,7 @@
     "save": "Spara",
     "saving": "Sparar...",
     "search": "Sök",
-    "searchPlaceholder": "Sök efter spexare...",
+    "searchResults": "Sökresultat",
     "select": "Välj",
     "selectAll": "Välj alla",
     "selectDate": "Välj datum",
@@ -221,6 +221,7 @@
       "false": "Nej",
       "true": "Ja"
     },
+    "searchPlaceholder": "Sök efter spexare...",
     "socialSecurityNumber": "Personnummer",
     "taggings": "Taggar",
     "toggles": "Inställningar"

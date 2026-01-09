@@ -6,7 +6,7 @@ import {
     Address,
     AddressEdge,
     Consent,
-    ConsentEdge,
+    ConsentEdge, Facet,
     Membership,
     MembershipEdge,
     News,
@@ -77,6 +77,10 @@ export type SpexCategoryPage = CursorPage<SpexCategory> & {
 
 export type SpexarePage = CursorPage<Spexare> & {
     edges: Array<Omit<SpexareEdge, 'node'> & { node: Spexare }>;
+};
+
+export type SpexareWithFacetsPage = SpexarePage & {
+    facets: Facet[];
 };
 
 export type TagPage = CursorPage<Tag> & {

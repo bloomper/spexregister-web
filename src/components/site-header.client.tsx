@@ -2,7 +2,7 @@
 
 import {SidebarIcon} from "lucide-react";
 import {useTranslations} from "next-intl";
-import {SearchForm} from "@/components/search-form";
+import {SpexareSearchForm} from "@/components/spexare/spexare-search-form.client";
 import {Button} from "@/components/ui/button";
 import {Separator} from "@/components/ui/separator";
 import {useSidebar} from "@/components/ui/sidebar";
@@ -51,7 +51,7 @@ export function SiteHeader() {
                 </div>
 
                 <div className="mt-1 w-full sm:mt-0 sm:ml-auto sm:w-auto sm:order-2">
-                    <SearchForm className="w-full sm:w-64"/>
+                    <SpexareSearchForm className="w-full sm:w-64"/>
                 </div>
             </div>
         </header>

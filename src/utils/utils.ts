@@ -32,11 +32,14 @@ export function getProxiedImageUrl(url?: string | null, lastModifiedAt?: string 
     if (!url) {
         return "";
     }
-    const base = `/api/image-download-proxy?url=${encodeURIComponent(url)}`;
-    if (!lastModifiedAt) {
-        return base;
+    const params = new URLSearchParams();
+    params.set("url", url);
+
+    if (lastModifiedAt) {
+        params.set("t", new Date(lastModifiedAt).getTime().toString());
     }
-    return `${base}&t=${new Date(lastModifiedAt).getTime()}`;
+
+    return `/api/image-download-proxy?${params.toString()}`;
 }
 
 export function translateError(t: any, error?: { message?: string }) {

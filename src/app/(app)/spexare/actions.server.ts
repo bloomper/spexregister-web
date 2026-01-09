@@ -9,12 +9,13 @@ import {
     deleteImage,
     getPaged,
     removePartner,
+    search,
     spexareFormSchema,
     update,
     uploadImage
 } from "@/lib/spexare";
 import {revalidateTag} from "next/cache";
-import {SortDirection} from "@/gql/graphql";
+import {AggregationFilterInput, SortDirection} from "@/gql/graphql";
 import {
     addressFormSchema,
     create as createAddress,
@@ -68,6 +69,19 @@ export async function getPageAction(args: {
             ...args,
             full: args.full === true || args.full === "true"
         });
+    });
+}
+
+export async function searchAction(args: {
+    q: string;
+    aggregationFilters: AggregationFilterInput[];
+    limit?: number;
+    offset?: number;
+    sort?: string[];
+    direction?: SortDirection;
+}) {
+    return withPolicyAction(Policies.spexare.requireRead, async () => {
+        return search(args);
     });
 }
 
