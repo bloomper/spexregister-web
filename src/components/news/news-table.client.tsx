@@ -28,6 +28,8 @@ export const columns: ColumnDef<News>[] = [
     columnHelper.select(),
     columnHelper.text("subject", "News.subject"),
     columnHelper.boolean("published", "News.published"),
+    columnHelper.date("visibleFrom", "News.visibleFrom", "visibleFrom", "hidden lg:table-cell"),
+    columnHelper.date("visibleTo", "News.visibleTo", "visibleTo", "hidden xl:table-cell"),
     ...columnHelper.audit<News>(),
     columnHelper.actions<News>(),
 ];
@@ -64,7 +66,6 @@ export function NewsTable({
     useEffect(() => {
         setMounted(true);
     }, []);
-
 
     const buildFilterString = (query: string, published: Set<string>) => {
         const parts: string[] = [];

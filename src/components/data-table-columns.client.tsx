@@ -7,7 +7,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {useTranslations} from "next-intl";
 import {Translated} from "@/components/translated.client";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import {formatDateTime} from "@/utils/utils";
+import {formatDate, formatDateTime} from "@/utils/utils";
 import {TableThumbnail} from "@/components/data-table-thumbnail.client";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 
@@ -70,6 +70,30 @@ export const columnHelper = {
         },
         meta: className ? {className} : undefined,
     }),
+    date: <T, >(id: string, translationId: string, accessorKey: string = id, className?: string): ColumnDef<T> => ({
+        id,
+        accessorKey,
+        header: ({column}) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8"
+                >
+                    <Translated id={translationId}/>
+                    {isSorted === "desc" ? <ArrowDown className="ml-2 h-4 w-4"/> : isSorted === "asc" ?
+                        <ArrowUp className="ml-2 h-4 w-4"/> : <ArrowUpDown className="ml-2 h-4 w-4"/>}
+                </Button>
+            );
+        },
+        cell: ({row}) => {
+            const value = row.getValue(id) as string;
+            return value ? formatDate(value) : "-";
+        },
+        meta: className ? {className} : undefined,
+    }),
+
     image: <T, >(id: string, translationId: string, accessorKey: string, fallbackIcon: LucideIcon): ColumnDef<T> => ({
         id,
         accessorKey,
