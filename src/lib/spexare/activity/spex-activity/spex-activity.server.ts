@@ -18,6 +18,9 @@ const BaseFragment = /* GraphQL */ `
             year
             title
             revival
+            category {
+                name
+            }
         }
     }
 `;

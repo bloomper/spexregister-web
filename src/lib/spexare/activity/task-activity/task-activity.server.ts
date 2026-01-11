@@ -21,6 +21,7 @@ const BaseFragment = /* GraphQL */ `
             id
             name
             category {
+                name
                 actorPresent
             }
         }
