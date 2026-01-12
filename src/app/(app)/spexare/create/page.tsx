@@ -10,13 +10,14 @@ import {getAll as getAllTasks} from "@/lib/task";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
+import {me} from "@/lib/user";
 
 export default async function SpexareCreatePage() {
     return withPolicyPage(Policies.spexare.requireCreate, async () => {
         const defaultPageSize = 15;
         const locale = await getLocale();
 
-        const [initialData, types, countries, tags, tasks, taskCategories, spex, spexCategories, t] = await Promise.all([
+        const [initialData, types, countries, tags, tasks, taskCategories, spex, spexCategories, currentUser, t] = await Promise.all([
             getPaged({
                 first: defaultPageSize,
                 filter: "(published:TRUE OR published:FALSE)",
@@ -29,6 +30,7 @@ export default async function SpexareCreatePage() {
             getAllTaskCategories(),
             getAllSpex(),
             getAllSpexCategories(),
+            me(),
             getTranslations()
         ]);
 
@@ -46,6 +48,7 @@ export default async function SpexareCreatePage() {
                     spex={spex}
                     spexCategories={spexCategories}
                     initialData={initialData}
+                    currentSpexareId={currentUser?.spexare?.id ?? null}
                 />
                 <SpexareCreateForm
                     types={types}

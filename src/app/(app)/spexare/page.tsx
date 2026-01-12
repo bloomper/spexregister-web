@@ -6,14 +6,16 @@ import {Policies} from "@/utils/policy.server";
 import {UserRound} from "lucide-react";
 import {getCountries} from "@/lib/settings";
 import {getLocale} from "next-intl/server";
+import {me} from "@/lib/user";
 
 export default async function SpexarePage() {
     return withPolicyPage(Policies.spexare.requireRead, async () => {
         const first = 24;
 
-        const [page, countries] = await Promise.all([
+        const [page, countries, currentUser] = await Promise.all([
             getPaged({first, after: null}),
             getLocale().then(locale => getCountries(locale)),
+            me(),
         ]);
         const initialItems = page.edges.map((e) => e.node);
 
@@ -21,7 +23,12 @@ export default async function SpexarePage() {
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {initialItems.length > 0 ? (
-                        <SpexareGrid countries={countries} initialItems={initialItems} initialPageInfo={page.pageInfo}/>
+                        <SpexareGrid
+                            countries={countries}
+                            initialItems={initialItems}
+                            initialPageInfo={page.pageInfo}
+                            currentSpexareId={currentUser?.spexare?.id ?? null}
+                        />
                     ) : (
                         <DataEmpty icon={UserRound}/>
                     )}

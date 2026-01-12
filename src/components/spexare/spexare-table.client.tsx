@@ -44,6 +44,7 @@ interface SpexareTableProps {
     spex?: Spex[],
     spexCategories?: SpexCategory[],
     initialData: CursorPage<Spexare>,
+    currentSpexareId?: string | null,
 }
 
 export function SpexareTable({
@@ -55,6 +56,7 @@ export function SpexareTable({
                                  spex = [],
                                  spexCategories = [],
                                  initialData,
+                                 currentSpexareId,
                              }: SpexareTableProps) {
     const t = useTranslations();
     const router = useRouter();
@@ -156,6 +158,11 @@ export function SpexareTable({
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: true})}
+                rowClassName={(row) =>
+                    currentSpexareId && row.id === currentSpexareId
+                        ? "relative after:absolute after:inset-y-0 after:left-0 after:w-1 after:bg-linear-to-b after:from-pink-500 after:via-purple-500 after:to-indigo-500 bg-primary/5 hover:bg-primary/10 transition-colors"
+                        : ""
+                }
                 meta={{
                     setEditItem,
                     setDeleteItem,
@@ -235,7 +242,7 @@ export function SpexareTable({
 
             <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    {viewItem && <SpexareView spexare={viewItem} countries={countries} showAudit/>}
+                    {viewItem && <SpexareView spexare={viewItem} countries={countries} showAudit isMe={viewItem.id === currentSpexareId}/>}
                     <DialogFooter className="p-6 pt-0">
                         <Button variant="outline" onClick={() => setViewItem(null)}>
                             {t("Common.close")}

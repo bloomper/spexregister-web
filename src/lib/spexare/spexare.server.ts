@@ -246,7 +246,7 @@ export async function getPaged(args: {
 
 export async function search(args: {
     q: string;
-    aggregationFilters: AggregationFilterInput[];
+    aggregationFilters?: AggregationFilterInput[];
     limit?: number;
     offset?: number;
     sort?: string[];

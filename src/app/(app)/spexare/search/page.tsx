@@ -6,6 +6,7 @@ import {getCountries} from "@/lib/settings";
 import {getLocale} from "next-intl/server";
 import {SpexareGrid} from "@/components/spexare";
 import {DataEmpty} from "@/components/data-empty";
+import {me} from "@/lib/user";
 
 export default async function SpexareSearchPage({
                                                     searchParams,
@@ -16,11 +17,11 @@ export default async function SpexareSearchPage({
         const {q = ""} = await searchParams;
         const locale = await getLocale();
 
-        const [page, countries] = await Promise.all([
+        const [page, countries, currentUser] = await Promise.all([
             search({q}),
             getCountries(locale),
+            me(),
         ]);
-
         const initialItems = page.edges.map((e) => e.node);
 
         return (
@@ -34,6 +35,7 @@ export default async function SpexareSearchPage({
                             initialSearchQuery={q}
                             mode="search"
                             facets={page.facets}
+                            currentSpexareId={currentUser?.spexare?.id ?? null}
                         />
                     ) : (
                         <DataEmpty icon={UserRound}/>

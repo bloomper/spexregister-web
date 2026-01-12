@@ -4,7 +4,19 @@ import * as React from "react";
 import Image from "next/image";
 import {format, parse} from "date-fns";
 import {useTranslations} from "next-intl";
-import {Fingerprint, Heart, IdCard, Mail, MapPin, Phone, ShieldCheck, Tag, ToggleLeft, User,} from "lucide-react";
+import {
+    Fingerprint,
+    Heart,
+    IdCard,
+    Mail,
+    MapPin,
+    Phone,
+    ShieldCheck,
+    Sparkles,
+    Tag,
+    ToggleLeft,
+    User,
+} from "lucide-react";
 import {Country, Spexare} from "@/gql/graphql";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
@@ -18,12 +30,14 @@ interface SpexareViewProps {
     spexare: Spexare;
     countries: Country[];
     showAudit?: boolean;
+    isMe?: boolean;
 }
 
 export function SpexareView({
                                 spexare,
                                 countries,
-                                showAudit
+                                showAudit,
+                                isMe,
                             }: SpexareViewProps) {
     const t = useTranslations();
     const getCountryLabel = (isoCode: string) => {
@@ -53,6 +67,13 @@ export function SpexareView({
                         <div className="flex flex-col gap-1">
                             <DialogTitle className="text-2xl leading-none text-left">
                                 {spexare.firstName} {spexare.lastName}
+                                {isMe && (
+                                    <Badge
+                                        className="ml-2 bg-linear-to-r from-pink-500 to-violet-500 text-white border-none text-[10px] uppercase px-2 py-0.5 h-5 font-bold">
+                                        <Sparkles className="mr-1 h-3 w-3"/>
+                                        {t("Common.me")}
+                                    </Badge>
+                                )}
                             </DialogTitle>
                             {spexare.nickName && (
                                 <div className="text-muted-foreground italic text-lg leading-none text-left">

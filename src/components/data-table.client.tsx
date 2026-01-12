@@ -19,6 +19,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {useTranslations} from "next-intl";
 import {SortDirection} from "@/gql/graphql";
 import {DataEmpty} from "@/components/data-empty";
+import {cn} from "@/utils/utils";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -29,6 +30,7 @@ interface DataTableProps<TData, TValue> {
     children?: React.ReactNode
     onRowClick?: (data: TData) => void
     onSelectionChange?: (selectedRows: TData[]) => void
+    rowClassName?: (data: TData) => string
     onFetch: (args: {
         first?: number;
         last?: number;
@@ -49,7 +51,8 @@ export function DataTable<TData, TValue>({
                                              meta: extraMeta,
                                              children,
                                              onRowClick,
-                                             onSelectionChange
+                                             onSelectionChange,
+                                             rowClassName,
                                          }: DataTableProps<TData, TValue>) {
     const [data, setData] = useState<TData[]>(initialData.items);
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
@@ -218,7 +221,10 @@ export function DataTable<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
-                                    className={onRowClick ? "cursor-pointer" : ""}
+                                    className={cn(
+                                        onRowClick ? "cursor-pointer" : "",
+                                        rowClassName?.(row.original)
+                                    )}
                                     onClick={() => onRowClick?.(row.original)}
                                 >
                                     {row.getVisibleCells().map((cell) => {
