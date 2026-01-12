@@ -13,17 +13,26 @@ import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
 import {getProxiedImageUrl} from "@/utils/utils";
 import Image from "next/image";
+import {useRouter} from "next/navigation";
+import {Pencil} from "lucide-react";
+import {Sheet} from "@/components/ui/sheet";
+import {SpexCategoryForm} from "@/components/spex/category/spex-category-form.client";
 
 export function SpexCategoryGrid({
                                      initialItems = [],
                                      initialPageInfo,
                                      maxItems,
+                                     canUpdate = false,
                                  }: {
     initialItems?: SpexCategory[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
+    canUpdate?: boolean;
 }) {
     const t = useTranslations();
+    const router = useRouter();
+    const [selected, setSelected] = useState<SpexCategory | null>(null);
+    const [editItem, setEditItem] = useState<SpexCategory | null>(null);
 
     const {
         items: allItems,
@@ -44,39 +53,52 @@ export function SpexCategoryGrid({
         initialPageInfo,
     });
 
-    const [selected, setSelected] = useState<SpexCategory | null>(null);
     const items = maxItems ? allItems.slice(0, maxItems) : allItems;
     const isInfiniteMode = !maxItems;
 
     return (
         <>
             {items.map((n) => (
-                <Card
-                    key={n.id}
-                    className="h-full overflow-hidden transition-all hover:bg-muted/50 cursor-pointer p-0 gap-0"
-                    onClick={() => setSelected(n)}
-                >
-                    {n.logoUrl ? (
-                        <div className="relative aspect-video w-full bg-muted border-b">
-                            <Image
-                                src={getProxiedImageUrl(n.logoUrl, n.lastModifiedAt)}
-                                alt={n.name}
-                                fill
-                                unoptimized
-                                className="object-contain p-4 transition-transform group-hover:scale-105"
-                            />
-                        </div>
-                    ) : (
-                        <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
-                            <span
-                                className="text-muted-foreground text-xs uppercase tracking-widest">{t("Common.noDataHeading")}</span>
+                <Card key={n.id}
+                      className="group relative overflow-hidden flex flex-col p-0 transition-colors hover:bg-muted/50 cursor-pointer">
+                    {canUpdate && (
+                        <div className="absolute top-2 right-2 z-20">
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditItem(n);
+                                }}
+                            >
+                                <Pencil className="h-4 w-4"/>
+                            </Button>
                         </div>
                     )}
-                    <CardHeader className="p-4">
-                        <CardTitle className="text-sm font-bold line-clamp-2 text-center leading-tight">
-                            {n.name}
-                        </CardTitle>
-                    </CardHeader>
+                    <div className="flex flex-col h-full" onClick={() => setSelected(n)}>
+                        {n.logoUrl ? (
+                            <div className="relative aspect-video w-full bg-muted border-b">
+                                <Image
+                                    src={getProxiedImageUrl(n.logoUrl, n.lastModifiedAt)}
+                                    alt={n.name}
+                                    fill
+                                    unoptimized
+                                    className="object-contain p-4 transition-transform group-hover:scale-105"
+                                />
+                            </div>
+                        ) : (
+                            <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
+                            <span
+                                className="text-muted-foreground text-xs uppercase tracking-widest">{t("Common.noDataHeading")}</span>
+                            </div>
+                        )}
+                        <CardHeader className="p-4">
+                            <CardTitle className="text-sm font-bold line-clamp-2 text-center leading-tight">
+                                {n.name}
+                            </CardTitle>
+                        </CardHeader>
+                    </div>
                 </Card>
             ))}
 
@@ -109,6 +131,18 @@ export function SpexCategoryGrid({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
+                {editItem && (
+                    <SpexCategoryForm
+                        item={editItem}
+                        onSuccess={() => {
+                            setEditItem(null);
+                            router.refresh();
+                        }}
+                    />
+                )}
+            </Sheet>
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

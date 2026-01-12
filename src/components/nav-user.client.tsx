@@ -52,10 +52,10 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" disabled className="cursor-default hover:bg-transparent!">
-                        <div className="h-8 w-8 animate-pulse rounded-lg bg-sidebar-accent-foreground/10" />
+                        <div className="h-8 w-8 animate-pulse rounded-lg bg-sidebar-accent-foreground/10"/>
                         <div className="grid flex-1 gap-1">
-                            <div className="h-3 w-24 animate-pulse rounded bg-sidebar-accent-foreground/10" />
-                            <div className="h-2 w-32 animate-pulse rounded bg-sidebar-accent-foreground/10" />
+                            <div className="h-3 w-24 animate-pulse rounded bg-sidebar-accent-foreground/10"/>
+                            <div className="h-2 w-32 animate-pulse rounded bg-sidebar-accent-foreground/10"/>
                         </div>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -8,13 +8,13 @@ import {ClipboardList} from "lucide-react";
 
 export default async function TaskPage() {
     return withPolicyPage(Policies.task.requireRead, async () => {
-        const first = 24;
-        const [page, categories] = await Promise.all([
-            getPaged({first, after: null}),
-            getAllCategories()
+        const [page, categories, canUpdate] = await Promise.all([
+            getPaged({first: 24, after: null}),
+            getAllCategories(),
+            Policies.task.requireUpdate(),
         ]);
 
-        const initialItems = page.edges.map((e) => e.node);
+        const initialItems = page.items;
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
@@ -24,6 +24,7 @@ export default async function TaskPage() {
                             initialItems={initialItems}
                             initialPageInfo={page.pageInfo}
                             categories={categories}
+                            canUpdate={canUpdate.ok}
                         />
                     ) : (
                         <DataEmpty icon={ClipboardList}/>

@@ -242,7 +242,8 @@ export function SpexareTable({
 
             <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    {viewItem && <SpexareView spexare={viewItem} countries={countries} showAudit isMe={viewItem.id === currentSpexareId}/>}
+                    {viewItem && <SpexareView spexare={viewItem} countries={countries} showAudit
+                                              isMe={viewItem.id === currentSpexareId}/>}
                     <DialogFooter className="p-6 pt-0">
                         <Button variant="outline" onClick={() => setViewItem(null)}>
                             {t("Common.close")}

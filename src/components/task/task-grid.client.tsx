@@ -12,24 +12,32 @@ import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/tasks/actions.server";
 import {DataFilter} from "@/components/data-filter";
-import {ClipboardList, X} from "lucide-react";
+import {ClipboardList, Pencil, X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
+import {useRouter} from "next/navigation";
+import {Sheet} from "@/components/ui/sheet";
+import {TaskForm} from "@/components/task/task-form.client";
 
 export function TaskGrid({
                              initialItems = [],
                              initialPageInfo,
                              maxItems,
                              categories = [],
+                             canUpdate = false,
                          }: {
     initialItems?: Task[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
     categories?: TaskCategory[];
+    canUpdate?: boolean;
 }) {
     const t = useTranslations();
+    const router = useRouter();
     const [searchValue, setSearchValue] = useState("");
     const [filterQuery, setFilterQuery] = useState("");
+    const [selected, setSelected] = useState<Task | null>(null);
+    const [editItem, setEditItem] = useState<Task | null>(null);
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
         new Set([...categories.map((c) => c.id), "none"])
     );
@@ -112,7 +120,6 @@ export function TaskGrid({
         setSearchValue(e.target.value);
     };
 
-    const [selected, setSelected] = useState<Task | null>(null);
     const items = maxItems ? allItems.slice(0, maxItems) : allItems;
     const isInfiniteMode = !maxItems;
     const noResults = !loading && items.length === 0;
@@ -191,17 +198,36 @@ export function TaskGrid({
                 items.map((n) => (
                     <Card
                         key={n.id}
-                        className="group h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0"
-                        onClick={() => setSelected(n)}
+                        className="group relative h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0"
                     >
-                        <CardHeader className="space-y-0.5 p-3">
-                            <div className="flex items-center justify-between gap-2">
-                                <CardDescription className="text-[10px]">
-                                    {n.category?.name ?? t("Common.none")}
-                                </CardDescription>
+                        {canUpdate && (
+                            <div className="absolute top-2 right-2 z-20">
+                                <Button
+                                    variant="secondary"
+                                    size="icon"
+                                    className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setEditItem(n);
+                                    }}
+                                >
+                                    <Pencil className="h-4 w-4"/>
+                                </Button>
                             </div>
-                            <CardTitle className="line-clamp-1 text-sm font-bold leading-tight">{n.name}</CardTitle>
-                        </CardHeader>
+                        )}
+                        <div
+                            className="flex flex-col h-full"
+                            onClick={() => setSelected(n)}
+                        >
+                            <CardHeader className="space-y-0.5 p-3">
+                                <div className="flex items-center justify-between gap-2">
+                                    <CardDescription className="text-[10px]">
+                                        {n.category?.name ?? t("Common.none")}
+                                    </CardDescription>
+                                </div>
+                                <CardTitle className="line-clamp-1 text-sm font-bold leading-tight">{n.name}</CardTitle>
+                            </CardHeader>
+                        </div>
                     </Card>
                 ))
             )}
@@ -229,6 +255,20 @@ export function TaskGrid({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
+                {editItem && (
+                    <TaskForm
+                        item={editItem}
+                        categories={categories}
+                        onSuccess={() => {
+                            setEditItem(null);
+                            reset();
+                            router.refresh();
+                        }}
+                    />
+                )}
+            </Sheet>
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

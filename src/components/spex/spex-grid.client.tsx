@@ -13,29 +13,37 @@ import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/spex/actions.server";
 import {Badge} from "@/components/ui/badge";
 import {DataFilter} from "@/components/data-filter";
-import {Clapperboard, ImageIcon, X} from "lucide-react";
+import {Clapperboard, ImageIcon, Pencil, X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
 import Image from "next/image";
 import {getProxiedImageUrl} from "@/utils/utils";
+import {Sheet} from "@/components/ui/sheet";
+import {SpexForm} from "@/components/spex/spex-form.client";
+import {useRouter} from "next/navigation";
 
 export function SpexGrid({
                              initialItems = [],
                              initialPageInfo,
                              maxItems,
                              categories = [],
+                             canUpdate = false,
                          }: {
     initialItems?: Spex[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
     categories?: SpexCategory[];
+    canUpdate?: boolean;
 }) {
     const t = useTranslations();
+    const router = useRouter();
     const [searchValue, setSearchValue] = useState("");
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
         new Set(categories.map((c) => c.id))
     );
+    const [selected, setSelected] = useState<Spex | null>(null);
+    const [editItem, setEditItem] = useState<Spex | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -104,7 +112,6 @@ export function SpexGrid({
         setSearchValue(e.target.value);
     };
 
-    const [selected, setSelected] = useState<Spex | null>(null);
     const items = maxItems ? allItems.slice(0, maxItems) : allItems;
     const isInfiniteMode = !maxItems;
     const noResults = !loading && items.length === 0;
@@ -179,26 +186,48 @@ export function SpexGrid({
                 items.map((n) => (
                     <Card
                         key={n.id}
-                        className="group h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0"
-                        onClick={() => setSelected(n)}
+                        className="group h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0 relative"
                     >
-                        {n.posterUrl ? (
-                            <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
-                                <Image
-                                    src={getProxiedImageUrl(n.posterUrl, n.lastModifiedAt)}
-                                    alt={n.title}
-                                    fill
-                                    unoptimized
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    className="object-cover transition-transform group-hover:scale-105"
-                                />
+                        <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
+                            {canUpdate && (
+                                <div className="absolute top-2 right-2 z-20">
+                                    <Button
+                                        variant="secondary"
+                                        size="icon"
+                                        className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditItem(n);
+                                        }}
+                                    >
+                                        <Pencil className="h-4 w-4"/>
+                                    </Button>
+                                </div>
+                            )}
+                            <div
+                                className="flex flex-col h-full"
+                                onClick={() => setSelected(n)}
+                            >
+                                {n.posterUrl ? (
+                                    <Image
+                                        src={getProxiedImageUrl(n.posterUrl, n.lastModifiedAt)}
+                                        alt={n.title}
+                                        fill
+                                        unoptimized
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        className="object-cover transition-transform group-hover:scale-105"
+                                    />
+                                ) : (
+                                    <div className="flex h-full w-full items-center justify-center">
+                                        <ImageIcon className="h-12 w-12 text-muted-foreground/20 stroke-[1.5]"/>
+                                    </div>
+                                )}
                             </div>
-                        ) : (
-                            <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
-                                <ImageIcon className="h-12 w-12 text-muted-foreground/20 stroke-[1.5]"/>
-                            </div>
-                        )}
-                        <CardHeader className="space-y-0.5 p-3">
+                        </div>
+                        <CardHeader
+                            className="space-y-0.5 p-3"
+                            onClick={() => setSelected(n)}
+                        >
                             <div className="flex items-center justify-between gap-2">
                                 <CardDescription className="text-[10px]">{n.year}</CardDescription>
                                 {n.revivals && n.revivals.length > 0 && (
@@ -213,7 +242,8 @@ export function SpexGrid({
                                     </div>
                                 )}
                             </div>
-                            <CardTitle className="line-clamp-1 text-sm font-bold leading-tight">{n.title}</CardTitle>
+                            <CardTitle
+                                className="line-clamp-1 text-sm font-bold leading-tight">{n.title}</CardTitle>
                         </CardHeader>
                         {n.category && (
                             <CardContent className="px-4 pb-4 pt-0">
@@ -286,6 +316,20 @@ export function SpexGrid({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
+                {editItem && (
+                    <SpexForm
+                        item={editItem}
+                        categories={categories}
+                        onSuccess={() => {
+                            setEditItem(null);
+                            reset();
+                            router.refresh();
+                        }}
+                    />
+                )}
+            </Sheet>
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

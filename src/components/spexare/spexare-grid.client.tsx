@@ -5,14 +5,14 @@ import {useCallback, useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
-import {Country, Facet, Spexare} from "@/gql/graphql";
+import {Facet, Spexare} from "@/gql/graphql";
 import {CursorPageInfo, SpexarePage} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
 import {DataEmpty} from "@/components/data-empty";
-import {CheckCircle2, Circle, Sparkles, User, UserRound, X} from "lucide-react";
+import {CheckCircle2, Circle, Pencil, Sparkles, User, UserRound, X} from "lucide-react";
 import {DataFilter} from "@/components/data-filter";
 import {Input} from "@/components/ui/input";
 import Image from "next/image";
@@ -20,6 +20,9 @@ import {cn, getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {SpexareView} from "@/components/spexare/spexare-view.client";
 import {usePathname, useRouter} from "next/navigation";
+import Link from "next/link";
+import {SpexareForm} from "@/components/spexare/spexare-form.client";
+import {Sheet} from "@/components/ui/sheet";
 
 export function SpexareGrid({
                                 countries = [],
@@ -30,8 +33,15 @@ export function SpexareGrid({
                                 initialSearchQuery = "",
                                 facets = [],
                                 currentSpexareId,
+                                canManage = false,
+                                types = [],
+                                tags = [],
+                                tasks = [],
+                                taskCategories = [],
+                                spex = [],
+                                spexCategories = [],
                             }: {
-    countries: Country[];
+    countries: any[];
     initialItems?: Spexare[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
@@ -39,6 +49,13 @@ export function SpexareGrid({
     initialSearchQuery?: string;
     facets?: Facet[];
     currentSpexareId?: string | null;
+    canManage?: boolean;
+    types?: any[];
+    tags?: any[];
+    tasks?: any[];
+    taskCategories?: any[];
+    spex?: any[];
+    spexCategories?: any[];
 }) {
     const t = useTranslations();
     const router = useRouter();
@@ -48,6 +65,8 @@ export function SpexareGrid({
     const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>({});
     const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
+    const [selected, setSelected] = useState<Spexare | null>(null);
+    const [editItem, setEditItem] = useState<Spexare | null>(null);
 
     useEffect(() => {
         if (mode !== "search") {
@@ -159,7 +178,6 @@ export function SpexareGrid({
         setSearchValue(e.target.value);
     };
 
-    const [selected, setSelected] = useState<Spexare | null>(null);
     const items = maxItems ? allItems.slice(0, maxItems) : allItems;
     const isInfiniteMode = !maxItems;
     const noResults = !loading && items.length === 0;
@@ -273,33 +291,71 @@ export function SpexareGrid({
             ) : (
                 items.map((n) => {
                     const isMe = currentSpexareId && n.id === currentSpexareId;
+                    const canEdit = isMe || canManage;
 
                     return (
                         <Card
                             key={n.id}
                             className={cn(
-                                "group h-full transition-all hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0",
+                                "group h-full transition-all hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0 relative",
                                 isMe && "ring-2 ring-primary ring-offset-2 border-primary/50 shadow-lg scale-[1.02]"
                             )}
-                            onClick={() => setSelected(n)}
                         >
-                            {n.imageUrl ? (
-                                <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
-                                    <Image
-                                        src={getProxiedImageUrl(n.imageUrl, n.lastModifiedAt)}
-                                        alt={`${n.firstName} ${n.lastName}`}
-                                        fill
-                                        unoptimized
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                        className="object-cover transition-transform group-hover:scale-105"
-                                    />
+                            <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
+                                {canEdit && (
+                                    <div className="absolute top-2 right-2 z-20">
+                                        {isMe ? (
+                                            <Button
+                                                variant="secondary"
+                                                size="icon"
+                                                className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
+                                                asChild
+                                            >
+                                                <Link href="/my-profile">
+                                                    <Pencil className="h-4 w-4"/>
+                                                </Link>
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="secondary"
+                                                size="icon"
+                                                className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setEditItem(n);
+                                                }}
+                                            >
+                                                <Pencil className="h-4 w-4"/>
+                                            </Button>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div
+                                    className="flex flex-col h-full"
+                                    onClick={() => setSelected(n)}
+                                >
+                                    {n.imageUrl ? (
+                                        <Image
+                                            src={getProxiedImageUrl(n.imageUrl, n.lastModifiedAt)}
+                                            alt={`${n.firstName} ${n.lastName}`}
+                                            fill
+                                            unoptimized
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            className="object-cover transition-transform group-hover:scale-105"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center">
+                                            <User className="h-12 w-12 text-muted-foreground/20 stroke-[1.5]"/>
+                                        </div>
+                                    )}
                                 </div>
-                            ) : (
-                                <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
-                                    <User className="h-12 w-12 text-muted-foreground/20 stroke-[1.5]"/>
-                                </div>
-                            )}
-                            <CardHeader className="space-y-2 p-3">
+                            </div>
+
+                            <CardHeader
+                                className="space-y-2 p-3 cursor-pointer"
+                                onClick={() => setSelected(n)}
+                            >
                                 <div className="flex flex-col gap-1">
                                     <div className="flex items-center justify-between gap-2">
                                         <CardTitle className="line-clamp-1 text-sm font-bold leading-tight">
@@ -307,8 +363,9 @@ export function SpexareGrid({
                                         </CardTitle>
                                         <div className="flex items-center gap-1 shrink-0">
                                             {isMe && (
-                                                <Badge className="bg-linear-to-r from-pink-500 to-violet-500 text-white border-none text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-bold">
-                                                    <Sparkles className="mr-0.5 h-2 w-2" />
+                                                <Badge
+                                                    className="bg-linear-to-r from-pink-500 to-violet-500 text-white border-none text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-bold">
+                                                    <Sparkles className="mr-0.5 h-2 w-2"/>
                                                     {t("Common.me")}
                                                 </Badge>
                                             )}
@@ -340,7 +397,8 @@ export function SpexareGrid({
 
             <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    {selected && <SpexareView spexare={selected} countries={countries} isMe={currentSpexareId === selected.id}/>}
+                    {selected &&
+                        <SpexareView spexare={selected} countries={countries} isMe={currentSpexareId === selected.id}/>}
 
                     <DialogFooter className="p-6 pt-0">
                         <Button variant="outline" onClick={() => setSelected(null)}>
@@ -349,6 +407,26 @@ export function SpexareGrid({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
+                {editItem && (
+                    <SpexareForm
+                        types={types}
+                        countries={countries}
+                        tags={tags}
+                        tasks={tasks}
+                        taskCategories={taskCategories}
+                        spex={spex}
+                        spexCategories={spexCategories}
+                        item={editItem}
+                        onSuccess={() => {
+                            setEditItem(null);
+                            reset();
+                            router.refresh();
+                        }}
+                    />
+                )}
+            </Sheet>
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

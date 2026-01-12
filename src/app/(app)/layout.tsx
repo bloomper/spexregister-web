@@ -1,4 +1,5 @@
 import * as React from "react";
+import {Suspense} from "react";
 import Link from "next/link";
 import {getTranslations} from "next-intl/server";
 import {AppSidebar} from "@/components/app-sidebar.client";
@@ -10,7 +11,6 @@ import {LogoText} from "@/components/logo-text";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
 import {requireUser} from "@/utils/auth.server";
-import {Suspense} from "react";
 import {me} from "@/lib/user";
 
 export default async function AppLayout({children}: { children: React.ReactNode }) {
@@ -73,8 +73,8 @@ export default async function AppLayout({children}: { children: React.ReactNode 
             <SidebarProvider className="flex flex-col">
                 <SiteHeader/>
                 <div className="flex flex-1">
-                    <Suspense fallback={<AppSidebar roles={roles} spexare={undefined} />}>
-                        <SidebarWithUser roles={roles} />
+                    <Suspense fallback={<AppSidebar roles={roles} spexare={undefined}/>}>
+                        <SidebarWithUser roles={roles}/>
                     </Suspense>
                     <SidebarInset>
                         {children}
