@@ -9,7 +9,7 @@ import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {SpexCategoryForm} from "@/components/spex/category";
 import {useEffect, useRef, useState} from "react";
-import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spex/categories/actions.server";
+import {bulkDeleteAction, deleteAction, getEventsAction, getPageAction} from "@/app/(app)/spex/categories/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
@@ -22,6 +22,7 @@ import Image from "next/image";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
+import {AuditTrail} from "@/components/data-audit-trail.client";
 
 export const columns: ColumnDef<SpexCategory>[] = [
     columnHelper.select<SpexCategory>(),
@@ -186,7 +187,10 @@ export function SpexCategoryTable({
                         </div>
 
                         {viewItem && (
-                            <AuditInfo item={viewItem}/>
+                            <div className="space-y-4">
+                                <AuditInfo item={viewItem}/>
+                                <AuditTrail id={viewItem.id} fetchAction={getEventsAction}/>
+                            </div>
                         )}
                     </div>
                     <DialogFooter>

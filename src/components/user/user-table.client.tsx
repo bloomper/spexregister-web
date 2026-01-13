@@ -8,7 +8,7 @@ import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {UserForm} from "@/components/user";
 import {useEffect, useRef, useState} from "react";
-import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/users/actions.server";
+import {bulkDeleteAction, deleteAction, getEventsAction, getPageAction} from "@/app/(app)/users/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
@@ -22,6 +22,7 @@ import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
 import {Translated} from "@/components/translated.client";
 import {Badge} from "@/components/ui/badge";
+import {AuditTrail} from "@/components/data-audit-trail.client";
 
 
 export const columns: ColumnDef<User>[] = [
@@ -285,7 +286,10 @@ export function UserTable({
                         </div>
 
                         {viewItem && (
-                            <AuditInfo item={viewItem}/>
+                            <div className="space-y-4">
+                                <AuditInfo item={viewItem}/>
+                                <AuditTrail id={viewItem.id} fetchAction={getEventsAction}/>
+                            </div>
                         )}
                     </div>
                     <DialogFooter>

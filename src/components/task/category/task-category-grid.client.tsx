@@ -10,11 +10,12 @@ import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getPageAction} from "@/app/(app)/tasks/categories/actions.server";
+import {getEventsAction, getPageAction} from "@/app/(app)/tasks/categories/actions.server";
 import {useRouter} from "next/navigation";
 import {Pencil} from "lucide-react";
 import {Sheet} from "@/components/ui/sheet";
 import {TaskCategoryForm} from "@/components/task/category/task-category-form.client";
+import {AuditTrail} from "@/components/data-audit-trail.client";
 
 export function TaskCategoryGrid({
                                      initialItems = [],
@@ -98,6 +99,11 @@ export function TaskCategoryGrid({
                                 {selected?.actorPresent ? t("Common.yes") : t("Common.no")}
                             </p>
                         </div>
+                        {selected && (
+                            <div className="space-y-4">
+                                <AuditTrail id={selected.id} fetchAction={getEventsAction}/>
+                            </div>
+                        )}
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setSelected(null)}>

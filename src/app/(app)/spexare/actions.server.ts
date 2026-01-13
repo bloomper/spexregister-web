@@ -7,6 +7,7 @@ import {
     create,
     del,
     deleteImage,
+    events,
     getPaged,
     removePartner,
     search,
@@ -374,6 +375,12 @@ export async function deleteActorAction(spexareId: string, activityId: string, t
         const result = await delActor(spexareId, activityId, taskActivityId, vocalId, id);
         revalidate();
         return result;
+    });
+}
+
+export async function getEventsAction(id: string) {
+    return withPolicyAction(Policies.spexare.requireRead, async () => {
+        return events(id);
     });
 }
 

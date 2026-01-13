@@ -205,10 +205,17 @@ export type Event = {
     __typename?: 'Event';
     createdAt: Scalars['Instant']['output'];
     createdBy: Scalars['String']['output'];
-    event: Scalars['String']['output'];
+    eventType: EventType;
     id: Scalars['ID']['output'];
-    source: Scalars['String']['output'];
+    sourceId: Scalars['Long']['output'];
+    sourceType: SourceType;
 };
+
+export enum EventType {
+    Create = 'CREATE',
+    Remove = 'REMOVE',
+    Update = 'UPDATE'
+}
 
 export type Facet = {
     __typename?: 'Facet';
@@ -788,7 +795,6 @@ export type Query = {
     authority?: Maybe<Authority>;
     countries?: Maybe<Array<Maybe<Country>>>;
     country?: Maybe<Country>;
-    event?: Maybe<Event>;
     events?: Maybe<Array<Maybe<Event>>>;
     language?: Maybe<Language>;
     languages?: Maybe<Array<Maybe<Language>>>;
@@ -797,7 +803,6 @@ export type Query = {
     newsEvents?: Maybe<Array<Maybe<Event>>>;
     newsPaged?: Maybe<NewsConnection>;
     noOp?: Maybe<Scalars['Void']['output']>;
-    sessionEvents?: Maybe<Array<Maybe<Event>>>;
     spex?: Maybe<Spex>;
     spexCategory?: Maybe<SpexCategory>;
     spexCategoryEvents?: Maybe<Array<Maybe<Event>>>;
@@ -846,13 +851,9 @@ export type QueryCountryArgs = {
 };
 
 
-export type QueryEventArgs = {
-    id: Scalars['ID']['input'];
-};
-
-
 export type QueryEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceType: SourceType;
 };
 
 
@@ -868,6 +869,7 @@ export type QueryNewsArgs = {
 
 export type QueryNewsEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceId: Scalars['ID']['input'];
 };
 
 
@@ -879,11 +881,6 @@ export type QueryNewsPagedArgs = {
     first?: InputMaybe<Scalars['Int']['input']>;
     last?: InputMaybe<Scalars['Int']['input']>;
     sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-
-export type QuerySessionEventsArgs = {
-    sinceInDays?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -899,6 +896,7 @@ export type QuerySpexCategoryArgs = {
 
 export type QuerySpexCategoryEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceId: Scalars['ID']['input'];
 };
 
 
@@ -915,6 +913,7 @@ export type QuerySpexCategoryPagedArgs = {
 
 export type QuerySpexEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceId: Scalars['ID']['input'];
 };
 
 
@@ -942,6 +941,7 @@ export type QuerySpexareArgs = {
 
 export type QuerySpexareEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceId: Scalars['ID']['input'];
 };
 
 
@@ -984,6 +984,7 @@ export type QueryTagArgs = {
 
 export type QueryTagEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceId: Scalars['ID']['input'];
 };
 
 
@@ -1010,6 +1011,7 @@ export type QueryTaskCategoryArgs = {
 
 export type QueryTaskCategoryEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceId: Scalars['ID']['input'];
 };
 
 
@@ -1026,6 +1028,7 @@ export type QueryTaskCategoryPagedArgs = {
 
 export type QueryTaskEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceId: Scalars['ID']['input'];
 };
 
 
@@ -1057,6 +1060,7 @@ export type QueryUserArgs = {
 
 export type QueryUserEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sourceId: Scalars['ID']['input'];
 };
 
 
@@ -1073,6 +1077,17 @@ export type QueryUserPagedArgs = {
 export enum SortDirection {
     Asc = 'ASC',
     Desc = 'DESC'
+}
+
+export enum SourceType {
+    News = 'NEWS',
+    Spex = 'SPEX',
+    Spexare = 'SPEXARE',
+    SpexCategory = 'SPEX_CATEGORY',
+    Tag = 'TAG',
+    Task = 'TASK',
+    TaskCategory = 'TASK_CATEGORY',
+    User = 'USER'
 }
 
 export type Spex = {

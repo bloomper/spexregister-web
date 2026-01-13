@@ -41,6 +41,17 @@ const DeleteMutation = /* GraphQL */ `
     }
 `;
 
+const EventsQuery = /* GraphQL */ `
+    query ($sourceId: ID!) {
+        taskCategoryEvents(sourceId: $sourceId) {
+            id
+            eventType
+            createdAt
+            createdBy
+        }
+    }
+`;
+
 const createQuery = (fields: string) => /* GraphQL */ `
     query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
@@ -160,4 +171,16 @@ export async function del(id: string) {
     }
 
     return result.data?.taskCategoryDelete;
+}
+
+export async function events(sourceId: string): Promise<Event[]> {
+    const result = await getClient()
+        .query<{ taskCategoryEvents: Event[] }>(EventsQuery, {sourceId})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.taskCategoryEvents ?? [];
 }

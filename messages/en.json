@@ -9,6 +9,11 @@
     "title": "About"
   },
   "Common": {
+    "eventTypes": {
+      "CREATE": "Created",
+      "UPDATE": "Updated",
+      "REMOVE": "Deleted"
+    },
     "add": "Add",
     "cancel": "Cancel",
     "clickToUpload": "Click to upload",
@@ -35,6 +40,7 @@
     "fieldTooLong": "Field is too long",
     "fileTooLarge": "File too large. Maximum file size is 15MB.",
     "general": "General",
+    "history": "History",
     "imageUploadHint": "PNG, JPEG or GIF (max. 15MB)",
     "insufficientPermissions": "Insufficient permissions",
     "lastModifiedAt": "Last modified at",

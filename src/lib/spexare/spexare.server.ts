@@ -188,6 +188,17 @@ const SearchQuery = /* GraphQL */ `
     ${SummaryFragment}
 `;
 
+const EventsQuery = /* GraphQL */ `
+    query ($sourceId: ID!) {
+        spexareEvents(sourceId: $sourceId) {
+            id
+            eventType
+            createdAt
+            createdBy
+        }
+    }
+`;
+
 const createQuery = (fields: string, fragment: string) => /* GraphQL */ `
     query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         spexarePaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
@@ -362,4 +373,16 @@ export async function uploadImage(id: string, file: File) {
 export async function deleteImage(id: string) {
     await axios.delete(`${process.env.API_REST_BASE_URL}/api/spexare/${id}/image`);
     return {success: true};
+}
+
+export async function events(sourceId: string): Promise<Event[]> {
+    const result = await getClient()
+        .query<{ spexareEvents: Event[] }>(EventsQuery, {sourceId})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexareEvents ?? [];
 }

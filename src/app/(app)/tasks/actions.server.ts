@@ -6,6 +6,7 @@ import {
     addCategory,
     create,
     del,
+    events,
     getAll as getAllTasks,
     getPaged,
     removeCategory,
@@ -94,6 +95,12 @@ export async function removeCategoryAction(id: string) {
         const result = await removeCategory(id);
         revalidate();
         return result;
+    });
+}
+
+export async function getEventsAction(id: string) {
+    return withPolicyAction(Policies.task.requireRead, async () => {
+        return events(id);
     });
 }
 

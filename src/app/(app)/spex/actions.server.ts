@@ -9,6 +9,7 @@ import {
     del,
     deletePoster,
     deleteRevival,
+    events,
     getAll as getAllSpex,
     getPaged,
     removeCategory,
@@ -135,6 +136,12 @@ export async function deletePosterAction(id: string) {
         return {
             success: true
         };
+    });
+}
+
+export async function getEventsAction(id: string) {
+    return withPolicyAction(Policies.spex.requireRead, async () => {
+        return events(id);
     });
 }
 

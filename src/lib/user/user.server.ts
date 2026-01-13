@@ -87,6 +87,17 @@ const SpexareRemoveMutation = /* GraphQL */ `
     }
 `;
 
+const EventsQuery = /* GraphQL */ `
+    query ($sourceId: ID!) {
+        userEvents(sourceId: $sourceId) {
+            id
+            eventType
+            createdAt
+            createdBy
+        }
+    }
+`;
+
 const createQuery = (fields: string) => /* GraphQL */ `
     query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
@@ -305,4 +316,16 @@ export async function removeSpexare(userId: string) {
         throw result.error;
     }
     return result.data?.userSpexareRemove;
+}
+
+export async function events(sourceId: string): Promise<Event[]> {
+    const result = await getClient()
+        .query<{ userEvents: Event[] }>(EventsQuery, {sourceId})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.userEvents ?? [];
 }

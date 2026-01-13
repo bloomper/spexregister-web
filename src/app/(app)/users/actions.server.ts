@@ -7,6 +7,7 @@ import {
     addSpexare,
     create,
     del,
+    events,
     getAuthorities,
     getPaged,
     getStates,
@@ -140,6 +141,12 @@ export async function searchSpexareAction(query: string) {
             full: false
         });
         return result.items;
+    });
+}
+
+export async function getEventsAction(id: string) {
+    return withPolicyAction(Policies.user.requireRead, async () => {
+        return events(id);
     });
 }
 

@@ -11,11 +11,12 @@ import {formatDate} from "@/utils/utils";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getPageAction} from "@/app/(app)/news/actions.server";
+import {getEventsAction, getPageAction} from "@/app/(app)/news/actions.server";
 import {useRouter} from "next/navigation";
 import {Sheet} from "@/components/ui/sheet";
 import {NewsForm} from "@/components/news/news-form.client";
 import {Pencil} from "lucide-react";
+import {AuditTrail} from "../data-audit-trail.client";
 
 export function NewsGrid({
                              initialItems = [],
@@ -102,8 +103,16 @@ export function NewsGrid({
                         </div>
                         <DialogTitle>{selected?.subject}</DialogTitle>
                     </DialogHeader>
-                    <div className="whitespace-pre-wrap text-sm text-foreground">
-                        {selected?.text}
+                    <div className="space-y-6">
+                        <div className="whitespace-pre-wrap text-sm text-foreground">
+                            {selected?.text}
+                        </div>
+
+                        {selected && (
+                            <div className="space-y-4">
+                                <AuditTrail id={selected.id} fetchAction={getEventsAction}/>
+                            </div>
+                        )}
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setSelected(null)}>

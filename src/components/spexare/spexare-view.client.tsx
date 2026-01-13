@@ -25,6 +25,8 @@ import {DataEmpty} from "@/components/data-empty";
 import {ActivityTimeline} from "@/components/spexare/activity/activity-timeline.client";
 import {DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
+import {AuditTrail} from "@/components/data-audit-trail.client";
+import {getEventsAction} from "@/app/(app)/spexare/actions.server";
 
 interface SpexareViewProps {
     spexare: Spexare;
@@ -147,7 +149,10 @@ export function SpexareView({
                                 </div>
                             )}
                         </div>
-                        {showAudit && <AuditInfo item={spexare}/>}
+                        <div className="space-y-4 pt-4 border-t border-muted/50">
+                            {showAudit && <AuditInfo item={spexare}/>}
+                            <AuditTrail id={spexare.id} fetchAction={getEventsAction}/>
+                        </div>
                     </TabsContent>
 
                     <TabsContent value="activities" className="pt-2">

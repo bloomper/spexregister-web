@@ -8,7 +8,7 @@ import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {TaskForm} from "@/components/task";
 import {useEffect, useRef, useState} from "react";
-import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/tasks/actions.server";
+import {bulkDeleteAction, deleteAction, getEventsAction, getPageAction} from "@/app/(app)/tasks/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
@@ -21,6 +21,7 @@ import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
+import {AuditTrail} from "@/components/data-audit-trail.client";
 
 
 export const columns: ColumnDef<Task>[] = [
@@ -211,7 +212,10 @@ export function TaskTable({
                         </div>
 
                         {viewItem && (
-                            <AuditInfo item={viewItem}/>
+                            <div className="space-y-4">
+                                <AuditInfo item={viewItem}/>
+                                <AuditTrail id={viewItem.id} fetchAction={getEventsAction}/>
+                            </div>
                         )}
                     </div>
                     <DialogFooter>

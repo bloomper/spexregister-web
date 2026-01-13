@@ -10,13 +10,14 @@ import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
+import {getEventsAction, getPageAction} from "@/app/(app)/spex/categories/actions.server";
 import {getProxiedImageUrl} from "@/utils/utils";
 import Image from "next/image";
 import {useRouter} from "next/navigation";
 import {Pencil} from "lucide-react";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexCategoryForm} from "@/components/spex/category/spex-category-form.client";
+import {AuditTrail} from "@/components/data-audit-trail.client";
 
 export function SpexCategoryGrid({
                                      initialItems = [],
@@ -121,6 +122,12 @@ export function SpexCategoryGrid({
                                     unoptimized
                                     className="object-contain p-6"
                                 />
+                            </div>
+                        )}
+
+                        {selected && (
+                            <div className="space-y-4">
+                                <AuditTrail id={selected.id} fetchAction={getEventsAction}/>
                             </div>
                         )}
                     </div>

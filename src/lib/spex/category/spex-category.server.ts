@@ -43,6 +43,17 @@ const DeleteMutation = /* GraphQL */ `
     }
 `;
 
+const EventsQuery = /* GraphQL */ `
+    query ($sourceId: ID!) {
+        spexCategoryEvents(sourceId: $sourceId) {
+            id
+            eventType
+            createdAt
+            createdBy
+        }
+    }
+`;
+
 const createQuery = (fields: string) => /* GraphQL */ `
     query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
@@ -177,4 +188,16 @@ export async function uploadLogo(id: string, file: File) {
 export async function deleteLogo(id: string) {
     await axios.delete(`${process.env.API_REST_BASE_URL}/api/spex/categories/${id}/logo`);
     return {success: true};
+}
+
+export async function events(sourceId: string): Promise<Event[]> {
+    const result = await getClient()
+        .query<{ spexCategoryEvents: Event[] }>(EventsQuery, {sourceId})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexCategoryEvents ?? [];
 }

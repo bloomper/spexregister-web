@@ -2,7 +2,7 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {create, del, deleteLogo, getPaged, spexCategoryFormSchema, update, uploadLogo} from "@/lib/spex/category";
+import {create, del, deleteLogo, events, getPaged, spexCategoryFormSchema, update, uploadLogo} from "@/lib/spex/category";
 import {revalidateTag} from "next/cache";
 import {SortDirection} from "@/gql/graphql";
 
@@ -75,6 +75,12 @@ export async function deleteLogoAction(id: string) {
         return {
             success: true
         };
+    });
+}
+
+export async function getEventsAction(id: string) {
+    return withPolicyAction(Policies.spexCategory.requireRead, async () => {
+        return events(id);
     });
 }
 

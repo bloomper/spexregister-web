@@ -80,6 +80,17 @@ const DeleteRevivalMutation = /* GraphQL */ `
     }
 `;
 
+const EventsQuery = /* GraphQL */ `
+    query ($sourceId: ID!) {
+        spexEvents(sourceId: $sourceId) {
+            id
+            eventType
+            createdAt
+            createdBy
+        }
+    }
+`;
+
 const createQuery = (fields: string) => /* GraphQL */ `
     query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
         spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
@@ -263,4 +274,16 @@ export async function uploadPoster(id: string, file: File) {
 export async function deletePoster(id: string) {
     await axios.delete(`${process.env.API_REST_BASE_URL}/api/spex/${id}/poster`);
     return {success: true};
+}
+
+export async function events(sourceId: string): Promise<Event[]> {
+    const result = await getClient()
+        .query<{ spexEvents: Event[] }>(EventsQuery, {sourceId})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexEvents ?? [];
 }

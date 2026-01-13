@@ -10,7 +10,7 @@ import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getPageAction} from "@/app/(app)/spex/actions.server";
+import {getEventsAction, getPageAction} from "@/app/(app)/spex/actions.server";
 import {Badge} from "@/components/ui/badge";
 import {DataFilter} from "@/components/data-filter";
 import {Clapperboard, ImageIcon, Pencil, X} from "lucide-react";
@@ -21,6 +21,7 @@ import {getProxiedImageUrl} from "@/utils/utils";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexForm} from "@/components/spex/spex-form.client";
 import {useRouter} from "next/navigation";
+import {AuditTrail} from "@/components/data-audit-trail.client";
 
 export function SpexGrid({
                              initialItems = [],
@@ -305,6 +306,12 @@ export function SpexGrid({
                                                 </Badge>
                                             ))}
                                     </div>
+                                </div>
+                            )}
+
+                            {selected && (
+                                <div className="space-y-4">
+                                    <AuditTrail id={selected.id} fetchAction={getEventsAction}/>
                                 </div>
                             )}
                         </div>

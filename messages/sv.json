@@ -9,6 +9,11 @@
     "title": "Om"
   },
   "Common": {
+    "eventTypes": {
+      "CREATE": "Skapad",
+      "UPDATE": "Uppdaterad",
+      "REMOVE": "Raderad"
+    },
     "add": "Lägg till",
     "cancel": "Avbryt",
     "clickToUpload": "Klicka för att ladda upp",
@@ -35,6 +40,7 @@
     "fieldTooLong": "Fälter är för långt",
     "fileTooLarge": "Filen är för stor. Max filstorlek är 15MB.",
     "general": "Allmänt",
+    "history": "Historik",
     "imageUploadHint": "PNG, JPEG eller GIF (max. 15MB)",
     "insufficientPermissions": "Otillräckliga rättigheter",
     "lastModifiedAt": "Senast uppdaterad",
@@ -156,8 +162,8 @@
     "Address": {
       "city": "Stad",
       "country": "Land",
-      "emailAddress": "Emailadress",
-      "invalidEmailAddress": "Ogiltig emailadress",
+      "emailAddress": "E-postadress",
+      "invalidEmailAddress": "Ogiltig e-postadress",
       "phone": "Telefonnummer",
       "phoneMobile": "Mobiltelefonnummer",
       "postalCode": "Postnummer",
@@ -275,11 +281,11 @@
     "authorities": "Rättigheter",
     "createHeading": "Skapa användare",
     "editHeading": "Ändra användare",
-    "email": "Emailadress",
+    "email": "E-postadress",
     "externalId": "Externt ID",
     "filterPlaceholder": "Filtrera på externt ID...",
     "heading": "Användare",
-    "invalidEmailAddress": "Ogiltig emailadress",
+    "invalidEmailAddress": "Ogiltig e-postadress",
     "spexare": "Spexare?",
     "spexareHeading": "Spexare",
     "state": "Status"
