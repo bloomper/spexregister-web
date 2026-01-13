@@ -118,11 +118,9 @@ export function DataTable<TData, TValue>({
         }
     }, [handleFilterChange, refresh]);
 
-    const handlePageChange = (direction: "next" | "prev" | "first" | "last") => {
+    const handlePageChange = (direction: "next" | "prev" | "first") => {
         if (direction === "first") {
             void handleFetch({first: pageSize});
-        } else if (direction === "last") {
-            void handleFetch({last: pageSize});
         } else if (direction === "next" && pageInfo.endCursor) {
             void handleFetch({first: pageSize, after: pageInfo.endCursor});
         } else if (direction === "prev" && pageInfo.startCursor) {
@@ -293,14 +291,6 @@ export function DataTable<TData, TValue>({
                         disabled={!pageInfo.hasNextPage || loading}
                     >
                         <ChevronRight className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => handlePageChange("last")}
-                        disabled={!pageInfo.hasNextPage || loading}
-                    >
-                        <ChevronsRight className="h-4 w-4"/>
                     </Button>
                 </div>
             </div>

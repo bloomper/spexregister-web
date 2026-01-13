@@ -43,7 +43,7 @@ export function DataTableSkeleton({
                         <TableRow>
                             {Array.from({length: columnCount}).map((_, i) => (
                                 <TableHead key={i} className={columnClasses[i]}>
-                                    <Skeleton className="h-4 w-[80px]"/>
+                                    <Skeleton className="h-4 w-20"/>
                                 </TableHead>
                             ))}
                         </TableRow>
@@ -74,6 +74,7 @@ export function DataTableSkeleton({
             <div className="flex flex-col gap-4 sm:flex-row items-center justify-between py-4">
                 <Skeleton className="h-8 w-[150px]"/>
                 <div className="flex space-x-2">
+                    <Skeleton className="h-8 w-8 rounded-md"/>
                     <Skeleton className="h-8 w-8 rounded-md"/>
                     <Skeleton className="h-8 w-8 rounded-md"/>
                 </div>
