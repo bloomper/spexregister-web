@@ -66,7 +66,7 @@ export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, 
                 <Field data-invalid={!!errors.role}>
                     <FieldLabel>{t("Spexare.Activity.TaskActivity.Actor.role")}</FieldLabel>
                     <FieldContent>
-                        <Input {...register("role")} placeholder="e.g. Romeo"/>
+                        <Input {...register("role")}/>
                         <FieldError errors={[translateError(t, errors.role)]}/>
                     </FieldContent>
                 </Field>
