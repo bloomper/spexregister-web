@@ -306,9 +306,13 @@ export function SpexareView({
                             <div className="grid grid-cols-1 gap-3">
                                 {Object.entries(
                                     spexare.memberships.reduce((accumulated, membership) => {
-                                        if (!membership) return accumulated;
+                                        if (!membership) {
+                                            return accumulated;
+                                        }
                                         const typeLabel = membership.type.label;
-                                        if (!accumulated[typeLabel]) accumulated[typeLabel] = [];
+                                        if (!accumulated[typeLabel]) {
+                                            accumulated[typeLabel] = [];
+                                        }
                                         accumulated[typeLabel].push(membership.year);
                                         return accumulated;
                                     }, {} as Record<string, string[]>),
@@ -317,7 +321,7 @@ export function SpexareView({
                                         <span className="text-sm font-bold border-b pb-1">{type}</span>
                                         <div className="flex flex-wrap gap-1.5">
                                             {years
-                                                .sort((a, b) => Number(b) - Number(a))
+                                                .sort((a, b) => Number(a) - Number(b))
                                                 .map((year) => (
                                                     <Badge key={year} variant="outline"
                                                            className="text-[10px] font-medium bg-background">
