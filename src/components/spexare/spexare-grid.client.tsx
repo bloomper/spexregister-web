@@ -69,16 +69,17 @@ export function SpexareGrid({
     const [editItem, setEditItem] = useState<Spexare | null>(null);
 
     useEffect(() => {
-        if (mode !== "search") {
+        if (mode !== "search" || !filterQuery) {
+            if (mode === "search" && !filterQuery && window.location.search) {
+                window.history.replaceState(null, '', pathname);
+            }
             return;
         }
 
         const params = new URLSearchParams();
-        if (filterQuery) {
-            params.set("q", filterQuery);
-        }
+        params.set("q", filterQuery);
 
-        const url = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+        const url = `${pathname}?${params.toString()}`;
         window.history.replaceState(null, '', url);
     }, [filterQuery, pathname, mode]);
 
@@ -97,7 +98,7 @@ export function SpexareGrid({
             const currentOffset = isFirstPage ? 0 : parseInt(args.after || "0");
 
             const res = await searchAction({
-                q: filterQuery.trim() || "*",
+                q: filterQuery.trim() || "",
                 limit: args.pageSize,
                 offset: currentOffset,
                 aggregationFilters,
@@ -157,25 +158,41 @@ export function SpexareGrid({
     });
 
     useEffect(() => {
-        setSearchValue(initialSearchQuery);
-        setFilterQuery(initialSearchQuery);
-        reset();
-    }, [initialSearchQuery, reset]);
+        if (initialSearchQuery !== searchValue) {
+            setSearchValue(initialSearchQuery);
+            setFilterQuery(initialSearchQuery);
+        }
+    }, [initialSearchQuery]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setFilterQuery(searchValue);
+            if (searchValue !== filterQuery) {
+                setFilterQuery(searchValue);
+            }
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [searchValue]);
+    }, [searchValue, filterQuery]);
 
     useEffect(() => {
         reset();
-    }, [filterQuery, selectedDeceasedValues, selectedFacets]);
+    }, [filterQuery, selectedDeceasedValues, selectedFacets, reset]);
 
     const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(e.target.value);
+    };
+
+    const handleReset = () => {
+        React.startTransition(() => {
+            setSearchValue("");
+            setFilterQuery("");
+            setSelectedDeceasedValues(new Set(["true", "false"]));
+            setSelectedFacets({});
+
+            if (mode === "search") {
+                router.replace(pathname, { scroll: false });
+            }
+        });
     };
 
     const items = maxItems ? allItems.slice(0, maxItems) : allItems;
@@ -264,12 +281,7 @@ export function SpexareGrid({
                         {isFiltered && (
                             <Button
                                 variant="ghost"
-                                onClick={() => {
-                                    setSearchValue("");
-                                    setFilterQuery("");
-                                    setSelectedDeceasedValues(new Set(["true", "false"]));
-                                    setSelectedFacets({});
-                                }}
+                                onClick={handleReset}
                                 className="h-8 px-2 lg:px-3 text-xs"
                             >
                                 {t("Common.reset")}
