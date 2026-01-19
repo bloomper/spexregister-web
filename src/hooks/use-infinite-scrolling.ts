@@ -56,11 +56,15 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        setItems(initialItems);
         if (initialPageInfo) {
             setAfter(initialPageInfo.endCursor ?? null);
             setHasNextPage(Boolean(initialPageInfo.hasNextPage));
+        } else {
+            setAfter(initialAfter ?? null);
+            setHasNextPage(true);
         }
-    }, [initialPageInfo]);
+    }, [initialItems, initialPageInfo, initialAfter]);
 
     const {ref: sentinelRef, inView} = useInView<HTMLDivElement>({rootMargin});
 
@@ -102,10 +106,10 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
     }, [after, fetchPageAction, getKeyAction, hasNextPage, loading, pageSize]);
 
     useEffect(() => {
-        if (initialItems.length === 0 && items.length === 0 && !loading && error === null) {
+        if (items.length === 0 && !loading && error === null && hasNextPage) {
             void loadMore();
         }
-    }, []);
+    }, [items.length, loading, error, hasNextPage, loadMore]);
 
     useEffect(() => {
         if (!inView) {

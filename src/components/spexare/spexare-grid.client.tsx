@@ -158,6 +158,21 @@ export function SpexareGrid({
     });
 
     useEffect(() => {
+        if (selected) {
+            const updated = allItems.find(i => i.id === selected.id);
+            if (updated) {
+                setSelected(updated);
+            }
+        }
+        if (editItem) {
+            const updated = allItems.find(i => i.id === editItem.id);
+            if (updated) {
+                setEditItem(updated);
+            }
+        }
+    }, [allItems, selected?.id, editItem?.id]);
+
+    useEffect(() => {
         if (initialSearchQuery !== searchValue) {
             setSearchValue(initialSearchQuery);
             setFilterQuery(initialSearchQuery);
