@@ -271,6 +271,10 @@ export async function search(args: {
             offset: args.offset ?? 0,
             sort: args.sort ?? ["score"],
             direction: args.direction ?? SortDirection.Desc,
+        }, {
+            fetchOptions: {
+                next: {tags: ['spexare']}
+            }
         })
         .toPromise();
 
