@@ -81,7 +81,6 @@ export function TaskActivityManager({
                         const isEditingThisTask = editingTaskActivityId === taskActivity.id;
                         const actors = taskActivity.actors || [];
                         const needsActor = taskActivity.task?.category?.actorPresent;
-                        const usedVocalIds = new Set(actors.map((a: any) => a.vocal?.id).filter(Boolean));
 
                         return (
                             <div key={taskActivity.id}
@@ -211,32 +210,15 @@ export function TaskActivityManager({
 
                                 {needsActor && !isEditingThisTask && (
                                     <div className="pl-4 space-y-2">
-                                        {(() => {
-                                            const isEditingActorInThisTask = actors.some((a: any) => a.id === editingActorId);
-                                            const vocalsForThisTask = editingActorId && isEditingActorInThisTask
-                                                ? vocals.filter(v => !usedVocalIds.has(v.id) || actors.find((a: any) => a.id === editingActorId)?.vocal?.id === v.id)
-                                                : vocals.filter(v => !usedVocalIds.has(v.id));
-
-                                            if (vocalsForThisTask.length > 0 || isEditingActorInThisTask) {
-                                                return (
-                                                    <ActorForm
-                                                        key={editingActorId ? `edit-actor-${editingActorId}` : `new-actor-${taskActivity.id}-${actors.length}`}
-                                                        spexareId={spexareId}
-                                                        activityId={activityId}
-                                                        taskActivityId={taskActivity.id}
-                                                        vocals={vocalsForThisTask}
-                                                        item={actors.find((a: any) => a.id === editingActorId)}
-                                                        onSuccess={() => setEditingActorId(null)}
-                                                    />
-                                                );
-                                            }
-
-                                            return (
-                                                <div className="text-[10px] text-muted-foreground italic">
-                                                    {t("Spexare.Activity.TaskActivity.Actor.noAvailableVocals")}
-                                                </div>
-                                            );
-                                        })()}
+                                        <ActorForm
+                                            key={editingActorId ? `edit-actor-${editingActorId}` : `new-actor-${taskActivity.id}-${actors.length}`}
+                                            spexareId={spexareId}
+                                            activityId={activityId}
+                                            taskActivityId={taskActivity.id}
+                                            vocals={vocals}
+                                            item={actors.find((a: any) => a.id === editingActorId)}
+                                            onSuccess={() => setEditingActorId(null)}
+                                        />
                                     </div>
                                 )}
                             </div>
