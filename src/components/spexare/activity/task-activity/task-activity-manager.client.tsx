@@ -203,6 +203,7 @@ export function TaskActivityManager({
                                             item={taskActivity}
                                             tasks={tasks}
                                             taskCategories={taskCategories}
+                                            existingTaskIds={initialTaskActivities.map(ta => ta.task?.id).filter(Boolean)}
                                             onSuccess={() => setEditingTaskActivityId(null)}
                                         />
                                     </div>
@@ -237,6 +238,7 @@ export function TaskActivityManager({
                     activityId={activityId}
                     tasks={tasks}
                     taskCategories={taskCategories}
+                    existingTaskIds={initialTaskActivities.map(ta => ta.task?.id).filter(Boolean)}
                 />
             </div>
         </div>

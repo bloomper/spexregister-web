@@ -23,10 +23,19 @@ interface TaskFormProps {
     item?: any;
     tasks: Task[];
     taskCategories: TaskCategory[];
+    existingTaskIds?: string[];
     onSuccess?: () => void;
 }
 
-export function TaskActivityForm({spexareId, activityId, item, tasks, taskCategories, onSuccess}: TaskFormProps) {
+export function TaskActivityForm({
+                                     spexareId,
+                                     activityId,
+                                     item,
+                                     tasks,
+                                     taskCategories,
+                                     existingTaskIds = [],
+                                     onSuccess
+}: TaskFormProps) {
     const t = useTranslations();
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
@@ -49,6 +58,7 @@ export function TaskActivityForm({spexareId, activityId, item, tasks, taskCatego
 
     const filteredTasks = tasks
         .filter(t => !selectedCategoryId || t.category?.id === selectedCategoryId)
+        .filter(t => t.id === item?.task?.id || !existingTaskIds.includes(t.id))
         .sort((a, b) => a.name.localeCompare(b.name));
 
     const onSubmit = handleSubmit((data) => {
