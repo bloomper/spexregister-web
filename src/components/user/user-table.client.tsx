@@ -8,7 +8,14 @@ import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {UserForm} from "@/components/user";
 import {useEffect, useRef, useState} from "react";
-import {bulkDeleteAction, deleteAction, getEventsAction, getPageAction} from "@/app/(app)/users/actions.server";
+import {
+    bulkDeleteAction,
+    deleteAction,
+    exportAction,
+    getEventsAction,
+    getPageAction,
+    importAction
+} from "@/app/(app)/users/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
@@ -23,6 +30,8 @@ import {columnHelper} from "@/components/data-table-columns.client";
 import {Translated} from "@/components/translated.client";
 import {Badge} from "@/components/ui/badge";
 import {AuditTrail} from "@/components/data-audit-trail.client";
+import {ExportButton} from "@/components/impex/export-button.client";
+import {ImportButton} from "@/components/impex/import-button.client";
 
 
 export const columns: ColumnDef<User>[] = [
@@ -202,6 +211,17 @@ export function UserTable({
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
                             )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <ExportButton
+                                exportAction={exportAction}
+                                selectedIds={selectedRows.map(r => r.id)}
+                                filterQuery={lastFilterQueryRef.current}
+                                requiresReportType={false}
+                            />
+
+                            <ImportButton importAction={importAction}/>
                         </div>
                     </div>
 

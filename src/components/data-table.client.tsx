@@ -14,7 +14,7 @@ import {
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
-import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, LoaderPinwheel} from "lucide-react";
+import {ChevronLeft, ChevronRight, ChevronsLeft, LoaderPinwheel} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useTranslations} from "next-intl";
 import {SortDirection} from "@/gql/graphql";
@@ -31,6 +31,7 @@ interface DataTableProps<TData, TValue> {
     onRowClick?: (data: TData) => void
     onSelectionChange?: (selectedRows: TData[]) => void
     rowClassName?: (data: TData) => string
+    showPagination?: boolean
     onFetch: (args: {
         first?: number;
         last?: number;
@@ -53,6 +54,7 @@ export function DataTable<TData, TValue>({
                                              onRowClick,
                                              onSelectionChange,
                                              rowClassName,
+                                             showPagination = true,
                                          }: DataTableProps<TData, TValue>) {
     const [data, setData] = useState<TData[]>(initialData.items);
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
@@ -119,6 +121,10 @@ export function DataTable<TData, TValue>({
     }, [handleFilterChange, refresh]);
 
     const handlePageChange = (direction: "next" | "prev" | "first") => {
+        if (!showPagination) {
+            return;
+        }
+
         if (direction === "first") {
             void handleFetch({first: pageSize});
         } else if (direction === "next" && pageInfo.endCursor) {
@@ -178,6 +184,10 @@ export function DataTable<TData, TValue>({
     const t = useTranslations();
 
     const handlePageSizeChange = (value: string) => {
+        if (!showPagination) {
+            return;
+        }
+
         const newSize = parseInt(value, 10);
         setPageSize(newSize);
         void handleFetch({first: newSize});
@@ -253,47 +263,50 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex flex-col gap-4 sm:flex-row items-center justify-between py-4">
-                <div className="flex items-center space-x-2">
-                    <p className="text-sm font-medium">{t("Common.rowsPerPage")}</p>
-                    <Select value={`${pageSize}`} onValueChange={handlePageSizeChange}>
-                        <SelectTrigger className="h-8 w-[70px]">
-                            <SelectValue placeholder={pageSize}/>
-                        </SelectTrigger>
-                        <SelectContent side="top">
-                            {[10, 15, 20, 25, 30, 40, 50].map((size) => (
-                                <SelectItem key={size} value={`${size}`}>{size}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+
+            {showPagination && (
+                <div className="flex flex-col gap-4 sm:flex-row items-center justify-between py-4">
+                    <div className="flex items-center space-x-2">
+                        <p className="text-sm font-medium">{t("Common.rowsPerPage")}</p>
+                        <Select value={`${pageSize}`} onValueChange={handlePageSizeChange}>
+                            <SelectTrigger className="h-8 w-[70px]">
+                                <SelectValue placeholder={pageSize}/>
+                            </SelectTrigger>
+                            <SelectContent side="top">
+                                {[10, 15, 20, 25, 30, 40, 50].map((size) => (
+                                    <SelectItem key={size} value={`${size}`}>{size}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                        <Button
+                            variant="outline"
+                            className="hidden h-8 w-8 p-0 lg:flex"
+                            onClick={() => handlePageChange("first")}
+                            disabled={!pageInfo.hasPreviousPage || loading}
+                        >
+                            <ChevronsLeft className="h-4 w-4"/>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handlePageChange("prev")}
+                            disabled={!pageInfo.hasPreviousPage || loading}
+                        >
+                            <ChevronLeft className="h-4 w-4"/>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handlePageChange("next")}
+                            disabled={!pageInfo.hasNextPage || loading}
+                        >
+                            <ChevronRight className="h-4 w-4"/>
+                        </Button>
+                    </div>
                 </div>
-                <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                    <Button
-                        variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => handlePageChange("first")}
-                        disabled={!pageInfo.hasPreviousPage || loading}
-                    >
-                        <ChevronsLeft className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0"
-                        onClick={() => handlePageChange("prev")}
-                        disabled={!pageInfo.hasPreviousPage || loading}
-                    >
-                        <ChevronLeft className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0"
-                        onClick={() => handlePageChange("next")}
-                        disabled={!pageInfo.hasNextPage || loading}
-                    >
-                        <ChevronRight className="h-4 w-4"/>
-                    </Button>
-                </div>
-            </div>
+            )}
         </div>
     );
 }

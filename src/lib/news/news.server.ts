@@ -1,9 +1,10 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {News, NewsConnection, NewsEdge, SortDirection} from "@/gql/graphql";
+import {ImpexType, JobReference, News, NewsConnection, NewsEdge, SortDirection} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
+import axios from "@/lib/axios.server";
 
 const SummaryFields = `
     id
@@ -41,6 +42,14 @@ const UpdateMutation = /* GraphQL */ `
 const DeleteMutation = /* GraphQL */ `
     mutation ($id: ID!) {
         newsDelete(id: $id)
+    }
+`;
+
+const ExportQuery = /* GraphQL */ `
+    query ($ids: [ID], $filter: String, $type: ImpexType!) {
+        newsExport(ids: $ids, filter: $filter, type: $type) {
+            id
+        }
     }
 `;
 
@@ -154,6 +163,28 @@ export async function del(id: string) {
     }
 
     return result.data?.newsDelete;
+}
+
+export async function exp(ids: string[] | null, filter: string | null, type: ImpexType): Promise<JobReference> {
+    const result = await getClient()
+        .query<{ newsExport: JobReference }>(ExportQuery, {ids, filter, type})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data!.newsExport;
+}
+
+export async function imp(type: ImpexType, file: File): Promise<JobReference> {
+    const arrayBuffer = await file.arrayBuffer();
+    const response = await axios.post(`${process.env.API_REST_BASE_URL}/api/news?type=${type}`, arrayBuffer, {
+        headers: {
+            'Content-Type': file.type,
+        }
+    });
+    return response.data;
 }
 
 export async function events(sourceId: string): Promise<Event[]> {

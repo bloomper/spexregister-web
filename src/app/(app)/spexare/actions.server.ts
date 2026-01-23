@@ -8,7 +8,9 @@ import {
     del,
     deleteImage,
     events,
+    exp,
     getPaged,
+    imp,
     removePartner,
     search,
     spexareFormSchema,
@@ -16,7 +18,7 @@ import {
     uploadImage
 } from "@/lib/spexare";
 import {revalidateTag} from "next/cache";
-import {AggregationFilterInput, SortDirection} from "@/gql/graphql";
+import {AggregationFilterInput, ImpexType, ReportType, SortDirection} from "@/gql/graphql";
 import {
     addressFormSchema,
     create as createAddress,
@@ -118,6 +120,20 @@ export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.spexare.requireDelete, async () => {
         await Promise.all(ids.map(id => del(id)));
         revalidate();
+    });
+}
+
+export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType) {
+    return withPolicyAction(Policies.spexare.requireExport, async () => {
+        return await exp(ids, filter, type, reportType);
+    });
+}
+
+export async function importAction(type: ImpexType, file: File) {
+    return withPolicyAction(Policies.spexare.requireImport, async () => {
+        const result = await imp(type, file);
+        revalidate();
+        return result;
     });
 }
 

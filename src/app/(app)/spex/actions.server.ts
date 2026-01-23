@@ -10,15 +10,17 @@ import {
     deletePoster,
     deleteRevival,
     events,
+    exp,
     getAll as getAllSpex,
     getPaged,
+    imp,
     removeCategory,
     spexFormSchema,
     update,
     uploadPoster
 } from "@/lib/spex";
 import {revalidateTag} from "next/cache";
-import {SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/graphql";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
 export async function getPageAction(args: {
@@ -77,6 +79,20 @@ export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.spex.requireDelete, async () => {
         await Promise.all(ids.map(id => del(id)));
         revalidate();
+    });
+}
+
+export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
+    return withPolicyAction(Policies.spex.requireExport, async () => {
+        return await exp(ids, filter, type);
+    });
+}
+
+export async function importAction(type: ImpexType, file: File) {
+    return withPolicyAction(Policies.spex.requireImport, async () => {
+        const result = await imp(type, file);
+        revalidate();
+        return result;
     });
 }
 

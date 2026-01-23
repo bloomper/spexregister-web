@@ -1,10 +1,11 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {Authority, SortDirection, State, User, UserConnection, UserEdge} from "@/gql/graphql";
+import {Authority, ImpexType, JobReference, SortDirection, State, User, UserConnection, UserEdge} from "@/gql/graphql";
 import {UserPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import {FullFragment as SpexareFullFragment} from "@/lib/spexare";
+import axios from "@/lib/axios.server";
 
 const SummaryFields = `
     id
@@ -55,6 +56,14 @@ const DeleteMutation = /* GraphQL */ `
     mutation ($id: ID!) {
         userDelete(id: $id)
     }
+`;
+
+const ExportQuery = /* GraphQL */ `
+  query ($ids: [ID], $filter: String, $type: ImpexType!) {
+    userExport(ids: $ids, filter: $filter, type: $type) {
+        id
+    }
+  }
 `;
 
 const AuthoritiesAddMutation = /* GraphQL */ `
@@ -224,6 +233,28 @@ export async function del(id: string) {
     }
 
     return result.data?.userDelete;
+}
+
+export async function exp(ids: string[] | null, filter: string | null, type: ImpexType): Promise<JobReference> {
+    const result = await getClient()
+        .query<{ userExport: JobReference }>(ExportQuery, { ids, filter, type })
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data!.userExport;
+}
+
+export async function imp(type: ImpexType, file: File): Promise<JobReference> {
+    const arrayBuffer = await file.arrayBuffer();
+    const response = await axios.post(`${process.env.API_REST_BASE_URL}/api/users?type=${type}`, arrayBuffer, {
+        headers: {
+            'Content-Type': file.type,
+        }
+    });
+    return response.data;
 }
 
 export async function getAuthorities(): Promise<Authority[]> {

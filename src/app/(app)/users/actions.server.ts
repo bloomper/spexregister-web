@@ -8,9 +8,11 @@ import {
     create,
     del,
     events,
+    exp,
     getAuthorities,
     getPaged,
     getStates,
+    imp,
     me,
     removeAuthorities,
     removeSpexare,
@@ -20,7 +22,7 @@ import {
 } from "@/lib/user";
 import {getPaged as getSpexarePaged} from "@/lib/spexare";
 import {revalidateTag} from "next/cache";
-import {SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/graphql";
 
 export async function getPageAction(args: {
     first?: number;
@@ -78,6 +80,21 @@ export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.user.requireDelete, async () => {
         await Promise.all(ids.map(id => del(id)));
         revalidate();
+    });
+}
+
+export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
+    return withPolicyAction(Policies.user.requireExport, async () => {
+        const result = await exp(ids, filter, type);
+        return result;
+    });
+}
+
+export async function importAction(type: ImpexType, file: File) {
+    return withPolicyAction(Policies.user.requireImport, async () => {
+        const result = await imp(type, file);
+        revalidate();
+        return result;
     });
 }
 

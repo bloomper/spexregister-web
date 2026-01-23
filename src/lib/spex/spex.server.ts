@@ -1,7 +1,7 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {SortDirection, Spex, SpexConnection, SpexEdge} from "@/gql/graphql";
+import {ImpexType, JobReference, SortDirection, Spex, SpexConnection, SpexEdge} from "@/gql/graphql";
 import {SpexPage} from "@/types/pagination";
 import axios from "@/lib/axios.server";
 import {mapConnection} from "@/utils/utils.server";
@@ -51,6 +51,14 @@ const DeleteMutation = /* GraphQL */ `
     mutation ($id: ID!) {
         spexDelete(id: $id)
     }
+`;
+
+const ExportQuery = /* GraphQL */ `
+  query ($ids: [ID], $filter: String, $type: ImpexType!) {
+    spexExport(ids: $ids, filter: $filter, type: $type) {
+        id
+    }
+  }
 `;
 
 const AddCategoryMutation = /* GraphQL */ `
@@ -211,6 +219,28 @@ export async function del(id: string) {
     }
 
     return result.data?.spexDelete;
+}
+
+export async function exp(ids: string[] | null, filter: string | null, type: ImpexType): Promise<JobReference> {
+    const result = await getClient()
+        .query<{ spexExport: JobReference }>(ExportQuery, { ids, filter, type })
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data!.spexExport;
+}
+
+export async function imp(type: ImpexType, file: File): Promise<JobReference> {
+    const arrayBuffer = await file.arrayBuffer();
+    const response = await axios.post(`${process.env.API_REST_BASE_URL}/api/spex?type=${type}`, arrayBuffer, {
+        headers: {
+            'Content-Type': file.type,
+        }
+    });
+    return response.data;
 }
 
 export async function addCategory(id: string, categoryId: string) {

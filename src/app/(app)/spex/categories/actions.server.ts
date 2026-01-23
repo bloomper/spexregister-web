@@ -2,9 +2,20 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {create, del, deleteLogo, events, getPaged, spexCategoryFormSchema, update, uploadLogo} from "@/lib/spex/category";
+import {
+    create,
+    del,
+    deleteLogo,
+    events,
+    exp,
+    getPaged,
+    imp,
+    spexCategoryFormSchema,
+    update,
+    uploadLogo
+} from "@/lib/spex/category";
 import {revalidateTag} from "next/cache";
-import {SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/graphql";
 
 export async function getPageAction(args: {
     first?: number;
@@ -54,6 +65,20 @@ export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.spexCategory.requireDelete, async () => {
         await Promise.all(ids.map(id => del(id)));
         revalidate();
+    });
+}
+
+export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
+    return withPolicyAction(Policies.spexCategory.requireExport, async () => {
+        return await exp(ids, filter, type);
+    });
+}
+
+export async function importAction(type: ImpexType, file: File) {
+    return withPolicyAction(Policies.spexCategory.requireImport, async () => {
+        const result = await imp(type, file);
+        revalidate();
+        return result;
     });
 }
 

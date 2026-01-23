@@ -9,7 +9,13 @@ import {DataTable} from "@/components/data-table.client";
 import {SpexareForm, SpexareView} from "@/components/spexare";
 import * as React from "react";
 import {useEffect, useRef, useState} from "react";
-import {bulkDeleteAction, deleteAction, getPageAction} from "@/app/(app)/spexare/actions.server";
+import {
+    bulkDeleteAction,
+    deleteAction,
+    exportAction,
+    getPageAction,
+    importAction
+} from "@/app/(app)/spexare/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
@@ -21,6 +27,8 @@ import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataFilter} from "@/components/data-filter";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {columnHelper} from "@/components/data-table-columns.client";
+import {ExportButton} from "@/components/impex/export-button.client";
+import {ImportButton} from "@/components/impex/import-button.client";
 
 
 export const columns: ColumnDef<Spexare>[] = [
@@ -228,6 +236,17 @@ export function SpexareTable({
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
                             )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <ExportButton
+                                exportAction={exportAction}
+                                selectedIds={selectedRows.map(r => r.id)}
+                                filterQuery={lastFilterQueryRef.current}
+                                requiresReportType={true}
+                            />
+
+                            <ImportButton importAction={importAction}/>
                         </div>
                     </div>
 

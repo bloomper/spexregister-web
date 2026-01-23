@@ -3,6 +3,9 @@ import 'server-only';
 import {getClient} from '@/lib/urql.server';
 import {
     AggregationFilterInput,
+    ImpexType,
+    JobReference,
+    ReportType,
     SortDirection,
     Spexare,
     SpexareConnection,
@@ -143,6 +146,14 @@ const DeleteMutation = /* GraphQL */ `
     mutation ($id: ID!) {
         spexareDelete(id: $id)
     }
+`;
+
+const ExportQuery = /* GraphQL */ `
+  query ($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {
+    spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) {
+        id
+    }
+  }
 `;
 
 const AddPartnerMutation = /* GraphQL */ `
@@ -338,6 +349,28 @@ export async function del(id: string) {
     }
 
     return result.data?.spexareDelete;
+}
+
+export async function exp(ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType): Promise<JobReference> {
+    const result = await getClient()
+        .query<{ spexareExport: JobReference }>(ExportQuery, { ids, filter, type, reportType })
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data!.spexareExport;
+}
+
+export async function imp(type: ImpexType, file: File): Promise<JobReference> {
+    const arrayBuffer = await file.arrayBuffer();
+    const response = await axios.post(`${process.env.API_REST_BASE_URL}/api/spexare?type=${type}`, arrayBuffer, {
+        headers: {
+            'Content-Type': file.type,
+        }
+    });
+    return response.data;
 }
 
 export async function addPartner(spexareId: string, id: string) {

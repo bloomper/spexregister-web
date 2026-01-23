@@ -18,6 +18,7 @@
     "cancel": "Cancel",
     "clickToUpload": "Click to upload",
     "close": "Close",
+    "copySuccess": "Copied",
     "couldNotLoadData": "Something went wrong while loading data.",
     "create": "Create",
     "createSuccess": "Create successful",
@@ -91,6 +92,59 @@
     "latestNews": "Latest news",
     "mustBeLoggedIn": "You must be logged in to use the address register.",
     "showAllNews": "Show all news"
+  },
+  "Impex": {
+    "exitStatuses": {
+      "COMPLETED": "Completed",
+      "EXECUTING": "Executing",
+      "FAILED": "Failed",
+      "NOOP": "None",
+      "STOPPED": "Stopped",
+      "UNKNOWN": "Unknown"
+    },
+    "reportTypes": {
+      "PDF_ADDRESS_LABELS": "Address labels",
+      "PDF_PLATOON_LIST": "Platoon list",
+      "PDF_SCRATCH_LIST": "Scratch list"
+    },
+    "statuses": {
+      "ABANDONED": "Abandoned",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed",
+      "STARTED": "Started",
+      "STARTING": "Starting",
+      "STOPPED": "Stopped",
+      "STOPPING": "Stopping",
+      "UNKNOWN": "Unknown"
+    },
+    "types": {
+      "EXCEL": "Excel",
+      "EXCEL_XLS": "Excel (Legacy)",
+      "PDF": "PDF"
+    },
+    "createdAt": "Created at",
+    "data": "Data",
+    "download": "Download",
+    "errors": "Errors",
+    "exitStatus": "Result",
+    "export": "Export",
+    "exportCompleted": "Export completed",
+    "exportFailed": "Export failed",
+    "exportStarted": "Export started",
+    "finishedAt": "Finished at",
+    "heading": "Import/Export",
+    "id": "ID",
+    "import": "Import",
+    "importCompleted": "Import completed",
+    "importFailed": "Import failed",
+    "importStarted": "Import started",
+    "importUploadHint": "XLSX or XLS (max. 15MB)",
+    "messages": "Messages",
+    "name": "Name",
+    "purgeHint": "Jobs are automatically purged after 7 days",
+    "selectFormat": "Select format",
+    "startedAt": "Started at",
+    "status": "Status"
   },
   "Meta": {
     "description": "Address registry for Chalmersspexet's members",

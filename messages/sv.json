@@ -18,6 +18,7 @@
     "cancel": "Avbryt",
     "clickToUpload": "Klicka för att ladda upp",
     "close": "Stäng",
+    "copySuccess": "Kopierat",
     "couldNotLoadData": "Något gick fel när data laddades.",
     "create": "Skapa",
     "createSuccess": "Skapandet lyckades",
@@ -41,7 +42,7 @@
     "fileTooLarge": "Filen är för stor. Max filstorlek är 15MB.",
     "general": "Allmänt",
     "history": "Historik",
-    "imageUploadHint": "PNG, JPEG eller GIF (max. 15MB)",
+    "imageUploadHint": "PNG, JPEG eller GIF (max 15MB)",
     "insufficientPermissions": "Otillräckliga rättigheter",
     "lastModifiedAt": "Senast uppdaterad",
     "lastModifiedBy": "Senast uppdaterad av",
@@ -90,6 +91,59 @@
     "latestNews": "Senaste nyheterna",
     "mustBeLoggedIn": "Du behöver vara inloggad för att använda adressregistret.",
     "showAllNews": "Visa alla nyheter"
+  },
+  "Impex": {
+    "exitStatuses": {
+      "COMPLETED": "Avslutad",
+      "EXECUTING": "Exekverar",
+      "FAILED": "Misslyckad",
+      "NOOP": "Ingen",
+      "STOPPED": "Stoppad",
+      "UNKNOWN": "Okänd"
+    },
+    "reportTypes": {
+      "PDF_ADDRESS_LABELS": "Adressetiketter",
+      "PDF_PLATOON_LIST": "Plutonslista",
+      "PDF_SCRATCH_LIST": "Strecklista"
+    },
+    "statuses": {
+      "ABANDONED": "Övergiven",
+      "COMPLETED": "Avslutad",
+      "FAILED": "Misslyckad",
+      "STARTED": "Startad",
+      "STARTING": "Startar",
+      "STOPPED": "Stoppad",
+      "STOPPING": "Stoppar",
+      "UNKNOWN": "Okänd"
+    },
+    "types": {
+      "EXCEL": "Excel",
+      "EXCEL_XLS": "Excel (äldre)",
+      "PDF": "PDF"
+    },
+    "createdAt": "Skapad",
+    "data": "Data",
+    "download": "Ladda ner",
+    "errors": "Fel",
+    "exitStatus": "Resultat",
+    "export": "Exportera",
+    "exportCompleted": "Export slutförd",
+    "exportFailed": "Export misslyckades",
+    "exportStarted": "Export påbörjad",
+    "finishedAt": "Avslutad",
+    "heading": "Importera/Exportera",
+    "id": "ID",
+    "import": "Importera",
+    "importCompleted": "Import slutförd",
+    "importFailed": "Import misslyckades",
+    "importStarted": "Import påbörjad",
+    "importUploadHint": "XLSX eller XLS (max 15MB)",
+    "messages": "Meddelanden",
+    "name": "Namn",
+    "purgeHint": "Jobb rensas automatiskt efter 7 dagar",
+    "selectFormat": "Välj format",
+    "startedAt": "Startad",
+    "status": "Status"
   },
   "Meta": {
     "description": "Adressregister för medlemmar i Chalmersspexet",

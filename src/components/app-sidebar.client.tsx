@@ -7,6 +7,7 @@ import {
     ClipboardList,
     Drama,
     House,
+    ListTodo,
     Newspaper,
     Shapes,
     Tag,
@@ -152,6 +153,18 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                 items: [
                     {title: t("Common.manage"), url: "/users/manage"},
                     {title: t("Common.create"), url: "/users/create"},
+                ],
+            } as any);
+        }
+
+        if (isCurrentUserAdminOrEditor) {
+            mainItems.push({
+                title: t("Impex.heading"),
+                url: "/impex/manage",
+                icon: ListTodo,
+                isActive: pathname.startsWith("/impex"),
+                items: [
+                    {title: t("Common.manage"), url: "/impex/manage"},
                 ],
             } as any);
         }

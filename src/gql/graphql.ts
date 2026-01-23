@@ -22,6 +22,8 @@ export type Scalars = {
     Email: { input: any; output: any; }
     /** A custom scalar that handles Java 8 Instant types */
     Instant: { input: any; output: any; }
+    /** A JSON scalar */
+    JSON: { input: any; output: any; }
     /** A IETF BCP 47 language tag */
     Locale: { input: any; output: any; }
     /** A 64-bit signed integer */
@@ -244,6 +246,46 @@ export type History = {
     label: Scalars['String']['output'];
 };
 
+export enum ImpexType {
+    Excel = 'EXCEL',
+    ExcelXls = 'EXCEL_XLS',
+    Pdf = 'PDF'
+}
+
+export type ImportResult = {
+    __typename?: 'ImportResult';
+    data?: Maybe<Scalars['JSON']['output']>;
+    errors?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+    messages?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+    success: Scalars['Boolean']['output'];
+};
+
+export type Job = {
+    __typename?: 'Job';
+    createdAt?: Maybe<Scalars['Instant']['output']>;
+    exitStatus?: Maybe<Scalars['String']['output']>;
+    finishedAt?: Maybe<Scalars['Instant']['output']>;
+    hasDownload?: Maybe<Scalars['Boolean']['output']>;
+    id: Scalars['ID']['output'];
+    importResult?: Maybe<ImportResult>;
+    name: Scalars['String']['output'];
+    startedAt?: Maybe<Scalars['Instant']['output']>;
+    status: Scalars['String']['output'];
+};
+
+export type JobReference = {
+    __typename?: 'JobReference';
+    id: Scalars['ID']['output'];
+};
+
+export type JobStatus = {
+    __typename?: 'JobStatus';
+    exitStatus?: Maybe<Scalars['String']['output']>;
+    id: Scalars['ID']['output'];
+    name: Scalars['String']['output'];
+    status: Scalars['String']['output'];
+};
+
 export type Language = {
     __typename?: 'Language';
     isoCode: Scalars['Locale']['output'];
@@ -290,6 +332,7 @@ export type Mutation = {
     consentCreate?: Maybe<Consent>;
     consentDelete?: Maybe<Scalars['Void']['output']>;
     consentUpdate?: Maybe<Consent>;
+    jobDelete?: Maybe<Scalars['Void']['output']>;
     membershipCreate?: Maybe<Membership>;
     membershipDelete?: Maybe<Scalars['Void']['output']>;
     newsCreate?: Maybe<News>;
@@ -426,6 +469,11 @@ export type MutationConsentUpdateArgs = {
     input: ConsentUpdate;
     spexareId: Scalars['ID']['input'];
     typeId: Scalars['ID']['input'];
+};
+
+
+export type MutationJobDeleteArgs = {
+    id: Scalars['ID']['input'];
 };
 
 
@@ -796,22 +844,29 @@ export type Query = {
     countries?: Maybe<Array<Maybe<Country>>>;
     country?: Maybe<Country>;
     events?: Maybe<Array<Maybe<Event>>>;
+    job?: Maybe<Job>;
+    jobStatus?: Maybe<JobStatus>;
+    jobs?: Maybe<Array<Maybe<Job>>>;
     language?: Maybe<Language>;
     languages?: Maybe<Array<Maybe<Language>>>;
     me?: Maybe<User>;
     news?: Maybe<News>;
     newsEvents?: Maybe<Array<Maybe<Event>>>;
+    newsExport?: Maybe<JobReference>;
     newsPaged?: Maybe<NewsConnection>;
     noOp?: Maybe<Scalars['Void']['output']>;
     spex?: Maybe<Spex>;
     spexCategory?: Maybe<SpexCategory>;
     spexCategoryEvents?: Maybe<Array<Maybe<Event>>>;
+    spexCategoryExport?: Maybe<JobReference>;
     spexCategoryPaged?: Maybe<SpexCategoryConnection>;
     spexEvents?: Maybe<Array<Maybe<Event>>>;
+    spexExport?: Maybe<JobReference>;
     spexPaged?: Maybe<SpexConnection>;
     spexRevival?: Maybe<Spex>;
     spexare?: Maybe<Spexare>;
     spexareEvents?: Maybe<Array<Maybe<Event>>>;
+    spexareExport?: Maybe<JobReference>;
     spexarePaged?: Maybe<SpexareConnection>;
     spexareSearchPaged?: Maybe<SpexareWithFacetsConnection>;
     state?: Maybe<State>;
@@ -819,18 +874,22 @@ export type Query = {
     statistics?: Maybe<Statistics>;
     tag?: Maybe<Tag>;
     tagEvents?: Maybe<Array<Maybe<Event>>>;
+    tagExport?: Maybe<JobReference>;
     tagPaged?: Maybe<TagConnection>;
     task?: Maybe<Task>;
     taskCategory?: Maybe<TaskCategory>;
     taskCategoryEvents?: Maybe<Array<Maybe<Event>>>;
+    taskCategoryExport?: Maybe<JobReference>;
     taskCategoryPaged?: Maybe<TaskCategoryConnection>;
     taskEvents?: Maybe<Array<Maybe<Event>>>;
+    taskExport?: Maybe<JobReference>;
     taskPaged?: Maybe<TaskConnection>;
     type?: Maybe<Type>;
     types?: Maybe<Array<Maybe<Type>>>;
     typesOfType?: Maybe<Array<Maybe<Type>>>;
     user?: Maybe<User>;
     userEvents?: Maybe<Array<Maybe<Event>>>;
+    userExport?: Maybe<JobReference>;
     userPaged?: Maybe<UserConnection>;
 };
 
@@ -857,6 +916,16 @@ export type QueryEventsArgs = {
 };
 
 
+export type QueryJobArgs = {
+    id: Scalars['ID']['input'];
+};
+
+
+export type QueryJobStatusArgs = {
+    id: Scalars['ID']['input'];
+};
+
+
 export type QueryLanguageArgs = {
     isoCode: Scalars['Locale']['input'];
 };
@@ -870,6 +939,13 @@ export type QueryNewsArgs = {
 export type QueryNewsEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
     sourceId: Scalars['ID']['input'];
+};
+
+
+export type QueryNewsExportArgs = {
+    filter?: InputMaybe<Scalars['String']['input']>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+    type: ImpexType;
 };
 
 
@@ -900,6 +976,13 @@ export type QuerySpexCategoryEventsArgs = {
 };
 
 
+export type QuerySpexCategoryExportArgs = {
+    filter?: InputMaybe<Scalars['String']['input']>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+    type: ImpexType;
+};
+
+
 export type QuerySpexCategoryPagedArgs = {
     after?: InputMaybe<Scalars['String']['input']>;
     before?: InputMaybe<Scalars['String']['input']>;
@@ -914,6 +997,13 @@ export type QuerySpexCategoryPagedArgs = {
 export type QuerySpexEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
     sourceId: Scalars['ID']['input'];
+};
+
+
+export type QuerySpexExportArgs = {
+    filter?: InputMaybe<Scalars['String']['input']>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+    type: ImpexType;
 };
 
 
@@ -942,6 +1032,14 @@ export type QuerySpexareArgs = {
 export type QuerySpexareEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
     sourceId: Scalars['ID']['input'];
+};
+
+
+export type QuerySpexareExportArgs = {
+    filter?: InputMaybe<Scalars['String']['input']>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+    reportType?: InputMaybe<ReportType>;
+    type: ImpexType;
 };
 
 
@@ -988,6 +1086,13 @@ export type QueryTagEventsArgs = {
 };
 
 
+export type QueryTagExportArgs = {
+    filter?: InputMaybe<Scalars['String']['input']>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+    type: ImpexType;
+};
+
+
 export type QueryTagPagedArgs = {
     after?: InputMaybe<Scalars['String']['input']>;
     before?: InputMaybe<Scalars['String']['input']>;
@@ -1015,6 +1120,13 @@ export type QueryTaskCategoryEventsArgs = {
 };
 
 
+export type QueryTaskCategoryExportArgs = {
+    filter?: InputMaybe<Scalars['String']['input']>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+    type: ImpexType;
+};
+
+
 export type QueryTaskCategoryPagedArgs = {
     after?: InputMaybe<Scalars['String']['input']>;
     before?: InputMaybe<Scalars['String']['input']>;
@@ -1029,6 +1141,13 @@ export type QueryTaskCategoryPagedArgs = {
 export type QueryTaskEventsArgs = {
     sinceInDays?: InputMaybe<Scalars['Int']['input']>;
     sourceId: Scalars['ID']['input'];
+};
+
+
+export type QueryTaskExportArgs = {
+    filter?: InputMaybe<Scalars['String']['input']>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+    type: ImpexType;
 };
 
 
@@ -1064,6 +1183,13 @@ export type QueryUserEventsArgs = {
 };
 
 
+export type QueryUserExportArgs = {
+    filter?: InputMaybe<Scalars['String']['input']>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+    type: ImpexType;
+};
+
+
 export type QueryUserPagedArgs = {
     after?: InputMaybe<Scalars['String']['input']>;
     before?: InputMaybe<Scalars['String']['input']>;
@@ -1073,6 +1199,12 @@ export type QueryUserPagedArgs = {
     last?: InputMaybe<Scalars['Int']['input']>;
     sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
+
+export enum ReportType {
+    PdfAddressLabels = 'PDF_ADDRESS_LABELS',
+    PdfPlatoonList = 'PDF_PLATOON_LIST',
+    PdfScratchList = 'PDF_SCRATCH_LIST'
+}
 
 export enum SortDirection {
     Asc = 'ASC',
@@ -1390,6 +1522,17 @@ export type Statistics = {
     taskCountHistory?: Maybe<Array<Maybe<History>>>;
     userCount?: Maybe<Scalars['Long']['output']>;
     userCountHistory?: Maybe<Array<Maybe<History>>>;
+};
+
+export type Subscription = {
+    __typename?: 'Subscription';
+    jobProgress?: Maybe<JobStatus>;
+    noOp?: Maybe<Scalars['Void']['output']>;
+};
+
+
+export type SubscriptionJobProgressArgs = {
+    id: Scalars['ID']['input'];
 };
 
 export type Tag = {

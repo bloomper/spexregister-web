@@ -42,6 +42,10 @@ export const columnHelper = {
         id,
         accessorKey,
         header: ({column}) => {
+            if (!column.getCanSort()) {
+                return <Translated id={translationId}/>;
+            }
+
             const isSorted = column.getIsSorted();
             return (
                 <Button
@@ -74,6 +78,10 @@ export const columnHelper = {
         id,
         accessorKey,
         header: ({column}) => {
+            if (!column.getCanSort()) {
+                return <Translated id={translationId}/>;
+            }
+
             const isSorted = column.getIsSorted();
             return (
                 <Button
@@ -90,6 +98,33 @@ export const columnHelper = {
         cell: ({row}) => {
             const value = row.getValue(id) as string;
             return value ? formatDate(value) : "-";
+        },
+        meta: className ? {className} : undefined,
+    }),
+    dateTime: <T, >(id: string, translationId: string, accessorKey: string = id, className?: string): ColumnDef<T> => ({
+        id,
+        accessorKey,
+        header: ({column}) => {
+            if (!column.getCanSort()) {
+                return <Translated id={translationId}/>;
+            }
+
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(isSorted === "asc")}
+                    className="-ml-4 h-8"
+                >
+                    <Translated id={translationId}/>
+                    {isSorted === "desc" ? <ArrowDown className="ml-2 h-4 w-4"/> : isSorted === "asc" ?
+                        <ArrowUp className="ml-2 h-4 w-4"/> : <ArrowUpDown className="ml-2 h-4 w-4"/>}
+                </Button>
+            );
+        },
+        cell: ({row}) => {
+            const value = row.getValue(id) as string;
+            return value ? formatDateTime(value) : "-";
         },
         meta: className ? {className} : undefined,
     }),
@@ -123,6 +158,10 @@ export const columnHelper = {
             id: "createdAt",
             accessorKey: "createdAt",
             header: ({column}) => {
+                if (!column.getCanSort()) {
+                    return <Translated id="Common.createdAt"/>;
+                }
+
                 const isSorted = column.getIsSorted();
                 return (
                     <Button variant="ghost" onClick={() => column.toggleSorting(isSorted === "asc")}
@@ -140,6 +179,10 @@ export const columnHelper = {
             id: "lastModifiedAt",
             accessorKey: "lastModifiedAt",
             header: ({column}) => {
+                if (!column.getCanSort()) {
+                    return <Translated id="Common.lastModifiedAt"/>;
+                }
+
                 const isSorted = column.getIsSorted();
                 return (
                     <Button variant="ghost" onClick={() => column.toggleSorting(isSorted === "asc")}

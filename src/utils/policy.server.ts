@@ -4,6 +4,14 @@ import {requireAnyRole} from "@/utils/auth.server";
 import {AuthzResult} from "@/types/auth";
 
 export const Policies = {
+    impex: {
+        async requireRead(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireDelete(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+    },
     news: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(['USER', 'EDITOR', 'ADMIN']);
@@ -15,6 +23,12 @@ export const Policies = {
             return requireAnyRole(['EDITOR', 'ADMIN']);
         },
         async requireDelete(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireExport(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireImport(): Promise<AuthzResult> {
             return requireAnyRole(['EDITOR', 'ADMIN']);
         },
     },
@@ -31,6 +45,12 @@ export const Policies = {
         async requireDelete(): Promise<AuthzResult> {
             return requireAnyRole(['ADMIN']);
         },
+        async requireExport(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireImport(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
     },
     spexCategory: {
         async requireRead(): Promise<AuthzResult> {
@@ -45,19 +65,31 @@ export const Policies = {
         async requireDelete(): Promise<AuthzResult> {
             return requireAnyRole(['ADMIN']);
         },
+        async requireExport(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireImport(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
     },
     spexare: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(['USER', 'EDITOR', 'ADMIN']);
         },
         async requireCreate(): Promise<AuthzResult> {
-            return requireAnyRole(['ADMIN']);
+            return requireAnyRole(['EDITOR', 'ADMIN']);
         },
         async requireUpdate(): Promise<AuthzResult> {
             return requireAnyRole(['USER', 'EDITOR', 'ADMIN']);
         },
         async requireDelete(): Promise<AuthzResult> {
             return requireAnyRole(['ADMIN']);
+        },
+        async requireExport(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireImport(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
         },
     },
     tag: {
@@ -71,6 +103,12 @@ export const Policies = {
             return requireAnyRole(['EDITOR', 'ADMIN']);
         },
         async requireDelete(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireExport(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireImport(): Promise<AuthzResult> {
             return requireAnyRole(['EDITOR', 'ADMIN']);
         },
     },
@@ -87,6 +125,12 @@ export const Policies = {
         async requireDelete(): Promise<AuthzResult> {
             return requireAnyRole(['ADMIN']);
         },
+        async requireExport(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireImport(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
     },
     taskCategory: {
         async requireRead(): Promise<AuthzResult> {
@@ -99,6 +143,12 @@ export const Policies = {
             return requireAnyRole(['ADMIN']);
         },
         async requireDelete(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireExport(): Promise<AuthzResult> {
+            return requireAnyRole(['EDITOR', 'ADMIN']);
+        },
+        async requireImport(): Promise<AuthzResult> {
             return requireAnyRole(['ADMIN']);
         },
     },
@@ -116,6 +166,12 @@ export const Policies = {
             return requireAnyRole(['ADMIN']);
         },
         async requireDelete(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireExport(): Promise<AuthzResult> {
+            return requireAnyRole(['ADMIN']);
+        },
+        async requireImport(): Promise<AuthzResult> {
             return requireAnyRole(['ADMIN']);
         },
     },

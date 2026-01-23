@@ -2,9 +2,9 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {create, del, events, getPaged, newsFormSchema, update} from "@/lib/news";
+import {create, del, events, exp, getPaged, imp, newsFormSchema, update} from "@/lib/news";
 import {revalidateTag} from "next/cache";
-import {SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/graphql";
 
 export async function getPageAction(args: {
     first?: number;
@@ -54,6 +54,22 @@ export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.news.requireDelete, async () => {
         await Promise.all(ids.map(id => del(id)));
         revalidate();
+    });
+}
+
+export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
+    return withPolicyAction(Policies.news.requireExport, async () => {
+        const result = await exp(ids, filter, type);
+        revalidate();
+        return result;
+    });
+}
+
+export async function importAction(type: ImpexType, file: File) {
+    return withPolicyAction(Policies.news.requireImport, async () => {
+        const result = await imp(type, file);
+        revalidate();
+        return result;
     });
 }
 
