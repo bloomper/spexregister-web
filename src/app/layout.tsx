@@ -6,6 +6,7 @@ import {cookies} from "next/headers";
 import Provider from "@/app/provider.client";
 import {AuthCheck} from "@/components/auth-check.client";
 import {Suspense} from "react";
+import {normalizeLocale} from "@/utils/utils.server";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -19,7 +20,8 @@ const geistMono = Geist_Mono({
 
 async function RootProvider({children}: { children: React.ReactNode }) {
     const store = await cookies();
-    const locale = store.get('locale')?.value || 'sv';
+    const cookieLocale = store.get('locale')?.value;
+    const locale = normalizeLocale(cookieLocale);
     const messages = (await import(`../../messages/${locale}.json`)).default;
 
     return (
@@ -45,8 +47,10 @@ export default async function RootLayout({
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const initialHtmlLang = normalizeLocale(undefined);
+
     return (
-        <html lang="sv" suppressHydrationWarning>
+        <html lang={initialHtmlLang} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center">Loading...</div>}>
             <RootProvider>

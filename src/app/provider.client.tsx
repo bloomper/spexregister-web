@@ -58,13 +58,17 @@ export default function Provider({
     );
 }
 
-const LocaleContext = createContext<{
+type LocaleContextValue = {
     locale: string;
     changeLocale: (locale: string) => Promise<void>;
-}>({
-    locale: 'sv',
-    changeLocale: async () => {
-    },
-})
+};
 
-export const useLocaleContext = () => useContext(LocaleContext)
+const LocaleContext = createContext<LocaleContextValue | null>(null);
+
+export const useLocaleContext = () => {
+    const ctx = useContext(LocaleContext);
+    if (!ctx) {
+        throw new Error("useLocaleContext must be used within <Provider />");
+    }
+    return ctx;
+};
