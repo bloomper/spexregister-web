@@ -15,7 +15,7 @@ import {
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@/components/ui/sidebar";
 import * as React from "react";
 import {useMemo, useState} from "react";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import {toast} from "sonner";
 import {useSession} from "next-auth/react";
 import {generateKeycloakLogoutUrl} from "@/utils/auth";
@@ -38,6 +38,7 @@ function getInitials(name?: string | null | undefined, email?: string | null | u
 export function NavUser({spexare}: { spexare?: Spexare | null }) {
     const {isMobile} = useSidebar();
     const t = useTranslations();
+    const locale = useLocale();
     const {data: session} = useSession();
     const user = session?.user ?? {};
 
@@ -131,7 +132,9 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
                             className="flex items-center gap-2"
                             onSelect={() => {
                                 const logoutUrl = generateKeycloakLogoutUrl(
-                                    process.env.NEXT_PUBLIC_AUTH_URL ?? ''
+                                    process.env.NEXT_PUBLIC_AUTH_URL ?? '',
+                                    null,
+                                    locale
                                 );
 
                                 toast.message(t("Common.loggedOut"));
