@@ -97,7 +97,6 @@ export function SpexareTable({
         setMounted(true);
     }, []);
 
-
     useEffect(() => {
         if (viewItem) {
             const updated = initialData.items.find(i => i.id === viewItem.id);
@@ -114,7 +113,7 @@ export function SpexareTable({
     }, [initialData, setViewItem, setEditItem]);
 
     const buildFilterString = (query: string, published: Set<string>, deceased: Set<string>) => {
-        const parts: string[] = [];
+        const parts: string[] = ["(published:TRUE OR published:FALSE)"];
         if (query) {
             parts.push(`(firstName:*${query}* OR lastName:*${query}* OR nickName:*${query}*)`);
         }
