@@ -16,6 +16,10 @@ export function ModeToggle() {
         return null;
     }
 
+    const persistThemeCookie = (value: "light" | "dark" | "system") => {
+        document.cookie = `theme=${encodeURIComponent(value)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    };
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -28,13 +32,22 @@ export function ModeToggle() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
+                <DropdownMenuItem onClick={() => {
+                    setTheme("light");
+                    persistThemeCookie("light");
+                }}>
                     {t("Common.themeLight")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <DropdownMenuItem onClick={() => {
+                    setTheme("dark");
+                    persistThemeCookie("dark");
+                }}>
                     {t("Common.themeDark")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
+                <DropdownMenuItem onClick={() => {
+                    setTheme("system");
+                    persistThemeCookie("system");
+                }}>
                     {t("Common.themeSystem")}
                 </DropdownMenuItem>
             </DropdownMenuContent>

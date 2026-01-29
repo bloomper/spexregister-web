@@ -22,7 +22,17 @@ export function extractRolesFromClaims(claims: AccessTokenClaims): Role[] {
     return Array.from(new Set(roles));
 }
 
-export const generateKeycloakLogoutUrl = (redirectUrl: string, idToken?: string | null, locale?: string): string => {
+export function normalizeTheme(value?: string): "light" | "dark" | "system" | undefined {
+    if (value === "light" || value === "dark" || value === "system") return value;
+    return undefined;
+}
+
+export const generateKeycloakLogoutUrl = (
+    redirectUrl: string,
+    idToken?: string | null,
+    locale?: string,
+    theme?: 'light' | 'dark' | 'system'
+): string => {
     const CLIENT_ID = process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ID ?? '';
     const AUTH_KEYCLOAK_ISSUER = process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER ?? '';
     const urlParams = new URLSearchParams();
@@ -31,6 +41,9 @@ export const generateKeycloakLogoutUrl = (redirectUrl: string, idToken?: string 
     urlParams.append('post_logout_redirect_uri', `${redirectUrl}/api/auth/logout`);
     if (locale) {
         urlParams.append('ui_locales', locale);
+    }
+    if (theme) {
+        urlParams.append('theme', theme);
     }
     if (idToken) {
         urlParams.append('id_token_hint', idToken);

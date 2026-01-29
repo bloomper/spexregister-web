@@ -21,6 +21,7 @@ import {useSession} from "next-auth/react";
 import {generateKeycloakLogoutUrl} from "@/utils/auth";
 import {Spexare} from "@/gql/graphql";
 import Link from "next/link";
+import {useTheme} from "next-themes";
 
 function getInitials(name?: string | null | undefined, email?: string | null | undefined) {
     const base = (name?.trim() || email?.trim() || "").trim();
@@ -41,6 +42,7 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
     const locale = useLocale();
     const {data: session} = useSession();
     const user = session?.user ?? {};
+    const {theme} = useTheme();
 
     const initials = useMemo(() => getInitials(user.name, user.email), [user.name, user.email]);
     const [avatarFailed, setAvatarFailed] = useState(false);
@@ -131,10 +133,14 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
                         <DropdownMenuItem
                             className="flex items-center gap-2"
                             onSelect={() => {
+                                const themeParam =
+                                    theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
+
                                 const logoutUrl = generateKeycloakLogoutUrl(
                                     process.env.NEXT_PUBLIC_AUTH_URL ?? '',
                                     null,
-                                    locale
+                                    locale,
+                                    themeParam
                                 );
 
                                 toast.message(t("Common.loggedOut"));
