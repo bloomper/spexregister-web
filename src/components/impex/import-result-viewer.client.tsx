@@ -2,13 +2,12 @@
 
 import {ImportResult} from "@/gql/graphql";
 import {useTranslations} from "next-intl";
-import {CheckCircle2, Copy, Terminal, XCircle} from "lucide-react";
+import {Copy} from "lucide-react";
 import {toast} from "sonner";
 
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {ScrollArea} from "@/components/ui/scroll-area";
-import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 
 interface ImportResultViewerProps {
     result: ImportResult;

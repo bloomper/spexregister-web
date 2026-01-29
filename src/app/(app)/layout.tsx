@@ -12,6 +12,7 @@ import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
 import {requireUser} from "@/utils/auth.server";
 import {me} from "@/lib/user";
+import {LogoHome} from "@/components/logo-home";
 
 export default async function AppLayout({children}: { children: React.ReactNode }) {
     const {session, roles} = await requireUser();
@@ -48,11 +49,17 @@ export default async function AppLayout({children}: { children: React.ReactNode 
                 <main className="flex-1 flex items-center">
                     <div className="mx-auto w-full max-w-5xl px-4 py-10">
                         <div className="space-y-4 text-center">
-                            <h1 className="text-lg font-semibold tracking-tight sm:text-xl">
-                                {t("Meta.title")}
+                            <div className="mx-auto flex justify-center">
+                                <div className="h-20 w-20 text-foreground sm:h-24 sm:w-24">
+                                    <LogoHome/>
+                                </div>
+                            </div>
+
+                            <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
+                                {t("Home.title")}
                             </h1>
 
-                            <p className="mx-auto text-balance text-muted-foreground">
+                            <p className="mx-auto mt-3 max-w-prose text-sm text-muted-foreground">
                                 {t("Home.mustBeLoggedIn")}
                             </p>
 

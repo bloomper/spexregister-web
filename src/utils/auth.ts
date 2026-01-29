@@ -1,5 +1,4 @@
 import {AccessTokenClaims, type Role} from '@/types/auth';
-import {normalizeLocale} from "@/utils/utils.server";
 
 export const isAdmin = (roles: Role[]) => roles.includes('ADMIN');
 export const isEditor = (roles: Role[]) => roles.includes('EDITOR');
