@@ -47,12 +47,13 @@ export default async function RootLayout({
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const t = await getTranslations();
     const initialHtmlLang = normalizeLocale(undefined);
 
     return (
         <html lang={initialHtmlLang} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center">Loading...</div>}>
+        <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center">{t("Common.loading")}</div>}>
             <RootProvider>
                 {children}
             </RootProvider>
