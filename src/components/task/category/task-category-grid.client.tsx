@@ -3,7 +3,14 @@
 import * as React from 'react';
 import {useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
 import {TaskCategory} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
@@ -91,6 +98,9 @@ export function TaskCategoryGrid({
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>{selected?.name}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
                     <div className="flex flex-col gap-4">
                         <div className="space-y-1">

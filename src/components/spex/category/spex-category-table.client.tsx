@@ -23,7 +23,14 @@ import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import Image from "next/image";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
@@ -177,6 +184,9 @@ export function SpexCategoryTable({
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle className="text-xl pr-6">{viewItem?.name}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-6">
                         <div className="grid gap-6">

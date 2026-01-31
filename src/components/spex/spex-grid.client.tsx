@@ -3,7 +3,14 @@
 import * as React from 'react';
 import {useCallback, useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
 import {Spex, SpexCategory} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
@@ -279,6 +286,9 @@ export function SpexGrid({
                                 {selected?.year}
                             </div>
                             <DialogTitle className="text-2xl">{selected?.title}</DialogTitle>
+                            <DialogDescription className="sr-only">
+                                HEPP
+                            </DialogDescription>
                         </DialogHeader>
                         <div className="mt-6 flex flex-col gap-4 text-sm">
                             {selected?.category && (

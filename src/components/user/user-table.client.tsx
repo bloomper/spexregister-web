@@ -22,7 +22,14 @@ import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
@@ -247,6 +254,9 @@ export function UserTable({
                                 </Badge>
                             )}
                         </div>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-6">
                         <div className="grid gap-6">

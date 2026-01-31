@@ -10,7 +10,14 @@ import {Job} from "@/gql/graphql";
 import {CursorPage} from "@/types/pagination";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {DataTable} from "@/components/data-table.client";
 import {columnHelper} from "@/components/data-table-columns.client";
 import {ImportResultViewer} from "./import-result-viewer.client";
@@ -212,6 +219,9 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
                         <DialogTitle className="text-xl pr-6">
                             {isLoadingDetails ? t("Common.loading") : (viewItem?.name ?? "-")}
                         </DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
 
                     {isLoadingDetails ? (

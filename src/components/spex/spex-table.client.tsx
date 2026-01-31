@@ -23,7 +23,14 @@ import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {DataFilter} from "@/components/data-filter";
 import {Badge} from "@/components/ui/badge";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
@@ -275,6 +282,9 @@ export function SpexTable({
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle className="text-xl pr-6">{viewItem?.title}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-6">
                         <div className="grid gap-6">

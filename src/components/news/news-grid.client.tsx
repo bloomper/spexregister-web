@@ -3,7 +3,14 @@
 import * as React from 'react';
 import {useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
 import {News} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
@@ -102,6 +109,9 @@ export function NewsGrid({
                             {selected?.visibleFrom ? formatDate(selected.visibleFrom) : ''}
                         </div>
                         <DialogTitle>{selected?.subject}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-6">
                         <div className="whitespace-pre-wrap text-sm text-foreground">

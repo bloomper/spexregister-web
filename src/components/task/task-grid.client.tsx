@@ -3,7 +3,14 @@
 import * as React from 'react';
 import {useCallback, useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
 import {Task, TaskCategory} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
@@ -238,6 +245,9 @@ export function TaskGrid({
                     <div className="p-6">
                         <DialogHeader>
                             <DialogTitle className="text-2xl">{selected?.name}</DialogTitle>
+                            <DialogDescription className="sr-only">
+                                {t("Common.details")}
+                            </DialogDescription>
                         </DialogHeader>
                         <div className="mt-6 flex flex-col gap-4 text-sm">
                             <div>

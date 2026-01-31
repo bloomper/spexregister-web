@@ -24,7 +24,14 @@ import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import {DataFilter} from "@/components/data-filter";
 import Link from "next/link";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
@@ -217,6 +224,9 @@ export function NewsTable({
                             )}
                         </div>
                         <DialogTitle className="text-xl pr-6">{viewItem?.subject}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-6">
                         <div className="whitespace-pre-wrap text-sm text-foreground max-h-[50vh] overflow-y-auto">

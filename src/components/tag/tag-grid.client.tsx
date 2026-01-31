@@ -3,7 +3,14 @@
 import * as React from 'react';
 import {useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
 import {Tag} from "@/gql/graphql";
 import {CursorPageInfo} from "@/types/pagination";
@@ -94,6 +101,9 @@ export function TagGrid({
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>{selected?.name}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
                     {selected && (
                         <div className="space-y-4">

@@ -23,7 +23,7 @@ import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {DataEmpty} from "@/components/data-empty";
 import {ActivityTimeline} from "@/components/spexare/activity/activity-timeline.client";
-import {DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {getEventsAction} from "@/app/(app)/spexare/actions.server";
@@ -96,6 +96,9 @@ export function SpexareView({
                             )}
                         </div>
                     </div>
+                    <DialogDescription className="sr-only">
+                        {t("Common.details")}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <Tabs defaultValue="general" className="mt-6">

@@ -9,7 +9,14 @@ import {useJobTracker} from "@/hooks/use-job-tracker.client";
 import {useTranslations} from "next-intl";
 import {cn} from "@/utils/utils";
 import {useDropzone} from "react-dropzone";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 interface ImportButtonProps {
@@ -112,6 +119,9 @@ export function ImportButton({ importAction }: ImportButtonProps) {
                 <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
                         <DialogTitle className="text-xl pr-6">{t("Impex.import")}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {t("Common.details")}
+                        </DialogDescription>
                     </DialogHeader>
 
                     <div className="space-y-6">
