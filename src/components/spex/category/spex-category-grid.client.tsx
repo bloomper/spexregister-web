@@ -66,7 +66,7 @@ export function SpexCategoryGrid({
 
     return (
         <>
-            {items.map((n) => (
+            {items.map((n, index) => (
                 <Card key={n.id}
                       className="group relative overflow-hidden flex flex-col p-0 transition-colors hover:bg-muted/50 cursor-pointer">
                     {canUpdate && (
@@ -91,6 +91,7 @@ export function SpexCategoryGrid({
                                     src={getProxiedImageUrl(n.logoUrl, n.lastModifiedAt)}
                                     alt={n.name}
                                     fill
+                                    preload={index < 2}
                                     unoptimized
                                     className="object-contain p-4 transition-transform group-hover:scale-105"
                                 />

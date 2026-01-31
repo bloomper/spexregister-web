@@ -191,7 +191,7 @@ export function SpexGrid({
                     />
                 </div>
             ) : (
-                items.map((n) => (
+                items.map((n, index) => (
                     <Card
                         key={n.id}
                         className="group h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0 relative"
@@ -221,6 +221,7 @@ export function SpexGrid({
                                         src={getProxiedImageUrl(n.posterUrl, n.lastModifiedAt)}
                                         alt={n.title}
                                         fill
+                                        preload={index < 2}
                                         unoptimized
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         className="object-cover transition-transform group-hover:scale-105"

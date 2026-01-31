@@ -316,7 +316,7 @@ export function SpexareGrid({
                     />
                 </div>
             ) : (
-                items.map((n) => {
+                items.map((n, index) => {
                     const isMe = currentSpexareId && n.id === currentSpexareId;
                     const canEdit = isMe || canManage;
 
@@ -367,6 +367,7 @@ export function SpexareGrid({
                                             src={getProxiedImageUrl(n.imageUrl, n.lastModifiedAt)}
                                             alt={`${n.firstName} ${n.lastName}`}
                                             fill
+                                            preload={index < 2}
                                             unoptimized
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             className="object-cover transition-transform group-hover:scale-105"
