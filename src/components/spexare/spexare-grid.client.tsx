@@ -359,7 +359,7 @@ export function SpexareGrid({
                                 )}
 
                                 <div
-                                    className="flex flex-col h-full"
+                                    className="relative flex flex-col h-full"
                                     onClick={() => setSelected(n)}
                                 >
                                     {n.imageUrl ? (

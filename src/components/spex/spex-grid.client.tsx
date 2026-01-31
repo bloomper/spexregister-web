@@ -213,7 +213,7 @@ export function SpexGrid({
                                 </div>
                             )}
                             <div
-                                className="flex flex-col h-full"
+                                className="relative flex flex-col h-full"
                                 onClick={() => setSelected(n)}
                             >
                                 {n.posterUrl ? (
