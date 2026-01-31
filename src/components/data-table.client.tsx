@@ -14,12 +14,13 @@ import {
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
-import {ChevronLeft, ChevronRight, ChevronsLeft, LoaderPinwheel} from "lucide-react";
+import {ChevronLeft, ChevronRight, ChevronsLeft} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useTranslations} from "next-intl";
 import {SortDirection} from "@/gql/graphql";
 import {DataEmpty} from "@/components/data-empty";
 import {cn} from "@/utils/utils";
+import {Spinner} from "@/components/ui/spinner";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -200,7 +201,7 @@ export function DataTable<TData, TValue>({
                 {loading && (
                     <div
                         className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
-                        <LoaderPinwheel className="h-6 w-6 animate-spin text-muted-foreground"/>
+                        <Spinner className="size-8 text-muted-foreground" />
                     </div>
                 )}
                 <Table>

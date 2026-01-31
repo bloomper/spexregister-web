@@ -7,6 +7,7 @@ import Provider from "@/app/provider.client";
 import {AuthCheck} from "@/components/auth-check.client";
 import {Suspense} from "react";
 import {normalizeLocale} from "@/utils/utils.server";
+import {Spinner} from "@/components/ui/spinner";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -47,13 +48,18 @@ export default async function RootLayout({
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const t = await getTranslations();
     const initialHtmlLang = normalizeLocale(undefined);
 
     return (
         <html lang={initialHtmlLang} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center">{t("Common.loading")}</div>}>
+        <Suspense
+            fallback={
+                <div className="fixed inset-0 flex items-center justify-center">
+                    <Spinner className="size-8" />
+                </div>
+            }
+        >
             <RootProvider>
                 {children}
             </RootProvider>

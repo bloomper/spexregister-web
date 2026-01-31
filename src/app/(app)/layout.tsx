@@ -1,6 +1,5 @@
 import * as React from "react";
 import {Suspense} from "react";
-import Link from "next/link";
 import {getTranslations} from "next-intl/server";
 import {AppSidebar} from "@/components/app-sidebar.client";
 import {SiteHeader} from "@/components/site-header.client";
@@ -65,7 +64,7 @@ export default async function AppLayout({children}: { children: React.ReactNode 
 
                             <div className="pt-2">
                                 <Button asChild>
-                                    <Link href="/api/auth/login">{t("Common.login")}</Link>
+                                    <a href="/api/auth/login">{t("Common.login")}</a>
                                 </Button>
                             </div>
                         </div>
