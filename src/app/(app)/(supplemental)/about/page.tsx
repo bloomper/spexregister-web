@@ -6,6 +6,21 @@ import {Card, CardContent} from "@/components/ui/card";
 import {Drama, Mail, User} from "lucide-react";
 import {useEffect, useState} from "react";
 
+function fnv1a32(input: string): number {
+    let hash = 0x811c9dc5;
+
+    for (let i = 0; i < input.length; i++) {
+        hash ^= input.charCodeAt(i);
+        hash = Math.imul(hash, 0x01000193);
+    }
+    return hash >>> 0;
+}
+
+function robohashFromSeed(seedInput: string, size = 200): string {
+    const seed = fnv1a32(seedInput).toString(16);
+    return `https://robohash.org/${seed}.png?size=${size}x${size}&set=set2`;
+}
+
 const contributorData = [
     {
         name: "Anders Jacobsson",
@@ -16,6 +31,11 @@ const contributorData = [
         name: "Fredrik Bonde",
         nickName: "Faxe",
         image: "https://fgv.nu/wp-content/uploads/2019/09/Faxe.jpg",
+    },
+    {
+        name: "Emil Kultje",
+        nickName: "Kakel",
+        image: robohashFromSeed("Emil Kultje|Kakel"),
     }
 ];
 
