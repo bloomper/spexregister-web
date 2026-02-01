@@ -15,15 +15,12 @@ import {
 import {SpexarePage, SpexareWithFacetsPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
-import {FullFragment as ActivityFullFragment, SummaryFragment as ActivitySummaryFragment} from "@/lib/spexare/activity";
-import {FullFragment as AddressFullFragment, SummaryFragment as AddressSummaryFragment} from "@/lib/spexare/address";
-import {FullFragment as ConsentFullFragment, SummaryFragment as ConsentSummaryFragment} from "@/lib/spexare/consent";
-import {
-    FullFragment as MembershipFullFragment,
-    SummaryFragment as MembershipSummaryFragment
-} from "@/lib/spexare/membership";
-import {FullFragment as TaggingFullFragment, SummaryFragment as TaggingSummaryFragment} from "@/lib/spexare/tagging";
-import {FullFragment as ToggleFullFragment, SummaryFragment as ToggleSummaryFragment} from "@/lib/spexare/toggle";
+import {FullFragment as ActivityFullFragment} from "@/lib/spexare/activity";
+import {FullFragment as AddressFullFragment} from "@/lib/spexare/address";
+import {FullFragment as ConsentFullFragment} from "@/lib/spexare/consent";
+import {FullFragment as MembershipFullFragment} from "@/lib/spexare/membership";
+import {FullFragment as TaggingFullFragment} from "@/lib/spexare/tagging";
+import {FullFragment as ToggleFullFragment} from "@/lib/spexare/toggle";
 
 export const SummaryFields = `
     ...SpexareSummary
@@ -61,32 +58,8 @@ const BaseFragment = /* GraphQL */ `
 const SummaryFragment = /* GraphQL */ `
     fragment SpexareSummary on Spexare {
         ...SpexareBase
-        activities {
-            ...ActivitySummary
-        }
-        addresses {
-            ...AddressSummary
-        }
-        consents {
-            ...ConsentSummary
-        }
-        memberships {
-            ...MembershipSummary
-        }
-        taggings {
-            ...TaggingSummary
-        }
-        toggles {
-            ...ToggleSummary
-        }
     }
     ${BaseFragment}
-    ${ActivitySummaryFragment}
-    ${AddressSummaryFragment}
-    ${ConsentSummaryFragment}
-    ${MembershipSummaryFragment}
-    ${TaggingSummaryFragment}
-    ${ToggleSummaryFragment}
 `;
 
 export const FullFragment = /* GraphQL */ `
@@ -127,6 +100,15 @@ export const FullFragment = /* GraphQL */ `
 const CreateMutation = /* GraphQL */ `
     mutation ($input: SpexareCreate!) {
         spexareCreate(input: $input) {
+            ${FullFields}
+        }
+    }
+    ${FullFragment}
+`;
+
+const GetQuery = /* GraphQL */ `
+    query ($id: ID!) {
+        spexare(id: $id) {
             ${FullFields}
         }
     }
@@ -316,6 +298,18 @@ export async function create(input: any) {
     }
 
     return result.data?.spexareCreate;
+}
+
+export async function get(id: string) {
+    const result = await getClient()
+        .query(GetQuery, {id})
+        .toPromise();
+
+    if (result.error) {
+        throw result.error;
+    }
+
+    return result.data?.spexare;
 }
 
 export async function update(id: string, input: any) {

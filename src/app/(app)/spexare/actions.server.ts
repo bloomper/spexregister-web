@@ -9,6 +9,7 @@ import {
     deleteImage,
     events,
     exp,
+    get,
     getPaged,
     imp,
     removePartner,
@@ -95,6 +96,12 @@ export async function createAction(data: unknown) {
         const result = await create(createInput);
         revalidate();
         return result;
+    });
+}
+
+export async function getAction(id: string) {
+    return withPolicyAction(Policies.spexare.requireRead, async () => {
+        return get(id);
     });
 }
 

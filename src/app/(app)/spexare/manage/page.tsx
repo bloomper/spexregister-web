@@ -20,7 +20,7 @@ export default async function SpexareManagePage() {
             getPaged({
                 first: defaultPageSize,
                 filter: "(published:TRUE OR published:FALSE)",
-                full: true
+                full: false
             }),
             getTypes(locale),
             getCountries(locale),

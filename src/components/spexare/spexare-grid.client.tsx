@@ -3,14 +3,14 @@
 import * as React from 'react';
 import {useCallback, useEffect, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
-import {Dialog, DialogContent, DialogFooter} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
 import {Facet, Spexare} from "@/gql/graphql";
 import {CursorPageInfo, SpexarePage} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
+import {getAction, getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
 import {DataEmpty} from "@/components/data-empty";
 import {CheckCircle2, Circle, Pencil, Sparkles, User, UserRound, X} from "lucide-react";
 import {DataFilter} from "@/components/data-filter";
@@ -23,6 +23,7 @@ import {usePathname, useRouter} from "next/navigation";
 import Link from "next/link";
 import {SpexareForm} from "@/components/spexare/spexare-form.client";
 import {Sheet} from "@/components/ui/sheet";
+import {Spinner} from "@/components/ui/spinner";
 
 export function SpexareGrid({
                                 countries = [],
@@ -66,7 +67,40 @@ export function SpexareGrid({
     const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>({});
     const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
     const [selected, setSelected] = useState<Spexare | null>(null);
+    const [selectedFull, setSelectedFull] = useState<Spexare | null>(null);
+    const [isSelectedLoading, setIsSelectedLoading] = useState(false);
     const [editItem, setEditItem] = useState<Spexare | null>(null);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadFull() {
+            if (!selected?.id) {
+                setSelectedFull(null);
+                setIsSelectedLoading(false);
+                return;
+            }
+
+            setIsSelectedLoading(true);
+            setSelectedFull(null);
+
+            try {
+                const full = await getAction(selected.id);
+                if (!cancelled) {
+                    setSelectedFull(full ?? null);
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsSelectedLoading(false);
+                }
+            }
+        }
+
+        void loadFull();
+        return () => {
+            cancelled = true;
+        };
+    }, [selected?.id]);
 
     useEffect(() => {
         if (mode !== "search" || !filterQuery) {
@@ -423,10 +457,43 @@ export function SpexareGrid({
                 })
             )}
 
-            <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+            <Dialog
+                open={!!selected}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setSelected(null);
+                        setSelectedFull(null);
+                    }
+                }}
+            >
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    {selected &&
-                        <SpexareView spexare={selected} countries={countries} isMe={currentSpexareId === selected.id}/>}
+                    <DialogHeader className="sr-only">
+                        <DialogTitle>
+                            {selectedFull
+                                ? `${selectedFull.firstName} ${selectedFull.lastName}`
+                                : selected
+                                    ? `${selected.firstName} ${selected.lastName}`
+                                    : t("Common.details")}
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    {isSelectedLoading ? (
+                        <div className="p-6">
+                            <div className="flex items-center justify-center py-16">
+                                <Spinner className="size-8"/>
+                            </div>
+                        </div>
+                    ) : selectedFull ? (
+                        <SpexareView
+                            spexare={selectedFull}
+                            countries={countries}
+                            isMe={currentSpexareId === selectedFull.id}
+                        />
+                    ) : (
+                        <div className="p-6 text-sm text-muted-foreground">
+                            {t("Common.noData")}
+                        </div>
+                    )}
 
                     <DialogFooter className="p-6 pt-0">
                         <Button variant="outline" onClick={() => setSelected(null)}>

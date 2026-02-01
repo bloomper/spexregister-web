@@ -13,6 +13,7 @@ import {
     bulkDeleteAction,
     deleteAction,
     exportAction,
+    getAction,
     getPageAction,
     importAction
 } from "@/app/(app)/spexare/actions.server";
@@ -22,13 +23,14 @@ import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
-import {Dialog, DialogContent, DialogFooter} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataFilter} from "@/components/data-filter";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {columnHelper} from "@/components/data-table-columns.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
+import {Spinner} from "@/components/ui/spinner";
 
 
 export const columns: ColumnDef<Spexare>[] = [
@@ -92,6 +94,40 @@ export function SpexareTable({
             setSelectedDeceasedValues(new Set(["true", "false"]));
         }
     );
+
+    const [viewFullItem, setViewFullItem] = useState<Spexare | null>(null);
+    const [isViewLoading, setIsViewLoading] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadFull() {
+            if (!viewItem?.id) {
+                setViewFullItem(null);
+                setIsViewLoading(false);
+                return;
+            }
+
+            setIsViewLoading(true);
+            setViewFullItem(null);
+
+            try {
+                const full = await getAction(viewItem.id);
+                if (!cancelled) {
+                    setViewFullItem(full ?? null);
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsViewLoading(false);
+                }
+            }
+        }
+
+        void loadFull();
+        return () => {
+            cancelled = true;
+        };
+    }, [viewItem?.id]);
 
     useEffect(() => {
         setMounted(true);
@@ -164,7 +200,7 @@ export function SpexareTable({
                 initialSorting={[{id: "firstName", desc: true}]}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
-                onFetch={(args) => getPageAction({...args, full: true})}
+                onFetch={(args) => getPageAction({...args, full: false})}
                 rowClassName={(row) =>
                     currentSpexareId && row.id === currentSpexareId
                         ? "relative after:absolute after:inset-y-0 after:left-0 after:w-1 after:bg-linear-to-b after:from-pink-500 after:via-purple-500 after:to-indigo-500 bg-primary/5 hover:bg-primary/10 transition-colors"
@@ -258,10 +294,45 @@ export function SpexareTable({
                 </div>
             </DataTable>
 
-            <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
+            <Dialog
+                open={!!viewItem}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setViewItem(null);
+                        setViewFullItem(null);
+                    }
+                }}
+            >
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    {viewItem && <SpexareView spexare={viewItem} countries={countries} showAudit
-                                              isMe={viewItem.id === currentSpexareId}/>}
+                    <DialogHeader className="sr-only">
+                        <DialogTitle>
+                            {viewFullItem
+                                ? `${viewFullItem.firstName} ${viewFullItem.lastName}`
+                                : viewItem
+                                    ? `${viewItem.firstName} ${viewItem.lastName}`
+                                    : t("Common.details")}
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    {isViewLoading ? (
+                        <div className="p-6">
+                            <div className="flex items-center justify-center py-16">
+                                <Spinner className="size-8"/>
+                            </div>
+                        </div>
+                    ) : viewFullItem ? (
+                        <SpexareView
+                            spexare={viewFullItem}
+                            countries={countries}
+                            showAudit
+                            isMe={viewFullItem.id === currentSpexareId}
+                        />
+                    ) : (
+                        <div className="p-6 text-sm text-muted-foreground">
+                            {t("Common.noData")}
+                        </div>
+                    )}
+
                     <DialogFooter className="p-6 pt-0">
                         <Button variant="outline" onClick={() => setViewItem(null)}>
                             {t("Common.close")}
