@@ -129,6 +129,40 @@ export function SpexareTable({
         };
     }, [viewItem?.id]);
 
+    const [editFullItem, setEditFullItem] = useState<Spexare | null>(null);
+    const [isEditLoading, setIsEditLoading] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadEditFull() {
+            if (!editItem?.id) {
+                setEditFullItem(null);
+                setIsEditLoading(false);
+                return;
+            }
+
+            setIsEditLoading(true);
+            setEditFullItem(null);
+
+            try {
+                const full = await getAction(editItem.id);
+                if (!cancelled) {
+                    setEditFullItem(full ?? null);
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsEditLoading(false);
+                }
+            }
+        }
+
+        void loadEditFull();
+        return () => {
+            cancelled = true;
+        };
+    }, [editItem?.id]);
+
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -341,8 +375,22 @@ export function SpexareTable({
                 </DialogContent>
             </Dialog>
 
-            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                {editItem && (
+            <Sheet
+                open={!!editItem}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setEditItem(null);
+                        setEditFullItem(null);
+                    }
+                }}
+            >
+                {isEditLoading ? (
+                    <div className="p-6">
+                        <div className="flex items-center justify-center py-16">
+                            <Spinner className="size-8"/>
+                        </div>
+                    </div>
+                ) : editFullItem ? (
                     <SpexareForm
                         types={types}
                         countries={countries}
@@ -351,16 +399,17 @@ export function SpexareTable({
                         taskCategories={taskCategories}
                         spex={spex}
                         spexCategories={spexCategories}
-                        item={editItem}
+                        item={editFullItem}
                         onSuccess={() => {
                             setEditItem(null);
+                            setEditFullItem(null);
                             setFilterQuery("");
                             setSelectedPublishedValues(new Set(["true", "false"]));
                             setSelectedDeceasedValues(new Set(["true", "false"]));
                             router.refresh();
                         }}
                     />
-                )}
+                ) : null}
             </Sheet>
 
             <DataTableDeleteDialogs

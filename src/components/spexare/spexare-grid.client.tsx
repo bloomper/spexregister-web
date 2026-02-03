@@ -70,6 +70,8 @@ export function SpexareGrid({
     const [selectedFull, setSelectedFull] = useState<Spexare | null>(null);
     const [isSelectedLoading, setIsSelectedLoading] = useState(false);
     const [editItem, setEditItem] = useState<Spexare | null>(null);
+    const [editFullItem, setEditFullItem] = useState<Spexare | null>(null);
+    const [isEditLoading, setIsEditLoading] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -101,6 +103,37 @@ export function SpexareGrid({
             cancelled = true;
         };
     }, [selected?.id]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadEditFull() {
+            if (!editItem?.id) {
+                setEditFullItem(null);
+                setIsEditLoading(false);
+                return;
+            }
+
+            setIsEditLoading(true);
+            setEditFullItem(null);
+
+            try {
+                const full = await getAction(editItem.id);
+                if (!cancelled) {
+                    setEditFullItem(full ?? null);
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsEditLoading(false);
+                }
+            }
+        }
+
+        void loadEditFull();
+        return () => {
+            cancelled = true;
+        };
+    }, [editItem?.id]);
 
     useEffect(() => {
         if (mode !== "search" || !filterQuery) {
@@ -503,8 +536,22 @@ export function SpexareGrid({
                 </DialogContent>
             </Dialog>
 
-            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                {editItem && (
+            <Sheet
+                open={!!editItem}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setEditItem(null);
+                        setEditFullItem(null);
+                    }
+                }}
+            >
+                {isEditLoading ? (
+                    <div className="p-6">
+                        <div className="flex items-center justify-center py-16">
+                            <Spinner className="size-8"/>
+                        </div>
+                    </div>
+                ) : editFullItem ? (
                     <SpexareForm
                         types={types}
                         countries={countries}
@@ -513,14 +560,15 @@ export function SpexareGrid({
                         taskCategories={taskCategories}
                         spex={spex}
                         spexCategories={spexCategories}
-                        item={editItem}
+                        item={editFullItem}
                         onSuccess={() => {
                             setEditItem(null);
+                            setEditFullItem(null);
                             reset();
                             router.refresh();
                         }}
                     />
-                )}
+                ) : null}
             </Sheet>
 
             {isInfiniteMode && (
