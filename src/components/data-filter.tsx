@@ -14,6 +14,7 @@ interface DataFilterProps {
         value: string
         icon?: React.ComponentType<{ className?: string }>
         groupLabel?: string
+        sortKey?: string
     }[]
     selectedValues: Set<string>
     onSelect: (values: Set<string>) => void
@@ -54,7 +55,14 @@ export function DataFilter({
             entries[existingIndex].options.push(option);
         });
 
-        return entries;
+        return entries.map(group => ({
+            ...group,
+            options: [...group.options].sort((a, b) => {
+                const aKey = (a.sortKey ?? a.label).toLowerCase();
+                const bKey = (b.sortKey ?? b.label).toLowerCase();
+                return aKey.localeCompare(bKey);
+            }),
+        }));
     }, [filteredOptions]);
 
     return (

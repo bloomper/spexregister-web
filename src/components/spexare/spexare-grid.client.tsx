@@ -375,6 +375,7 @@ export function SpexareGrid({
                                                 label: `${valueLabel}${countSuffix}`,
                                                 value: v?.id ?? "",
                                                 groupLabel: group?.label ?? undefined,
+                                                sortKey: valueLabel,
                                             };
                                         }) ?? []
                                     )}
