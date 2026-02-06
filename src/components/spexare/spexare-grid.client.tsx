@@ -73,6 +73,7 @@ export function SpexareGrid({
     const [editFullItem, setEditFullItem] = useState<Spexare | null>(null);
     const [isEditLoading, setIsEditLoading] = useState(false);
     const previousResetKeyRef = useRef<string | null>(null);
+    const skipNextResetRef = useRef(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -247,6 +248,7 @@ export function SpexareGrid({
 
     useEffect(() => {
         if (initialSearchQuery !== searchValue) {
+            skipNextResetRef.current = true;
             setSearchValue(initialSearchQuery);
             setFilterQuery(initialSearchQuery);
         }
@@ -273,6 +275,11 @@ export function SpexareGrid({
 
     useEffect(() => {
         if (previousResetKeyRef.current === null) {
+            previousResetKeyRef.current = resetKey;
+            return;
+        }
+        if (skipNextResetRef.current) {
+            skipNextResetRef.current = false;
             previousResetKeyRef.current = resetKey;
             return;
         }
