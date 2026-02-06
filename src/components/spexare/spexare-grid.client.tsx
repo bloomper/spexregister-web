@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from 'react';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
@@ -72,6 +72,7 @@ export function SpexareGrid({
     const [editItem, setEditItem] = useState<Spexare | null>(null);
     const [editFullItem, setEditFullItem] = useState<Spexare | null>(null);
     const [isEditLoading, setIsEditLoading] = useState(false);
+    const previousResetKeyRef = useRef<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -164,22 +165,27 @@ export function SpexareGrid({
 
             const currentOffset = isFirstPage ? 0 : parseInt(args.after || "0");
 
-            const res = await searchAction({
+            const result = await searchAction({
                 q: filterQuery.trim() || "",
                 limit: args.pageSize,
                 offset: currentOffset,
                 aggregationFilters,
             });
 
-            if (isFirstPage && res.facets) {
-                setCurrentFacets(res.facets);
+            if (isFirstPage && result.facets) {
+                setCurrentFacets(result.facets);
             }
 
+            const hasNextPage = result.pageInfo?.hasNextPage;
+            const resolvedHasNextPage =
+                result.items.length === args.pageSize && hasNextPage !== false;
+
             return {
-                ...res,
+                ...result,
                 pageInfo: {
-                    ...res.pageInfo,
-                    endCursor: (currentOffset + res.items.length).toString()
+                    ...result.pageInfo,
+                    endCursor: (currentOffset + result.items.length).toString(),
+                    hasNextPage: resolvedHasNextPage,
                 }
             };
         }
@@ -256,9 +262,25 @@ export function SpexareGrid({
         return () => clearTimeout(timer);
     }, [searchValue, filterQuery]);
 
+    const resetKey = useMemo(() => {
+        const deceasedKey = Array.from(selectedDeceasedValues).sort().join(",");
+        const facetsKey = Object.entries(selectedFacets)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([name, values]) => `${name}:${Array.from(values).sort().join(",")}`)
+            .join("|");
+        return `${filterQuery}__${deceasedKey}__${facetsKey}`;
+    }, [filterQuery, selectedDeceasedValues, selectedFacets]);
+
     useEffect(() => {
-        reset();
-    }, [filterQuery, selectedDeceasedValues, selectedFacets, reset]);
+        if (previousResetKeyRef.current === null) {
+            previousResetKeyRef.current = resetKey;
+            return;
+        }
+        if (previousResetKeyRef.current !== resetKey) {
+            previousResetKeyRef.current = resetKey;
+            reset();
+        }
+    }, [resetKey, reset]);
 
     const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(e.target.value);

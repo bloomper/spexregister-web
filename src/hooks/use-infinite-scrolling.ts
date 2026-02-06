@@ -103,7 +103,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         } finally {
             setLoading(false);
         }
-    }, [after, fetchPageAction, getKeyAction, hasNextPage, loading, pageSize]);
+    }, [after, fetchPageAction, getKeyAction, hasNextPage, loading, pageSize, error]);
 
     useEffect(() => {
         if (items.length === 0 && !loading && error === null && hasNextPage) {
