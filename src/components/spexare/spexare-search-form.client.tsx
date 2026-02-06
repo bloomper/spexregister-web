@@ -19,9 +19,11 @@ export function SpexareSearchForm({...props}: React.ComponentProps<"form">) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (query.trim()) {
-            router.push(`/spexare/search?q=${encodeURIComponent(query.trim())}`);
-        }
+        const trimmed = query.trim();
+        const target = trimmed
+            ? `/spexare/search?q=${encodeURIComponent(trimmed)}`
+            : "/spexare/search";
+        router.push(target);
     };
 
     return (
