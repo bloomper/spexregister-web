@@ -294,7 +294,7 @@ export function SpexareGrid({
             setSelectedFacets({});
 
             if (mode === "search") {
-                router.replace(pathname, { scroll: false });
+                router.replace(pathname, {scroll: false});
             }
         });
     };
@@ -368,13 +368,13 @@ export function SpexareGrid({
                                     })) : undefined}
                                     options={facet.groups.flatMap(group =>
                                         group?.values.map(v => {
-                                            const label = group.label
-                                                ? `${group.label}: ${v?.label}`
-                                                : v?.label;
+                                            const countSuffix = typeof v?.count === "number" ? ` (${v.count})` : "";
+                                            const valueLabel = v?.label ?? "";
 
                                             return {
-                                                label: `${label} (${v?.count})`,
+                                                label: `${valueLabel}${countSuffix}`,
                                                 value: v?.id ?? "",
+                                                groupLabel: group?.label ?? undefined,
                                             };
                                         }) ?? []
                                     )}

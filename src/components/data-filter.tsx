@@ -13,6 +13,7 @@ interface DataFilterProps {
         label: string
         value: string
         icon?: React.ComponentType<{ className?: string }>
+        groupLabel?: string
     }[]
     selectedValues: Set<string>
     onSelect: (values: Set<string>) => void
@@ -29,9 +30,32 @@ export function DataFilter({
     const t = useTranslations();
     const [searchTerm, setSearchTerm] = React.useState("");
 
-    const filteredOptions = options.filter(option =>
-        option.label.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const filteredOptions = options.filter(option => {
+        if (!normalizedSearch) {
+            return true;
+        }
+        const labelMatch = option.label.toLowerCase().includes(normalizedSearch);
+        const groupMatch = option.groupLabel?.toLowerCase().includes(normalizedSearch);
+        return labelMatch || groupMatch;
+    });
+    const groupedOptions = React.useMemo(() => {
+        const entries: { label?: string; options: typeof options }[] = [];
+        const groupIndex = new Map<string, number>();
+
+        filteredOptions.forEach(option => {
+            const key = option.groupLabel ?? "__ungrouped__";
+            const existingIndex = groupIndex.get(key);
+            if (existingIndex === undefined) {
+                groupIndex.set(key, entries.length);
+                entries.push({label: option.groupLabel, options: [option]});
+                return;
+            }
+            entries[existingIndex].options.push(option);
+        });
+
+        return entries;
+    }, [filteredOptions]);
 
     return (
         <Popover onOpenChange={(open) => !open && setSearchTerm("")}>
@@ -64,35 +88,48 @@ export function DataFilter({
                             />
                         </div>
                     )}
-                    {filteredOptions.map((option) => {
-                        const isSelected = selectedValues.has(option.value)
-                        return (
-                            <Button
-                                key={option.value}
-                                variant="ghost"
-                                size="sm"
-                                className="justify-start font-normal h-auto py-1.5 px-2"
-                                onClick={() => {
-                                    const next = new Set(selectedValues)
-                                    if (isSelected) {
-                                        next.delete(option.value)
-                                    } else {
-                                        next.add(option.value)
-                                    }
-                                    onSelect(next)
-                                }}
-                            >
-                                <div className={cn(
-                                    "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                                    isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible"
-                                )}>
-                                    <Check className="h-4 w-4"/>
+                    {groupedOptions.map((group, groupIndex) => (
+                        <React.Fragment key={`${group.label ?? "ungrouped"}-${groupIndex}`}>
+                            {groupIndex > 0 && (
+                                <Separator className="my-1"/>
+                            )}
+                            {group.label && (
+                                <div className="px-2 py-1 text-[11px] font-semibold text-muted-foreground">
+                                    {group.label}
                                 </div>
-                                {option.icon && <option.icon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground"/>}
-                                <span className="text-left wrap-break-word">{option.label}</span>
-                            </Button>
-                        )
-                    })}
+                            )}
+                            {group.options.map((option) => {
+                                const isSelected = selectedValues.has(option.value)
+                                return (
+                                    <Button
+                                        key={option.value}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="justify-start font-normal h-auto py-1.5 px-2"
+                                        onClick={() => {
+                                            const next = new Set(selectedValues)
+                                            if (isSelected) {
+                                                next.delete(option.value)
+                                            } else {
+                                                next.add(option.value)
+                                            }
+                                            onSelect(next)
+                                        }}
+                                    >
+                                        <div className={cn(
+                                            "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                                            isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible"
+                                        )}>
+                                            <Check className="h-4 w-4"/>
+                                        </div>
+                                        {option.icon &&
+                                            <option.icon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground"/>}
+                                        <span className="text-left wrap-break-word">{option.label}</span>
+                                    </Button>
+                                )
+                            })}
+                        </React.Fragment>
+                    ))}
                     {selectedValues.size > 0 && (
                         <>
                             <Separator className="my-1"/>
