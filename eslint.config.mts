@@ -7,6 +7,7 @@ import {defineConfig, globalIgnores} from "eslint/config";
 export default defineConfig([
     ...nextVitals,
     ...nextTs,
+    {settings: {react: {version: "19.2.4"}}},
     globalIgnores(["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "package-lock.json"]),
     {files: ["**/*.json"], plugins: {json}, language: "json/json", extends: ["json/recommended"]},
     {files: ["**/*.css"], plugins: {css}, language: "css/css", extends: ["css/recommended"]},

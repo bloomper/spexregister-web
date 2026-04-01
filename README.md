@@ -17,7 +17,7 @@ Spexregister Web is the second generation of the frontend responsible for servin
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 24+
 - npm (package manager)
 - Docker & Docker Compose (optional, for containerized setup)
 
