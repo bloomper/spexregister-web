@@ -3,6 +3,7 @@ import 'server-only';
 import {getClient} from '@/lib/urql.server';
 import {
     AggregationFilterInput,
+    Event,
     Facet,
     ImpexType,
     JobReference,
@@ -279,7 +280,18 @@ export async function search(args: {
     }
 
     const connection = result.data?.spexareSearchPaged;
-    const page = mapConnection<Spexare, SpexareEdge>(connection);
+    const safeConnection = connection
+        ? {
+            edges: connection.edges ?? [],
+            pageInfo: connection.pageInfo ?? {
+                hasNextPage: false,
+                hasPreviousPage: false,
+                startCursor: null,
+                endCursor: null,
+            },
+        }
+        : undefined;
+    const page = mapConnection<Spexare, SpexareEdge>(safeConnection);
 
     return {
         ...page,
@@ -315,7 +327,7 @@ export async function get(id: string) {
     return result.data?.spexare;
 }
 
-export async function update(id: string, input: SpexareUpdate) {
+export async function update(id: string, input: Omit<SpexareUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

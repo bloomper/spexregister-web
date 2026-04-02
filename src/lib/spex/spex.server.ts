@@ -1,7 +1,17 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {ImpexType, JobReference, SortDirection, Spex, SpexConnection, SpexCreate, SpexEdge, SpexUpdate} from "@/gql/graphql";
+import {
+    Event,
+    ImpexType,
+    JobReference,
+    SortDirection,
+    Spex,
+    SpexConnection,
+    SpexCreate,
+    SpexEdge,
+    SpexUpdate
+} from "@/gql/graphql";
 import {SpexPage} from "@/types/pagination";
 import axios from "@/lib/axios.server";
 import {mapConnection} from "@/utils/utils.server";
@@ -188,7 +198,7 @@ export async function create(input: SpexCreate) {
     return result.data?.spexCreate;
 }
 
-export async function update(id: string, input: SpexUpdate) {
+export async function update(id: string, input: Omit<SpexUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

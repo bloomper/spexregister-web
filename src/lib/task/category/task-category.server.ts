@@ -2,6 +2,7 @@ import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
 import {
+    Event,
     ImpexType,
     JobReference,
     SortDirection,
@@ -158,7 +159,7 @@ export async function create(input: TaskCategoryCreate) {
     return result.data?.taskCategoryCreate;
 }
 
-export async function update(id: string, input: TaskCategoryUpdate) {
+export async function update(id: string, input: Omit<TaskCategoryUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

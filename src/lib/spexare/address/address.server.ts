@@ -79,7 +79,7 @@ export async function create(spexareId: string, typeId: string, input: AddressCr
     return result.data?.addressCreate;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: AddressUpdate) {
+export async function update(spexareId: string, typeId: string, id: string, input: Omit<AddressUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             spexareId,

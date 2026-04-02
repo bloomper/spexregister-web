@@ -5,7 +5,7 @@ export default function TaskManageLoading() {
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
             <div className="flex items-center justify-between gap-2">
-                <Skeleton className="h-8 w-[150px]"/>
+                <Skeleton className="h-8 w-37.5"/>
             </div>
             <DataTableSkeleton
                 rowCount={15}

@@ -17,7 +17,7 @@ import {
     ToggleLeft,
     User,
 } from "lucide-react";
-import {Country, Spexare} from "@/gql/graphql";
+import {Activity, Country, Spexare} from "@/gql/graphql";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -159,7 +159,9 @@ export function SpexareView({
                     </TabsContent>
 
                     <TabsContent value="activities" className="pt-2">
-                        <ActivityTimeline activities={spexare.activities || []}/>
+                        <ActivityTimeline
+                            activities={(spexare.activities ?? []).filter((activity): activity is Activity => !!activity)}
+                        />
                     </TabsContent>
 
                     <TabsContent value="partner" className="pt-4 space-y-4">

@@ -128,7 +128,7 @@ export function StatisticsCharts({data}: StatisticsChartsProps) {
                                     <YAxis yAxisId="total" hide domain={['auto', 'auto']}/>
                                     <YAxis yAxisId="growth" hide domain={['auto', 'auto']}/>
                                     <ChartTooltip
-                                        content={<ChartTooltipContent config={chartConfig} indicator="line"/>}/>
+                                        content={<ChartTooltipContent indicator="line"/>}/>
                                     <Line yAxisId="total" type="monotone" dataKey="accumulated" stroke="#94a3b8"
                                           strokeWidth={2} strokeOpacity={0.4} dot={false} connectNulls/>
                                     <Line yAxisId="growth" type="monotone" dataKey="count" stroke={chart.color}

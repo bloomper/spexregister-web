@@ -71,7 +71,7 @@ export default function AboutPage() {
                     <h2 className="text-2xl font-bold uppercase tracking-widest text-primary/70">
                         {t("behindTheScenes")}
                     </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left min-h-[100px]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left min-h-25">
                         {isClient && contributors.map((person) => (
                             <Card key={person.name}
                                   className="overflow-hidden border-none bg-sidebar/50 backdrop-blur-sm transition-all hover:bg-sidebar group">

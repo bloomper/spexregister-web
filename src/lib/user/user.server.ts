@@ -3,6 +3,7 @@ import 'server-only';
 import {getClient} from '@/lib/urql.server';
 import {
     Authority,
+    Event,
     ImpexType,
     JobReference,
     SortDirection,
@@ -213,7 +214,7 @@ export async function create(input: UserCreate) {
     return result.data?.userCreate;
 }
 
-export async function update(id: string, input: UserUpdate) {
+export async function update(id: string, input: Omit<UserUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

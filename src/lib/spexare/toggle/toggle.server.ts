@@ -73,7 +73,7 @@ export async function create(spexareId: string, typeId: string, input: ToggleCre
     return result.data?.toggleCreate;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: ToggleUpdate) {
+export async function update(spexareId: string, typeId: string, id: string, input: Omit<ToggleUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             spexareId,

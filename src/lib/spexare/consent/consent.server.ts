@@ -73,7 +73,7 @@ export async function create(spexareId: string, typeId: string, input: ConsentCr
     return result.data?.consentCreate;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: ConsentUpdate) {
+export async function update(spexareId: string, typeId: string, id: string, input: Omit<ConsentUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             spexareId,

@@ -128,7 +128,7 @@ export function TaskActivityManager({
                                                             variant="ghost"
                                                             size="icon"
                                                             className="h-4 w-4 text-muted-foreground hover:text-destructive p-0"
-                                                            disabled={isPending}
+                                                            disabled={isPending || !actor.vocal?.id}
                                                         >
                                                             <X className="h-2.5 w-2.5"/>
                                                         </Button>
@@ -141,7 +141,11 @@ export function TaskActivityManager({
                                                         <AlertDialogFooter>
                                                             <AlertDialogCancel>{t("Common.cancel")}</AlertDialogCancel>
                                                             <AlertDialogAction
-                                                                onClick={() => handleDeleteActor(actor.id, actor.vocal?.id, taskActivity.id)}
+                                                                onClick={() => {
+                                                                    if (actor.vocal?.id) {
+                                                                        handleDeleteActor(actor.id, actor.vocal.id, taskActivity.id);
+                                                                    }
+                                                                }}
                                                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                                             >
                                                                 {t("Common.delete")}

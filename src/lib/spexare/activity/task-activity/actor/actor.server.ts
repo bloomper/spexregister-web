@@ -73,7 +73,7 @@ export async function create(spexareId: string, activityId: string, taskActivity
     return result.data?.actorCreate;
 }
 
-export async function update(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string, input: ActorUpdate) {
+export async function update(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string, input: Omit<ActorUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             spexareId,

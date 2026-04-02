@@ -2,6 +2,7 @@ import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
 import {
+    Event,
     ImpexType,
     JobReference,
     SortDirection,
@@ -159,7 +160,7 @@ export async function create(input: SpexCategoryCreate) {
     return result.data?.spexCategoryCreate;
 }
 
-export async function update(id: string, input: SpexCategoryUpdate) {
+export async function update(id: string, input: Omit<SpexCategoryUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

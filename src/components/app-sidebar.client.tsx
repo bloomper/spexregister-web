@@ -45,6 +45,9 @@ interface NavItem {
     isActive?: boolean;
     items?: NavItem[];
 }
+interface NavSecondaryItem extends Omit<NavItem, "icon"> {
+    icon: LucideIcon;
+}
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     roles: Role[];
@@ -56,7 +59,7 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
     const t = useTranslations();
     const isClient = useIsClient();
 
-    const navigation = useMemo((): { main: NavItem[]; secondary: NavItem[] } => {
+    const navigation = useMemo((): { main: NavItem[]; secondary: NavSecondaryItem[] } => {
         const isCurrentUserAdmin = isAdmin(roles);
         const isCurrentUserAdminOrEditor = isAdminOrEditor(roles);
 

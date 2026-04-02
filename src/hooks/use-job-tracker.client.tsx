@@ -56,5 +56,5 @@ export function useJobTracker(jobId: string | null, onComplete?: () => void) {
                 clearInterval(timerRef.current);
             }
         };
-    }, [jobId, onComplete]);
+    }, [jobId, onComplete, t]);
 }

@@ -21,7 +21,7 @@ import {
 import {SpexActivityForm} from "@/components/spexare/activity/spex-activity/spex-activity-form.client";
 import {TaskActivityManager} from "@/components/spexare/activity/task-activity/task-activity-manager.client";
 import {cn} from "@/utils/utils";
-import {Activity as ActivityType, Spex, SpexCategory, Task, TaskCategory, Type} from "@/gql/graphql";
+import {Activity as ActivityType, Spex, SpexCategory, Task, TaskActivity, TaskCategory, Type} from "@/gql/graphql";
 import {useRouter} from "next/navigation";
 
 interface ActivityManagerProps {
@@ -158,7 +158,7 @@ export function ActivityManager({
                                                 spex={spex}
                                                 spexCategories={spexCategories}
                                                 activityId={activity.id}
-                                                item={activity.spexActivity}
+                                                item={activity.spexActivity ?? undefined}
                                                 onSuccess={() => setEditingActivityId(null)}
                                             />
                                         ) : (
@@ -168,7 +168,9 @@ export function ActivityManager({
                                                 types={types}
                                                 tasks={tasks}
                                                 taskCategories={taskCategories}
-                                                initialTaskActivities={activity.taskActivities || []}
+                                                initialTaskActivities={(activity.taskActivities ?? []).filter(
+                                                    (taskActivity): taskActivity is TaskActivity => !!taskActivity
+                                                )}
                                             />
                                         )}
                                     </div>

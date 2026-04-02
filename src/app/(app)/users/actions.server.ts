@@ -85,8 +85,7 @@ export async function bulkDeleteAction(ids: string[]) {
 
 export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
     return withPolicyAction(Policies.user.requireExport, async () => {
-        const result = await exp(ids, filter, type);
-        return result;
+        return await exp(ids, filter, type);
     });
 }
 

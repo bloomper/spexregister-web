@@ -50,7 +50,7 @@ export const columns: ColumnDef<User>[] = [
         accessorKey: "email",
         header: () => <Translated id="User.email"/>,
         cell: ({row}) => (
-            <div className="max-w-[300px] truncate font-medium cursor-default">
+            <div className="max-w-75 truncate font-medium cursor-default">
                 {row.original.email}
             </div>
         ),
@@ -187,7 +187,7 @@ export function UserTable({
                             placeholder={t("User.filterPlaceholder")}
                             value={filterQuery}
                             onChange={(e) => setFilterQuery(e.target.value)}
-                            className="h-8 w-full sm:w-[150px] lg:w-[250px]"
+                            className="h-8 w-full sm:w-37.5 lg:w-62.5"
                         />
 
                         <div className="flex items-center gap-2">

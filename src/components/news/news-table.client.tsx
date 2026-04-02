@@ -140,7 +140,7 @@ export function NewsTable({
                             placeholder={t("News.filterPlaceholder")}
                             value={filterQuery}
                             onChange={(e) => setFilterQuery(e.target.value)}
-                            className="h-8 w-full sm:w-[150px] lg:w-[250px]"
+                            className="h-8 w-full sm:w-37.5 lg:w-62.5"
                         />
 
                         <div className="flex items-center gap-2">

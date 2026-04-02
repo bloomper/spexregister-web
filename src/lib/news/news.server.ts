@@ -132,7 +132,7 @@ export async function create(input: NewsCreate) {
     return result.data?.newsCreate;
 }
 
-export async function update(id: string, input: NewsUpdate) {
+export async function update(id: string, input: Omit<NewsUpdate, "id">) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

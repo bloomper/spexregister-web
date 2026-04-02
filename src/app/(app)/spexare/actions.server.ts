@@ -19,7 +19,7 @@ import {
     uploadImage
 } from "@/lib/spexare";
 import {revalidateTag} from "next/cache";
-import {AggregationFilterInput, ImpexType, ReportType, SortDirection} from "@/gql/graphql";
+import {AggregationFilterInput, ImpexType, ReportType, SortDirection, SpexareCreate, SpexareUpdate} from "@/gql/graphql";
 import {
     addressFormSchema,
     create as createAddress,
@@ -93,7 +93,12 @@ export async function createAction(data: unknown) {
     return withPolicyAction(Policies.spexare.requireCreate, async () => {
         const validated = spexareFormSchema.parse(data);
         const {birthDate, birthNumber, socialSecurityNumber, graduation, comment, ...createInput} = validated;
-        const result = await create(createInput);
+        const payload: SpexareCreate = {
+            ...createInput,
+            deceased: createInput.deceased ?? false,
+            published: createInput.published ?? false,
+        };
+        const result = await create(payload);
         revalidate();
         return result;
     });
@@ -109,7 +114,12 @@ export async function updateAction(id: string, data: unknown) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = spexareFormSchema.parse(data);
         const {birthDate, birthNumber, ...updateInput} = validated;
-        const result = await update(id, updateInput);
+        const payload: Omit<SpexareUpdate, "id"> = {
+            ...updateInput,
+            deceased: updateInput.deceased ?? false,
+            published: updateInput.published ?? false,
+        };
+        const result = await update(id, payload);
         revalidate();
         return result;
     });
