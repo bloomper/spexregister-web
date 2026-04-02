@@ -157,7 +157,7 @@ export function SpexareForm({
             >
                 <div className={cn("shrink-0", isSheet ? "px-6 pb-4" : "mb-4")}>
                     <TabsList className={cn(
-                        "grid w-full h-auto p-1 text-muted-foreground",
+                        "grid w-full !h-auto min-h-9 p-1 text-muted-foreground",
                         isSheet
                             ? "grid-cols-2 sm:grid-cols-3 bg-muted/50 rounded-lg"
                             : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 bg-muted/40 rounded-xl border shadow-sm"

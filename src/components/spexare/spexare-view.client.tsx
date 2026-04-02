@@ -102,7 +102,7 @@ export function SpexareView({
                 </DialogHeader>
 
                 <Tabs defaultValue="general" className="mt-6">
-                    <TabsList className="grid w-full h-auto p-1 bg-muted/50 grid-cols-2 sm:grid-cols-3">
+                    <TabsList className="grid w-full !h-auto min-h-9 p-1 bg-muted/50 grid-cols-2 sm:grid-cols-3">
                         <TabsTrigger value="general">{t("Common.general")}</TabsTrigger>
                         <TabsTrigger value="activities">{t("Spexare.activities")}</TabsTrigger>
                         <TabsTrigger value="partner">{t("Spexare.partner")}</TabsTrigger>

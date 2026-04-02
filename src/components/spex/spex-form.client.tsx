@@ -141,7 +141,7 @@ export function SpexForm({
             <form onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <Tabs defaultValue="general" className="flex-1 flex flex-col min-h-0">
                     <div className="px-6 pb-4 shrink-0">
-                        <TabsList className="grid w-full h-auto p-1 bg-muted/50 grid-cols-2">
+                        <TabsList className="grid w-full !h-auto min-h-9 p-1 bg-muted/50 grid-cols-2">
                             <TabsTrigger value="general" className="py-2 text-xs sm:text-sm">
                                 {t("Common.general")}
                             </TabsTrigger>
