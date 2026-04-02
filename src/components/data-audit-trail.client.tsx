@@ -16,7 +16,7 @@ const EVENT_ICONS = {
 
 interface AuditTrailProps {
     id: string;
-    fetchAction: (id: string) => Promise<any>;
+    fetchAction: (id: string) => Promise<Event[]>;
 }
 
 export function AuditTrail({id, fetchAction}: AuditTrailProps) {
@@ -32,9 +32,7 @@ export function AuditTrail({id, fetchAction}: AuditTrailProps) {
             startTransition(async () => {
                 try {
                     const data = await fetchAction(id);
-                    if (Array.isArray(data)) {
-                        setEvents(data as Event[]);
-                    }
+                    setEvents(data);
                     setHasLoaded(true);
                 } catch (e) {
                     console.error("Failed to fetch audit trail", e);

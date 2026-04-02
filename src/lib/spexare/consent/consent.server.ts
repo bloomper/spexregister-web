@@ -1,6 +1,7 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
+import {ConsentCreate, ConsentUpdate} from "@/gql/graphql";
 
 export const SummaryFields = `
     ...ConsentSummary
@@ -56,7 +57,7 @@ const DeleteMutation = /* GraphQL */ `
     }
 `;
 
-export async function create(spexareId: string, typeId: string, input: any) {
+export async function create(spexareId: string, typeId: string, input: ConsentCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {spexareId, typeId, input})
         .toPromise();
@@ -72,7 +73,7 @@ export async function create(spexareId: string, typeId: string, input: any) {
     return result.data?.consentCreate;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: any) {
+export async function update(spexareId: string, typeId: string, id: string, input: ConsentUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             spexareId,
@@ -106,4 +107,3 @@ export async function del(spexareId: string, typeId: string, id: string) {
 
     return result.data?.consentDelete;
 }
-

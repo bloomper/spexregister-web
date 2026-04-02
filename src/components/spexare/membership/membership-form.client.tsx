@@ -36,7 +36,7 @@ export function MembershipForm({
         control,
         watch,
         formState: {errors},
-    } = useForm<MembershipFormInput, any, MembershipFormOutput>({
+    } = useForm<MembershipFormInput, unknown, MembershipFormOutput>({
         resolver: zodResolver(membershipFormSchema),
         defaultValues: {
             typeId: defaultValues?.typeId ?? (membershipTypes[0]?.id || ""),

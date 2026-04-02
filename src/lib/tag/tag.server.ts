@@ -1,7 +1,7 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {ImpexType, JobReference, SortDirection, Tag, TagConnection, TagEdge} from "@/gql/graphql";
+import {ImpexType, JobReference, SortDirection, Tag, TagConnection, TagCreate, TagEdge, TagUpdate} from "@/gql/graphql";
 import {TagPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
@@ -132,7 +132,7 @@ export async function getAll(args?: { full?: boolean }): Promise<Tag[]> {
     return items;
 }
 
-export async function create(input: any) {
+export async function create(input: TagCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {input})
         .toPromise();
@@ -148,7 +148,7 @@ export async function create(input: any) {
     return result.data?.tagCreate;
 }
 
-export async function update(id: string, input: any) {
+export async function update(id: string, input: TagUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

@@ -86,7 +86,7 @@ export function SpexareForm({
         handleSubmit,
         control,
         formState: {errors},
-    } = useForm<SpexareFormInput, any, SpexareFormOutput>({
+    } = useForm<SpexareFormInput, unknown, SpexareFormOutput>({
         resolver: zodResolver(spexareFormSchema),
         defaultValues: {
             firstName: item?.firstName ?? "",

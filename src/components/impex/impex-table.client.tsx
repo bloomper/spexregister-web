@@ -51,7 +51,7 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
             return "-";
         }
 
-        const key = `Impex.statuses.${status}` as any;
+        const key = `Impex.statuses.${status}`;
         const translated = t(key);
 
         return translated === key ? status : translated;
@@ -62,7 +62,7 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
             return "-";
         }
 
-        const key = `Impex.exitStatuses.${status}` as any;
+        const key = `Impex.exitStatuses.${status}`;
         const translated = t(key);
 
         return translated === key ? status : translated;
@@ -199,9 +199,9 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
                     };
                 }}
                 meta={{
-                    setRefresh: (getRefresh: any) => {
-                        refreshRef.current = typeof getRefresh === "function" ? getRefresh() : getRefresh;
-                    },
+                    setRefresh: (handler) => {
+                        refreshRef.current = handler;
+                    }
                 }}
             />
 

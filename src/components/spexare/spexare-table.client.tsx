@@ -31,6 +31,7 @@ import {columnHelper} from "@/components/data-table-columns.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {Spinner} from "@/components/ui/spinner";
+import {useIsClient} from "@/hooks/use-is-client";
 
 
 export const columns: ColumnDef<Spexare>[] = [
@@ -70,7 +71,7 @@ export function SpexareTable({
                              }: SpexareTableProps) {
     const t = useTranslations();
     const router = useRouter();
-    const [mounted, setMounted] = useState(false);
+    const isClient = useIsClient();
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
@@ -164,10 +165,6 @@ export function SpexareTable({
     }, [editItem?.id]);
 
     useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    useEffect(() => {
         if (viewItem) {
             const updated = initialData.items.find(i => i.id === viewItem.id);
             if (updated) {
@@ -222,7 +219,7 @@ export function SpexareTable({
         return () => clearTimeout(timer);
     }, [filterQuery, selectedPublishedValues, selectedDeceasedValues]);
 
-    if (!mounted) {
+    if (!isClient) {
         return <DataTableSkeleton columnCount={9} rowCount={15}/>;
     }
 
@@ -243,9 +240,9 @@ export function SpexareTable({
                 meta={{
                     setEditItem,
                     setDeleteItem,
-                    setFilter: (fn: any) => {
-                        setFilterQueryRef.current = typeof fn === 'function' && fn.length === 0 ? fn() : fn;
-                    },
+                    setFilter: (handler) => {
+                        setFilterQueryRef.current = handler;
+                    }
                 }}
             >
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
@@ -311,7 +308,7 @@ export function SpexareTable({
                             <ExportButton
                                 exportAction={exportAction}
                                 selectedIds={selectedRows.map(r => r.id)}
-                                filterQuery={lastFilterQueryRef.current}
+                                getFilterQuery={() => lastFilterQueryRef.current}
                                 requiresReportType={true}
                             />
 

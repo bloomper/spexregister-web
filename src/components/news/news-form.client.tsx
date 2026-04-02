@@ -29,7 +29,7 @@ export function NewsForm({item, onSuccess}: NewsFormProps) {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<NewsFormInput, any, NewsFormOutput>({
+    } = useForm<NewsFormInput, unknown, NewsFormOutput>({
         resolver: zodResolver(newsFormSchema),
         defaultValues: {
             subject: item?.subject ?? "",

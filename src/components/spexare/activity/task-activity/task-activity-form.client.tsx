@@ -15,12 +15,12 @@ import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandL
 import {cn, translateError} from "@/utils/utils";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {useRouter} from "next/navigation";
-import {Task, TaskCategory} from "@/gql/graphql";
+import {Task, TaskActivity, TaskCategory} from "@/gql/graphql";
 
 interface TaskFormProps {
     spexareId: string;
     activityId: string;
-    item?: any;
+    item?: TaskActivity;
     tasks: Task[];
     taskCategories: TaskCategory[];
     existingTaskIds?: string[];

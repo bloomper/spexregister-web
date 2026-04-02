@@ -12,6 +12,8 @@ import {LanguageToggle} from "@/components/language-toggle.client";
 import {requireUser} from "@/utils/auth.server";
 import {me} from "@/lib/user";
 import {LogoHome} from "@/components/logo-home";
+import Link from "next/link";
+import {Role} from "@/types/auth";
 
 export default async function AppLayout({children}: { children: React.ReactNode }) {
     const {session, roles} = await requireUser();
@@ -64,7 +66,7 @@ export default async function AppLayout({children}: { children: React.ReactNode 
 
                             <div className="pt-2">
                                 <Button asChild>
-                                    <a href="/api/auth/login">{t("Common.login")}</a>
+                                    <Link href="/api/auth/login">{t("Common.login")}</Link>
                                 </Button>
                             </div>
                         </div>
@@ -91,7 +93,7 @@ export default async function AppLayout({children}: { children: React.ReactNode 
     );
 }
 
-async function SidebarWithUser({roles}: { roles: any[] }) {
+async function SidebarWithUser({roles}: { roles: Role[] }) {
     const currentUser = await me();
 
     return (

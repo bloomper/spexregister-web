@@ -11,7 +11,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {cn, translateError} from "@/utils/utils";
-import {Spex, SpexCategory} from "@/gql/graphql";
+import {Spex, SpexActivity, SpexCategory} from "@/gql/graphql";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import {Check, ChevronsUpDown, Plus} from "lucide-react";
@@ -20,7 +20,7 @@ import {useRouter} from "next/navigation";
 interface SpexActivityFormProps {
     spexareId: string;
     activityId: string;
-    item?: any;
+    item?: SpexActivity;
     spex: Spex[];
     spexCategories: SpexCategory[];
     onSuccess?: () => void;

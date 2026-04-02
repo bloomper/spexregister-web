@@ -1,6 +1,6 @@
 "use client";
 
-import {ColumnDef} from "@tanstack/react-table";
+import {ColumnDef, type Row, type Table} from "@tanstack/react-table";
 import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, LucideIcon, MoreHorizontal} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -10,31 +10,60 @@ import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/compon
 import {formatDate, formatDateTime} from "@/utils/utils";
 import {TableThumbnail} from "@/components/data-table-thumbnail.client";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import type {DataTableMeta} from "@/components/data-table.client";
+
+function SelectAllHeader<T>({table}: { table: Table<T> }) {
+    const t = useTranslations();
+    return (
+        <Checkbox
+            checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label={t("Common.selectAll")}
+        />
+    );
+}
+
+function SelectRowCell<T>({row}: { row: Row<T> }) {
+    const t = useTranslations();
+    return (
+        <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            onClick={(e) => e.stopPropagation()}
+            aria-label={t("Common.select")}
+        />
+    );
+}
+
+function ActionsCell<T>({row, table}: { row: Row<T>; table: Table<T> }) {
+    const t = useTranslations();
+    const meta = table.options.meta as DataTableMeta<T> | undefined;
+    return (
+        <div onClick={(e) => e.stopPropagation()}>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4"/>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onSelect={() => meta?.setEditItem?.(row.original)}>
+                        {t("Common.edit")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="text-destructive" onSelect={() => meta?.setDeleteItem?.(row.original)}>
+                        {t("Common.delete")}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+    );
+}
 
 export const columnHelper = {
     select: <T, >(): ColumnDef<T> => ({
         id: "select",
-        header: ({table}) => {
-            const t = useTranslations();
-            return (
-                <Checkbox
-                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label={t("Common.selectAll")}
-                />
-            );
-        },
-        cell: ({row}) => {
-            const t = useTranslations();
-            return (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    onClick={(e) => e.stopPropagation()}
-                    aria-label={t("Common.select")}
-                />
-            );
-        },
+        header: ({table}) => <SelectAllHeader table={table}/>,
+        cell: ({row}) => <SelectRowCell row={row}/>,
         enableSorting: false,
         enableHiding: false,
     }),
@@ -129,14 +158,19 @@ export const columnHelper = {
         meta: className ? {className} : undefined,
     }),
 
-    image: <T, >(id: string, translationId: string, accessorKey: string, fallbackIcon: LucideIcon): ColumnDef<T> => ({
+    image: <T extends { lastModifiedAt?: string | null }, >(
+        id: string,
+        translationId: string,
+        accessorKey: string,
+        fallbackIcon: LucideIcon
+    ): ColumnDef<T> => ({
         id,
         accessorKey,
         header: () => <Translated id={translationId}/>,
         cell: ({row}) => (
             <TableThumbnail
                 url={row.getValue(id)}
-                lastModifiedAt={(row.original as any).lastModifiedAt}
+                lastModifiedAt={row.original.lastModifiedAt}
                 fallbackIcon={fallbackIcon}
             />
         ),
@@ -199,27 +233,6 @@ export const columnHelper = {
     ],
     actions: <T, >(): ColumnDef<T> => ({
         id: "actions",
-        cell: ({row, table}) => {
-            const item = row.original;
-            const t = useTranslations();
-            const meta = table.options.meta as any;
-            return (
-                <div onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4"/>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                                onSelect={() => meta?.setEditItem(item)}>{t("Common.edit")}</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive"
-                                              onSelect={() => meta?.setDeleteItem(item)}>{t("Common.delete")}</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            );
-        },
+        cell: ({row, table}) => <ActionsCell row={row} table={table}/>,
     })
 };

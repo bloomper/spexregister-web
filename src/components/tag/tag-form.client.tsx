@@ -28,7 +28,7 @@ export function TagForm({item, onSuccess}: TagFormProps) {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<TagFormInput, any, TagFormOutput>({
+    } = useForm<TagFormInput, unknown, TagFormOutput>({
         resolver: zodResolver(tagFormSchema),
         defaultValues: {
             name: item?.name ?? "",

@@ -50,7 +50,7 @@ export function UserForm({item, authorities, states, onSuccess}: UserFormProps) 
         setValue,
         watch,
         formState: {errors},
-    } = useForm<UserFormInput, any, UserFormOutput>({
+    } = useForm<UserFormInput, unknown, UserFormOutput>({
         resolver: zodResolver(userFormSchema),
         defaultValues: {
             email: item?.email ?? "",

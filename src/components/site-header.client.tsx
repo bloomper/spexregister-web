@@ -8,16 +8,12 @@ import {Separator} from "@/components/ui/separator";
 import {useSidebar} from "@/components/ui/sidebar";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
-import {useEffect, useState} from "react";
+import {useIsClient} from "@/hooks/use-is-client";
 
 export function SiteHeader() {
     const {toggleSidebar} = useSidebar();
-    const [mounted, setMounted] = useState(false);
+    const isClient = useIsClient();
     const t = useTranslations();
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     return (
         <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
@@ -40,7 +36,7 @@ export function SiteHeader() {
 
                 <div className="flex items-center gap-2 sm:order-3">
                     <Separator orientation="vertical" className="hidden h-4 sm:block"/>
-                    {mounted ? (
+                    {isClient ? (
                         <>
                             <LanguageToggle/>
                             <ModeToggle/>

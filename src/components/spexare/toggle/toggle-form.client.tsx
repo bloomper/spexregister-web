@@ -27,7 +27,7 @@ export function ToggleForm({defaultValues, types, onSubmit, onCancel, isPending}
         handleSubmit,
         control,
         formState: {errors},
-    } = useForm<ToggleFormInput, any, ToggleFormOutput>({
+    } = useForm<ToggleFormInput, unknown, ToggleFormOutput>({
         resolver: zodResolver(toggleFormSchema),
         defaultValues: {
             typeId: defaultValues?.typeId ?? (toggleTypes[0]?.id || ""),

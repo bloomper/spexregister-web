@@ -1,6 +1,7 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
+import {ActorCreate, ActorUpdate} from "@/gql/graphql";
 
 export const SummaryFields = `
     ...ActorSummary
@@ -56,7 +57,7 @@ const DeleteMutation = /* GraphQL */ `
     }
 `;
 
-export async function create(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, input: any) {
+export async function create(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, input: ActorCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {spexareId, activityId, taskActivityId, vocalId, input})
         .toPromise();
@@ -72,7 +73,7 @@ export async function create(spexareId: string, activityId: string, taskActivity
     return result.data?.actorCreate;
 }
 
-export async function update(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string, input: any) {
+export async function update(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string, input: ActorUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             spexareId,
@@ -108,4 +109,3 @@ export async function del(spexareId: string, activityId: string, taskActivityId:
 
     return result.data?.actorDelete;
 }
-

@@ -52,7 +52,7 @@ export function SpexForm({
         watch,
         setValue,
         formState: {errors},
-    } = useForm<SpexFormInput, any, SpexFormOutput>({
+    } = useForm<SpexFormInput, unknown, SpexFormOutput>({
         resolver: zodResolver(spexFormSchema),
         defaultValues: {
             year: item?.year ?? "",

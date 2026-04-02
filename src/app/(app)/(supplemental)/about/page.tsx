@@ -4,7 +4,8 @@ import {useTranslations} from "next-intl";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.client";
 import {Card, CardContent} from "@/components/ui/card";
 import {Drama, Mail, User} from "lucide-react";
-import {useEffect, useState} from "react";
+import {useMemo} from "react";
+import {useIsClient} from "@/hooks/use-is-client";
 
 function fnv1a32(input: string): number {
     let hash = 0x811c9dc5;
@@ -42,14 +43,12 @@ const contributorData = [
 export default function AboutPage() {
     const t = useTranslations("About");
 
-    const [mounted, setMounted] = useState(false);
-    const [contributors, setContributors] = useState(contributorData);
+    const isClient = useIsClient();
+    const contributors = useMemo(
+        () => [...contributorData].sort((a, b) => fnv1a32(a.name) - fnv1a32(b.name)),
+        []
+    );
     const feedbackEmail = process.env.NEXT_PUBLIC_FEEDBACK_EMAIL!;
-
-    useEffect(() => {
-        setContributors([...contributorData].sort(() => Math.random() - 0.5));
-        setMounted(true);
-    }, []);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-var(--header-height))] py-12 px-4">
@@ -73,7 +72,7 @@ export default function AboutPage() {
                         {t("behindTheScenes")}
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left min-h-[100px]">
-                        {mounted && contributors.map((person) => (
+                        {isClient && contributors.map((person) => (
                             <Card key={person.name}
                                   className="overflow-hidden border-none bg-sidebar/50 backdrop-blur-sm transition-all hover:bg-sidebar group">
                                 <CardContent className="p-6 flex items-center gap-5">
@@ -113,7 +112,7 @@ export default function AboutPage() {
                         <p className="max-w-md mx-auto opacity-90" suppressHydrationWarning>
                             {t("feedbackDescription", {email: feedbackEmail})}
                         </p>
-                        {mounted ? (
+                        {isClient ? (
                             <a
                                 href={`mailto:${feedbackEmail}`}
                                 className="inline-flex h-10 items-center justify-center rounded-full bg-primary-foreground px-6 text-sm font-medium text-primary transition-colors hover:bg-primary-foreground/90"

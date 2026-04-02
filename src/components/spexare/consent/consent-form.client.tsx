@@ -27,7 +27,7 @@ export function ConsentForm({defaultValues, types, onSubmit, onCancel, isPending
         handleSubmit,
         control,
         formState: {errors},
-    } = useForm<ConsentFormInput, any, ConsentFormOutput>({
+    } = useForm<ConsentFormInput, unknown, ConsentFormOutput>({
         resolver: zodResolver(consentFormSchema),
         defaultValues: {
             typeId: defaultValues?.typeId ?? (consentTypes[0]?.id || ""),

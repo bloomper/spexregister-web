@@ -36,7 +36,7 @@ export function TaskForm({
         control,
         setValue,
         formState: {errors},
-    } = useForm<TaskFormInput, any, TaskFormOutput>({
+    } = useForm<TaskFormInput, unknown, TaskFormOutput>({
         resolver: zodResolver(taskFormSchema),
         defaultValues: {
             name: item?.name ?? "",

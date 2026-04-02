@@ -12,9 +12,9 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface DataTableDeleteDialogsProps {
-    deleteItem: any;
-    setDeleteItem: (item: any) => void;
+interface DataTableDeleteDialogsProps<T> {
+    deleteItem: T | null;
+    setDeleteItem: (item: T | null) => void;
     isBulkDeleting: boolean;
     setIsBulkDeleting: (open: boolean) => void;
     isPending: boolean;
@@ -22,15 +22,15 @@ interface DataTableDeleteDialogsProps {
     handleBulkDelete: () => void;
 }
 
-export function DataTableDeleteDialogs({
-                                           deleteItem,
-                                           setDeleteItem,
-                                           isBulkDeleting,
-                                           setIsBulkDeleting,
-                                           isPending,
-                                           handleDelete,
-                                           handleBulkDelete,
-                                       }: DataTableDeleteDialogsProps) {
+export function DataTableDeleteDialogs<T>({
+                                              deleteItem,
+                                              setDeleteItem,
+                                              isBulkDeleting,
+                                              setIsBulkDeleting,
+                                              isPending,
+                                              handleDelete,
+                                              handleBulkDelete,
+                                          }: DataTableDeleteDialogsProps<T>) {
     const t = useTranslations();
 
     return (

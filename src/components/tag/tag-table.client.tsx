@@ -37,6 +37,7 @@ import {columnHelper} from "@/components/data-table-columns.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
+import {useIsClient} from "@/hooks/use-is-client";
 
 
 export const columns: ColumnDef<Tag>[] = [
@@ -53,7 +54,7 @@ export function TagTable({
 }) {
     const t = useTranslations();
     const router = useRouter();
-    const [mounted, setMounted] = useState(false);
+    const isClient = useIsClient();
     const [filterQuery, setFilterQuery] = useState("");
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
 
@@ -73,11 +74,6 @@ export function TagTable({
             setFilterQuery("");
         }
     );
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
 
     const buildFilterString = (query: string) => {
         const parts: string[] = [];
@@ -103,7 +99,7 @@ export function TagTable({
         return () => clearTimeout(timer);
     }, [filterQuery]);
 
-    if (!mounted) {
+    if (!isClient) {
         return <DataTableSkeleton columnCount={4} rowCount={15}/>;
     }
 
@@ -119,9 +115,9 @@ export function TagTable({
                 meta={{
                     setEditItem,
                     setDeleteItem,
-                    setFilter: (fn: any) => {
-                        setFilterQueryRef.current = typeof fn === 'function' && fn.length === 0 ? fn() : fn;
-                    },
+                    setFilter: (handler) => {
+                        setFilterQueryRef.current = handler;
+                    }
                 }}
             >
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
@@ -163,7 +159,7 @@ export function TagTable({
                             <ExportButton
                                 exportAction={exportAction}
                                 selectedIds={selectedRows.map(r => r.id)}
-                                filterQuery={lastFilterQueryRef.current}
+                                getFilterQuery={() => lastFilterQueryRef.current}
                                 requiresReportType={false}
                             />
 

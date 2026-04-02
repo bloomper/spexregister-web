@@ -39,7 +39,7 @@ export function AddressForm({
         handleSubmit,
         control,
         formState: {errors},
-    } = useForm<AddressFormInput, any, AddressFormOutput>({
+    } = useForm<AddressFormInput, unknown, AddressFormOutput>({
         resolver: zodResolver(addressFormSchema),
         defaultValues: {
             typeId: defaultValues?.typeId ?? (addressTypes[0]?.id || ""),

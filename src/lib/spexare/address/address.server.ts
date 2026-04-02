@@ -1,6 +1,7 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
+import {AddressCreate, AddressUpdate} from "@/gql/graphql";
 
 export const SummaryFields = `
     ...AddressSummary
@@ -62,7 +63,7 @@ const DeleteMutation = /* GraphQL */ `
     }
 `;
 
-export async function create(spexareId: string, typeId: string, input: any) {
+export async function create(spexareId: string, typeId: string, input: AddressCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {spexareId, typeId, input})
         .toPromise();
@@ -78,7 +79,7 @@ export async function create(spexareId: string, typeId: string, input: any) {
     return result.data?.addressCreate;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: any) {
+export async function update(spexareId: string, typeId: string, id: string, input: AddressUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             spexareId,
@@ -112,4 +113,3 @@ export async function del(spexareId: string, typeId: string, id: string) {
 
     return result.data?.addressDelete;
 }
-

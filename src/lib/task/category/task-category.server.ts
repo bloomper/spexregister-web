@@ -7,7 +7,9 @@ import {
     SortDirection,
     TaskCategory,
     TaskCategoryConnection,
-    TaskCategoryEdge
+    TaskCategoryCreate,
+    TaskCategoryEdge,
+    TaskCategoryUpdate
 } from "@/gql/graphql";
 import {TaskCategoryPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
@@ -140,7 +142,7 @@ export async function getAll(args?: { full?: boolean }): Promise<TaskCategory[]>
     return items;
 }
 
-export async function create(input: any) {
+export async function create(input: TaskCategoryCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {input})
         .toPromise();
@@ -156,7 +158,7 @@ export async function create(input: any) {
     return result.data?.taskCategoryCreate;
 }
 
-export async function update(id: string, input: any) {
+export async function update(id: string, input: TaskCategoryUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

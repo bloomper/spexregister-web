@@ -8,7 +8,7 @@ import {ImpexType, JobReference} from "@/gql/graphql";
 import {useJobTracker} from "@/hooks/use-job-tracker.client";
 import {useTranslations} from "next-intl";
 import {cn} from "@/utils/utils";
-import {useDropzone} from "react-dropzone";
+import {type FileRejection, useDropzone} from "react-dropzone";
 import {
     Dialog,
     DialogContent,
@@ -37,7 +37,7 @@ export function ImportButton({ importAction }: ImportButtonProps) {
     const allowedTypes = useMemo(() => [ImpexType.Excel, ImpexType.ExcelXls], []);
 
     const onDrop = useCallback(
-        (acceptedFiles: File[], fileRejections: any[]) => {
+        (acceptedFiles: File[], fileRejections: FileRejection[]) => {
             if (fileRejections.length > 0) {
                 const rejection = fileRejections[0];
                 const code = rejection?.errors?.[0]?.code;
@@ -85,8 +85,14 @@ export function ImportButton({ importAction }: ImportButtonProps) {
             toast.info(t("Impex.importStarted"));
             setOpen(false);
             reset();
-        } catch (e: any) {
-            const statusCode = e.response?.status || "ERROR";
+        } catch (error) {
+            const statusCode =
+                typeof error === "object" &&
+                error !== null &&
+                "response" in error &&
+                typeof (error as { response?: { status?: number } }).response?.status === "number"
+                    ? (error as { response: { status: number } }).response.status
+                    : "ERROR";
             toast.error(t("Impex.importFailed", {statusCode}));
         } finally {
             setLoading(false);

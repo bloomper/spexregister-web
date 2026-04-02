@@ -30,7 +30,7 @@ export function TaskCategoryForm({item, onSuccess}: TaskCategoryFormProps) {
         handleSubmit,
         control,
         formState: {errors},
-    } = useForm<TaskCategoryFormInput, any, TaskCategoryFormOutput>({
+    } = useForm<TaskCategoryFormInput, unknown, TaskCategoryFormOutput>({
         resolver: zodResolver(taskCategoryFormSchema),
         defaultValues: {
             name: item?.name ?? "",

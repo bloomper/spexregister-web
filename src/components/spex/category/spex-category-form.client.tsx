@@ -38,7 +38,7 @@ export function SpexCategoryForm({item, onSuccess}: SpexCategoryFormProps) {
         handleSubmit,
         control,
         formState: {errors},
-    } = useForm<SpexCategoryFormInput, any, SpexCategoryFormOutput>({
+    } = useForm<SpexCategoryFormInput, unknown, SpexCategoryFormOutput>({
         resolver: zodResolver(spexCategoryFormSchema),
         defaultValues: {
             name: item?.name ?? "",

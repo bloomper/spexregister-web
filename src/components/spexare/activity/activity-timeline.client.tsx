@@ -5,9 +5,10 @@ import {Drama, History} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {DataEmpty} from "@/components/data-empty";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Activity, Actor, TaskActivity} from "@/gql/graphql";
 
 interface ActivityTimelineProps {
-    activities: any[];
+    activities: Activity[];
 }
 
 export function ActivityTimeline({activities}: ActivityTimelineProps) {
@@ -31,7 +32,9 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
         <div
             className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent pt-4 pb-8">
             <TooltipProvider>
-                {sortedActivities.map((activity) => (
+                {sortedActivities.map((activity) => {
+                    const taskActivities = activity.taskActivities?.filter((item): item is TaskActivity => !!item) ?? [];
+                    return (
                     <div key={activity.id} className="relative pl-12">
                         <div
                             className="absolute left-0 flex items-center justify-center w-10 h-10 rounded-full border bg-background shadow-sm z-10">
@@ -64,8 +67,8 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                             </div>
 
                             <div className="flex flex-wrap gap-2 pt-1">
-                                {activity.taskActivities?.map((taskActivity: any) => {
-                                    const actors = taskActivity.actors || [];
+                                {taskActivities.map((taskActivity) => {
+                                    const actors = taskActivity.actors?.filter((actor): actor is Actor => !!actor) ?? [];
                                     const hasActors = actors.length > 0;
 
                                     return (
@@ -93,7 +96,7 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
 
                                             {hasActors && (
                                                 <div className="flex flex-col gap-1 pl-1">
-                                                    {actors.map((actor: any) => (
+                                                    {actors.map((actor) => (
                                                         <div key={actor.id}
                                                              className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] py-0.5 border-l-2 border-primary/20 pl-2">
                                                             {actor.role && (
@@ -130,7 +133,7 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                             </div>
                         </div>
                     </div>
-                ))}
+                )})}
             </TooltipProvider>
         </div>
     );

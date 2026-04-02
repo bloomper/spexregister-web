@@ -7,7 +7,7 @@ import {Edit2, Trash2, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {deleteActorAction, deleteTaskActivityAction} from "@/app/(app)/spexare/actions.server";
 import {Badge} from "@/components/ui/badge";
-import {Task, TaskCategory, Type, TypeType} from "@/gql/graphql";
+import {Actor, Task, TaskActivity, TaskCategory, Type, TypeType} from "@/gql/graphql";
 import {ActorForm} from "@/components/spexare/activity/task-activity/actor/actor-form.client";
 import {TaskActivityForm} from "@/components/spexare/activity/task-activity/task-activity-form.client";
 import {cn} from "@/utils/utils";
@@ -30,7 +30,7 @@ interface TaskActivityManagerProps {
     types: Type[];
     tasks: Task[];
     taskCategories: TaskCategory[];
-    initialTaskActivities: any[];
+    initialTaskActivities: TaskActivity[];
 }
 
 export function TaskActivityManager({
@@ -79,7 +79,7 @@ export function TaskActivityManager({
                 <div className="space-y-2">
                     {initialTaskActivities.map((taskActivity) => {
                         const isEditingThisTask = editingTaskActivityId === taskActivity.id;
-                        const actors = taskActivity.actors || [];
+                        const actors = taskActivity.actors?.filter((actor): actor is Actor => !!actor) ?? [];
                         const needsActor = taskActivity.task?.category?.actorPresent;
 
                         return (
@@ -91,7 +91,7 @@ export function TaskActivityManager({
                                             {taskActivity.task?.name}
                                         </Badge>
 
-                                        {actors.map((actor: any) => (
+                                        {actors.map((actor) => (
                                             <div key={actor.id}
                                                  className="text-[11px] text-muted-foreground font-medium italic bg-muted/50 pl-2 pr-1 py-0.5 rounded-sm inline-flex items-center gap-1.5 border border-border/40">
                                                 {actor.role && (
@@ -203,7 +203,7 @@ export function TaskActivityManager({
                                             item={taskActivity}
                                             tasks={tasks}
                                             taskCategories={taskCategories}
-                                            existingTaskIds={initialTaskActivities.map(ta => ta.task?.id).filter(Boolean)}
+                                            existingTaskIds={initialTaskActivities.map(ta => ta.task?.id).filter((id): id is string => Boolean(id))}
                                             onSuccess={() => setEditingTaskActivityId(null)}
                                         />
                                     </div>
@@ -217,7 +217,7 @@ export function TaskActivityManager({
                                             activityId={activityId}
                                             taskActivityId={taskActivity.id}
                                             vocals={vocals}
-                                            item={actors.find((a: any) => a.id === editingActorId)}
+                                            item={actors.find((actor) => actor.id === editingActorId)}
                                             onSuccess={() => setEditingActorId(null)}
                                         />
                                     </div>
@@ -238,7 +238,7 @@ export function TaskActivityManager({
                     activityId={activityId}
                     tasks={tasks}
                     taskCategories={taskCategories}
-                    existingTaskIds={initialTaskActivities.map(ta => ta.task?.id).filter(Boolean)}
+                    existingTaskIds={initialTaskActivities.map(ta => ta.task?.id).filter((id): id is string => Boolean(id))}
                 />
             </div>
         </div>

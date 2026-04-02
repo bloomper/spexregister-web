@@ -23,6 +23,7 @@ interface ExportButtonProps {
     exportAction: ExportAction | ExportActionWithReportType;
     selectedIds?: string[];
     filterQuery?: string;
+    getFilterQuery?: () => string | null;
     requiresReportType?: boolean;
 }
 
@@ -30,6 +31,7 @@ export function ExportButton({
                                  exportAction,
                                  selectedIds = [],
                                  filterQuery,
+                                 getFilterQuery,
                                  requiresReportType = false
                              }: ExportButtonProps) {
     const t = useTranslations();
@@ -42,7 +44,7 @@ export function ExportButton({
         setLoading(true);
         try {
             const ids = selectedIds.length > 0 ? selectedIds : null;
-            const filter = filterQuery || null;
+            const filter = getFilterQuery?.() ?? filterQuery ?? null;
 
             let result: JobReference;
 
@@ -54,8 +56,9 @@ export function ExportButton({
 
             setActiveJobId(result.id);
             toast.info(t("Impex.exportStarted"));
-        } catch (e: any) {
-            toast.error(t("Impex.exportFailed"), {description: e.message});
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            toast.error(t("Impex.exportFailed"), {description: message});
         } finally {
             setLoading(false);
         }

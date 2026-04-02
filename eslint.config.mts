@@ -8,7 +8,17 @@ export default defineConfig([
     ...nextVitals,
     ...nextTs,
     {settings: {react: {version: "19.2.4"}}},
-    globalIgnores(["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "package-lock.json"]),
+    globalIgnores([
+        "node_modules/**",
+        ".next/**",
+        "out/**",
+        "build/**",
+        "next-env.d.ts",
+        "package-lock.json",
+        "src/components/ui/**",
+        "src/gql/**",
+        "src/app/globals.css",
+    ]),
     {files: ["**/*.json"], plugins: {json}, language: "json/json", extends: ["json/recommended"]},
     {files: ["**/*.css"], plugins: {css}, language: "css/css", extends: ["css/recommended"]},
 ]);

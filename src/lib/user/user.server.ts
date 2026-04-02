@@ -1,7 +1,18 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {Authority, ImpexType, JobReference, SortDirection, State, User, UserConnection, UserEdge} from "@/gql/graphql";
+import {
+    Authority,
+    ImpexType,
+    JobReference,
+    SortDirection,
+    State,
+    User,
+    UserConnection,
+    UserCreate,
+    UserEdge,
+    UserUpdate
+} from "@/gql/graphql";
 import {UserPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import {FullFragment as SpexareFullFragment} from "@/lib/spexare";
@@ -186,7 +197,7 @@ export async function me(): Promise<User | null | undefined> {
     return result.data?.me;
 }
 
-export async function create(input: any) {
+export async function create(input: UserCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {input})
         .toPromise();
@@ -202,7 +213,7 @@ export async function create(input: any) {
     return result.data?.userCreate;
 }
 
-export async function update(id: string, input: any) {
+export async function update(id: string, input: UserUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

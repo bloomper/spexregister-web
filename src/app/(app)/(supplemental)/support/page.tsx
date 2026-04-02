@@ -2,16 +2,12 @@
 
 import {useTranslations} from "next-intl";
 import {Mail, Wrench} from "lucide-react";
-import {useEffect, useState} from "react";
+import {useIsClient} from "@/hooks/use-is-client";
 
 export default function SupportPage() {
     const t = useTranslations("Support");
-    const [mounted, setMounted] = useState(false);
+    const isClient = useIsClient();
     const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL!;
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-var(--header-height))] py-12 px-4">
@@ -41,7 +37,7 @@ export default function SupportPage() {
                         <p className="max-w-md mx-auto opacity-90" suppressHydrationWarning>
                             {t("contactDescription", {email: supportEmail})}
                         </p>
-                        {mounted ? (
+                        {isClient ? (
                             <a
                                 href={`mailto:${supportEmail}`}
                                 className="inline-flex h-10 items-center justify-center rounded-full bg-primary-foreground px-6 text-sm font-medium text-primary transition-colors hover:bg-primary-foreground/90"

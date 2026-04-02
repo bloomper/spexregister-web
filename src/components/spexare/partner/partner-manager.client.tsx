@@ -13,15 +13,17 @@ import {Input} from "@/components/ui/input";
 import {Badge} from "@/components/ui/badge";
 import {getProxiedImageUrl} from "@/utils/utils";
 
+type PartnerLike = Spexare | SpexarePartner;
+
 interface PartnerManagerProps {
     spexareId: string;
-    initialPartner?: SpexarePartner | null;
+    initialPartner?: PartnerLike | null;
 }
 
 export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
-    const [partner, setPartner] = useState<SpexarePartner | null>(initialPartner || null);
+    const [partner, setPartner] = useState<PartnerLike | null>(initialPartner || null);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<Spexare[]>([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -70,7 +72,7 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
                 toast.success(t("Common.updateSuccess"));
                 const selected = searchResults.find(s => s.id === id);
                 if (selected) {
-                    setPartner(selected as any);
+                    setPartner(selected);
                 }
                 setSearchQuery("");
                 setSearchResults([]);

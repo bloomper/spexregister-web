@@ -5,13 +5,13 @@ import {useCallback, useState, useTransition} from "react";
 import {Button} from "@/components/ui/button";
 import {ImagePlus, Loader2, X} from "lucide-react";
 import {toast} from "sonner";
-import {useDropzone} from "react-dropzone";
+import {type FileRejection, useDropzone} from "react-dropzone";
 import {getProxiedImageUrl} from "@/utils/utils";
 
 interface ImageUploadProps {
     initialImageUrl?: string | null;
-    onUpload?: (formData: FormData) => Promise<any>;
-    onDelete?: () => Promise<any>;
+    onUpload?: (formData: FormData) => Promise<unknown>;
+    onDelete?: () => Promise<unknown>;
     onFileSelect?: (file: File | null) => void;
     onFileDelete?: () => void;
 }
@@ -23,7 +23,7 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
         return getProxiedImageUrl(initialImageUrl, Date.now().toString());
     });
 
-    const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
+    const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
         if (fileRejections.length > 0) {
             const rejection = fileRejections[0];
             if (rejection.errors[0]?.code === "file-too-large") {

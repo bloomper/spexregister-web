@@ -3,13 +3,16 @@ import 'server-only';
 import {getClient} from '@/lib/urql.server';
 import {
     AggregationFilterInput,
+    Facet,
     ImpexType,
     JobReference,
     ReportType,
     SortDirection,
     Spexare,
     SpexareConnection,
+    SpexareCreate,
     SpexareEdge,
+    SpexareUpdate,
     SpexareWithFacetsConnection
 } from "@/gql/graphql";
 import {SpexarePage, SpexareWithFacetsPage} from "@/types/pagination";
@@ -276,15 +279,15 @@ export async function search(args: {
     }
 
     const connection = result.data?.spexareSearchPaged;
-    const page = mapConnection<Spexare, SpexareEdge>(connection as any);
+    const page = mapConnection<Spexare, SpexareEdge>(connection);
 
     return {
         ...page,
-        facets: (connection?.facets ?? []).filter((f): f is any => Boolean(f))
+        facets: (connection?.facets ?? []).filter((f): f is Facet => Boolean(f))
     };
 }
 
-export async function create(input: any) {
+export async function create(input: SpexareCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {input})
         .toPromise();
@@ -312,7 +315,7 @@ export async function get(id: string) {
     return result.data?.spexare;
 }
 
-export async function update(id: string, input: any) {
+export async function update(id: string, input: SpexareUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

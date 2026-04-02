@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {useEffect, useMemo, useState} from "react";
+import {useMemo} from "react";
 import {
     Clapperboard,
     ClipboardList,
@@ -13,7 +13,8 @@ import {
     Tag,
     UserRound,
     Users,
-    Wrench
+    Wrench,
+    type LucideIcon
 } from "lucide-react";
 
 import {NavMain} from "@/components/nav-main.client";
@@ -35,7 +36,15 @@ import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {usePathname} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {Spexare} from "@/gql/graphql";
+import {useIsClient} from "@/hooks/use-is-client";
 
+interface NavItem {
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+    items?: NavItem[];
+}
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     roles: Role[];
@@ -45,13 +54,13 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
     const pathname = usePathname();
     const t = useTranslations();
-    const [mounted, setMounted] = useState(false);
+    const isClient = useIsClient();
 
-    const navigation = useMemo(() => {
+    const navigation = useMemo((): { main: NavItem[]; secondary: NavItem[] } => {
         const isCurrentUserAdmin = isAdmin(roles);
         const isCurrentUserAdminOrEditor = isAdminOrEditor(roles);
 
-        const mainItems = [
+        const mainItems: NavItem[] = [
             {
                 title: t("Home.heading"),
                 url: "/",
@@ -154,7 +163,7 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                     {title: t("Common.manage"), url: "/users/manage"},
                     {title: t("Common.create"), url: "/users/create"},
                 ],
-            } as any);
+            });
         }
 
         if (isCurrentUserAdminOrEditor) {
@@ -166,7 +175,7 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                 items: [
                     {title: t("Common.manage"), url: "/impex/manage"},
                 ],
-            } as any);
+            });
         }
 
         return {
@@ -185,10 +194,6 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
             ]
         };
     }, [roles, pathname, t]);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     return (
         <Sidebar collapsible="icon"
@@ -217,7 +222,7 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                {mounted ? (
+                {isClient ? (
                     <>
                         <NavMain items={navigation.main}/>
                         <NavSecondary items={navigation.secondary} className="mt-auto"/>
@@ -235,7 +240,7 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                 )}
             </SidebarContent>
             <SidebarFooter>
-                {mounted && <NavUser spexare={spexare}/>}
+                {isClient && <NavUser spexare={spexare}/>}
             </SidebarFooter>
         </Sidebar>
     );

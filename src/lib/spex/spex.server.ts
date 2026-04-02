@@ -1,7 +1,7 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {ImpexType, JobReference, SortDirection, Spex, SpexConnection, SpexEdge} from "@/gql/graphql";
+import {ImpexType, JobReference, SortDirection, Spex, SpexConnection, SpexCreate, SpexEdge, SpexUpdate} from "@/gql/graphql";
 import {SpexPage} from "@/types/pagination";
 import axios from "@/lib/axios.server";
 import {mapConnection} from "@/utils/utils.server";
@@ -172,7 +172,7 @@ export async function getAll(args?: { full?: boolean }): Promise<Spex[]> {
     return items;
 }
 
-export async function create(input: any) {
+export async function create(input: SpexCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {input})
         .toPromise();
@@ -188,7 +188,7 @@ export async function create(input: any) {
     return result.data?.spexCreate;
 }
 
-export async function update(id: string, input: any) {
+export async function update(id: string, input: SpexUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

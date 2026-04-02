@@ -5,7 +5,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
-import {Facet, Spexare} from "@/gql/graphql";
+import {Country, Facet, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/graphql";
 import {CursorPageInfo, SpexarePage} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
@@ -42,7 +42,7 @@ export function SpexareGrid({
                                 spex = [],
                                 spexCategories = [],
                             }: {
-    countries: any[];
+    countries: Country[];
     initialItems?: Spexare[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
@@ -51,12 +51,12 @@ export function SpexareGrid({
     facets?: Facet[];
     currentSpexareId?: string | null;
     canManage?: boolean;
-    types?: any[];
-    tags?: any[];
-    tasks?: any[];
-    taskCategories?: any[];
-    spex?: any[];
-    spexCategories?: any[];
+    types?: Type[];
+    tags?: TagType[];
+    tasks?: Task[];
+    taskCategories?: TaskCategory[];
+    spex?: Spex[];
+    spexCategories?: SpexCategory[];
 }) {
     const t = useTranslations();
     const router = useRouter();

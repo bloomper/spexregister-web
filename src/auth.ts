@@ -86,7 +86,7 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
         async session({session, token}) {
             session.access_token = token.access_token as string;
             session.roles = (token.roles as Role[]) || [];
-            session.error = token.error as any;
+            session.error = token.error === "RefreshTokenError" ? "RefreshTokenError" : undefined;
 
             if (session.user) {
                 session.user.id = token.sub as string;

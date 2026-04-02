@@ -8,6 +8,7 @@ import {ConsentManager} from "@/components/consent-manager.client";
 import {useRouter} from "next/navigation";
 import {Toaster} from "@/components/ui/sonner.client";
 import {SessionProvider} from "next-auth/react";
+import type {AbstractIntlMessages} from "use-intl/core";
 
 export default function Provider({
                                      children,
@@ -16,7 +17,7 @@ export default function Provider({
                                  }: Readonly<{
     children: React.ReactNode;
     locale: string;
-    messages: any;
+    messages: AbstractIntlMessages;
 }>) {
     const router = useRouter();
     const [locale, setLocale] = useState(initialLocale);

@@ -42,6 +42,7 @@ import {columnHelper} from "@/components/data-table-columns.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
+import {useIsClient} from "@/hooks/use-is-client";
 
 
 export const columns: ColumnDef<Spex>[] = [
@@ -128,7 +129,7 @@ export function SpexTable({
 }) {
     const t = useTranslations();
     const router = useRouter();
-    const [mounted, setMounted] = useState(false);
+    const isClient = useIsClient();
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
         new Set(categories.map(c => c.id))
@@ -152,10 +153,6 @@ export function SpexTable({
             setSelectedCategories(new Set(categories.map(c => c.id)));
         }
     );
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     const buildFilterString = (query: string, selectedCategories: Set<string>, categories: SpexCategory[]) => {
         const parts: string[] = ["parent:NULL"];
@@ -187,7 +184,7 @@ export function SpexTable({
         return () => clearTimeout(timer);
     }, [filterQuery, selectedCategories, categories]);
 
-    if (!mounted) {
+    if (!isClient) {
         return <DataTableSkeleton columnCount={8} rowCount={15}/>;
     }
 
@@ -203,9 +200,9 @@ export function SpexTable({
                 meta={{
                     setEditItem,
                     setDeleteItem,
-                    setFilter: (fn: any) => {
-                        setFilterQueryRef.current = typeof fn === 'function' && fn.length === 0 ? fn() : fn;
-                    },
+                    setFilter: (handler) => {
+                        setFilterQueryRef.current = handler;
+                    }
                 }}
             >
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
@@ -261,7 +258,7 @@ export function SpexTable({
                             <ExportButton
                                 exportAction={exportAction}
                                 selectedIds={selectedRows.map(r => r.id)}
-                                filterQuery={lastFilterQueryRef.current}
+                                getFilterQuery={() => lastFilterQueryRef.current}
                                 requiresReportType={false}
                             />
 

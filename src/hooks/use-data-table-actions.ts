@@ -6,8 +6,8 @@ import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 
 export function useDataTableActions<T extends { id: string }>(
-    deleteAction: (id: string) => Promise<any>,
-    bulkDeleteAction?: (ids: string[]) => Promise<any>,
+    deleteAction: (id: string) => Promise<unknown>,
+    bulkDeleteAction?: (ids: string[]) => Promise<unknown>,
     onSuccess?: () => void,
 ) {
     const t = useTranslations();

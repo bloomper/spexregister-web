@@ -42,12 +42,12 @@ export function getProxiedImageUrl(url?: string | null, lastModifiedAt?: string 
     return `/api/image-download-proxy?${params.toString()}`;
 }
 
-export function translateError(t: any, error?: { message?: string }) {
+export function translateError<T extends { message?: string }>(t: (key: string) => string, error?: T) {
     if (!error?.message) {
         return error;
     }
     return {
         ...error,
-        message: t(error.message as any)
+        message: t(error.message)
     };
 }

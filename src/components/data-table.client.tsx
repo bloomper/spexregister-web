@@ -22,12 +22,19 @@ import {DataEmpty} from "@/components/data-empty";
 import {cn} from "@/utils/utils";
 import {Spinner} from "@/components/ui/spinner";
 
-interface DataTableProps<TData, TValue> {
+export type DataTableMeta<TData> = {
+    setRefresh?: (handler: () => void) => void;
+    setFilter?: (handler: (filter: string) => void) => void;
+    setEditItem?: (item: TData | null) => void;
+    setDeleteItem?: (item: TData | null) => void;
+};
+
+interface DataTableProps<TData extends { id: string }, TValue> {
     columns: ColumnDef<TData, TValue>[]
     initialData: CursorPage<TData>
     initialPageSize?: number
     initialSorting?: SortingState
-    meta?: Record<string, any>
+    meta?: DataTableMeta<TData>
     children?: React.ReactNode
     onRowClick?: (data: TData) => void
     onSelectionChange?: (selectedRows: TData[]) => void
@@ -44,7 +51,7 @@ interface DataTableProps<TData, TValue> {
     }) => Promise<CursorPage<TData>>
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: string }, TValue>({
                                              columns,
                                              initialData,
                                              initialPageSize = 15,
@@ -85,7 +92,7 @@ export function DataTable<TData, TValue>({
         let sort = args.sort;
         if (!sort && currentSort) {
             const column = table.getColumn(currentSort.id);
-            const sortKey = (column?.columnDef.meta as any)?.sortKey;
+            const sortKey = (column?.columnDef.meta as { sortKey?: string } | undefined)?.sortKey;
             sort = [sortKey ?? currentSort.id];
         }
         const direction = args.direction || (currentSort ? (currentSort.desc ? SortDirection.Desc : SortDirection.Asc) : undefined);
@@ -113,12 +120,8 @@ export function DataTable<TData, TValue>({
     extraMetaRef.current = extraMeta;
 
     useEffect(() => {
-        if (extraMetaRef.current?.setRefresh) {
-            extraMetaRef.current.setRefresh(() => refresh);
-        }
-        if (extraMetaRef.current?.setFilter) {
-            extraMetaRef.current.setFilter(() => handleFilterChange);
-        }
+        extraMetaRef.current?.setRefresh?.(refresh);
+        extraMetaRef.current?.setFilter?.(handleFilterChange);
     }, [handleFilterChange, refresh]);
 
     const handlePageChange = (direction: "next" | "prev" | "first") => {
@@ -150,10 +153,10 @@ export function DataTable<TData, TValue>({
             let sortId = sortField?.id;
             if (sortField) {
                 const column = table.getColumn(sortField.id);
-                const sortKey = (column?.columnDef.meta as any)?.sortKey;
-                if (sortKey) {
-                    sortId = sortKey;
-                }
+            const sortKey = (column?.columnDef.meta as { sortKey?: string } | undefined)?.sortKey;
+            if (sortKey) {
+                sortId = sortKey;
+            }
             }
 
             void handleFetch({
@@ -164,7 +167,7 @@ export function DataTable<TData, TValue>({
         },
         enableRowSelection: true,
         onRowSelectionChange: setRowSelection,
-        getRowId: (row: any) => row.id,
+        getRowId: (row) => row.id,
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
         manualSorting: true,

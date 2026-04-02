@@ -1,7 +1,7 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {ImpexType, JobReference, News, NewsConnection, NewsEdge, SortDirection} from "@/gql/graphql";
+import {Event, ImpexType, JobReference, News, NewsConnection, NewsCreate, NewsEdge, NewsUpdate, SortDirection} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
@@ -116,7 +116,7 @@ export async function getPaged(args: {
     return mapConnection<News, NewsEdge>(result.data?.newsPaged);
 }
 
-export async function create(input: any) {
+export async function create(input: NewsCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {input})
         .toPromise();
@@ -132,7 +132,7 @@ export async function create(input: any) {
     return result.data?.newsCreate;
 }
 
-export async function update(id: string, input: any) {
+export async function update(id: string, input: NewsUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {

@@ -7,7 +7,9 @@ import {
     SortDirection,
     SpexCategory,
     SpexCategoryConnection,
-    SpexCategoryEdge
+    SpexCategoryCreate,
+    SpexCategoryEdge,
+    SpexCategoryUpdate
 } from "@/gql/graphql";
 import {SpexCategoryPage} from "@/types/pagination";
 import axios from "@/lib/axios.server";
@@ -141,7 +143,7 @@ export async function getAll(args?: { full?: boolean }): Promise<SpexCategory[]>
     return items;
 }
 
-export async function create(input: any) {
+export async function create(input: SpexCategoryCreate) {
     const result = await getClient()
         .mutation(CreateMutation, {input})
         .toPromise();
@@ -157,7 +159,7 @@ export async function create(input: any) {
     return result.data?.spexCategoryCreate;
 }
 
-export async function update(id: string, input: any) {
+export async function update(id: string, input: SpexCategoryUpdate) {
     const result = await getClient()
         .mutation(UpdateMutation, {
             input: {
