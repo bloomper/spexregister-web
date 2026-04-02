@@ -5,7 +5,7 @@ import {getTranslations} from "next-intl/server";
 import {cookies} from "next/headers";
 import Provider from "@/app/provider.client";
 import {AuthCheck} from "@/components/auth-check.client";
-import {Suspense} from "react";
+import React, {Suspense} from "react";
 import {normalizeLocale} from "@/utils/utils.server";
 import {Spinner} from "@/components/ui/spinner";
 

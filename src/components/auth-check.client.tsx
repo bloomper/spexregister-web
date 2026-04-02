@@ -1,7 +1,7 @@
 "use client";
 
 import {signOut, useSession} from "next-auth/react";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 
 export function AuthCheck({children}: { children: React.ReactNode }) {
     const {data: session} = useSession();

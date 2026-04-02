@@ -6,6 +6,7 @@ import {Separator} from "@/components/ui/separator";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {useTranslations} from "next-intl";
 import {Input} from "@/components/ui/input";
+import {useMemo, useState} from "react";
 
 interface DataFilterProps {
     title?: string
@@ -29,7 +30,7 @@ export function DataFilter({
                                onClear,
                            }: DataFilterProps) {
     const t = useTranslations();
-    const [searchTerm, setSearchTerm] = React.useState("");
+    const [searchTerm, setSearchTerm] = useState("");
 
     const normalizedSearch = searchTerm.trim().toLowerCase();
     const filteredOptions = options.filter(option => {
@@ -40,7 +41,7 @@ export function DataFilter({
         const groupMatch = option.groupLabel?.toLowerCase().includes(normalizedSearch);
         return labelMatch || groupMatch;
     });
-    const groupedOptions = React.useMemo(() => {
+    const groupedOptions = useMemo(() => {
         const entries: { label?: string; options: typeof options }[] = [];
         const groupIndex = new Map<string, number>();
 
@@ -83,7 +84,7 @@ export function DataFilter({
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto min-w-[200px] max-w-[300px] p-0" align="start">
+            <PopoverContent className="w-auto min-w-50 max-w-75 p-0" align="start">
                 <div className="flex flex-col p-1">
                     {options.length > 5 && (
                         <div className="px-2 py-2">

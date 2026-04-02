@@ -1,4 +1,6 @@
 /* eslint-disable */
+import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/core';
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = T | null | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1749,3 +1751,230 @@ export type UserUpdate = {
     email: Scalars['Email']['input'];
     id: Scalars['ID']['input'];
 };
+
+export type TaggingSummaryFragment = { __typename?: 'Tag', id: string, name: string } & {
+    ' $fragmentName'?: 'TaggingSummaryFragment'
+};
+
+export type TaggingFullFragment = (
+    {
+        __typename?: 'Tag',
+        createdAt: any,
+        createdBy: string,
+        lastModifiedAt?: any | null,
+        lastModifiedBy?: string | null
+    }
+    & { ' $fragmentRefs'?: { 'TaggingSummaryFragment': TaggingSummaryFragment } }
+    ) & { ' $fragmentName'?: 'TaggingFullFragment' };
+
+export type StatisticsFieldsFragment =
+    {
+        __typename?: 'Statistics',
+        spexareCount?: any | null,
+        userCount?: any | null,
+        spexCount?: any | null,
+        spexRevivalCount?: any | null,
+        taskCount?: any | null,
+        spexareCountHistory?: Array<{ __typename?: 'History', label: string, count: any } | null> | null,
+        userCountHistory?: Array<{ __typename?: 'History', label: string, count: any } | null> | null,
+        spexCountHistory?: Array<{ __typename?: 'History', label: string, count: any } | null> | null,
+        spexRevivalCountHistory?: Array<{ __typename?: 'History', label: string, count: any } | null> | null,
+        taskCountHistory?: Array<{ __typename?: 'History', label: string, count: any } | null> | null
+    }
+    & { ' $fragmentName'?: 'StatisticsFieldsFragment' };
+
+export type StatisticsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StatisticsQuery = {
+    __typename?: 'Query', statistics?: (
+        { __typename?: 'Statistics' }
+        & { ' $fragmentRefs'?: { 'StatisticsFieldsFragment': StatisticsFieldsFragment } }
+        ) | null
+};
+
+export const TaggingSummaryFragmentDoc = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "TaggingSummary"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Tag"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "name"}
+            }]
+        }
+    }]
+} as unknown as DocumentNode<TaggingSummaryFragment, unknown>;
+export const TaggingFullFragmentDoc = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "TaggingFull"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Tag"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "FragmentSpread",
+                "name": {"kind": "Name", "value": "TaggingSummary"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "createdBy"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "lastModifiedBy"}
+            }]
+        }
+    }, {
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "TaggingSummary"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Tag"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "name"}
+            }]
+        }
+    }]
+} as unknown as DocumentNode<TaggingFullFragment, unknown>;
+export const StatisticsFieldsFragmentDoc = {
+    "kind": "Document", "definitions": [{
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "StatisticsFields"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Statistics"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "spexareCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexareCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "userCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "userCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "spexCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "spexRevivalCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexRevivalCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "taskCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "taskCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<StatisticsFieldsFragment, unknown>;
+export const StatisticsDocument = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "query",
+        "name": {"kind": "Name", "value": "Statistics"},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "statistics"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "StatisticsFields"}}]
+                }
+            }]
+        }
+    }, {
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "StatisticsFields"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Statistics"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "spexareCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexareCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "userCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "userCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "spexCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "spexRevivalCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexRevivalCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "taskCount"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "taskCountHistory"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "count"}
+                    }]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<StatisticsQuery, StatisticsQueryVariables>;

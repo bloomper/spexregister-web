@@ -135,7 +135,7 @@ export function ImportButton({importAction}: ImportButtonProps) {
                             <div
                                 {...getRootProps()}
                                 className={cn(
-                                    "relative flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 transition-colors min-h-[150px]",
+                                    "relative flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 transition-colors min-h-37.5",
                                     isDragActive ? "border-primary bg-primary/5" : "hover:bg-muted/50",
                                     loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                                 )}

@@ -1,7 +1,7 @@
 "use client";
 
 import {useTranslations} from "next-intl";
-import {useCallback, useState, useTransition} from "react";
+import React, {useCallback, useState, useTransition} from "react";
 import {Button} from "@/components/ui/button";
 import {ImagePlus, Loader2, X} from "lucide-react";
 import {toast} from "sonner";
@@ -96,7 +96,7 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
         <div className="space-y-2">
             <div
                 {...getRootProps()}
-                className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 transition-colors min-h-[150px] ${
+                className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 transition-colors min-h-37.5 ${
                     isDragActive ? "border-primary bg-primary/5" : "hover:bg-muted/50"
                 } ${isPending ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
             >
