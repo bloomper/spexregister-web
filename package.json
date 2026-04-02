@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "format": "prettier --write .",
     "gql-codegen": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --require dotenv/config --config codegen.ts dotenv_config_path=.env.local"
   },

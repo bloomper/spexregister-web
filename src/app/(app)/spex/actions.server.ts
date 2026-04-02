@@ -51,6 +51,8 @@ export async function createAction(data: unknown) {
     return withPolicyAction(Policies.spex.requireCreate, async () => {
         const validated = spexFormSchema.parse(data);
         const {categoryId, revivalYears, ...createInput} = validated;
+        void categoryId;
+        void revivalYears;
         const result = await create(createInput);
         revalidate();
         return result;
@@ -61,6 +63,8 @@ export async function updateAction(id: string, data: unknown) {
     return withPolicyAction(Policies.spex.requireUpdate, async () => {
         const validated = spexFormSchema.parse(data);
         const {categoryId, revivalYears, ...updateInput} = validated;
+        void categoryId;
+        void revivalYears;
         const result = await update(id, updateInput);
         revalidate();
         return result;

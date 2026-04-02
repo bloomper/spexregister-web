@@ -143,6 +143,7 @@ export function SpexareForm({
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
                 onSuccess();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

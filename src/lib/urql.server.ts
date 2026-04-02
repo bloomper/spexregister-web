@@ -44,7 +44,7 @@ const makeClient = () => {
                         token = session?.access_token || null;
                     },
 
-                    willAuthError(_operation) {
+                    willAuthError() {
                         return !token;
                     },
                 };

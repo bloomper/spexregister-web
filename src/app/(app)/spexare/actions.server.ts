@@ -100,6 +100,11 @@ export async function createAction(data: unknown) {
     return withPolicyAction(Policies.spexare.requireCreate, async () => {
         const validated = spexareFormSchema.parse(data);
         const {birthDate, birthNumber, socialSecurityNumber, graduation, comment, ...createInput} = validated;
+        void birthDate;
+        void birthNumber;
+        void socialSecurityNumber;
+        void graduation;
+        void comment;
         const payload: SpexareCreate = {
             ...createInput,
             deceased: createInput.deceased ?? false,
@@ -121,6 +126,8 @@ export async function updateAction(id: string, data: unknown) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = spexareFormSchema.parse(data);
         const {birthDate, birthNumber, ...updateInput} = validated;
+        void birthDate;
+        void birthNumber;
         const payload: Omit<SpexareUpdate, "id"> = {
             ...updateInput,
             deceased: updateInput.deceased ?? false,
@@ -202,6 +209,7 @@ export async function createAddressAction(spexareId: string, _typeId: string, da
     return withPolicyAction(Policies.spexare.requireCreate, async () => {
         const validated = addressFormSchema.parse(data);
         const {typeId, ...createInput} = validated;
+        void typeId;
         const result = await createAddress(spexareId, _typeId, createInput);
         revalidate();
         return result;
@@ -212,6 +220,7 @@ export async function updateAddressAction(spexareId: string, _typeId: string, id
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = addressFormSchema.parse(data);
         const {typeId, ...updateInput} = validated;
+        void typeId;
         const result = await updateAddress(spexareId, _typeId, id, updateInput);
         revalidate();
         return result;
@@ -230,6 +239,7 @@ export async function createConsentAction(spexareId: string, _typeId: string, da
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = consentFormSchema.parse(data);
         const {typeId, ...createInput} = validated;
+        void typeId;
         const result = await createConsent(spexareId, _typeId, createInput);
         revalidate();
         return result;
@@ -240,6 +250,7 @@ export async function updateConsentAction(spexareId: string, _typeId: string, id
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = consentFormSchema.parse(data);
         const {typeId, ...updateInput} = validated;
+        void typeId;
         const result = await updateConsent(spexareId, _typeId, id, updateInput);
         revalidate();
         return result;
@@ -258,6 +269,7 @@ export async function createMembershipAction(spexareId: string, _typeId: string,
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = membershipFormSchema.parse(data);
         const {typeId, ...createInput} = validated;
+        void typeId;
         const result = await createMembership(spexareId, _typeId, createInput);
         revalidate();
         return result;
@@ -268,6 +280,7 @@ export async function updateMembershipAction(spexareId: string, _typeId: string,
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = membershipFormSchema.parse(data);
         const {typeId, ...updateInput} = validated;
+        void typeId;
         const result = await updateMembership(spexareId, _typeId, id, updateInput);
         revalidate();
         return result;
@@ -302,6 +315,7 @@ export async function createToggleAction(spexareId: string, _typeId: string, dat
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = toggleFormSchema.parse(data);
         const {typeId, ...createInput} = validated;
+        void typeId;
         const result = await createToggle(spexareId, _typeId, createInput);
         revalidate();
         return result;
@@ -312,6 +326,7 @@ export async function updateToggleAction(spexareId: string, _typeId: string, id:
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = toggleFormSchema.parse(data);
         const {typeId, ...updateInput} = validated;
+        void typeId;
         const result = await updateToggle(spexareId, _typeId, id, updateInput);
         revalidate();
         return result;
@@ -394,6 +409,7 @@ export async function createActorAction(spexareId: string, activityId: string, t
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = actorFormSchema.parse(data);
         const {vocalId, ...createInput} = validated;
+        void vocalId;
         const result = await createActor(spexareId, activityId, taskActivityId, _vocalId, createInput);
         revalidate();
         return result;

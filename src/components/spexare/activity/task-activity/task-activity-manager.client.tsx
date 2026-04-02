@@ -56,6 +56,7 @@ export function TaskActivityManager({
                 toast.success(t("Common.deleteSuccess"));
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -68,6 +69,7 @@ export function TaskActivityManager({
                 toast.success(t("Common.deleteSuccess"));
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

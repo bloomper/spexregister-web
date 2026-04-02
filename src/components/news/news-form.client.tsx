@@ -51,6 +51,7 @@ export function NewsForm({item, onSuccess}: NewsFormProps) {
                 }
                 onSuccess();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

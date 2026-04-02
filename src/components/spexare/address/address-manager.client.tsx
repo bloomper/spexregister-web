@@ -40,6 +40,7 @@ export function AddressManager({
                 setIsAdding(false);
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -53,6 +54,7 @@ export function AddressManager({
                 setEditingId(null);
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -65,6 +67,7 @@ export function AddressManager({
                 toast.success(t("Common.deleteSuccess"));
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

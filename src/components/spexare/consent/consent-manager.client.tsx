@@ -39,6 +39,7 @@ export function ConsentManager({
                 setIsAdding(false);
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -52,6 +53,7 @@ export function ConsentManager({
                 setEditingId(null);
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -64,6 +66,7 @@ export function ConsentManager({
                 toast.success(t("Common.deleteSuccess"));
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

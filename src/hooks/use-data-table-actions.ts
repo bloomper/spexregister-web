@@ -32,6 +32,7 @@ export function useDataTableActions<T extends { id: string }>(
                 onSuccess?.();
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -51,6 +52,7 @@ export function useDataTableActions<T extends { id: string }>(
                 onSuccess?.();
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

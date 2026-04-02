@@ -40,6 +40,7 @@ export function useJobTracker(jobId: string | null, onComplete?: () => void) {
                     onComplete?.();
                 }
             } catch (error) {
+                void error;
                 if (timerRef.current) {
                     clearInterval(timerRef.current);
                 }

@@ -70,6 +70,7 @@ export function SpexActivityForm({
                 router.refresh();
                 onSuccess?.();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

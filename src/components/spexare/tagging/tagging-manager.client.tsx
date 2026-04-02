@@ -36,6 +36,7 @@ export function TaggingManager({
                 toast.success(t("Common.updateSuccess"));
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -48,6 +49,7 @@ export function TaggingManager({
                 toast.success(t("Common.deleteSuccess"));
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

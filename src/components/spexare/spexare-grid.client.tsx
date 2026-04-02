@@ -179,7 +179,7 @@ export function SpexareGrid({
 
             const hasNextPage = result.pageInfo?.hasNextPage;
             const resolvedHasNextPage =
-                result.items.length === args.pageSize && hasNextPage !== false;
+                result.items.length === args.pageSize && hasNextPage;
 
             return {
                 ...result,
@@ -212,7 +212,7 @@ export function SpexareGrid({
             first: args.pageSize,
             filter: parts.join(" AND ")
         });
-    }, [filterQuery, selectedDeceasedValues, selectedFacets]);
+    }, [filterQuery, mode, selectedDeceasedValues, selectedFacets]);
 
     const {
         items: allItems,
@@ -244,7 +244,7 @@ export function SpexareGrid({
                 setEditItem(updated);
             }
         }
-    }, [allItems, selected?.id, editItem?.id]);
+    }, [allItems, selected, editItem]);
 
     useEffect(() => {
         if (initialSearchQuery !== searchValue) {
@@ -252,7 +252,7 @@ export function SpexareGrid({
             setSearchValue(initialSearchQuery);
             setFilterQuery(initialSearchQuery);
         }
-    }, [initialSearchQuery]);
+    }, [initialSearchQuery, searchValue]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -324,7 +324,7 @@ export function SpexareGrid({
                         </h3>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                        <div className="relative w-full sm:w-[300px]">
+                        <div className="relative w-full sm:w-75">
                             <Input
                                 placeholder={mode === "search" ? t("Spexare.searchPlaceholder") : t("Spexare.filterPlaceholder")}
                                 value={searchValue}

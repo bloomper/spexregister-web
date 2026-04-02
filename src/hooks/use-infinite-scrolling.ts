@@ -17,6 +17,7 @@ export type UseInfiniteCursorOptions<TItem> = {
 function useInView<T extends Element>(options?: IntersectionObserverInit) {
     const ref = useRef<T | null>(null);
     const [inView, setInView] = useState(false);
+    const {root, rootMargin, threshold} = options ?? {};
 
     useEffect(() => {
         if (!ref.current) {
@@ -25,11 +26,11 @@ function useInView<T extends Element>(options?: IntersectionObserverInit) {
 
         const obs = new IntersectionObserver(([entry]) => {
             setInView(entry.isIntersecting);
-        }, options);
+        }, {root, rootMargin, threshold});
 
         obs.observe(ref.current);
         return () => obs.disconnect();
-    }, [options?.root, options?.rootMargin, options?.threshold]);
+    }, [root, rootMargin, threshold]);
 
     return {ref, inView};
 }

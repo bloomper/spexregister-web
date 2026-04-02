@@ -47,6 +47,7 @@ export function TagForm({item, onSuccess}: TagFormProps) {
                 }
                 onSuccess();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

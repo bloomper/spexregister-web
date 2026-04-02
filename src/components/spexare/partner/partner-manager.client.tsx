@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState, useTransition} from "react";
+import {useCallback, useEffect, useState, useTransition} from "react";
 import {useTranslations} from "next-intl";
 import {Heart, Loader2, Search, User, X} from "lucide-react";
 import {toast} from "sonner";
@@ -28,19 +28,7 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
     const [searchResults, setSearchResults] = useState<Spexare[]>([]);
     const [isSearching, setIsSearching] = useState(false);
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (searchQuery.trim().length >= 2) {
-                handleSearch();
-            } else if (searchQuery.trim().length === 0) {
-                setSearchResults([]);
-            }
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
-
-    const handleSearch = async () => {
+    const handleSearch = useCallback(async () => {
         if (!searchQuery.trim()) {
             setSearchResults([]);
             return;
@@ -59,11 +47,24 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
 
             setSearchResults(results.items.filter(s => s.id !== spexareId));
         } catch (error) {
+            void error;
             toast.error(t("Common.errorOccurred"));
         } finally {
             setIsSearching(false);
         }
-    };
+    }, [searchQuery, spexareId, t]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery.trim().length >= 2) {
+                void handleSearch();
+            } else if (searchQuery.trim().length === 0) {
+                setSearchResults([]);
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [handleSearch, searchQuery]);
 
     const handleAddPartner = (id: string) => {
         startTransition(async () => {
@@ -77,6 +78,7 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
                 setSearchQuery("");
                 setSearchResults([]);
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -89,6 +91,7 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
                 setPartner(null);
                 toast.success(t("Common.updateSuccess"));
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

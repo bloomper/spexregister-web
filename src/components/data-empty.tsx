@@ -1,5 +1,5 @@
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty";
-import {Icon, LucideIcon, Search} from "lucide-react";
+import {LucideIcon, Search} from "lucide-react";
 import {useTranslations} from "next-intl";
 
 export function DataEmpty({

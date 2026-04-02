@@ -77,7 +77,8 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
             if (fullJob) {
                 setViewItem(fullJob);
             }
-        } catch (e) {
+        } catch (error) {
+            void error;
             toast.error(t("Common.couldNotLoadData"));
         } finally {
             setIsLoadingDetails(false);

@@ -55,6 +55,7 @@ export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, 
                 onSuccess?.();
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

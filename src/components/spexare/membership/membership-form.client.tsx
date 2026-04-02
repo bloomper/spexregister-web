@@ -44,6 +44,7 @@ export function MembershipForm({
         },
     });
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const selectedTypeId = watch("typeId");
 
     const availableYears = useMemo(() => {

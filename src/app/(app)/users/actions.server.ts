@@ -52,6 +52,9 @@ export async function createAction(data: unknown) {
     return withPolicyAction(Policies.user.requireCreate, async () => {
         const validated = userFormSchema.parse(data);
         const {authorityIds, stateId, spexareId, ...createInput} = validated;
+        void authorityIds;
+        void stateId;
+        void spexareId;
         const result = await create(createInput);
         revalidate();
         return result;
@@ -62,6 +65,9 @@ export async function updateAction(id: string, data: unknown) {
     return withPolicyAction(Policies.user.requireUpdate, async () => {
         const validated = userFormSchema.parse(data);
         const {authorityIds, stateId, spexareId, ...updateInput} = validated;
+        void authorityIds;
+        void stateId;
+        void spexareId;
         const result = await update(id, updateInput);
         revalidate();
         return result;

@@ -47,6 +47,7 @@ export function MembershipManager({
                 setIsAdding(false);
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -60,6 +61,7 @@ export function MembershipManager({
                 setEditingId(null);
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
@@ -72,6 +74,7 @@ export function MembershipManager({
                 toast.success(t("Common.deleteSuccess"));
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

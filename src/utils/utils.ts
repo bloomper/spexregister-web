@@ -12,7 +12,7 @@ export function formatDate(date: string) {
     }
     try {
         return format(parseISO(date), "yyyy-MM-dd");
-    } catch (e) {
+    } catch {
         return '';
     }
 }
@@ -23,7 +23,7 @@ export function formatDateTime(date: string) {
     }
     try {
         return format(parseISO(date), "yyyy-MM-dd HH:mm");
-    } catch (e) {
+    } catch {
         return formatDate(date);
     }
 }

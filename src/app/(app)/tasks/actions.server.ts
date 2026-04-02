@@ -47,6 +47,7 @@ export async function createAction(data: unknown) {
     return withPolicyAction(Policies.task.requireCreate, async () => {
         const validated = taskFormSchema.parse(data);
         const {categoryId, ...createInput} = validated;
+        void categoryId;
         const result = await create(createInput);
         revalidate();
         return result;
@@ -57,6 +58,7 @@ export async function updateAction(id: string, data: unknown) {
     return withPolicyAction(Policies.task.requireUpdate, async () => {
         const validated = taskFormSchema.parse(data);
         const {categoryId, ...updateInput} = validated;
+        void categoryId;
         const result = await update(id, updateInput);
         revalidate();
         return result;

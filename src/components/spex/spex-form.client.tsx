@@ -62,6 +62,7 @@ export function SpexForm({
         },
     });
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const selectedCategoryId = watch("categoryId");
     const selectedCategory = categories.find(c => c.id === selectedCategoryId);
     const selectedYear = watch("year");
@@ -128,20 +129,21 @@ export function SpexForm({
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
                 onSuccess();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });
     });
 
     return (
-        <SheetContent className="sm:max-w-[600px] flex flex-col gap-0 p-0 h-full">
+        <SheetContent className="sm:max-w-150 flex flex-col gap-0 p-0 h-full">
             <SheetHeader className="p-6 pb-2 shrink-0">
                 <SheetTitle>{item ? t("Spex.editHeading") : t("Spex.createHeading")}</SheetTitle>
             </SheetHeader>
             <form onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <Tabs defaultValue="general" className="flex-1 flex flex-col min-h-0">
                     <div className="px-6 pb-4 shrink-0">
-                        <TabsList className="grid w-full !h-auto min-h-9 p-1 bg-muted/50 grid-cols-2">
+                        <TabsList className="grid w-full h-auto! min-h-9 p-1 bg-muted/50 grid-cols-2">
                             <TabsTrigger value="general" className="py-2 text-xs sm:text-sm">
                                 {t("Common.general")}
                             </TabsTrigger>

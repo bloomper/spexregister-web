@@ -73,6 +73,7 @@ export function TaskActivityForm({
                 onSuccess?.();
                 router.refresh();
             } catch (error) {
+                void error;
                 toast.error(t("Common.errorOccurred"));
             }
         });

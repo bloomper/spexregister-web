@@ -177,7 +177,7 @@ export function SpexareTable({
                 setEditItem(updated);
             }
         }
-    }, [initialData, setViewItem, setEditItem]);
+    }, [initialData, viewItem, editItem, setViewItem, setEditItem]);
 
     const buildFilterString = (query: string, published: Set<string>, deceased: Set<string>) => {
         const parts: string[] = ["(published:TRUE OR published:FALSE)"];

@@ -7,6 +7,7 @@ import {ImagePlus, Loader2, X} from "lucide-react";
 import {toast} from "sonner";
 import {type FileRejection, useDropzone} from "react-dropzone";
 import {getProxiedImageUrl} from "@/utils/utils";
+import Image from "next/image";
 
 interface ImageUploadProps {
     initialImageUrl?: string | null;
@@ -50,6 +51,7 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
                     await onUpload(formData);
                     toast.success(t("Common.uploadSuccess"));
                 } catch (error) {
+                    void error;
                     toast.error(t("Common.errorOccurred"));
                 }
             });
@@ -67,6 +69,7 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
                     setPreview(null);
                     toast.success(t("Common.deleteSuccess"));
                 } catch (error) {
+                    void error;
                     toast.error(t("Common.errorOccurred"));
                 }
             });
@@ -99,9 +102,11 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
             >
                 <input {...getInputProps()} />
                 {preview ? (
-                    <div className="relative w-full aspect-video flex items-center justify-center"
-                         onClick={(e) => e.stopPropagation()}>
-                        <img src={preview} alt="Preview" className="max-h-32 object-contain rounded"/>
+                    <div
+                        className="relative w-full aspect-video flex items-center justify-center"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <Image src={preview} alt="Preview" fill unoptimized className="object-contain rounded"/>
                         <Button
                             type="button"
                             variant="destructive"

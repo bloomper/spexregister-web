@@ -73,27 +73,30 @@ export function DataTable<TData extends { id: string }, TValue>({
     const [loading, setLoading] = useState(false);
     const lastInitialData = useRef(initialData);
 
-    useEffect(() => {
-        if (filter) {
-            void handleFetch({first: pageSize, filter});
-        }
-    }, []);
-
     if (lastInitialData.current !== initialData) {
         setData(initialData.items);
         setPageInfo(initialData.pageInfo);
         lastInitialData.current = initialData;
     }
 
-    const handleFetch = async (args: Parameters<typeof onFetch>[0]) => {
+    const getSortKey = useCallback(
+        (sortId: string) => {
+            const column = columns.find(
+                (col) => col.id === sortId || ("accessorKey" in col && col.accessorKey === sortId)
+            );
+            const meta = (column?.meta as { sortKey?: string } | undefined) ?? undefined;
+            return meta?.sortKey ?? sortId;
+        },
+        [columns]
+    );
+
+    const handleFetch = useCallback(async (args: Parameters<typeof onFetch>[0]) => {
         setLoading(true);
         setRowSelection({});
         const currentSort = sorting[0];
         let sort = args.sort;
         if (!sort && currentSort) {
-            const column = table.getColumn(currentSort.id);
-            const sortKey = (column?.columnDef.meta as { sortKey?: string } | undefined)?.sortKey;
-            sort = [sortKey ?? currentSort.id];
+            sort = [getSortKey(currentSort.id)];
         }
         const direction = args.direction || (currentSort ? (currentSort.desc ? SortDirection.Desc : SortDirection.Asc) : undefined);
         const currentFilter = args.filter !== undefined ? args.filter : filter;
@@ -105,16 +108,16 @@ export function DataTable<TData extends { id: string }, TValue>({
         } finally {
             setLoading(false);
         }
-    };
+    }, [filter, getSortKey, onFetch, sorting]);
 
-    const refresh = () => {
+    const refresh = useCallback(() => {
         void handleFetch({first: pageSize});
-    };
+    }, [handleFetch, pageSize]);
 
     const handleFilterChange = useCallback((newFilter: string) => {
         setFilter(newFilter);
         void handleFetch({first: pageSize, filter: newFilter});
-    }, [pageSize, filter]);
+    }, [handleFetch, pageSize]);
 
     const extraMetaRef = useRef(extraMeta);
     extraMetaRef.current = extraMeta;
@@ -150,14 +153,7 @@ export function DataTable<TData extends { id: string }, TValue>({
             setSorting(nextSorting);
 
             const sortField = nextSorting[0];
-            let sortId = sortField?.id;
-            if (sortField) {
-                const column = table.getColumn(sortField.id);
-                const sortKey = (column?.columnDef.meta as { sortKey?: string } | undefined)?.sortKey;
-                if (sortKey) {
-                    sortId = sortKey;
-                }
-            }
+            const sortId = sortField ? getSortKey(sortField.id) : undefined;
 
             void handleFetch({
                 first: pageSize,
@@ -273,7 +269,7 @@ export function DataTable<TData extends { id: string }, TValue>({
                     <div className="flex items-center space-x-2">
                         <p className="text-sm font-medium">{t("Common.rowsPerPage")}</p>
                         <Select value={`${pageSize}`} onValueChange={handlePageSizeChange}>
-                            <SelectTrigger className="h-8 w-[70px]">
+                            <SelectTrigger className="h-8 w-17.5">
                                 <SelectValue placeholder={pageSize}/>
                             </SelectTrigger>
                             <SelectContent side="top">
