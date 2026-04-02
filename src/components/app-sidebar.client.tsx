@@ -8,13 +8,13 @@ import {
     Drama,
     House,
     ListTodo,
+    type LucideIcon,
     Newspaper,
     Shapes,
     Tag,
     UserRound,
     Users,
-    Wrench,
-    type LucideIcon
+    Wrench
 } from "lucide-react";
 
 import {NavMain} from "@/components/nav-main.client";
@@ -45,6 +45,7 @@ interface NavItem {
     isActive?: boolean;
     items?: NavItem[];
 }
+
 interface NavSecondaryItem extends Omit<NavItem, "icon"> {
     icon: LucideIcon;
 }

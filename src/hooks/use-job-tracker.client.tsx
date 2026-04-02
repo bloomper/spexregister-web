@@ -30,8 +30,8 @@ export function useJobTracker(jobId: string | null, onComplete?: () => void) {
 
                     toast.error(
                         isExport
-                            ? t("Impex.exportFailed", { error: errorMsg })
-                            : t("Impex.importFailed", { error: errorMsg })
+                            ? t("Impex.exportFailed", {error: errorMsg})
+                            : t("Impex.importFailed", {error: errorMsg})
                     );
 
                     if (timerRef.current) {

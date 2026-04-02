@@ -6,7 +6,9 @@
       "dom.iterable",
       "esnext"
     ],
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "rootDir": "./src",
     "allowJs": true,
     "skipLibCheck": true,

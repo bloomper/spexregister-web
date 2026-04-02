@@ -1,4 +1,4 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
+import {CodegenConfig} from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
     schema: process.env.API_GRAPHQL_ENDPOINT || '',

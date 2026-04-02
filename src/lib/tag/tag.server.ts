@@ -1,7 +1,17 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {Event, ImpexType, JobReference, SortDirection, Tag, TagConnection, TagCreate, TagEdge, TagUpdate} from "@/gql/graphql";
+import {
+    Event,
+    ImpexType,
+    JobReference,
+    SortDirection,
+    Tag,
+    TagConnection,
+    TagCreate,
+    TagEdge,
+    TagUpdate
+} from "@/gql/graphql";
 import {TagPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
@@ -42,11 +52,11 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 const ExportQuery = /* GraphQL */ `
-  query ($ids: [ID], $filter: String, $type: ImpexType!) {
-    tagExport(ids: $ids, filter: $filter, type: $type) {
-        id
+    query ($ids: [ID], $filter: String, $type: ImpexType!) {
+        tagExport(ids: $ids, filter: $filter, type: $type) {
+            id
+        }
     }
-  }
 `;
 
 const EventsQuery = /* GraphQL */ `
@@ -183,7 +193,7 @@ export async function del(id: string) {
 
 export async function exp(ids: string[] | null, filter: string | null, type: ImpexType): Promise<JobReference> {
     const result = await getClient()
-        .query<{ tagExport: JobReference }>(ExportQuery, { ids, filter, type })
+        .query<{ tagExport: JobReference }>(ExportQuery, {ids, filter, type})
         .toPromise();
 
     if (result.error) {

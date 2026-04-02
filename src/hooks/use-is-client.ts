@@ -1,7 +1,8 @@
 import {useSyncExternalStore} from "react";
 
 const subscribe = () => {
-    return () => {};
+    return () => {
+    };
 };
 
 const getSnapshot = () => true;

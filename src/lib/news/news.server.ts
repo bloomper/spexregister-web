@@ -1,7 +1,17 @@
 import 'server-only';
 
 import {getClient} from '@/lib/urql.server';
-import {Event, ImpexType, JobReference, News, NewsConnection, NewsCreate, NewsEdge, NewsUpdate, SortDirection} from "@/gql/graphql";
+import {
+    Event,
+    ImpexType,
+    JobReference,
+    News,
+    NewsConnection,
+    NewsCreate,
+    NewsEdge,
+    NewsUpdate,
+    SortDirection
+} from "@/gql/graphql";
 import {NewsPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";

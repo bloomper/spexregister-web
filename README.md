@@ -7,8 +7,10 @@ Spexregister Web is the second generation of the frontend responsible for servin
 ## Tech Stack
 
 - **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
-- **UI & Styling:** [shadcn/ui](https://ui.shadcn.com/), [Radix UI](https://www.radix-ui.com/) & [Tailwind CSS 4](https://tailwindcss.com/)
-- **Data Fetching:** [urql](https://formidable.com/open-source/urql/) (GraphQL) & [Axios](https://axios-http.com/) (REST)
+- **UI & Styling:
+  ** [shadcn/ui](https://ui.shadcn.com/), [Radix UI](https://www.radix-ui.com/) & [Tailwind CSS 4](https://tailwindcss.com/)
+- **Data Fetching:** [urql](https://formidable.com/open-source/urql/) (GraphQL) & [Axios](https://axios-http.com/) (
+  REST)
 - **State Management:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/) for validation
 - **Authentication:** [NextAuth.js](https://next-auth.js.org/) (Keycloak integration)
 - **Internationalization:** [next-intl](https://next-intl-docs.vercel.app/) (Supports English & Swedish)
@@ -45,7 +47,8 @@ Spexregister Web is the second generation of the frontend responsible for servin
 
 ## Docker
 
-The project includes a `Dockerfile` and `docker-compose.yaml` for containerized deployment, including a Caddy reverse proxy setup for local development with HTTPS.
+The project includes a `Dockerfile` and `docker-compose.yaml` for containerized deployment, including a Caddy reverse
+proxy setup for local development with HTTPS.
 
 ### Running with Docker Compose
 
@@ -55,7 +58,8 @@ To start the application along with the Caddy reverse proxy:
 docker-compose up --build
 ```
 
-The application will be accessible via the configured hostnames (e.g., `https://register.fgv.local.nu` if your hosts file is configured).
+The application will be accessible via the configured hostnames (e.g., `https://register.fgv.local.nu` if your hosts
+file is configured).
 
 ## Building and Deployment
 
@@ -81,9 +85,15 @@ You can contribute to Spexregister Web by:
 Spexregister Web is open source software released under the [Apache 2.0 license][6].
 
 [1]: https://register.fgv.nu/docs/
+
 [2]: https://gradle.org
+
 [3]: CODE_OF_CONDUCT.md
+
 [4]: https://help.github.com/articles/using-pull-requests/
+
 [5]: CONTRIBUTING.md
+
 [6]: https://www.apache.org/licenses/LICENSE-2.0.html
+
 [7]: http://localhost:8080/docs/

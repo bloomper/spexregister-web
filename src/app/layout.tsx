@@ -56,7 +56,7 @@ export default async function RootLayout({
         <Suspense
             fallback={
                 <div className="fixed inset-0 flex items-center justify-center">
-                    <Spinner className="size-8" />
+                    <Spinner className="size-8"/>
                 </div>
             }
         >

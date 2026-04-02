@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     const jobId = request.nextUrl.searchParams.get('id');
 
     if (!jobId) {
-        return NextResponse.json({ error: 'Job ID is required' }, { status: 400 });
+        return NextResponse.json({error: 'Job ID is required'}, {status: 400});
     }
 
     try {
@@ -30,8 +30,8 @@ export async function GET(request: NextRequest) {
     } catch (error) {
         console.error('Error proxying impex result download:', error);
         if (isAxiosError(error) && error.response) {
-            return NextResponse.json({ error: 'Failed to fetch impex result' }, { status: error.response.status });
+            return NextResponse.json({error: 'Failed to fetch impex result'}, {status: error.response.status});
         }
-        return NextResponse.json({ error: 'Failed to proxy download' }, { status: 500 });
+        return NextResponse.json({error: 'Failed to proxy download'}, {status: 500});
     }
 }

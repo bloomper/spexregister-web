@@ -73,16 +73,16 @@ export function AuditTrail({id, fetchAction}: AuditTrailProps) {
                         </div>
                     ) : (
                         <>
-                        {!hasLoaded && !isPending && <div className="h-2"/>}
-                        {hasLoaded && events.length === 0 && (
-                            <div className="text-[11px] text-muted-foreground italic py-1">
-                                {t('Common.noDataFound')}
-                            </div>
-                        )}
+                            {!hasLoaded && !isPending && <div className="h-2"/>}
+                            {hasLoaded && events.length === 0 && (
+                                <div className="text-[11px] text-muted-foreground italic py-1">
+                                    {t('Common.noDataFound')}
+                                </div>
+                            )}
 
-                        {events.length > 0 && (
-                            <div className="absolute left-[5px] top-2 bottom-2 w-px bg-border/60"/>
-                        )}
+                            {events.length > 0 && (
+                                <div className="absolute left-[5px] top-2 bottom-2 w-px bg-border/60"/>
+                            )}
 
                             <div className="space-y-3">
                                 {events.map((event) => (

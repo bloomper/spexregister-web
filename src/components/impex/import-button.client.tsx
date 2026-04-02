@@ -23,7 +23,7 @@ interface ImportButtonProps {
     importAction: (type: ImpexType, file: File) => Promise<JobReference>;
 }
 
-export function ImportButton({ importAction }: ImportButtonProps) {
+export function ImportButton({importAction}: ImportButtonProps) {
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
     const [activeJobId, setActiveJobId] = useState<string | null>(null);
@@ -183,7 +183,8 @@ export function ImportButton({ importAction }: ImportButtonProps) {
                                         </div>
 
                                         <div className="text-sm">
-                                            <span className="font-semibold text-primary">{t("Common.clickToUpload")}</span>
+                                            <span
+                                                className="font-semibold text-primary">{t("Common.clickToUpload")}</span>
                                             <p className="text-muted-foreground">{t("Common.dragAndDrop")}</p>
                                         </div>
 
@@ -206,7 +207,8 @@ export function ImportButton({ importAction }: ImportButtonProps) {
                                 disabled={!pendingFile || loading}
                             >
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder={pendingFile ? t("Impex.selectFormat") : t("Common.select")}/>
+                                    <SelectValue
+                                        placeholder={pendingFile ? t("Impex.selectFormat") : t("Common.select")}/>
                                 </SelectTrigger>
                                 <SelectContent>
                                     {allowedTypes.map((type) => (

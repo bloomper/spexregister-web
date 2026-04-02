@@ -19,7 +19,14 @@ import {
     uploadImage
 } from "@/lib/spexare";
 import {revalidateTag} from "next/cache";
-import {AggregationFilterInput, ImpexType, ReportType, SortDirection, SpexareCreate, SpexareUpdate} from "@/gql/graphql";
+import {
+    AggregationFilterInput,
+    ImpexType,
+    ReportType,
+    SortDirection,
+    SpexareCreate,
+    SpexareUpdate
+} from "@/gql/graphql";
 import {
     addressFormSchema,
     create as createAddress,

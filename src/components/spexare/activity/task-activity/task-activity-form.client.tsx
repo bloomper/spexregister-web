@@ -35,7 +35,7 @@ export function TaskActivityForm({
                                      taskCategories,
                                      existingTaskIds = [],
                                      onSuccess
-}: TaskFormProps) {
+                                 }: TaskFormProps) {
     const t = useTranslations();
     const router = useRouter();
     const [isPending, startTransition] = useTransition();

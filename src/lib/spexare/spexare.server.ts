@@ -135,11 +135,11 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 const ExportQuery = /* GraphQL */ `
-  query ($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {
-    spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) {
-        id
+    query ($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {
+        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) {
+            id
+        }
     }
-  }
 `;
 
 const AddPartnerMutation = /* GraphQL */ `
@@ -362,7 +362,7 @@ export async function del(id: string) {
 
 export async function exp(ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType): Promise<JobReference> {
     const result = await getClient()
-        .query<{ spexareExport: JobReference }>(ExportQuery, { ids, filter, type, reportType })
+        .query<{ spexareExport: JobReference }>(ExportQuery, {ids, filter, type, reportType})
         .toPromise();
 
     if (result.error) {

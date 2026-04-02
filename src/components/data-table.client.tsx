@@ -52,18 +52,18 @@ interface DataTableProps<TData extends { id: string }, TValue> {
 }
 
 export function DataTable<TData extends { id: string }, TValue>({
-                                             columns,
-                                             initialData,
-                                             initialPageSize = 15,
-                                             initialSorting = [],
-                                             onFetch,
-                                             meta: extraMeta,
-                                             children,
-                                             onRowClick,
-                                             onSelectionChange,
-                                             rowClassName,
-                                             showPagination = true,
-                                         }: DataTableProps<TData, TValue>) {
+                                                                    columns,
+                                                                    initialData,
+                                                                    initialPageSize = 15,
+                                                                    initialSorting = [],
+                                                                    onFetch,
+                                                                    meta: extraMeta,
+                                                                    children,
+                                                                    onRowClick,
+                                                                    onSelectionChange,
+                                                                    rowClassName,
+                                                                    showPagination = true,
+                                                                }: DataTableProps<TData, TValue>) {
     const [data, setData] = useState<TData[]>(initialData.items);
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
     const [pageSize, setPageSize] = useState(initialPageSize);
@@ -153,10 +153,10 @@ export function DataTable<TData extends { id: string }, TValue>({
             let sortId = sortField?.id;
             if (sortField) {
                 const column = table.getColumn(sortField.id);
-            const sortKey = (column?.columnDef.meta as { sortKey?: string } | undefined)?.sortKey;
-            if (sortKey) {
-                sortId = sortKey;
-            }
+                const sortKey = (column?.columnDef.meta as { sortKey?: string } | undefined)?.sortKey;
+                if (sortKey) {
+                    sortId = sortKey;
+                }
             }
 
             void handleFetch({
@@ -204,7 +204,7 @@ export function DataTable<TData extends { id: string }, TValue>({
                 {loading && (
                     <div
                         className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
-                        <Spinner className="size-8 text-muted-foreground" />
+                        <Spinner className="size-8 text-muted-foreground"/>
                     </div>
                 )}
                 <Table>

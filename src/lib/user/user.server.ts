@@ -71,11 +71,11 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 const ExportQuery = /* GraphQL */ `
-  query ($ids: [ID], $filter: String, $type: ImpexType!) {
-    userExport(ids: $ids, filter: $filter, type: $type) {
-        id
+    query ($ids: [ID], $filter: String, $type: ImpexType!) {
+        userExport(ids: $ids, filter: $filter, type: $type) {
+            id
+        }
     }
-  }
 `;
 
 const AuthoritiesAddMutation = /* GraphQL */ `
@@ -249,7 +249,7 @@ export async function del(id: string) {
 
 export async function exp(ids: string[] | null, filter: string | null, type: ImpexType): Promise<JobReference> {
     const result = await getClient()
-        .query<{ userExport: JobReference }>(ExportQuery, { ids, filter, type })
+        .query<{ userExport: JobReference }>(ExportQuery, {ids, filter, type})
         .toPromise();
 
     if (result.error) {
