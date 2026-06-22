@@ -9,7 +9,7 @@ import {defineConfig, globalIgnores} from "eslint/config";
 export default defineConfig([
     ...nextVitals,
     ...nextTs,
-    {settings: {react: {version: "19.2.4"}}},
+    {settings: {react: {version: "19.2.7"}}},
     globalIgnores([
         "node_modules/**",
         ".next/**",
