@@ -2,10 +2,8 @@ import 'server-only';
 
 import nextAuth, {DefaultSession} from 'next-auth';
 import Keycloak from 'next-auth/providers/keycloak';
-import {createHash} from "node:crypto";
-import {AccessTokenClaims, Role} from "@/types/auth";
-import {jwtDecode} from "jwt-decode";
-import {extractRolesFromClaims} from "@/utils/auth";
+import {Role} from "@/types/auth";
+import {gravatarImageUrl, isTokenExpired, mapInitialToken, refreshAccessToken} from "@/lib/auth-tokens";
 
 declare module 'next-auth' {
     interface Session extends DefaultSession {
@@ -21,22 +19,10 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
     callbacks: {
         async jwt({token, account, user}) {
             if (account && user) {
-                const claims = jwtDecode<AccessTokenClaims>(account.access_token!);
-
-                return {
-                    access_token: account.access_token,
-                    expires_at: account.expires_at,
-                    refresh_token: account.refresh_token,
-                    roles: extractRolesFromClaims(claims),
-                    sub: user.id,
-                    name: user.name,
-                    email: user.email,
-                };
+                return mapInitialToken(account, user);
             }
 
-            const expiresAt = token.expires_at as number;
-
-            if (Date.now() < (expiresAt * 1000)) {
+            if (!isTokenExpired(token)) {
                 return token;
             }
 
@@ -44,44 +30,7 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
                 throw new TypeError("Missing refresh_token");
             }
 
-            try {
-                const AUTH_KEYCLOAK_ISSUER = process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER!;
-                const response = await fetch(`${AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
-                    method: "POST",
-                    body: new URLSearchParams({
-                        client_id: process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ID!,
-                        client_secret: process.env.AUTH_KEYCLOAK_SECRET!,
-                        grant_type: "refresh_token",
-                        refresh_token: token.refresh_token as string,
-                    }),
-                })
-
-                const tokensOrError = await response.json();
-
-                if (!response.ok) {
-                    throw tokensOrError;
-                }
-
-                const newTokens = tokensOrError as {
-                    access_token: string
-                    expires_in: number
-                    refresh_token?: string
-                };
-
-                const claims = jwtDecode<AccessTokenClaims>(newTokens.access_token);
-
-                return {
-                    ...token,
-                    access_token: newTokens.access_token,
-                    expires_at: Math.floor(Date.now() / 1000 + newTokens.expires_in),
-                    refresh_token: newTokens.refresh_token ? newTokens.refresh_token : token.refresh_token,
-                    roles: extractRolesFromClaims(claims),
-                };
-            } catch (error) {
-                console.error("Error refreshing access_token", error);
-                token.error = "RefreshTokenError";
-                return token;
-            }
+            return refreshAccessToken(token.refresh_token as string, token);
         },
         async session({session, token}) {
             session.access_token = token.access_token as string;
@@ -91,11 +40,10 @@ export const {handlers, auth, signIn, signOut} = nextAuth({
             if (session.user) {
                 session.user.id = token.sub as string;
 
-                const email = token.email?.trim().toLowerCase();
+                const image = gravatarImageUrl(token.email);
 
-                if (email) {
-                    const emailHash = createHash("md5").update(email).digest("hex");
-                    session.user.image = `https://www.gravatar.com/avatar/${emailHash}?d=404&s=128`;
+                if (image) {
+                    session.user.image = image;
                 }
             }
 

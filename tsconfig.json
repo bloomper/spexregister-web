@@ -9,7 +9,6 @@
     "types": [
       "node"
     ],
-    "rootDir": "./src",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -41,6 +40,11 @@
     "**/*.mts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "vitest.config.ts",
+    "vitest.setup.ts",
+    "test",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
   ]
 }

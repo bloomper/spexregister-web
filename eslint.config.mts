@@ -19,6 +19,8 @@ export default defineConfig([
         "package-lock.json",
         "src/components/ui/**",
         "src/gql/**",
+        "coverage/**",
+        "test-results/**",
     ]),
     {files: ["**/*.json"], plugins: {json}, language: "json/json", extends: ["json/recommended"]},
     {

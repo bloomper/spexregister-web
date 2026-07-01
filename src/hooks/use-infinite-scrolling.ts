@@ -3,6 +3,8 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
 
+const EMPTY_ITEMS: never[] = [];
+
 export type UseInfiniteCursorOptions<TItem> = {
     fetchPageAction: (args: { after: string | null; pageSize: number }) => Promise<CursorPage<TItem>>;
     pageSize?: number;
@@ -41,7 +43,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         pageSize = 10,
         rootMargin = '600px',
         getKeyAction,
-        initialItems = [],
+        initialItems = EMPTY_ITEMS,
         initialPageInfo,
         initialAfter,
     } = options;
@@ -56,7 +58,22 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const initialSignature = [
+        initialItems.length,
+        getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[0]) : '',
+        getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[initialItems.length - 1]) : '',
+        initialAfter ?? '',
+        initialPageInfo?.endCursor ?? '',
+        String(initialPageInfo?.hasNextPage ?? ''),
+    ].join('|');
+    const seededSignatureRef = useRef<string | null>(null);
+
     useEffect(() => {
+        if (seededSignatureRef.current === initialSignature) {
+            return;
+        }
+        seededSignatureRef.current = initialSignature;
+
         setItems(initialItems);
         if (initialPageInfo) {
             setAfter(initialPageInfo.endCursor ?? null);
@@ -65,7 +82,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
             setAfter(initialAfter ?? null);
             setHasNextPage(true);
         }
-    }, [initialItems, initialPageInfo, initialAfter]);
+    }, [initialSignature]);
 
     const {ref: sentinelRef, inView} = useInView<HTMLDivElement>({rootMargin});
 

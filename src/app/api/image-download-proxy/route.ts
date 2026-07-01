@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
         }
 
         const imageBuffer = response.data;
-        const contentType = response.headers['content-type'] || 'image/jpeg';
-        const lastModified = response.headers['last-modified'];
+        const contentType = (response.headers['content-type'] as string | undefined) || 'image/jpeg';
+        const lastModified = response.headers['last-modified'] as string | undefined;
 
         const responseHeaders: Record<string, string> = {
             'Content-Type': contentType,

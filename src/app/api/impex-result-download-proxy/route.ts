@@ -17,8 +17,9 @@ export async function GET(request: NextRequest) {
         });
 
         const buffer = response.data;
-        const contentType = response.headers['content-type'] || 'application/octet-stream';
-        const contentDisposition = response.headers['content-disposition'] || `attachment; filename="result-${jobId}"`;
+        const contentType = (response.headers['content-type'] as string | undefined) || 'application/octet-stream';
+        const contentDisposition =
+            (response.headers['content-disposition'] as string | undefined) || `attachment; filename="result-${jobId}"`;
 
         return new NextResponse(buffer, {
             headers: {

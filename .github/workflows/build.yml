@@ -1,0 +1,61 @@
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      git-ref:
+        description: Git Ref (optional)
+        required: false
+name: Build Workflow
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+jobs:
+  build-web-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type check
+        run: npm run typecheck
+      - name: Run tests with coverage
+        run: npm run test:coverage
+      - name: Build
+        run: npm run build
+        env:
+          AUTH_SECRET: build-time-dummy-secret
+          AUTH_KEYCLOAK_ID: dummy
+          AUTH_KEYCLOAK_SECRET: dummy
+          AUTH_KEYCLOAK_ISSUER: https://keycloak.example/realms/spexregister
+          API_GRAPHQL_ENDPOINT: https://api.example/api/graphql
+          API_REST_BASE_URL: https://api.example
+          NEXT_PUBLIC_AUTH_URL: https://app.example
+          NEXT_PUBLIC_AUTH_KEYCLOAK_ID: dummy
+          NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER: https://keycloak.example/realms/spexregister
+          NEXT_PUBLIC_API_BASE_URL: https://api.example/api
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            test-results/*.xml
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage
+          if-no-files-found: ignore
