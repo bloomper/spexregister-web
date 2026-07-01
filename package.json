@@ -18,7 +18,7 @@
     "gql-codegen": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --require dotenv/config --config codegen.ts dotenv_config_path=.env.local"
   },
   "dependencies": {
-    "@c15t/nextjs": "^1.8.6",
+    "@c15t/nextjs": "^2.1.0",
     "@c15t/translations": "^1.8.5",
     "@hookform/resolvers": "^5.4.0",
     "@radix-ui/react-alert-dialog": "^1.1.18",
