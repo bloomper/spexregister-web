@@ -1,7 +1,7 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
 import {Job, JobStatus} from "@/gql/graphql";
+import {runMutationField, runQuery} from "@/lib/graphql.server";
 
 const BaseFields = `
     id
@@ -54,63 +54,23 @@ const DeleteMutation = /* GraphQL */ `
     }
 `;
 
+const jobContext = {fetchOptions: {next: {tags: ['job']}}};
+
 export async function jobStatus(id: string): Promise<JobStatus | null> {
-    const result = await getClient()
-        .query<{ jobStatus: JobStatus }>(JobStatusQuery, {id}, {
-            fetchOptions: {
-                next: {tags: ['job']}
-            }
-        })
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.jobStatus ?? null;
+    const data = await runQuery<{ jobStatus: JobStatus }>(JobStatusQuery, {id}, jobContext);
+    return data?.jobStatus ?? null;
 }
 
 export async function job(id: string): Promise<Job | null> {
-
-    const result = await getClient()
-        .query<{ job: Job }>(JobQuery, {id}, {
-            fetchOptions: {
-                next: {tags: ['job']}
-            }
-        })
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.job ?? null;
+    const data = await runQuery<{ job: Job }>(JobQuery, {id}, jobContext);
+    return data?.job ?? null;
 }
 
 export async function jobs(): Promise<Job[]> {
-    const result = await getClient()
-        .query<{ jobs: Job[] }>(JobsQuery, {}, {
-            fetchOptions: {
-                next: {tags: ['job']}
-            }
-        })
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.jobs ?? [];
+    const data = await runQuery<{ jobs: Job[] }>(JobsQuery, {}, jobContext);
+    return data?.jobs ?? [];
 }
 
 export async function del(id: string) {
-    const result = await getClient()
-        .mutation(DeleteMutation, {id})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.jobDelete;
+    return runMutationField(DeleteMutation, {id}, 'jobDelete');
 }

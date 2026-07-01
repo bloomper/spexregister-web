@@ -4,11 +4,11 @@ const toPromise = vi.fn();
 const query = vi.fn<(...args: unknown[]) => {toPromise: typeof toPromise}>(() => ({toPromise}));
 const mutation = vi.fn<(...args: unknown[]) => {toPromise: typeof toPromise}>(() => ({toPromise}));
 vi.mock('@/lib/urql.server', () => ({getClient: () => ({query, mutation})}));
-
+const axiosPut = vi.fn();
 const axiosDelete = vi.fn();
-vi.mock('@/lib/axios.server', () => ({default: {delete: (...a: unknown[]) => axiosDelete(...a)}}));
+vi.mock('@/lib/axios.server', () => ({default: {put: (...a: unknown[]) => axiosPut(...a), delete: (...a: unknown[]) => axiosDelete(...a)}}));
 
-import {create, del, getAll, getPaged} from '@/lib/spex/spex.server';
+import {addCategory, createRevival, deletePoster, deleteRevival, getPaged, removeCategory, uploadPoster} from '@/lib/spex/spex.server';
 import {SortDirection} from '@/gql/graphql';
 
 const connection = (nodes: {id: string}[], hasNextPage: boolean, endCursor: string | null) => ({
@@ -20,83 +20,80 @@ beforeEach(() => {
     toPromise.mockReset();
     query.mockClear();
     mutation.mockClear();
+    axiosPut.mockReset();
     axiosDelete.mockReset();
 });
 
-describe('getPaged', () => {
-    it('maps the connection into a page and applies default variables', async () => {
+// Generic CRUD/impex/events mechanics live in graphql.server.test.ts. Here we
+// verify spex's own config binding and its bespoke (non-factory) operations.
+describe('spex.server (factory config binding)', () => {
+    it('applies spex-specific defaults and maps the connection into a page', async () => {
         toPromise.mockResolvedValue({data: {spexPaged: connection([{id: '1'}, {id: '2'}], true, 'c1')}});
 
         const page = await getPaged({});
 
         expect(page.items).toEqual([{id: '1'}, {id: '2'}]);
-        expect(page.pageInfo.hasNextPage).toBe(true);
-
         const vars = query.mock.calls[0][1] as Record<string, unknown>;
-        expect(vars).toMatchObject({
-            sort: ['year'],
-            direction: SortDirection.Desc,
-            filter: 'parent:NULL',
-            after: null,
-            before: null,
-        });
+        expect(vars).toMatchObject({sort: ['year'], direction: SortDirection.Desc, filter: 'parent:NULL'});
     });
 
-    it('forwards explicit arguments', async () => {
-        toPromise.mockResolvedValue({data: {spexPaged: connection([], false, null)}});
-
-        await getPaged({first: 10, after: 'cursor', sort: ['title'], direction: SortDirection.Asc, filter: 'year:2024'});
-
-        const vars = query.mock.calls[0][1] as Record<string, unknown>;
-        expect(vars).toMatchObject({first: 10, after: 'cursor', sort: ['title'], direction: SortDirection.Asc, filter: 'year:2024'});
-    });
-
-    it('throws when the query returns an error', async () => {
+    it('propagates query errors', async () => {
         toPromise.mockResolvedValue({error: new Error('graphql failed')});
         await expect(getPaged({})).rejects.toThrow('graphql failed');
     });
 });
 
-describe('getAll', () => {
-    it('walks every page until hasNextPage is false', async () => {
-        toPromise
-            .mockResolvedValueOnce({data: {spexPaged: connection([{id: '1'}, {id: '2'}], true, 'c-end-1')}})
-            .mockResolvedValueOnce({data: {spexPaged: connection([{id: '3'}], false, null)}});
+describe('spex category/revival mutations', () => {
+    it('addCategory forwards ids and returns the payload', async () => {
+        toPromise.mockResolvedValue({data: {spexCategoryAdd: true}});
+        await expect(addCategory('1', 'c9')).resolves.toBe(true);
+        expect(mutation.mock.calls[0][1]).toEqual({id: '1', categoryId: 'c9'});
+    });
 
-        const items = await getAll();
+    it('removeCategory returns the payload', async () => {
+        toPromise.mockResolvedValue({data: {spexCategoryRemove: true}});
+        await expect(removeCategory('1')).resolves.toBe(true);
+    });
 
-        expect(items.map((i) => i.id)).toEqual(['1', '2', '3']);
-        expect(query).toHaveBeenCalledTimes(2);
-        // Second page continues from the first page's endCursor.
-        expect((query.mock.calls[1][1] as Record<string, unknown>).after).toBe('c-end-1');
+    it('createRevival forwards spexId/year and returns the revival', async () => {
+        toPromise.mockResolvedValue({data: {spexRevivalCreate: {id: 'r1', year: '2000'}}});
+        await expect(createRevival('1', '2000')).resolves.toEqual({id: 'r1', year: '2000'});
+        expect(mutation.mock.calls[0][1]).toEqual({spexId: '1', year: '2000'});
+    });
+
+    it('deleteRevival forwards spexId/id and returns the payload', async () => {
+        toPromise.mockResolvedValue({data: {spexRevivalDelete: true}});
+        await expect(deleteRevival('1', 'r1')).resolves.toBe(true);
+        expect(mutation.mock.calls[0][1]).toEqual({spexId: '1', id: 'r1'});
+    });
+
+    it('propagates mutation errors', async () => {
+        toPromise.mockResolvedValue({error: new Error('denied')});
+        await expect(addCategory('1', 'c')).rejects.toThrow('denied');
     });
 });
 
-describe('create', () => {
-    it('returns the created spex on success', async () => {
-        toPromise.mockResolvedValue({data: {spexCreate: {id: '42', year: '2024'}}});
-        await expect(create({title: 'X', year: '2024'} as never)).resolves.toEqual({id: '42', year: '2024'});
+describe('spex poster upload/delete (REST)', () => {
+    it('uploadPoster PUTs the file bytes to the poster endpoint', async () => {
+        vi.stubEnv('API_REST_BASE_URL', 'https://api.test');
+        axiosPut.mockResolvedValue({data: {posterUrl: 'u'}});
+        const file = new File(['x'], 'p.jpg', {type: 'image/jpeg'});
+
+        await expect(uploadPoster('42', file)).resolves.toEqual({posterUrl: 'u'});
+        expect(axiosPut).toHaveBeenCalledWith(
+            'https://api.test/api/spex/42/poster',
+            expect.anything(),
+            {headers: {'Content-Type': 'image/jpeg'}},
+        );
+        vi.unstubAllEnvs();
     });
 
-    it('throws when the mutation reports an error', async () => {
-        toPromise.mockResolvedValue({error: new Error('boom')});
-        await expect(create({} as never)).rejects.toThrow('boom');
-    });
+    it('deletePoster DELETEs the poster endpoint and reports success', async () => {
+        vi.stubEnv('API_REST_BASE_URL', 'https://api.test');
+        axiosDelete.mockResolvedValue({});
 
-    it('throws when no data is returned', async () => {
-        toPromise.mockResolvedValue({data: {}});
-        await expect(create({} as never)).rejects.toThrow('No data created');
-    });
-});
-
-describe('del', () => {
-    it('propagates a mutation error', async () => {
-        toPromise.mockResolvedValue({error: new Error('cannot delete')});
-        await expect(del('1')).rejects.toThrow('cannot delete');
-    });
-
-    it('returns the delete payload on success', async () => {
-        toPromise.mockResolvedValue({data: {spexDelete: true}});
-        await expect(del('1')).resolves.toBe(true);
+        await expect(deletePoster('42')).resolves.toEqual({success: true});
+        expect(axiosDelete).toHaveBeenCalledWith('https://api.test/api/spex/42/poster');
+        vi.unstubAllEnvs();
     });
 });

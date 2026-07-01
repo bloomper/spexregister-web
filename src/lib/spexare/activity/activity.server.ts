@@ -1,6 +1,7 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
+import {Activity} from "@/gql/graphql";
+import {mutateForData, runMutationField} from "@/lib/graphql.server";
 import {
     FullFragment as TaskActivityFullFragment,
     SummaryFragment as TaskActivitySummaryFragment
@@ -74,29 +75,9 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 export async function create(spexareId: string) {
-    const result = await getClient()
-        .mutation(CreateMutation, {spexareId})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.activityCreate) {
-        throw new Error("No data created");
-    }
-
-    return result.data?.activityCreate;
+    return mutateForData<Activity>(CreateMutation, {spexareId}, 'activityCreate', 'No data created');
 }
 
 export async function del(spexareId: string, id: string) {
-    const result = await getClient()
-        .mutation(DeleteMutation, {spexareId, id})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.activityDelete;
+    return runMutationField(DeleteMutation, {spexareId, id}, 'activityDelete');
 }

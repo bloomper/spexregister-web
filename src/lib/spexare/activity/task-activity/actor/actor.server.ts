@@ -1,7 +1,7 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
-import {ActorCreate, ActorUpdate} from "@/gql/graphql";
+import {Actor, ActorCreate, ActorUpdate} from "@/gql/graphql";
+import {mutateForData, runMutationField} from "@/lib/graphql.server";
 
 export const SummaryFields = `
     ...ActorSummary
@@ -53,59 +53,18 @@ const UpdateMutation = /* GraphQL */ `
 
 const DeleteMutation = /* GraphQL */ `
     mutation ($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $id: ID!) {
-        actorDelete(spexareId: $spexareId,, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, id: $id)
+        actorDelete(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, id: $id)
     }
 `;
 
 export async function create(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, input: ActorCreate) {
-    const result = await getClient()
-        .mutation(CreateMutation, {spexareId, activityId, taskActivityId, vocalId, input})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.actorCreate) {
-        throw new Error("No data created");
-    }
-
-    return result.data?.actorCreate;
+    return mutateForData<Actor>(CreateMutation, {spexareId, activityId, taskActivityId, vocalId, input}, 'actorCreate', 'No data created');
 }
 
 export async function update(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string, input: Omit<ActorUpdate, "id">) {
-    const result = await getClient()
-        .mutation(UpdateMutation, {
-            spexareId,
-            activityId,
-            taskActivityId,
-            vocalId,
-            input: {
-                ...input,
-                id
-            }
-        })
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.actorUpdate) {
-        throw new Error("No data updated");
-    }
-
-    return result.data?.actorUpdate;
+    return mutateForData<Actor>(UpdateMutation, {spexareId, activityId, taskActivityId, vocalId, input: {...input, id}}, 'actorUpdate', 'No data updated');
 }
 
 export async function del(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string) {
-    const result = await getClient()
-        .mutation(DeleteMutation, {spexareId, activityId, taskActivityId, vocalId, id})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.actorDelete;
+    return runMutationField(DeleteMutation, {spexareId, activityId, taskActivityId, vocalId, id}, 'actorDelete');
 }

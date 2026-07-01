@@ -1,7 +1,7 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
-import {ToggleCreate, ToggleUpdate} from "@/gql/graphql";
+import {Toggle, ToggleCreate, ToggleUpdate} from "@/gql/graphql";
+import {mutateForData, runMutationField} from "@/lib/graphql.server";
 
 export const SummaryFields = `
     ...ToggleSummary
@@ -58,52 +58,13 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 export async function create(spexareId: string, typeId: string, input: ToggleCreate) {
-    const result = await getClient()
-        .mutation(CreateMutation, {spexareId, typeId, input})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.toggleCreate) {
-        throw new Error("No data created");
-    }
-
-    return result.data?.toggleCreate;
+    return mutateForData<Toggle>(CreateMutation, {spexareId, typeId, input}, 'toggleCreate', 'No data created');
 }
 
 export async function update(spexareId: string, typeId: string, id: string, input: Omit<ToggleUpdate, "id">) {
-    const result = await getClient()
-        .mutation(UpdateMutation, {
-            spexareId,
-            typeId,
-            input: {
-                ...input,
-                id
-            }
-        })
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.toggleUpdate) {
-        throw new Error("No data updated");
-    }
-
-    return result.data?.toggleUpdate;
+    return mutateForData<Toggle>(UpdateMutation, {spexareId, typeId, input: {...input, id}}, 'toggleUpdate', 'No data updated');
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    const result = await getClient()
-        .mutation(DeleteMutation, {spexareId, typeId, id})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.toggleDelete;
+    return runMutationField(DeleteMutation, {spexareId, typeId, id}, 'toggleDelete');
 }

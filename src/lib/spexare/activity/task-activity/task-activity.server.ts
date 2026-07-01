@@ -1,6 +1,7 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
+import {TaskActivity} from "@/gql/graphql";
+import {mutateForData, runMutationField} from "@/lib/graphql.server";
 import {
     FullFragment as ActorFullFragment,
     SummaryFragment as ActorSummaryFragment
@@ -79,50 +80,13 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 export async function create(spexareId: string, activityId: string, taskId: string) {
-    const result = await getClient()
-        .mutation(CreateMutation, {spexareId, activityId, taskId})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.taskActivityCreate) {
-        throw new Error("No data created");
-    }
-
-    return result.data?.taskActivityCreate;
+    return mutateForData<TaskActivity>(CreateMutation, {spexareId, activityId, taskId}, 'taskActivityCreate', 'No data created');
 }
 
 export async function update(spexareId: string, activityId: string, taskId: string, id: string) {
-    const result = await getClient()
-        .mutation(UpdateMutation, {
-            spexareId,
-            activityId,
-            taskId,
-            id
-        })
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.taskActivityUpdate) {
-        throw new Error("No data updated");
-    }
-
-    return result.data?.taskActivityUpdate;
+    return mutateForData<TaskActivity>(UpdateMutation, {spexareId, activityId, taskId, id}, 'taskActivityUpdate', 'No data updated');
 }
 
 export async function del(spexareId: string, activityId: string, id: string) {
-    const result = await getClient()
-        .mutation(DeleteMutation, {spexareId, activityId, id})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.taskActivityDelete;
+    return runMutationField(DeleteMutation, {spexareId, activityId, id}, 'taskActivityDelete');
 }

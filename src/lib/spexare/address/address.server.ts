@@ -1,7 +1,7 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
-import {AddressCreate, AddressUpdate} from "@/gql/graphql";
+import {Address, AddressCreate, AddressUpdate} from "@/gql/graphql";
+import {mutateForData, runMutationField} from "@/lib/graphql.server";
 
 export const SummaryFields = `
     ...AddressSummary
@@ -64,52 +64,13 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 export async function create(spexareId: string, typeId: string, input: AddressCreate) {
-    const result = await getClient()
-        .mutation(CreateMutation, {spexareId, typeId, input})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.addressCreate) {
-        throw new Error("No data created");
-    }
-
-    return result.data?.addressCreate;
+    return mutateForData<Address>(CreateMutation, {spexareId, typeId, input}, 'addressCreate', 'No data created');
 }
 
 export async function update(spexareId: string, typeId: string, id: string, input: Omit<AddressUpdate, "id">) {
-    const result = await getClient()
-        .mutation(UpdateMutation, {
-            spexareId,
-            typeId,
-            input: {
-                ...input,
-                id
-            }
-        })
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.addressUpdate) {
-        throw new Error("No data updated");
-    }
-
-    return result.data?.addressUpdate;
+    return mutateForData<Address>(UpdateMutation, {spexareId, typeId, input: {...input, id}}, 'addressUpdate', 'No data updated');
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    const result = await getClient()
-        .mutation(DeleteMutation, {spexareId, typeId, id})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.addressDelete;
+    return runMutationField(DeleteMutation, {spexareId, typeId, id}, 'addressDelete');
 }

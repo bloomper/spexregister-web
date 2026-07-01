@@ -1,7 +1,7 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
-import {ConsentCreate, ConsentUpdate} from "@/gql/graphql";
+import {Consent, ConsentCreate, ConsentUpdate} from "@/gql/graphql";
+import {mutateForData, runMutationField} from "@/lib/graphql.server";
 
 export const SummaryFields = `
     ...ConsentSummary
@@ -58,52 +58,13 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 export async function create(spexareId: string, typeId: string, input: ConsentCreate) {
-    const result = await getClient()
-        .mutation(CreateMutation, {spexareId, typeId, input})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.consentCreate) {
-        throw new Error("No data created");
-    }
-
-    return result.data?.consentCreate;
+    return mutateForData<Consent>(CreateMutation, {spexareId, typeId, input}, 'consentCreate', 'No data created');
 }
 
 export async function update(spexareId: string, typeId: string, id: string, input: Omit<ConsentUpdate, "id">) {
-    const result = await getClient()
-        .mutation(UpdateMutation, {
-            spexareId,
-            typeId,
-            input: {
-                ...input,
-                id
-            }
-        })
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    if (!result.data?.consentUpdate) {
-        throw new Error("No data updated");
-    }
-
-    return result.data?.consentUpdate;
+    return mutateForData<Consent>(UpdateMutation, {spexareId, typeId, input: {...input, id}}, 'consentUpdate', 'No data updated');
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    const result = await getClient()
-        .mutation(DeleteMutation, {spexareId, typeId, id})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.consentDelete;
+    return runMutationField(DeleteMutation, {spexareId, typeId, id}, 'consentDelete');
 }

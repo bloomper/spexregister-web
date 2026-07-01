@@ -1,6 +1,6 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
+import {runMutationField} from "@/lib/graphql.server";
 
 export const SummaryFields = `
     ...TaggingSummary
@@ -41,26 +41,10 @@ const DeleteMutation = /* GraphQL */ `
 `;
 
 export async function create(spexareId: string, tagId: string) {
-    const result = await getClient()
-        .mutation(CreateMutation, {spexareId, tagId})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.taggingCreate;
+    return runMutationField(CreateMutation, {spexareId, tagId}, 'taggingCreate');
 }
 
 export async function del(spexareId: string, tagId: string) {
-    const result = await getClient()
-        .mutation(DeleteMutation, {spexareId, tagId})
-        .toPromise();
-
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.taggingDelete;
+    return runMutationField(DeleteMutation, {spexareId, tagId}, 'taggingDelete');
 }
 

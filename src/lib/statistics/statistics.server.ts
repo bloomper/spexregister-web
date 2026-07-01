@@ -1,7 +1,7 @@
 import 'server-only';
 
-import {getClient} from '@/lib/urql.server';
 import {Statistics} from "@/gql/graphql";
+import {runQuery} from "@/lib/graphql.server";
 
 const Fields = /* GraphQL */ `
     fragment StatisticsFields on Statistics {
@@ -43,17 +43,11 @@ const Query = /* GraphQL */ `
 `;
 
 export async function get(): Promise<Statistics | undefined> {
-    const result = await getClient()
-        .query<{ statistics: Statistics }>(Query, {}, {
-            fetchOptions: {
-                next: {tags: ['spexare', 'spex', 'task', 'user']}
-            }
-        })
-        .toPromise();
+    const data = await runQuery<{ statistics: Statistics }>(Query, {}, {
+        fetchOptions: {
+            next: {tags: ['spexare', 'spex', 'task', 'user']}
+        }
+    });
 
-    if (result.error) {
-        throw result.error;
-    }
-
-    return result.data?.statistics;
+    return data?.statistics;
 }
