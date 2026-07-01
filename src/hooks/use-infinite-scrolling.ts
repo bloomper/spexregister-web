@@ -67,6 +67,12 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         String(initialPageInfo?.hasNextPage ?? ''),
     ].join('|');
     const seededSignatureRef = useRef<string | null>(null);
+    const initialItemsRef = useRef(initialItems);
+    const initialPageInfoRef = useRef(initialPageInfo);
+    const initialAfterRef = useRef(initialAfter);
+    initialItemsRef.current = initialItems;
+    initialPageInfoRef.current = initialPageInfo;
+    initialAfterRef.current = initialAfter;
 
     useEffect(() => {
         if (seededSignatureRef.current === initialSignature) {
@@ -74,12 +80,12 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         }
         seededSignatureRef.current = initialSignature;
 
-        setItems(initialItems);
-        if (initialPageInfo) {
-            setAfter(initialPageInfo.endCursor ?? null);
-            setHasNextPage(Boolean(initialPageInfo.hasNextPage));
+        setItems(initialItemsRef.current);
+        if (initialPageInfoRef.current) {
+            setAfter(initialPageInfoRef.current.endCursor ?? null);
+            setHasNextPage(Boolean(initialPageInfoRef.current.hasNextPage));
         } else {
-            setAfter(initialAfter ?? null);
+            setAfter(initialAfterRef.current ?? null);
             setHasNextPage(true);
         }
     }, [initialSignature]);
