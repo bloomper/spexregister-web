@@ -16,13 +16,13 @@ vi.mock('@/lib/task', () => ({
     update: vi.fn(),
     del: vi.fn(),
     exp: vi.fn(),
+    imp: vi.fn(),
     events: vi.fn(),
     addCategory: vi.fn(),
     removeCategory: vi.fn(),
     taskFormSchema: {parse: (d: unknown) => d},
 }));
 vi.mock('@/lib/task/category', () => ({getAll: vi.fn()}));
-vi.mock('@/lib/news', () => ({imp: vi.fn()}));
 
 import {createAction, updateAction, getPageAction, bulkDeleteAction} from '@/app/(app)/tasks/actions.server';
 import {create, update, del, getPaged} from '@/lib/task';

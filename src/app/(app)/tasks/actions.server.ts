@@ -17,7 +17,7 @@ import {
 import {revalidateTag} from "next/cache";
 import {ImpexType, SortDirection} from "@/gql/graphql";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
-import {imp} from "@/lib/news";
+import {imp} from "@/lib/task";
 
 export async function getPageAction(args: {
     first?: number;
