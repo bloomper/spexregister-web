@@ -119,6 +119,14 @@ describe('collectAllPages', () => {
         await expect(collectAllPages(fetchPage)).resolves.toEqual([]);
         expect(fetchPage).toHaveBeenCalledTimes(1);
     });
+
+    it('aborts a runaway loop when hasNextPage never becomes false', async () => {
+        const fetchPage = vi.fn(async () => ({
+            items: [{id: 'x'}],
+            pageInfo: {hasNextPage: true, hasPreviousPage: false, startCursor: null, endCursor: 'stuck'},
+        }));
+        await expect(collectAllPages(fetchPage)).rejects.toThrow(/exceeded 1000 pages/);
+    });
 });
 
 describe('createResourceClient', () => {

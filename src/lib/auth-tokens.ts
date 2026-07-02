@@ -95,6 +95,6 @@ export function gravatarImageUrl(email?: string | null): string | undefined {
         return undefined;
     }
 
-    const emailHash = createHash('md5').update(normalized).digest('hex');
+    const emailHash = createHash('sha256').update(normalized).digest('hex');
     return `https://www.gravatar.com/avatar/${emailHash}?d=404&s=128`;
 }

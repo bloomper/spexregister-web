@@ -100,14 +100,20 @@ export async function mutateForData(
     return value;
 }
 
+const MAX_COLLECT_PAGES = 1000;
+
 export async function collectAllPages<TItem>(
     fetchPage: (after: string | null) => Promise<CursorPage<TItem>>,
 ): Promise<TItem[]> {
     const items: TItem[] = [];
     let hasNextPage = true;
     let after: string | null = null;
+    let pages = 0;
 
     while (hasNextPage) {
+        if (pages++ >= MAX_COLLECT_PAGES) {
+            throw new Error(`collectAllPages exceeded ${MAX_COLLECT_PAGES} pages; aborting to avoid an unbounded loop`);
+        }
         const page = await fetchPage(after);
         items.push(...page.items);
         hasNextPage = page.pageInfo.hasNextPage;

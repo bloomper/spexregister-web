@@ -133,7 +133,7 @@ describe('gravatarImageUrl', () => {
     });
 
     it('hashes the normalized email into a gravatar URL', () => {
-        const expected = createHash('md5').update('ada@example.com').digest('hex');
+        const expected = createHash('sha256').update('ada@example.com').digest('hex');
         expect(gravatarImageUrl('  Ada@Example.com ')).toBe(
             `https://www.gravatar.com/avatar/${expected}?d=404&s=128`,
         );

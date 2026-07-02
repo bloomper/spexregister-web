@@ -46,16 +46,4 @@ export async function withPolicyAction<T>(
     return handler(authz);
 }
 
-export async function withPolicyPage<T>(
-    policy: () => Promise<AuthzResult>,
-    handler: (authz: AuthzOk) => Promise<T>
-): Promise<T> {
-    const authz = await policy();
-    if (!authz.ok) {
-        if (authz.status === 401) {
-            redirect("/");
-        }
-        throw new Error(authz.message);
-    }
-    return handler(authz);
-}
+export const withPolicyPage = withPolicyAction;
