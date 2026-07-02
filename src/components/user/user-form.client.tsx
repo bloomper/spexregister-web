@@ -3,7 +3,7 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {UserFormInput, UserFormOutput, userFormSchema} from "@/lib/user/schema";
-import {Authority, Spexare, State, User} from "@/gql/graphql";
+import {Authority, Spexare, State, User} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {useState, useTransition} from "react";
 import {toast} from "sonner";

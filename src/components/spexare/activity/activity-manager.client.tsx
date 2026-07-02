@@ -21,7 +21,7 @@ import {
 import {SpexActivityForm} from "@/components/spexare/activity/spex-activity/spex-activity-form.client";
 import {TaskActivityManager} from "@/components/spexare/activity/task-activity/task-activity-manager.client";
 import {cn} from "@/utils/utils";
-import {Activity as ActivityType, Spex, SpexCategory, Task, TaskActivity, TaskCategory, Type} from "@/gql/graphql";
+import {Activity as ActivityType, Spex, SpexCategory, Task, TaskActivity, TaskCategory, Type} from "@/gql/schema";
 import {useRouter} from "next/navigation";
 
 interface ActivityManagerProps {

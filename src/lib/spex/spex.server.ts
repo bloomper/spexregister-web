@@ -1,40 +1,95 @@
 import 'server-only';
 
-import {Spex, SpexCreate, SpexEdge, SpexUpdate, SortDirection} from "@/gql/graphql";
+import {Spex, SpexCreate, SpexEdge, SpexUpdate, SortDirection} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {createResourceClient, runMutationField} from "@/lib/graphql.server";
 import axios from "@/lib/axios.server";
 
-const SummaryFields = `
-    id
-    year
-    title
-    posterUrl
-    revival
-    revivals {
-      id
-      year
+export const SpexSummary = graphql(`
+    fragment SpexSummary on Spex {
+        id
+        year
+        title
+        posterUrl
+        revival
+        revivals {
+            id
+            year
+        }
+        category {
+            id
+            name
+        }
     }
-    category {
-      id
-      name
-    }
-`;
+`);
 
-const FullFields = `
-    ${SummaryFields}
-    revival
-    createdAt
-    createdBy
-    lastModifiedAt
-    lastModifiedBy
-`;
+export const SpexFull = graphql(`
+    fragment SpexFull on Spex {
+        ...SpexSummary
+        createdAt
+        createdBy
+        lastModifiedAt
+        lastModifiedBy
+    }
+`);
+
+const SpexPagedSummary = graphql(`
+    query SpexPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges { cursor node { ...SpexSummary } }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+        }
+    }
+`);
+
+const SpexPagedFull = graphql(`
+    query SpexPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges { cursor node { ...SpexFull } }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+        }
+    }
+`);
+
+const SpexCreateMutation = graphql(`
+    mutation SpexCreate($input: SpexCreate!) {
+        spexCreate(input: $input) { ...SpexFull }
+    }
+`);
+
+const SpexUpdateMutation = graphql(`
+    mutation SpexUpdate($input: SpexUpdate!) {
+        spexUpdate(input: $input) { ...SpexFull }
+    }
+`);
+
+const SpexDeleteMutation = graphql(`
+    mutation SpexDelete($id: ID!) {
+        spexDelete(id: $id)
+    }
+`);
+
+const SpexExportQuery = graphql(`
+    query SpexExport($ids: [ID], $filter: String, $type: ImpexType!) {
+        spexExport(ids: $ids, filter: $filter, type: $type) { id }
+    }
+`);
+
+const SpexEventsQuery = graphql(`
+    query SpexEvents($sourceId: ID!) {
+        spexEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
+    }
+`);
 
 const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
     singular: 'spex',
-    createInputType: 'SpexCreate',
-    updateInputType: 'SpexUpdate',
-    summaryFields: SummaryFields,
-    fullFields: FullFields,
+    pagedSummaryQuery: SpexPagedSummary,
+    pagedFullQuery: SpexPagedFull,
+    createMutation: SpexCreateMutation,
+    updateMutation: SpexUpdateMutation,
+    deleteMutation: SpexDeleteMutation,
+    exportQuery: SpexExportQuery,
+    eventsQuery: SpexEventsQuery,
     cacheTag: 'spex',
     restPath: 'spex',
     defaultSort: ['year'],
@@ -44,47 +99,47 @@ const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
 
 export const {getPaged, getAll, create, update, del, exp, imp, events} = client;
 
-const AddCategoryMutation = /* GraphQL */ `
-    mutation ($id: ID!, $categoryId: ID!) {
+const SpexCategoryAddMutation = graphql(`
+    mutation SpexCategoryAdd($id: ID!, $categoryId: ID!) {
         spexCategoryAdd(spexId: $id, id: $categoryId)
     }
-`;
+`);
 
-const RemoveCategoryMutation = /* GraphQL */ `
-    mutation ($id: ID!) {
+const SpexCategoryRemoveMutation = graphql(`
+    mutation SpexCategoryRemove($id: ID!) {
         spexCategoryRemove(spexId: $id)
     }
-`;
+`);
 
-const CreateRevivalMutation = /* GraphQL */ `
-    mutation ($spexId: ID!, $year: Year!) {
+const SpexRevivalCreateMutation = graphql(`
+    mutation SpexRevivalCreate($spexId: ID!, $year: Year!) {
         spexRevivalCreate(spexId: $spexId, year: $year) {
             id
             year
         }
     }
-`;
+`);
 
-const DeleteRevivalMutation = /* GraphQL */ `
-    mutation ($id: ID!, $spexId: ID!) {
+const SpexRevivalDeleteMutation = graphql(`
+    mutation SpexRevivalDelete($id: ID!, $spexId: ID!) {
         spexRevivalDelete(spexId: $spexId, id: $id)
     }
-`;
+`);
 
 export async function addCategory(id: string, categoryId: string) {
-    return runMutationField(AddCategoryMutation, {id, categoryId}, 'spexCategoryAdd');
+    return runMutationField(SpexCategoryAddMutation, {id, categoryId}, 'spexCategoryAdd');
 }
 
 export async function removeCategory(id: string) {
-    return runMutationField(RemoveCategoryMutation, {id}, 'spexCategoryRemove');
+    return runMutationField(SpexCategoryRemoveMutation, {id}, 'spexCategoryRemove');
 }
 
 export async function createRevival(spexId: string, year: string) {
-    return runMutationField(CreateRevivalMutation, {spexId, year}, 'spexRevivalCreate');
+    return runMutationField(SpexRevivalCreateMutation, {spexId, year}, 'spexRevivalCreate');
 }
 
 export async function deleteRevival(spexId: string, id: string) {
-    return runMutationField(DeleteRevivalMutation, {spexId, id}, 'spexRevivalDelete');
+    return runMutationField(SpexRevivalDeleteMutation, {spexId, id}, 'spexRevivalDelete');
 }
 
 export async function uploadPoster(id: string, file: File) {

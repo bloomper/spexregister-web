@@ -5,7 +5,7 @@ import {useCallback} from "react"
 import {CartesianGrid, Line, LineChart, XAxis, YAxis} from "recharts"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
-import {History, Statistics} from "@/gql/graphql"
+import {History, Statistics} from "@/gql/schema"
 import {useTranslations} from "next-intl"
 import {TrendingUp} from "lucide-react"
 

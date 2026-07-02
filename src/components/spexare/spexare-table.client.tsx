@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table";
 import {CheckCircle2, Circle, Plus, User, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/graphql";
+import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {SpexareForm, SpexareView} from "@/components/spexare";

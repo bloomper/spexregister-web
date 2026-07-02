@@ -1,7 +1,7 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {Address, Country, Type, TypeType} from "@/gql/graphql";
+import {Address, Country, Type, TypeType} from "@/gql/schema";
 import {Button} from "@/components/ui/button";
 import {Edit2, MapPin, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";

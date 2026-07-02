@@ -1,21 +1,10 @@
 import 'server-only';
 
-import {TaskActivity} from "@/gql/graphql";
+import {TaskActivity} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {mutateForData, runMutationField} from "@/lib/graphql.server";
-import {
-    FullFragment as ActorFullFragment,
-    SummaryFragment as ActorSummaryFragment
-} from "@/lib/spexare/activity/task-activity/actor";
 
-export const SummaryFields = `
-    ...TaskActivitySummary
-`;
-
-export const FullFields = `
-    ...TaskActivityFull
-`;
-
-const BaseFragment = /* GraphQL */ `
+export const TaskActivityBase = graphql(`
     fragment TaskActivityBase on TaskActivity {
         id
         task {
@@ -27,20 +16,18 @@ const BaseFragment = /* GraphQL */ `
             }
         }
     }
-`;
+`);
 
-export const SummaryFragment = /* GraphQL */ `
+export const TaskActivitySummary = graphql(`
     fragment TaskActivitySummary on TaskActivity {
         ...TaskActivityBase
         actors {
             ...ActorSummary
         }
     }
-    ${BaseFragment}
-    ${ActorSummaryFragment}
-`;
+`);
 
-export const FullFragment = /* GraphQL */ `
+export const TaskActivityFull = graphql(`
     fragment TaskActivityFull on TaskActivity {
         ...TaskActivityBase
         actors {
@@ -51,42 +38,38 @@ export const FullFragment = /* GraphQL */ `
         lastModifiedAt
         lastModifiedBy
     }
-    ${BaseFragment}
-    ${ActorFullFragment}
-`;
+`);
 
-const CreateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $activityId: ID!, $taskId: ID!) {
+const TaskActivityCreateMutation = graphql(`
+    mutation TaskActivityCreate($spexareId: ID!, $activityId: ID!, $taskId: ID!) {
         taskActivityCreate(spexareId: $spexareId, activityId: $activityId, taskId: $taskId) {
-            ${FullFields}
+            ...TaskActivityFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const UpdateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $activityId: ID!, $taskId: ID!, $id: ID!) {
+const TaskActivityUpdateMutation = graphql(`
+    mutation TaskActivityUpdate($spexareId: ID!, $activityId: ID!, $taskId: ID!, $id: ID!) {
         taskActivityUpdate(spexareId: $spexareId, activityId: $activityId, taskId: $taskId, id: $id) {
-            ${FullFields}
+            ...TaskActivityFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const DeleteMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $activityId: ID!, $id: ID!) {
+const TaskActivityDeleteMutation = graphql(`
+    mutation TaskActivityDelete($spexareId: ID!, $activityId: ID!, $id: ID!) {
         taskActivityDelete(spexareId: $spexareId, activityId: $activityId, id: $id)
     }
-`;
+`);
 
-export async function create(spexareId: string, activityId: string, taskId: string) {
-    return mutateForData<TaskActivity>(CreateMutation, {spexareId, activityId, taskId}, 'taskActivityCreate', 'No data created');
+export async function create(spexareId: string, activityId: string, taskId: string): Promise<TaskActivity> {
+    return mutateForData(TaskActivityCreateMutation, {spexareId, activityId, taskId}, 'taskActivityCreate', 'No data created') as Promise<TaskActivity>;
 }
 
-export async function update(spexareId: string, activityId: string, taskId: string, id: string) {
-    return mutateForData<TaskActivity>(UpdateMutation, {spexareId, activityId, taskId, id}, 'taskActivityUpdate', 'No data updated');
+export async function update(spexareId: string, activityId: string, taskId: string, id: string): Promise<TaskActivity> {
+    return mutateForData(TaskActivityUpdateMutation, {spexareId, activityId, taskId, id}, 'taskActivityUpdate', 'No data updated') as Promise<TaskActivity>;
 }
 
 export async function del(spexareId: string, activityId: string, id: string) {
-    return runMutationField(DeleteMutation, {spexareId, activityId, id}, 'taskActivityDelete');
+    return runMutationField(TaskActivityDeleteMutation, {spexareId, activityId, id}, 'taskActivityDelete');
 }

@@ -1,17 +1,10 @@
 import 'server-only';
 
-import {Toggle, ToggleCreate, ToggleUpdate} from "@/gql/graphql";
+import {Toggle, ToggleCreate, ToggleUpdate} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {mutateForData, runMutationField} from "@/lib/graphql.server";
 
-export const SummaryFields = `
-    ...ToggleSummary
-`;
-
-export const FullFields = `
-    ...ToggleFull
-`;
-
-export const SummaryFragment = /* GraphQL */ `
+export const ToggleSummary = graphql(`
     fragment ToggleSummary on Toggle {
         id
         value
@@ -20,9 +13,9 @@ export const SummaryFragment = /* GraphQL */ `
             label
         }
     }
-`;
+`);
 
-export const FullFragment = /* GraphQL */ `
+export const ToggleFull = graphql(`
     fragment ToggleFull on Toggle {
         ...ToggleSummary
         createdAt
@@ -30,41 +23,38 @@ export const FullFragment = /* GraphQL */ `
         lastModifiedAt
         lastModifiedBy
     }
-    ${SummaryFragment}
-`;
+`);
 
-const CreateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $input: ToggleCreate!) {
+const ToggleCreateMutation = graphql(`
+    mutation ToggleCreate($spexareId: ID!, $typeId: ID!, $input: ToggleCreate!) {
         toggleCreate(spexareId: $spexareId, typeId: $typeId, input: $input) {
-            ${FullFields}
+            ...ToggleFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const UpdateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $input: ToggleUpdate!) {
+const ToggleUpdateMutation = graphql(`
+    mutation ToggleUpdate($spexareId: ID!, $typeId: ID!, $input: ToggleUpdate!) {
         toggleUpdate(spexareId: $spexareId, typeId: $typeId, input: $input) {
-            ${FullFields}
+            ...ToggleFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const DeleteMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $id: ID!) {
+const ToggleDeleteMutation = graphql(`
+    mutation ToggleDelete($spexareId: ID!, $typeId: ID!, $id: ID!) {
         toggleDelete(spexareId: $spexareId, typeId: $typeId, id: $id)
     }
-`;
+`);
 
-export async function create(spexareId: string, typeId: string, input: ToggleCreate) {
-    return mutateForData<Toggle>(CreateMutation, {spexareId, typeId, input}, 'toggleCreate', 'No data created');
+export async function create(spexareId: string, typeId: string, input: ToggleCreate): Promise<Toggle> {
+    return mutateForData(ToggleCreateMutation, {spexareId, typeId, input}, 'toggleCreate', 'No data created') as Promise<Toggle>;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: Omit<ToggleUpdate, "id">) {
-    return mutateForData<Toggle>(UpdateMutation, {spexareId, typeId, input: {...input, id}}, 'toggleUpdate', 'No data updated');
+export async function update(spexareId: string, typeId: string, id: string, input: Omit<ToggleUpdate, "id">): Promise<Toggle> {
+    return mutateForData(ToggleUpdateMutation, {spexareId, typeId, input: {...input, id}}, 'toggleUpdate', 'No data updated') as Promise<Toggle>;
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    return runMutationField(DeleteMutation, {spexareId, typeId, id}, 'toggleDelete');
+    return runMutationField(ToggleDeleteMutation, {spexareId, typeId, id}, 'toggleDelete');
 }

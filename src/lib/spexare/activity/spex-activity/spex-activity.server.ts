@@ -1,17 +1,10 @@
 import 'server-only';
 
-import {SpexActivity} from "@/gql/graphql";
+import {SpexActivity} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {mutateForData, runMutationField} from "@/lib/graphql.server";
 
-export const SummaryFields = `
-    ...SpexActivitySummary
-`;
-
-export const FullFields = `
-    ...SpexActivityFull
-`;
-
-const BaseFragment = /* GraphQL */ `
+export const SpexActivityBase = graphql(`
     fragment SpexActivityBase on SpexActivity {
         id
         spex {
@@ -24,16 +17,15 @@ const BaseFragment = /* GraphQL */ `
             }
         }
     }
-`;
+`);
 
-export const SummaryFragment = /* GraphQL */ `
+export const SpexActivitySummary = graphql(`
     fragment SpexActivitySummary on SpexActivity {
         ...SpexActivityBase
     }
-    ${BaseFragment}
-`;
+`);
 
-export const FullFragment = /* GraphQL */ `
+export const SpexActivityFull = graphql(`
     fragment SpexActivityFull on SpexActivity {
         ...SpexActivityBase
         createdAt
@@ -41,41 +33,38 @@ export const FullFragment = /* GraphQL */ `
         lastModifiedAt
         lastModifiedBy
     }
-    ${BaseFragment}
-`;
+`);
 
-const CreateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $activityId: ID!, $spexId: ID!) {
+const SpexActivityCreateMutation = graphql(`
+    mutation SpexActivityCreate($spexareId: ID!, $activityId: ID!, $spexId: ID!) {
         spexActivityCreate(spexareId: $spexareId, activityId: $activityId, spexId: $spexId) {
-            ${FullFields}
+            ...SpexActivityFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const UpdateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $activityId: ID!, $spexId: ID!, $id: ID!) {
+const SpexActivityUpdateMutation = graphql(`
+    mutation SpexActivityUpdate($spexareId: ID!, $activityId: ID!, $spexId: ID!, $id: ID!) {
         spexActivityUpdate(spexareId: $spexareId, activityId: $activityId, spexId: $spexId, id: $id) {
-            ${FullFields}
+            ...SpexActivityFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const DeleteMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $activityId: ID!, $id: ID!) {
+const SpexActivityDeleteMutation = graphql(`
+    mutation SpexActivityDelete($spexareId: ID!, $activityId: ID!, $id: ID!) {
         spexActivityDelete(spexareId: $spexareId, activityId: $activityId, id: $id)
     }
-`;
+`);
 
-export async function create(spexareId: string, activityId: string, spexId: string) {
-    return mutateForData<SpexActivity>(CreateMutation, {spexareId, activityId, spexId}, 'spexActivityCreate', 'No data created');
+export async function create(spexareId: string, activityId: string, spexId: string): Promise<SpexActivity> {
+    return mutateForData(SpexActivityCreateMutation, {spexareId, activityId, spexId}, 'spexActivityCreate', 'No data created') as Promise<SpexActivity>;
 }
 
-export async function update(spexareId: string, activityId: string, spexId: string, id: string) {
-    return mutateForData<SpexActivity>(UpdateMutation, {spexareId, activityId, spexId, id}, 'spexActivityUpdate', 'No data updated');
+export async function update(spexareId: string, activityId: string, spexId: string, id: string): Promise<SpexActivity> {
+    return mutateForData(SpexActivityUpdateMutation, {spexareId, activityId, spexId, id}, 'spexActivityUpdate', 'No data updated') as Promise<SpexActivity>;
 }
 
 export async function del(spexareId: string, activityId: string, id: string) {
-    return runMutationField(DeleteMutation, {spexareId, activityId, id}, 'spexActivityDelete');
+    return runMutationField(SpexActivityDeleteMutation, {spexareId, activityId, id}, 'spexActivityDelete');
 }

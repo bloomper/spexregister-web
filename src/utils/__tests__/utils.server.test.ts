@@ -1,6 +1,6 @@
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {mapConnection} from '@/utils/utils.server';
-import type {PageInfo} from '@/gql/graphql';
+import type {PageInfo} from '@/gql/schema';
 
 type Edge = {cursor: string; node: {id: string}};
 

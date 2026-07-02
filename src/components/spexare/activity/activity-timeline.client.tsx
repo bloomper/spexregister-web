@@ -5,7 +5,7 @@ import {Drama, History} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {DataEmpty} from "@/components/data-empty";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import {Activity, Actor, TaskActivity} from "@/gql/graphql";
+import {Activity, Actor, TaskActivity} from "@/gql/schema";
 
 interface ActivityTimelineProps {
     activities: Activity[];

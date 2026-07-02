@@ -17,7 +17,7 @@ import {CursorPage, CursorPageInfo} from "@/types/pagination";
 import {ChevronLeft, ChevronRight, ChevronsLeft} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useTranslations} from "next-intl";
-import {SortDirection} from "@/gql/graphql";
+import {SortDirection} from "@/gql/schema";
 import {DataEmpty} from "@/components/data-empty";
 import {cn} from "@/utils/utils";
 import {Spinner} from "@/components/ui/spinner";

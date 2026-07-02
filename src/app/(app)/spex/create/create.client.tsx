@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexForm} from "@/components/spex";
-import {SpexCategory} from "@/gql/graphql";
+import {SpexCategory} from "@/gql/schema";
 
 export function SpexCreateForm({categories}: { categories: SpexCategory[] }) {
     const router = useRouter();

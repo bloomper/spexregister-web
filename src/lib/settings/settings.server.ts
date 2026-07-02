@@ -1,42 +1,37 @@
 import 'server-only';
 
-import {Country, Type} from "@/gql/graphql";
+import {print} from "graphql";
+import type {TypedDocumentNode} from "@graphql-typed-document-node/core";
+import {Country, Type} from "@/gql/schema";
+import {graphql} from "@/gql";
 
-const CountryFields = `
-    isoCode
-    label
-`;
-
-const TypeFields = `
-    id
-    label
-    type
-`;
-
-const CountriesQuery = /* GraphQL */ `
-    query {
+const CountriesQuery = graphql(`
+    query Countries {
         countries {
-            ${CountryFields}
+            isoCode
+            label
         }
     }
-`;
+`);
 
-const TypesQuery = /* GraphQL */ `
-    query {
+const TypesQuery = graphql(`
+    query Types {
         types {
-            ${TypeFields}
+            id
+            label
+            type
         }
     }
-`;
+`);
 
-async function fetchStatic<T>(query: string, locale: string): Promise<T> {
+async function fetchStatic<TData>(query: TypedDocumentNode<TData, Record<string, never>>, locale: string): Promise<TData> {
     const response = await fetch(process.env.API_GRAPHQL_ENDPOINT || '', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept-Language': locale,
         },
-        body: JSON.stringify({query}),
+        body: JSON.stringify({query: print(query)}),
     });
 
     const result = await response.json();
@@ -50,12 +45,12 @@ async function fetchStatic<T>(query: string, locale: string): Promise<T> {
 
 export async function getCountries(locale: string): Promise<Country[]> {
     "use cache";
-    const data = await fetchStatic<{ countries: Country[] }>(CountriesQuery, locale);
-    return data.countries ?? [];
+    const data = await fetchStatic(CountriesQuery, locale);
+    return (data.countries ?? []) as Country[];
 }
 
 export async function getTypes(locale: string): Promise<Type[]> {
     "use cache";
-    const data = await fetchStatic<{ types: Type[] }>(TypesQuery, locale);
-    return data.types ?? [];
+    const data = await fetchStatic(TypesQuery, locale);
+    return (data.types ?? []) as Type[];
 }

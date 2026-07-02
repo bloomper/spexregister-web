@@ -9,7 +9,7 @@ const axiosDelete = vi.fn();
 vi.mock('@/lib/axios.server', () => ({default: {put: (...a: unknown[]) => axiosPut(...a), delete: (...a: unknown[]) => axiosDelete(...a)}}));
 
 import {deleteLogo, getPaged, uploadLogo} from '@/lib/spex/category/spex-category.server';
-import {SortDirection} from '@/gql/graphql';
+import {SortDirection} from '@/gql/schema';
 
 const connection = (nodes: {id: string}[], hasNextPage: boolean, endCursor: string | null) => ({
     edges: nodes.map((node, i) => ({cursor: `c${i}`, node})),

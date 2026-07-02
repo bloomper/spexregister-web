@@ -3,7 +3,7 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SpexFormInput, SpexFormOutput, spexFormSchema} from "@/lib/spex/schema";
-import {Spex, SpexCategory} from "@/gql/graphql";
+import {Spex, SpexCategory} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {useState, useTransition} from "react";
 import {toast} from "sonner";

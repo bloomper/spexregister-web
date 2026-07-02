@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table";
 import {Check, CheckCircle2, Circle, Copy, Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Authority, State, User} from "@/gql/graphql";
+import {Authority, State, User} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {UserForm} from "@/components/user";

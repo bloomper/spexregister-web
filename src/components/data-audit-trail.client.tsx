@@ -4,7 +4,7 @@ import {useState, useTransition} from 'react';
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '@/components/ui/collapsible';
 import {Button} from '@/components/ui/button';
 import {ChevronDown, ChevronUp, History, Pencil, PlusCircle, Trash2} from 'lucide-react';
-import {Event, EventType} from '@/gql/graphql';
+import {Event, EventType} from '@/gql/schema';
 import {useTranslations} from 'next-intl';
 import {formatDateTime} from "@/utils/utils";
 

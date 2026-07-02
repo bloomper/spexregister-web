@@ -1,6 +1,6 @@
 "use client";
 
-import {ImportResult} from "@/gql/graphql";
+import {ImportResult} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {Copy} from "lucide-react";
 import {toast} from "sonner";

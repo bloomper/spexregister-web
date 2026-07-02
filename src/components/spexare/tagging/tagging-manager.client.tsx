@@ -1,7 +1,7 @@
 "use client";
 
 import {useTransition} from "react";
-import {Tag} from "@/gql/graphql";
+import {Tag} from "@/gql/schema";
 import {Badge} from "@/components/ui/badge";
 import {Plus, Tag as TagIcon, X} from "lucide-react";
 import {useTranslations} from "next-intl";

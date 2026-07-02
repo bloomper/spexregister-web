@@ -1,17 +1,10 @@
 import 'server-only';
 
-import {Membership, MembershipCreate} from "@/gql/graphql";
+import {Membership, MembershipCreate} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {mutateForData, runMutationField} from "@/lib/graphql.server";
 
-export const SummaryFields = `
-    ...MembershipSummary
-`;
-
-export const FullFields = `
-    ...MembershipFull
-`;
-
-export const SummaryFragment = /* GraphQL */ `
+export const MembershipSummary = graphql(`
     fragment MembershipSummary on Membership {
         id
         year
@@ -20,9 +13,9 @@ export const SummaryFragment = /* GraphQL */ `
             label
         }
     }
-`;
+`);
 
-export const FullFragment = /* GraphQL */ `
+export const MembershipFull = graphql(`
     fragment MembershipFull on Membership {
         ...MembershipSummary
         createdAt
@@ -30,41 +23,26 @@ export const FullFragment = /* GraphQL */ `
         lastModifiedAt
         lastModifiedBy
     }
-    ${SummaryFragment}
-`;
+`);
 
-const CreateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $input: MembershipCreate!) {
+const MembershipCreateMutation = graphql(`
+    mutation MembershipCreate($spexareId: ID!, $typeId: ID!, $input: MembershipCreate!) {
         membershipCreate(spexareId: $spexareId, typeId: $typeId, input: $input) {
-            ${FullFields}
+            ...MembershipFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const UpdateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $input: MembershipUpdate!) {
-        membershipUpdate(spexareId: $spexareId, typeId: $typeId, input: $input) {
-            ${FullFields}
-        }
-    }
-    ${FullFragment}
-`;
-
-const DeleteMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $id: ID!) {
+const MembershipDeleteMutation = graphql(`
+    mutation MembershipDelete($spexareId: ID!, $typeId: ID!, $id: ID!) {
         membershipDelete(spexareId: $spexareId, typeId: $typeId, id: $id)
     }
-`;
+`);
 
-export async function create(spexareId: string, typeId: string, input: MembershipCreate) {
-    return mutateForData<Membership>(CreateMutation, {spexareId, typeId, input}, 'membershipCreate', 'No data created');
-}
-
-export async function update(spexareId: string, typeId: string, id: string, input: MembershipCreate) {
-    return mutateForData<Membership>(UpdateMutation, {spexareId, typeId, input: {...input, id}}, 'membershipUpdate', 'No data updated');
+export async function create(spexareId: string, typeId: string, input: MembershipCreate): Promise<Membership> {
+    return mutateForData(MembershipCreateMutation, {spexareId, typeId, input}, 'membershipCreate', 'No data created') as Promise<Membership>;
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    return runMutationField(DeleteMutation, {spexareId, typeId, id}, 'membershipDelete');
+    return runMutationField(MembershipDeleteMutation, {spexareId, typeId, id}, 'membershipDelete');
 }

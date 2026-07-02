@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table";
 import {ArrowDown, ArrowUp, ArrowUpDown, Image as ImageIcon, Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Spex, SpexCategory} from "@/gql/graphql";
+import {Spex, SpexCategory} from "@/gql/schema";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";

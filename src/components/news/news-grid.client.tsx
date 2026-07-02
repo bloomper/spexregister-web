@@ -12,7 +12,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
-import {News} from "@/gql/graphql";
+import {News} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {formatDate} from "@/utils/utils";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";

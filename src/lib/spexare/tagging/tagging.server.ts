@@ -1,23 +1,16 @@
 import 'server-only';
 
+import {graphql} from "@/gql";
 import {runMutationField} from "@/lib/graphql.server";
 
-export const SummaryFields = `
-    ...TaggingSummary
-`;
-
-export const FullFields = `
-    ...TaggingFull
-`;
-
-export const SummaryFragment = /* GraphQL */ `
+export const TaggingSummary = graphql(`
     fragment TaggingSummary on Tag {
         id
         name
     }
-`;
+`);
 
-export const FullFragment = /* GraphQL */ `
+export const TaggingFull = graphql(`
     fragment TaggingFull on Tag {
         ...TaggingSummary
         createdAt
@@ -25,26 +18,24 @@ export const FullFragment = /* GraphQL */ `
         lastModifiedAt
         lastModifiedBy
     }
-    ${SummaryFragment}
-`;
+`);
 
-const CreateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $tagId: ID!) {
+const TaggingCreateMutation = graphql(`
+    mutation TaggingCreate($spexareId: ID!, $tagId: ID!) {
         taggingCreate(spexareId: $spexareId, tagId: $tagId)
     }
-`;
+`);
 
-const DeleteMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $tagId: ID!) {
+const TaggingDeleteMutation = graphql(`
+    mutation TaggingDelete($spexareId: ID!, $tagId: ID!) {
         taggingDelete(spexareId: $spexareId, tagId: $tagId)
     }
-`;
+`);
 
 export async function create(spexareId: string, tagId: string) {
-    return runMutationField(CreateMutation, {spexareId, tagId}, 'taggingCreate');
+    return runMutationField(TaggingCreateMutation, {spexareId, tagId}, 'taggingCreate');
 }
 
 export async function del(spexareId: string, tagId: string) {
-    return runMutationField(DeleteMutation, {spexareId, tagId}, 'taggingDelete');
+    return runMutationField(TaggingDeleteMutation, {spexareId, tagId}, 'taggingDelete');
 }
-

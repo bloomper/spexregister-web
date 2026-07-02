@@ -3,7 +3,7 @@
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {NewsFormInput, NewsFormOutput, newsFormSchema} from "@/lib/news/schema";
-import {News} from "@/gql/graphql";
+import {News} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {useTransition} from "react";
 import {toast} from "sonner";

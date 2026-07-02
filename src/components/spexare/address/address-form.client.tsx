@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button";
 import {useTranslations} from "next-intl";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {cn, translateError} from "@/utils/utils";
-import {Country, Type, TypeType} from "@/gql/graphql";
+import {Country, Type, TypeType} from "@/gql/schema";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Check, ChevronsUpDown} from "lucide-react";

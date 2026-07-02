@@ -4,7 +4,7 @@ import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
 import {create, del, events, exp, getPaged, imp, newsFormSchema, update} from "@/lib/news";
 import {revalidateTag} from "next/cache";
-import {ImpexType, SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/schema";
 
 export async function getPageAction(args: {
     first?: number;

@@ -4,7 +4,7 @@ import {useCallback, useMemo, useState} from "react";
 import {FileSpreadsheet, Loader2, Upload} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {toast} from "sonner";
-import {ImpexType, JobReference} from "@/gql/graphql";
+import {ImpexType, JobReference} from "@/gql/schema";
 import {useJobTracker} from "@/hooks/use-job-tracker.client";
 import {useTranslations} from "next-intl";
 import {cn} from "@/utils/utils";

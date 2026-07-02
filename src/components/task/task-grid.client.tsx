@@ -12,7 +12,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
-import {Task, TaskCategory} from "@/gql/graphql";
+import {Task, TaskCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";

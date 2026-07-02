@@ -6,7 +6,7 @@ import {Download, MoreHorizontal} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {toast} from "sonner";
 
-import {Job} from "@/gql/graphql";
+import {Job} from "@/gql/schema";
 import {CursorPage} from "@/types/pagination";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";

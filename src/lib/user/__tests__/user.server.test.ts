@@ -17,7 +17,7 @@ import {
     removeSpexare,
     setState,
 } from '@/lib/user/user.server';
-import {SortDirection} from '@/gql/graphql';
+import {SortDirection} from '@/gql/schema';
 
 const connection = (nodes: {id: string}[], hasNextPage: boolean, endCursor: string | null) => ({
     edges: nodes.map((node, i) => ({cursor: `c${i}`, node})),

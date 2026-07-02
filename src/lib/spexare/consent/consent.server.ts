@@ -1,17 +1,10 @@
 import 'server-only';
 
-import {Consent, ConsentCreate, ConsentUpdate} from "@/gql/graphql";
+import {Consent, ConsentCreate, ConsentUpdate} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {mutateForData, runMutationField} from "@/lib/graphql.server";
 
-export const SummaryFields = `
-    ...ConsentSummary
-`;
-
-export const FullFields = `
-    ...ConsentFull
-`;
-
-export const SummaryFragment = /* GraphQL */ `
+export const ConsentSummary = graphql(`
     fragment ConsentSummary on Consent {
         id
         value
@@ -20,9 +13,9 @@ export const SummaryFragment = /* GraphQL */ `
             label
         }
     }
-`;
+`);
 
-export const FullFragment = /* GraphQL */ `
+export const ConsentFull = graphql(`
     fragment ConsentFull on Consent {
         ...ConsentSummary
         createdAt
@@ -30,41 +23,38 @@ export const FullFragment = /* GraphQL */ `
         lastModifiedAt
         lastModifiedBy
     }
-    ${SummaryFragment}
-`;
+`);
 
-const CreateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $input: ConsentCreate!) {
+const ConsentCreateMutation = graphql(`
+    mutation ConsentCreate($spexareId: ID!, $typeId: ID!, $input: ConsentCreate!) {
         consentCreate(spexareId: $spexareId, typeId: $typeId, input: $input) {
-            ${FullFields}
+            ...ConsentFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const UpdateMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $input: ConsentUpdate!) {
+const ConsentUpdateMutation = graphql(`
+    mutation ConsentUpdate($spexareId: ID!, $typeId: ID!, $input: ConsentUpdate!) {
         consentUpdate(spexareId: $spexareId, typeId: $typeId, input: $input) {
-            ${FullFields}
+            ...ConsentFull
         }
     }
-    ${FullFragment}
-`;
+`);
 
-const DeleteMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $typeId: ID!, $id: ID!) {
+const ConsentDeleteMutation = graphql(`
+    mutation ConsentDelete($spexareId: ID!, $typeId: ID!, $id: ID!) {
         consentDelete(spexareId: $spexareId, typeId: $typeId, id: $id)
     }
-`;
+`);
 
-export async function create(spexareId: string, typeId: string, input: ConsentCreate) {
-    return mutateForData<Consent>(CreateMutation, {spexareId, typeId, input}, 'consentCreate', 'No data created');
+export async function create(spexareId: string, typeId: string, input: ConsentCreate): Promise<Consent> {
+    return mutateForData(ConsentCreateMutation, {spexareId, typeId, input}, 'consentCreate', 'No data created') as Promise<Consent>;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: Omit<ConsentUpdate, "id">) {
-    return mutateForData<Consent>(UpdateMutation, {spexareId, typeId, input: {...input, id}}, 'consentUpdate', 'No data updated');
+export async function update(spexareId: string, typeId: string, id: string, input: Omit<ConsentUpdate, "id">): Promise<Consent> {
+    return mutateForData(ConsentUpdateMutation, {spexareId, typeId, input: {...input, id}}, 'consentUpdate', 'No data updated') as Promise<Consent>;
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    return runMutationField(DeleteMutation, {spexareId, typeId, id}, 'consentDelete');
+    return runMutationField(ConsentDeleteMutation, {spexareId, typeId, id}, 'consentDelete');
 }

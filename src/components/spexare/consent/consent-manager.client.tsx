@@ -1,7 +1,7 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {Consent, Type, TypeType} from "@/gql/graphql";
+import {Consent, Type, TypeType} from "@/gql/schema";
 import {Button} from "@/components/ui/button";
 import {Edit2, Plus, ShieldCheck, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";

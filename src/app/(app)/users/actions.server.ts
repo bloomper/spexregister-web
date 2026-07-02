@@ -22,7 +22,7 @@ import {
 } from "@/lib/user";
 import {getPaged as getSpexarePaged} from "@/lib/spexare";
 import {revalidateTag} from "next/cache";
-import {ImpexType, SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/schema";
 
 export async function getPageAction(args: {
     first?: number;

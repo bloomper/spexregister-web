@@ -35,7 +35,7 @@ import {Role} from "@/types/auth";
 import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {usePathname} from "next/navigation";
 import {useTranslations} from "next-intl";
-import {Spexare} from "@/gql/graphql";
+import {Spexare} from "@/gql/schema";
 import {useIsClient} from "@/hooks/use-is-client";
 
 interface NavItem {

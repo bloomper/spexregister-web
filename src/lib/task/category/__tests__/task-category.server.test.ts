@@ -7,7 +7,7 @@ vi.mock('@/lib/urql.server', () => ({getClient: () => ({query, mutation})}));
 vi.mock('@/lib/axios.server', () => ({default: {}}));
 
 import {getPaged} from '@/lib/task/category/task-category.server';
-import {SortDirection} from '@/gql/graphql';
+import {SortDirection} from '@/gql/schema';
 
 const connection = (nodes: {id: string}[], hasNextPage: boolean, endCursor: string | null) => ({
     edges: nodes.map((node, i) => ({cursor: `c${i}`, node})),

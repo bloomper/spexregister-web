@@ -1,6 +1,6 @@
 import 'server-only';
 
-import {PageInfo} from "@/gql/graphql";
+import {PageInfo} from "@/gql/schema";
 import {CursorPage} from "@/types/pagination";
 
 export function mapConnection<T, E extends { cursor: string; node: T }>(

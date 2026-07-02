@@ -5,7 +5,7 @@ import {useTranslations} from "next-intl";
 import {Heart, Loader2, Search, User, X} from "lucide-react";
 import {toast} from "sonner";
 import Image from "next/image";
-import {Spexare, SpexarePartner} from "@/gql/graphql";
+import {Spexare, SpexarePartner} from "@/gql/schema";
 import {addPartnerAction, getPageAction, removePartnerAction} from "@/app/(app)/spexare/actions.server";
 import {Button} from "@/components/ui/button";
 import {DataEmpty} from "@/components/data-empty";

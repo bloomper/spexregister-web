@@ -26,7 +26,7 @@ import {
     SortDirection,
     SpexareCreate,
     SpexareUpdate
-} from "@/gql/graphql";
+} from "@/gql/schema";
 import {
     addressFormSchema,
     create as createAddress,
@@ -42,8 +42,7 @@ import {
 import {
     create as createMembership,
     del as delMembership,
-    membershipFormSchema,
-    update as updateMembership
+    membershipFormSchema
 } from "@/lib/spexare/membership";
 import {create as createTagging, del as delTagging} from "@/lib/spexare/tagging";
 import {create as createToggle, del as delToggle, toggleFormSchema, update as updateToggle} from "@/lib/spexare/toggle";
@@ -271,17 +270,6 @@ export async function createMembershipAction(spexareId: string, _typeId: string,
         const {typeId, ...createInput} = validated;
         void typeId;
         const result = await createMembership(spexareId, _typeId, createInput);
-        revalidate();
-        return result;
-    });
-}
-
-export async function updateMembershipAction(spexareId: string, _typeId: string, id: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = membershipFormSchema.parse(data);
-        const {typeId, ...updateInput} = validated;
-        void typeId;
-        const result = await updateMembership(spexareId, _typeId, id, updateInput);
         revalidate();
         return result;
     });

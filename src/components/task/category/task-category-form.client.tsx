@@ -3,7 +3,7 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {TaskCategoryFormInput, TaskCategoryFormOutput, taskCategoryFormSchema} from "@/lib/task/category/schema";
-import {TaskCategory} from "@/gql/graphql";
+import {TaskCategory} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {useTransition} from "react";
 import {toast} from "sonner";

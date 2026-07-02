@@ -30,7 +30,7 @@ import {
     ToggleEdge,
     User,
     UserEdge
-} from "@/gql/graphql";
+} from "@/gql/schema";
 
 export type CursorPageInfo = {
     hasNextPage: boolean;

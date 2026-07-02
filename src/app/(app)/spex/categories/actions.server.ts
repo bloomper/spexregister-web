@@ -15,7 +15,7 @@ import {
     uploadLogo
 } from "@/lib/spex/category";
 import {revalidateTag} from "next/cache";
-import {ImpexType, SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/schema";
 
 export async function getPageAction(args: {
     first?: number;

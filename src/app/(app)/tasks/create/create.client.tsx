@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Sheet} from "@/components/ui/sheet";
 import {TaskForm} from "@/components/task";
-import {TaskCategory} from "@/gql/graphql";
+import {TaskCategory} from "@/gql/schema";
 
 export function TaskCreateForm({categories}: { categories: TaskCategory[] }) {
     const router = useRouter();

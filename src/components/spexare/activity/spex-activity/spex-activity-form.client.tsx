@@ -11,7 +11,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {cn, translateError} from "@/utils/utils";
-import {Spex, SpexActivity, SpexCategory} from "@/gql/graphql";
+import {Spex, SpexActivity, SpexCategory} from "@/gql/schema";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import {Check, ChevronsUpDown, Plus} from "lucide-react";

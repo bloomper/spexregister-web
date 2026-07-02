@@ -3,7 +3,7 @@
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {TagFormInput, TagFormOutput, tagFormSchema} from "@/lib/tag/schema";
-import {Tag} from "@/gql/graphql";
+import {Tag} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {useTransition} from "react";
 import {toast} from "sonner";

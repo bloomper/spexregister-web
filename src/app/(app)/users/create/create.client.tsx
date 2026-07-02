@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Sheet} from "@/components/ui/sheet";
 import {UserForm} from "@/components/user";
-import {Authority, State} from "@/gql/graphql";
+import {Authority, State} from "@/gql/schema";
 
 export function UserCreateForm({
                                    states,

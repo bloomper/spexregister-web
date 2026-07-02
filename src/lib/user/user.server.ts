@@ -1,44 +1,99 @@
 import 'server-only';
 
-import {Authority, SortDirection, State, User, UserCreate, UserEdge, UserUpdate} from "@/gql/graphql";
+import {Authority, SortDirection, State, User, UserCreate, UserEdge, UserUpdate} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {createResourceClient, runMutationField, runQuery} from "@/lib/graphql.server";
-import {FullFragment as SpexareFullFragment} from "@/lib/spexare";
 
-const SummaryFields = `
-    id
-    externalId
-    email
-    authorities {
-      id
-      label
+export const UserSummary = graphql(`
+    fragment UserSummary on User {
+        id
+        externalId
+        email
+        authorities {
+            id
+            label
+        }
+        state {
+            id
+            label
+        }
+        spexare {
+            id
+            firstName
+            lastName
+            nickName
+        }
     }
-    state {
-      id
-      label
-    }
-    spexare {
-      id
-      firstName
-      lastName
-      nickName
-    }
-`;
+`);
 
-const FullFields = `
-    ${SummaryFields}
-    temporaryPassword
-    createdAt
-    createdBy
-    lastModifiedAt
-    lastModifiedBy
-`;
+export const UserFull = graphql(`
+    fragment UserFull on User {
+        ...UserSummary
+        temporaryPassword
+        createdAt
+        createdBy
+        lastModifiedAt
+        lastModifiedBy
+    }
+`);
+
+const UserPagedSummary = graphql(`
+    query UserPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges { cursor node { ...UserSummary } }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+        }
+    }
+`);
+
+const UserPagedFull = graphql(`
+    query UserPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges { cursor node { ...UserFull } }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+        }
+    }
+`);
+
+const UserCreateMutation = graphql(`
+    mutation UserCreate($input: UserCreate!) {
+        userCreate(input: $input) { ...UserFull }
+    }
+`);
+
+const UserUpdateMutation = graphql(`
+    mutation UserUpdate($input: UserUpdate!) {
+        userUpdate(input: $input) { ...UserFull }
+    }
+`);
+
+const UserDeleteMutation = graphql(`
+    mutation UserDelete($id: ID!) {
+        userDelete(id: $id)
+    }
+`);
+
+const UserExportQuery = graphql(`
+    query UserExport($ids: [ID], $filter: String, $type: ImpexType!) {
+        userExport(ids: $ids, filter: $filter, type: $type) { id }
+    }
+`);
+
+const UserEventsQuery = graphql(`
+    query UserEvents($sourceId: ID!) {
+        userEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
+    }
+`);
 
 const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
     singular: 'user',
-    createInputType: 'UserCreate',
-    updateInputType: 'UserUpdate',
-    summaryFields: SummaryFields,
-    fullFields: FullFields,
+    pagedSummaryQuery: UserPagedSummary,
+    pagedFullQuery: UserPagedFull,
+    createMutation: UserCreateMutation,
+    updateMutation: UserUpdateMutation,
+    deleteMutation: UserDeleteMutation,
+    exportQuery: UserExportQuery,
+    eventsQuery: UserEventsQuery,
     cacheTag: 'user',
     restPath: 'users',
     defaultSort: ['id'],
@@ -48,69 +103,77 @@ const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
 
 export const {getPaged, create, update, del, exp, imp, events} = client;
 
-const AuthoritiesAddMutation = /* GraphQL */ `
-    mutation ($userId: ID!, $ids: [ID]!) {
+const AuthoritiesAddMutation = graphql(`
+    mutation UserAuthoritiesAdd($userId: ID!, $ids: [ID]!) {
         userAuthoritiesAdd(userId: $userId, ids: $ids)
     }
-`;
+`);
 
-const AuthoritiesRemoveMutation = /* GraphQL */ `
-    mutation ($userId: ID!, $ids: [ID]!) {
+const AuthoritiesRemoveMutation = graphql(`
+    mutation UserAuthoritiesRemove($userId: ID!, $ids: [ID]!) {
         userAuthoritiesRemove(userId: $userId, ids: $ids)
     }
-`;
+`);
 
-const StateSetMutation = /* GraphQL */ `
-    mutation ($userId: ID!, $id: ID!) {
+const StateSetMutation = graphql(`
+    mutation UserStateSet($userId: ID!, $id: ID!) {
         userStateSet(userId: $userId, id: $id)
     }
-`;
+`);
 
-const SpexareAddMutation = /* GraphQL */ `
-    mutation ($userId: ID!, $id: ID!) {
+const SpexareAddMutation = graphql(`
+    mutation UserSpexareAdd($userId: ID!, $id: ID!) {
         userSpexareAdd(userId: $userId, id: $id)
     }
-`;
+`);
 
-const SpexareRemoveMutation = /* GraphQL */ `
-    mutation ($userId: ID!) {
+const SpexareRemoveMutation = graphql(`
+    mutation UserSpexareRemove($userId: ID!) {
         userSpexareRemove(userId: $userId)
     }
-`;
+`);
 
-export async function me(): Promise<User | null | undefined> {
-    const query = /* GraphQL */ `
-        query {
-            me {
-                spexare {
-                    ...SpexareFull
-                }
+const MeQuery = graphql(`
+    query UserMe {
+        me {
+            spexare {
+                ...SpexareFull
             }
         }
-        ${SpexareFullFragment}
-    `;
+    }
+`);
 
-    const data = await runQuery<{ me: User }>(query, {}, {
+const AuthoritiesQuery = graphql(`
+    query Authorities {
+        authorities {
+            id
+            label
+        }
+    }
+`);
+
+const StatesQuery = graphql(`
+    query States {
+        states {
+            id
+            label
+        }
+    }
+`);
+
+export async function me(): Promise<User | null | undefined> {
+    const data = await runQuery(MeQuery, {}, {
         fetchOptions: {
             next: {tags: ['me']}
         }
     });
 
-    return data?.me;
+    return data?.me as User | null | undefined;
 }
 
 export async function getAuthorities(): Promise<Authority[]> {
-    const query = /* GraphQL */ `
-        query {
-            authorities {
-                id
-                label
-            }
-        }
-    `;
-
-    const data = await runQuery<{ authorities: Authority[] }>(query, {});
-    return data?.authorities ?? [];
+    const data = await runQuery(AuthoritiesQuery, {});
+    return (data?.authorities ?? []) as Authority[];
 }
 
 export async function addAuthorities(userId: string, ids: string[]) {
@@ -122,17 +185,8 @@ export async function removeAuthorities(userId: string, ids: string[]) {
 }
 
 export async function getStates(): Promise<State[]> {
-    const query = /* GraphQL */ `
-        query {
-            states {
-                id
-                label
-            }
-        }
-    `;
-
-    const data = await runQuery<{ states: State[] }>(query, {});
-    return data?.states ?? [];
+    const data = await runQuery(StatesQuery, {});
+    return (data?.states ?? []) as State[];
 }
 
 export async function setState(userId: string, id: string) {

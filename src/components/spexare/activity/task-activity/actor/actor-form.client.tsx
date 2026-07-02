@@ -12,7 +12,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {translateError} from "@/utils/utils";
-import {Actor, Type} from "@/gql/graphql";
+import {Actor, Type} from "@/gql/schema";
 import {useRouter} from "next/navigation";
 import {Plus} from "lucide-react";
 

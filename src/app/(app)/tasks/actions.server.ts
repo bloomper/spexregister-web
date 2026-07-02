@@ -15,7 +15,7 @@ import {
     update
 } from "@/lib/task";
 import {revalidateTag} from "next/cache";
-import {ImpexType, SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/schema";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {imp} from "@/lib/task";
 

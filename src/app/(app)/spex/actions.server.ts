@@ -20,7 +20,7 @@ import {
     uploadPoster
 } from "@/lib/spex";
 import {revalidateTag} from "next/cache";
-import {ImpexType, SortDirection} from "@/gql/graphql";
+import {ImpexType, SortDirection} from "@/gql/schema";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
 export async function getPageAction(args: {

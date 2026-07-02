@@ -1,30 +1,86 @@
 import 'server-only';
 
-import {SortDirection, SpexCategory, SpexCategoryCreate, SpexCategoryEdge, SpexCategoryUpdate} from "@/gql/graphql";
+import {SortDirection, SpexCategory, SpexCategoryCreate, SpexCategoryEdge, SpexCategoryUpdate} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {createResourceClient} from "@/lib/graphql.server";
 import axios from "@/lib/axios.server";
 
-const SummaryFields = `
-    id
-    name
-    logoUrl
-    firstYear
-`;
+export const SpexCategorySummary = graphql(`
+    fragment SpexCategorySummary on SpexCategory {
+        id
+        name
+        logoUrl
+        firstYear
+    }
+`);
 
-const FullFields = `
-    ${SummaryFields}
-    createdAt
-    createdBy
-    lastModifiedAt
-    lastModifiedBy
-`;
+export const SpexCategoryFull = graphql(`
+    fragment SpexCategoryFull on SpexCategory {
+        ...SpexCategorySummary
+        createdAt
+        createdBy
+        lastModifiedAt
+        lastModifiedBy
+    }
+`);
+
+const SpexCategoryPagedSummary = graphql(`
+    query SpexCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges { cursor node { ...SpexCategorySummary } }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+        }
+    }
+`);
+
+const SpexCategoryPagedFull = graphql(`
+    query SpexCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges { cursor node { ...SpexCategoryFull } }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+        }
+    }
+`);
+
+const SpexCategoryCreateMutation = graphql(`
+    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {
+        spexCategoryCreate(input: $input) { ...SpexCategoryFull }
+    }
+`);
+
+const SpexCategoryUpdateMutation = graphql(`
+    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {
+        spexCategoryUpdate(input: $input) { ...SpexCategoryFull }
+    }
+`);
+
+const SpexCategoryDeleteMutation = graphql(`
+    mutation SpexCategoryDelete($id: ID!) {
+        spexCategoryDelete(id: $id)
+    }
+`);
+
+const SpexCategoryExportQuery = graphql(`
+    query SpexCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {
+        spexCategoryExport(ids: $ids, filter: $filter, type: $type) { id }
+    }
+`);
+
+const SpexCategoryEventsQuery = graphql(`
+    query SpexCategoryEvents($sourceId: ID!) {
+        spexCategoryEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
+    }
+`);
 
 const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategoryCreate, SpexCategoryUpdate>({
     singular: 'spexCategory',
-    createInputType: 'SpexCategoryCreate',
-    updateInputType: 'SpexCategoryUpdate',
-    summaryFields: SummaryFields,
-    fullFields: FullFields,
+    pagedSummaryQuery: SpexCategoryPagedSummary,
+    pagedFullQuery: SpexCategoryPagedFull,
+    createMutation: SpexCategoryCreateMutation,
+    updateMutation: SpexCategoryUpdateMutation,
+    deleteMutation: SpexCategoryDeleteMutation,
+    exportQuery: SpexCategoryExportQuery,
+    eventsQuery: SpexCategoryEventsQuery,
     cacheTag: 'spex-category',
     restPath: 'spex/categories',
     defaultSort: ['name'],

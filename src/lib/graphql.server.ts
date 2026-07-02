@@ -1,14 +1,25 @@
 import 'server-only';
 
 import type {AnyVariables, OperationContext} from '@urql/core';
+import type {TypedDocumentNode} from '@graphql-typed-document-node/core';
 import {getClient} from '@/lib/urql.server';
 import {mapConnection} from '@/utils/utils.server';
-import {Event, ImpexType, JobReference, PageInfo, SortDirection} from '@/gql/graphql';
+import {Event, ImpexType, JobReference, PageInfo, SortDirection} from '@/gql/schema';
 import {CursorPage} from '@/types/pagination';
 import axios from '@/lib/axios.server';
 
+export async function runQuery<TData, TVariables extends AnyVariables>(
+    query: TypedDocumentNode<TData, TVariables>,
+    variables: TVariables,
+    context?: Partial<OperationContext>,
+): Promise<TData | undefined>;
 export async function runQuery<TData>(
     query: string,
+    variables?: AnyVariables,
+    context?: Partial<OperationContext>,
+): Promise<TData | undefined>;
+export async function runQuery<TData>(
+    query: string | TypedDocumentNode<TData, AnyVariables>,
     variables: AnyVariables = {},
     context?: Partial<OperationContext>,
 ): Promise<TData | undefined> {
@@ -21,8 +32,16 @@ export async function runQuery<TData>(
     return result.data;
 }
 
+export async function runMutation<TData, TVariables extends AnyVariables>(
+    mutation: TypedDocumentNode<TData, TVariables>,
+    variables: TVariables,
+): Promise<TData | undefined>;
 export async function runMutation<TData>(
     mutation: string,
+    variables?: AnyVariables,
+): Promise<TData | undefined>;
+export async function runMutation<TData>(
+    mutation: string | TypedDocumentNode<TData, AnyVariables>,
     variables: AnyVariables = {},
 ): Promise<TData | undefined> {
     const result = await getClient().mutation<TData>(mutation, variables).toPromise();
@@ -34,22 +53,44 @@ export async function runMutation<TData>(
     return result.data;
 }
 
+export async function runMutationField<TData, TVariables extends AnyVariables, TField extends keyof TData>(
+    mutation: TypedDocumentNode<TData, TVariables>,
+    variables: TVariables,
+    field: TField,
+): Promise<TData[TField] | undefined>;
 export async function runMutationField<TValue>(
     mutation: string,
     variables: AnyVariables,
     field: string,
-): Promise<TValue | undefined> {
-    const data = await runMutation<Record<string, TValue>>(mutation, variables);
+): Promise<TValue | undefined>;
+export async function runMutationField(
+    mutation: string | TypedDocumentNode<unknown, AnyVariables>,
+    variables: AnyVariables,
+    field: string,
+): Promise<unknown> {
+    const data = await runMutation<Record<string, unknown>>(mutation as string, variables);
     return data?.[field];
 }
 
+export async function mutateForData<TData, TVariables extends AnyVariables, TField extends keyof TData>(
+    mutation: TypedDocumentNode<TData, TVariables>,
+    variables: TVariables,
+    field: TField,
+    errorMessage: string,
+): Promise<NonNullable<TData[TField]>>;
 export async function mutateForData<TValue>(
     mutation: string,
     variables: AnyVariables,
     field: string,
     errorMessage: string,
-): Promise<TValue> {
-    const data = await runMutation<Record<string, TValue>>(mutation, variables);
+): Promise<TValue>;
+export async function mutateForData(
+    mutation: string | TypedDocumentNode<unknown, AnyVariables>,
+    variables: AnyVariables,
+    field: string,
+    errorMessage: string,
+): Promise<unknown> {
+    const data = await runMutation<Record<string, unknown>>(mutation as string, variables);
     const value = data?.[field];
 
     if (!value) {
@@ -76,49 +117,6 @@ export async function collectAllPages<TItem>(
     return items;
 }
 
-export function buildPagedQuery(pagedField: string, fields: string, fragment?: string): string {
-    return /* GraphQL */ `
-    query ($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
-        ${pagedField}(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
-            edges {
-                cursor
-                node { ${fields} }
-            }
-            pageInfo {
-                hasNextPage
-                hasPreviousPage
-                startCursor
-                endCursor
-            }
-        }
-    }
-    ${fragment ?? ''}
-`;
-}
-
-export function buildEventsQuery(eventsField: string): string {
-    return /* GraphQL */ `
-    query ($sourceId: ID!) {
-        ${eventsField}(sourceId: $sourceId) {
-            id
-            eventType
-            createdAt
-            createdBy
-        }
-    }
-`;
-}
-
-export function buildExportQuery(exportField: string): string {
-    return /* GraphQL */ `
-    query ($ids: [ID], $filter: String, $type: ImpexType!) {
-        ${exportField}(ids: $ids, filter: $filter, type: $type) {
-            id
-        }
-    }
-`;
-}
-
 type ConnectionShape<TEdge> = {
     edges: (TEdge | null | undefined)[];
     pageInfo: PageInfo;
@@ -135,21 +133,44 @@ export type PagedArgs = {
     full?: boolean;
 };
 
-export type ResourceConfig = {
-    /** camelCase operation prefix, e.g. `spex`, `taskCategory`, `spexCategory`. */
+/** Variables shared by every `${singular}Paged` cursor query. */
+export type PagedQueryVariables = {
+    first?: number | null;
+    last?: number | null;
+    after?: string | null;
+    before?: string | null;
+    sort?: Array<string | null> | null;
+    direction?: SortDirection | null;
+    filter?: string | null;
+};
+
+export type ExportQueryVariables = {
+    ids?: Array<string | null> | null;
+    filter?: string | null;
+    type: ImpexType;
+};
+
+/**
+ * Documents + metadata for a standard CRUD resource. The resource module supplies
+ * schema-validated `graphql()` documents (so operations, variables and input types are
+ * type-checked against the schema); the factory owns the uniform execution shape
+ * (pagination loop, `mapConnection`, error handling, cache tags, REST import). Result
+ * types are cast to the domain `TNode` at extraction — the same trust boundary as before,
+ * so consumers keep receiving whole domain objects.
+ */
+export type ResourceClientConfig<TCreateInput, TUpdateInput> = {
+    /** camelCase operation prefix, e.g. `spex`, `taskCategory` — used to read `data[<field>]`. */
     singular: string;
-    /** GraphQL input type for `create`, e.g. `SpexCreate`. */
-    createInputType: string;
-    /** GraphQL input type for `update`, e.g. `SpexUpdate`. */
-    updateInputType: string;
-    /** Field selection (or `...Fragment` spread) used by summary/list views. */
-    summaryFields: string;
-    /** Field selection (or `...Fragment` spread) used by full/detail views. */
-    fullFields: string;
-    /** Fragment definitions to append when `summaryFields` is a spread. */
-    summaryFragment?: string;
-    /** Fragment definitions to append when `fullFields` is a spread. */
-    fullFragment?: string;
+    /** Paged cursor query selecting summary fields (list views). */
+    pagedSummaryQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
+    /** Paged cursor query selecting full fields (detail-heavy list reads). */
+    pagedFullQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
+    createMutation: TypedDocumentNode<Record<string, unknown>, {input: TCreateInput}>;
+    updateMutation: TypedDocumentNode<Record<string, unknown>, {input: TUpdateInput}>;
+    deleteMutation: TypedDocumentNode<Record<string, unknown>, {id: string}>;
+    /** Optional: omit for resources with a bespoke export (e.g. spexare's report export). */
+    exportQuery?: TypedDocumentNode<Record<string, unknown>, ExportQueryVariables>;
+    eventsQuery: TypedDocumentNode<Record<string, unknown>, {sourceId: string}>;
     /** Next.js cache tag applied to list reads. */
     cacheTag: string;
     /** REST path segment for impex import, e.g. `spex`, `tasks`, `spex/categories`. */
@@ -164,7 +185,7 @@ export function createResourceClient<
     TEdge extends {cursor: string; node: TNode},
     TCreateInput,
     TUpdateInput extends {id?: unknown},
->(config: ResourceConfig) {
+>(config: ResourceClientConfig<TCreateInput, TUpdateInput>) {
     const {singular} = config;
     const pagedField = `${singular}Paged`;
     const createField = `${singular}Create`;
@@ -173,40 +194,10 @@ export function createResourceClient<
     const exportField = `${singular}Export`;
     const eventsField = `${singular}Events`;
 
-    const CreateMutation = /* GraphQL */ `
-    mutation ($input: ${config.createInputType}!) {
-        ${createField}(input: $input) {
-            ${config.fullFields}
-        }
-    }
-    ${config.fullFragment ?? ''}
-`;
-
-    const UpdateMutation = /* GraphQL */ `
-    mutation ($input: ${config.updateInputType}!) {
-        ${updateField}(input: $input) {
-            ${config.fullFields}
-        }
-    }
-    ${config.fullFragment ?? ''}
-`;
-
-    const DeleteMutation = /* GraphQL */ `
-    mutation ($id: ID!) {
-        ${deleteField}(id: $id)
-    }
-`;
-
     async function getPaged(args: PagedArgs): Promise<CursorPage<TNode> & {edges: TEdge[]}> {
-        const query = buildPagedQuery(
-            pagedField,
-            args.full ? config.fullFields : config.summaryFields,
-            args.full ? config.fullFragment : config.summaryFragment,
-        );
-
-        const data = await runQuery<Record<string, ConnectionShape<TEdge>>>(query, {
-            first: args.first,
-            last: args.last,
+        const data = await runQuery(args.full ? config.pagedFullQuery : config.pagedSummaryQuery, {
+            first: args.first ?? null,
+            last: args.last ?? null,
             after: args.after ?? null,
             before: args.before ?? null,
             sort: args.sort ?? config.defaultSort,
@@ -218,7 +209,7 @@ export function createResourceClient<
             },
         });
 
-        return mapConnection<TNode, TEdge>(data?.[pagedField]);
+        return mapConnection<TNode, TEdge>(data?.[pagedField] as ConnectionShape<TEdge> | null | undefined);
     }
 
     async function getAll(args?: {full?: boolean}): Promise<TNode[]> {
@@ -228,20 +219,30 @@ export function createResourceClient<
     }
 
     async function create(input: TCreateInput): Promise<TNode> {
-        return mutateForData<TNode>(CreateMutation, {input}, createField, 'No data created');
+        const value = await mutateForData(config.createMutation, {input}, createField, 'No data created');
+        return value as TNode;
     }
 
     async function update(id: string, input: Omit<TUpdateInput, 'id'>): Promise<TNode> {
-        return mutateForData<TNode>(UpdateMutation, {input: {...input, id}}, updateField, 'No data updated');
+        const value = await mutateForData(
+            config.updateMutation,
+            {input: {...input, id} as TUpdateInput},
+            updateField,
+            'No data updated',
+        );
+        return value as TNode;
     }
 
     async function del(id: string): Promise<boolean | undefined> {
-        return runMutationField<boolean>(DeleteMutation, {id}, deleteField);
+        return runMutationField(config.deleteMutation, {id}, deleteField) as Promise<boolean | undefined>;
     }
 
     async function exp(ids: string[] | null, filter: string | null, type: ImpexType): Promise<JobReference> {
-        const data = await runQuery<Record<string, JobReference>>(buildExportQuery(exportField), {ids, filter, type});
-        return data![exportField];
+        if (!config.exportQuery) {
+            throw new Error(`Resource '${singular}' has no export query configured`);
+        }
+        const data = await runQuery(config.exportQuery, {ids, filter, type});
+        return data![exportField] as JobReference;
     }
 
     async function imp(type: ImpexType, file: File): Promise<JobReference> {
@@ -255,8 +256,8 @@ export function createResourceClient<
     }
 
     async function events(sourceId: string): Promise<Event[]> {
-        const data = await runQuery<Record<string, Event[]>>(buildEventsQuery(eventsField), {sourceId});
-        return data?.[eventsField] ?? [];
+        const data = await runQuery(config.eventsQuery, {sourceId});
+        return (data?.[eventsField] as Event[] | undefined) ?? [];
     }
 
     return {getPaged, getAll, create, update, del, exp, imp, events};

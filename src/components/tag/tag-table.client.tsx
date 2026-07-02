@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table";
 import {Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Tag} from "@/gql/graphql";
+import {Tag} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
 import {TagForm} from "@/components/tag";

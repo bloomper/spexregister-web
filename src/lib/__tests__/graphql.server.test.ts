@@ -9,9 +9,6 @@ const axiosPost = vi.fn();
 vi.mock('@/lib/axios.server', () => ({default: {post: (...a: unknown[]) => axiosPost(...a)}}));
 
 import {
-    buildEventsQuery,
-    buildExportQuery,
-    buildPagedQuery,
     collectAllPages,
     createResourceClient,
     mutateForData,
@@ -19,7 +16,7 @@ import {
     runMutationField,
     runQuery,
 } from '@/lib/graphql.server';
-import {ImpexType, SortDirection} from '@/gql/graphql';
+import {ImpexType, SortDirection} from '@/gql/schema';
 import type {CursorPage} from '@/types/pagination';
 
 beforeEach(() => {
@@ -124,36 +121,37 @@ describe('collectAllPages', () => {
     });
 });
 
-describe('query builders', () => {
-    it('buildPagedQuery embeds the field, selection and optional fragment', () => {
-        const q = buildPagedQuery('thingPaged', 'id name', 'fragment F on T { id }');
-        expect(q).toContain('thingPaged(first: $first');
-        expect(q).toContain('node { id name }');
-        expect(q).toContain('fragment F on T { id }');
-    });
-
-    it('buildPagedQuery omits fragment text when none is supplied', () => {
-        const q = buildPagedQuery('thingPaged', 'id');
-        expect(q).toContain('thingPaged');
-        expect(q).not.toContain('fragment');
-    });
-
-    it('buildEventsQuery and buildExportQuery embed their fields', () => {
-        expect(buildEventsQuery('thingEvents')).toContain('thingEvents(sourceId: $sourceId)');
-        expect(buildExportQuery('thingExport')).toContain('thingExport(ids: $ids, filter: $filter, type: $type)');
-    });
-});
-
 describe('createResourceClient', () => {
     type Thing = {id: string; name?: string};
     type ThingEdge = {cursor: string; node: Thing};
 
+    // Opaque marker documents — the urql client is mocked, so the factory only forwards
+    // these to getClient().query/mutation. We assert on document identity (summary vs full,
+    // export, etc.) rather than on query-string contents.
+    const pagedSummaryDoc = {doc: 'pagedSummary'};
+    const pagedFullDoc = {doc: 'pagedFull'};
+    const createDoc = {doc: 'create'};
+    const updateDoc = {doc: 'update'};
+    const deleteDoc = {doc: 'delete'};
+    const exportDoc = {doc: 'export'};
+    const eventsDoc = {doc: 'events'};
+
     const client = createResourceClient<Thing, ThingEdge, {name: string}, {id?: string; name?: string}>({
         singular: 'thing',
-        createInputType: 'ThingCreate',
-        updateInputType: 'ThingUpdate',
-        summaryFields: 'id',
-        fullFields: 'id name',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        pagedSummaryQuery: pagedSummaryDoc as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        pagedFullQuery: pagedFullDoc as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        createMutation: createDoc as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        updateMutation: updateDoc as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        deleteMutation: deleteDoc as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        exportQuery: exportDoc as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        eventsQuery: eventsDoc as any,
         cacheTag: 'thing',
         restPath: 'things',
         defaultSort: ['name'],
@@ -166,25 +164,25 @@ describe('createResourceClient', () => {
         pageInfo: {hasNextPage, hasPreviousPage: false, startCursor: 'c0', endCursor},
     });
 
-    it('getPaged maps the connection, applies defaults, tags the read and uses summary fields', async () => {
+    it('getPaged maps the connection, applies defaults, tags the read and uses the summary document', async () => {
         toPromise.mockResolvedValue({data: {thingPaged: connection([{id: '1'}, {id: '2'}], true, 'c1')}});
 
         const page = await client.getPaged({});
 
         expect(page.items).toEqual([{id: '1'}, {id: '2'}]);
-        const [queryString, vars, context] = query.mock.calls[0] as [string, Record<string, unknown>, unknown];
-        expect(queryString).toContain('node { id }');
+        const [doc, vars, context] = query.mock.calls[0] as [unknown, Record<string, unknown>, unknown];
+        expect(doc).toBe(pagedSummaryDoc);
         expect(vars).toMatchObject({sort: ['name'], direction: SortDirection.Asc, filter: 'active:TRUE', after: null, before: null});
         expect(context).toEqual({fetchOptions: {next: {tags: ['thing']}}});
     });
 
-    it('getPaged selects full fields and forwards explicit arguments', async () => {
+    it('getPaged selects the full document and forwards explicit arguments', async () => {
         toPromise.mockResolvedValue({data: {thingPaged: connection([], false, null)}});
 
         await client.getPaged({full: true, first: 5, after: 'x', sort: ['id'], direction: SortDirection.Desc, filter: 'f'});
 
-        const [queryString, vars] = query.mock.calls[0] as [string, Record<string, unknown>];
-        expect(queryString).toContain('node { id name }');
+        const [doc, vars] = query.mock.calls[0] as [unknown, Record<string, unknown>];
+        expect(doc).toBe(pagedFullDoc);
         expect(vars).toMatchObject({first: 5, after: 'x', sort: ['id'], direction: SortDirection.Desc, filter: 'f'});
     });
 
@@ -203,6 +201,7 @@ describe('createResourceClient', () => {
     it('create returns the entity or throws when missing', async () => {
         toPromise.mockResolvedValueOnce({data: {thingCreate: {id: '9'}}});
         await expect(client.create({name: 'a'})).resolves.toEqual({id: '9'});
+        expect(mutation.mock.calls[0][0]).toBe(createDoc);
 
         toPromise.mockResolvedValueOnce({data: {}});
         await expect(client.create({name: 'a'})).rejects.toThrow('No data created');
@@ -211,6 +210,7 @@ describe('createResourceClient', () => {
     it('update injects the id into the input and throws when missing', async () => {
         toPromise.mockResolvedValueOnce({data: {thingUpdate: {id: '9', name: 'b'}}});
         await client.update('9', {name: 'b'});
+        expect(mutation.mock.calls[0][0]).toBe(updateDoc);
         expect(mutation.mock.calls[0][1]).toEqual({input: {name: 'b', id: '9'}});
 
         toPromise.mockResolvedValueOnce({data: {}});
@@ -220,18 +220,20 @@ describe('createResourceClient', () => {
     it('del returns the delete payload', async () => {
         toPromise.mockResolvedValue({data: {thingDelete: true}});
         await expect(client.del('9')).resolves.toBe(true);
+        expect(mutation.mock.calls[0][0]).toBe(deleteDoc);
     });
 
-    it('exp returns the export job reference', async () => {
+    it('exp returns the export job reference using the export document', async () => {
         toPromise.mockResolvedValue({data: {thingExport: {id: 'job-1'}}});
         const job = await client.exp(['1'], 'f', ImpexType.Excel);
         expect(job).toEqual({id: 'job-1'});
-        expect(query.mock.calls[0][0]).toContain('thingExport');
+        expect(query.mock.calls[0][0]).toBe(exportDoc);
     });
 
     it('events returns the list, defaulting to empty', async () => {
         toPromise.mockResolvedValueOnce({data: {thingEvents: [{id: 'e1'}]}});
         await expect(client.events('1')).resolves.toEqual([{id: 'e1'}]);
+        expect(query.mock.calls[0][0]).toBe(eventsDoc);
 
         toPromise.mockResolvedValueOnce({data: {}});
         await expect(client.events('1')).resolves.toEqual([]);

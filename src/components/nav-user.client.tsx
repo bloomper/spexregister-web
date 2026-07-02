@@ -19,7 +19,7 @@ import {useLocale, useTranslations} from "next-intl";
 import {toast} from "sonner";
 import {useSession} from "next-auth/react";
 import {generateKeycloakLogoutUrl} from "@/utils/auth";
-import {Spexare} from "@/gql/graphql";
+import {Spexare} from "@/gql/schema";
 import Link from "next/link";
 import {useTheme} from "next-themes";
 

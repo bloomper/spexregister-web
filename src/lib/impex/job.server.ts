@@ -1,74 +1,82 @@
 import 'server-only';
 
-import {Job, JobStatus} from "@/gql/graphql";
+import {Job, JobStatus} from "@/gql/schema";
+import {graphql} from "@/gql";
 import {runMutationField, runQuery} from "@/lib/graphql.server";
 
-const BaseFields = `
-    id
-    name
-    status
-    exitStatus
-`;
-
-const Fields = `
-    ${BaseFields}
-    createdAt
-    startedAt
-    finishedAt
-    hasDownload
-    importResult {
-      success
-      errors
-      messages
-      data
+export const JobStatusFields = graphql(`
+    fragment JobStatusFields on JobStatus {
+        id
+        name
+        status
+        exitStatus
     }
-`;
+`);
 
-const JobStatusQuery = /* GraphQL */ `
-    query ($id: ID!) {
+export const JobFields = graphql(`
+    fragment JobFields on Job {
+        id
+        name
+        status
+        exitStatus
+        createdAt
+        startedAt
+        finishedAt
+        hasDownload
+        importResult {
+            success
+            errors
+            messages
+            data
+        }
+    }
+`);
+
+const JobStatusQuery = graphql(`
+    query JobStatus($id: ID!) {
         jobStatus(id: $id) {
-            ${BaseFields}
+            ...JobStatusFields
         }
     }
-`;
+`);
 
-const JobQuery = /* GraphQL */ `
-    query ($id: ID!) {
+const JobQuery = graphql(`
+    query JobById($id: ID!) {
         job(id: $id) {
-            ${Fields}
+            ...JobFields
         }
     }
-`;
+`);
 
-const JobsQuery = /* GraphQL */ `
-    query {
+const JobsQuery = graphql(`
+    query Jobs {
         jobs {
-            ${Fields}
+            ...JobFields
         }
     }
-`;
+`);
 
-const DeleteMutation = /* GraphQL */ `
-    mutation ($id: ID!) {
+const DeleteMutation = graphql(`
+    mutation JobDelete($id: ID!) {
         jobDelete(id: $id)
     }
-`;
+`);
 
 const jobContext = {fetchOptions: {next: {tags: ['job']}}};
 
 export async function jobStatus(id: string): Promise<JobStatus | null> {
-    const data = await runQuery<{ jobStatus: JobStatus }>(JobStatusQuery, {id}, jobContext);
-    return data?.jobStatus ?? null;
+    const data = await runQuery(JobStatusQuery, {id}, jobContext);
+    return (data?.jobStatus as JobStatus | undefined) ?? null;
 }
 
 export async function job(id: string): Promise<Job | null> {
-    const data = await runQuery<{ job: Job }>(JobQuery, {id}, jobContext);
-    return data?.job ?? null;
+    const data = await runQuery(JobQuery, {id}, jobContext);
+    return (data?.job as Job | undefined) ?? null;
 }
 
 export async function jobs(): Promise<Job[]> {
-    const data = await runQuery<{ jobs: Job[] }>(JobsQuery, {}, jobContext);
-    return data?.jobs ?? [];
+    const data = await runQuery(JobsQuery, {}, jobContext);
+    return (data?.jobs as Job[] | undefined) ?? [];
 }
 
 export async function del(id: string) {

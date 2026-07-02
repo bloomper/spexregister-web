@@ -17,7 +17,7 @@ import {
     ToggleLeft,
     User,
 } from "lucide-react";
-import {Activity, Country, Spexare} from "@/gql/graphql";
+import {Activity, Country, Spexare} from "@/gql/schema";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";

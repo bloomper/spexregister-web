@@ -15,7 +15,7 @@ import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandL
 import {cn, translateError} from "@/utils/utils";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {useRouter} from "next/navigation";
-import {Task, TaskActivity, TaskCategory} from "@/gql/graphql";
+import {Task, TaskActivity, TaskCategory} from "@/gql/schema";
 
 interface TaskFormProps {
     spexareId: string;

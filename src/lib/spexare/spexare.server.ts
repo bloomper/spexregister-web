@@ -11,29 +11,14 @@ import {
     SpexareCreate,
     SpexareEdge,
     SpexareUpdate,
-    SpexareWithFacetsConnection
-} from "@/gql/graphql";
+} from "@/gql/schema";
 import {SpexareWithFacetsPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
+import {graphql} from "@/gql";
 import {createResourceClient, runMutationField, runQuery} from "@/lib/graphql.server";
-import {FullFragment as ActivityFullFragment} from "@/lib/spexare/activity";
-import {FullFragment as AddressFullFragment} from "@/lib/spexare/address";
-import {FullFragment as ConsentFullFragment} from "@/lib/spexare/consent";
-import {FullFragment as MembershipFullFragment} from "@/lib/spexare/membership";
-import {FullFragment as TaggingFullFragment} from "@/lib/spexare/tagging";
-import {FullFragment as ToggleFullFragment} from "@/lib/spexare/toggle";
 
-export const SummaryFields = `
-    ...SpexareSummary
-`;
-
-export const FullFields = `
-    ...SpexareFull
-`;
-
-
-const BaseFragment = /* GraphQL */ `
+export const SpexareBase = graphql(`
     fragment SpexareBase on Spexare {
         id
         firstName
@@ -55,16 +40,15 @@ const BaseFragment = /* GraphQL */ `
             imageUrl
         }
     }
-`;
+`);
 
-const SummaryFragment = /* GraphQL */ `
+export const SpexareSummary = graphql(`
     fragment SpexareSummary on Spexare {
         ...SpexareBase
     }
-    ${BaseFragment}
-`;
+`);
 
-export const FullFragment = /* GraphQL */ `
+export const SpexareFull = graphql(`
     fragment SpexareFull on Spexare {
         ...SpexareBase
         activities {
@@ -90,23 +74,58 @@ export const FullFragment = /* GraphQL */ `
         lastModifiedAt
         lastModifiedBy
     }
-    ${BaseFragment}
-    ${ActivityFullFragment}
-    ${AddressFullFragment}
-    ${ConsentFullFragment}
-    ${MembershipFullFragment}
-    ${TaggingFullFragment}
-    ${ToggleFullFragment}
-`;
+`);
+
+const SpexarePagedSummary = graphql(`
+    query SpexarePagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        spexarePaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges { cursor node { ...SpexareSummary } }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+        }
+    }
+`);
+
+const SpexarePagedFull = graphql(`
+    query SpexarePagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {
+        spexarePaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
+            edges { cursor node { ...SpexareFull } }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+        }
+    }
+`);
+
+const SpexareCreateMutation = graphql(`
+    mutation SpexareCreate($input: SpexareCreate!) {
+        spexareCreate(input: $input) { ...SpexareFull }
+    }
+`);
+
+const SpexareUpdateMutation = graphql(`
+    mutation SpexareUpdate($input: SpexareUpdate!) {
+        spexareUpdate(input: $input) { ...SpexareFull }
+    }
+`);
+
+const SpexareDeleteMutation = graphql(`
+    mutation SpexareDelete($id: ID!) {
+        spexareDelete(id: $id)
+    }
+`);
+
+const SpexareEventsQuery = graphql(`
+    query SpexareEvents($sourceId: ID!) {
+        spexareEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
+    }
+`);
 
 const client = createResourceClient<Spexare, SpexareEdge, SpexareCreate, SpexareUpdate>({
     singular: 'spexare',
-    createInputType: 'SpexareCreate',
-    updateInputType: 'SpexareUpdate',
-    summaryFields: SummaryFields,
-    fullFields: FullFields,
-    summaryFragment: SummaryFragment,
-    fullFragment: FullFragment,
+    pagedSummaryQuery: SpexarePagedSummary,
+    pagedFullQuery: SpexarePagedFull,
+    createMutation: SpexareCreateMutation,
+    updateMutation: SpexareUpdateMutation,
+    deleteMutation: SpexareDeleteMutation,
+    eventsQuery: SpexareEventsQuery,
     cacheTag: 'spexare',
     restPath: 'spexare',
     defaultSort: ['firstName'],
@@ -116,42 +135,34 @@ const client = createResourceClient<Spexare, SpexareEdge, SpexareCreate, Spexare
 
 export const {getPaged, create, update, del, imp, events} = client;
 
-const GetQuery = /* GraphQL */ `
-    query ($id: ID!) {
-        spexare(id: $id) {
-            ${FullFields}
-        }
+const GetQuery = graphql(`
+    query SpexareGet($id: ID!) {
+        spexare(id: $id) { ...SpexareFull }
     }
-    ${FullFragment}
-`;
+`);
 
-const AddPartnerMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!, $id: ID!) {
+const AddPartnerMutation = graphql(`
+    mutation SpexarePartnerAdd($spexareId: ID!, $id: ID!) {
         spexarePartnerAdd(spexareId: $spexareId, id: $id)
     }
-`;
+`);
 
-const RemovePartnerMutation = /* GraphQL */ `
-    mutation ($spexareId: ID!) {
+const RemovePartnerMutation = graphql(`
+    mutation SpexarePartnerRemove($spexareId: ID!) {
         spexarePartnerRemove(spexareId: $spexareId)
     }
-`;
+`);
 
-const ExportQuery = /* GraphQL */ `
-    query ($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {
-        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) {
-            id
-        }
+const ExportQuery = graphql(`
+    query SpexareExport($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {
+        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) { id }
     }
-`;
+`);
 
-const SearchQuery = /* GraphQL */ `
-    query ($q: String!, $aggregationFilters: [AggregationFilterInput], $limit: Int, $offset: Int, $sort: [String], $direction: SortDirection) {
+const SearchQuery = graphql(`
+    query SpexareSearch($q: String!, $aggregationFilters: [AggregationFilterInput], $limit: Int, $offset: Int, $sort: [String], $direction: SortDirection) {
         spexareSearchPaged(q: $q, aggregationFilters: $aggregationFilters, limit: $limit, offset: $offset, sort: $sort, direction: $direction) {
-            edges {
-                cursor
-                node { ${SummaryFields} }
-            }
+            edges { cursor node { ...SpexareSummary } }
             facets {
                 id
                 label
@@ -165,16 +176,10 @@ const SearchQuery = /* GraphQL */ `
                     }
                 }
             }
-            pageInfo {
-                hasNextPage
-                hasPreviousPage
-                startCursor
-                endCursor
-            }
+            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
         }
     }
-    ${SummaryFragment}
-`;
+`);
 
 export async function search(args: {
     q: string;
@@ -184,7 +189,7 @@ export async function search(args: {
     sort?: string[];
     direction?: SortDirection;
 }): Promise<SpexareWithFacetsPage> {
-    const data = await runQuery<{ spexareSearchPaged: SpexareWithFacetsConnection }>(SearchQuery, {
+    const data = await runQuery(SearchQuery, {
         q: args.q,
         aggregationFilters: args.aggregationFilters ?? [],
         limit: args.limit ?? 24,
@@ -209,22 +214,22 @@ export async function search(args: {
             },
         }
         : undefined;
-    const page = mapConnection<Spexare, SpexareEdge>(safeConnection);
+    const page = mapConnection<Spexare, SpexareEdge>(safeConnection as Parameters<typeof mapConnection<Spexare, SpexareEdge>>[0]);
 
     return {
         ...page,
-        facets: (connection?.facets ?? []).filter((f): f is Facet => Boolean(f))
+        facets: (connection?.facets ?? []).filter(Boolean) as Facet[],
     };
 }
 
 export async function get(id: string) {
-    const data = await runQuery<{ spexare: Spexare }>(GetQuery, {id});
-    return data?.spexare;
+    const data = await runQuery(GetQuery, {id});
+    return data?.spexare as Spexare | undefined;
 }
 
 export async function exp(ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType): Promise<JobReference> {
-    const data = await runQuery<{ spexareExport: JobReference }>(ExportQuery, {ids, filter, type, reportType});
-    return data!.spexareExport;
+    const data = await runQuery(ExportQuery, {ids, filter, type, reportType});
+    return data!.spexareExport as JobReference;
 }
 
 export async function addPartner(spexareId: string, id: string) {

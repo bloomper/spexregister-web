@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexareForm} from "@/components/spexare";
-import {Country, Spex, SpexCategory, Tag, Task, TaskCategory, Type} from "@/gql/graphql";
+import {Country, Spex, SpexCategory, Tag, Task, TaskCategory, Type} from "@/gql/schema";
 
 interface SpexareCreateFormProps {
     types: Type[],
