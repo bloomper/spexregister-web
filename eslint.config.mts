@@ -1,3 +1,7 @@
+// @ts-nocheck -- @eslint/json and @eslint/css ship @eslint/core@1 rule types that don't
+// match eslint@9's Plugin type (@eslint/core@0.17), so `defineConfig` reports a false
+// TS2322 on the json/css plugin blocks. ESLint validates this config at runtime; drop this
+// pragma once the toolchain is back on a single @eslint/core (e.g. after the eslint@10 upgrade).
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import json from "@eslint/json";
@@ -21,6 +25,14 @@ export default defineConfig([
         files: ["src/app/global-error.tsx"],
         rules: {
             "@next/next/no-html-link-for-pages": "off",
+        },
+    },
+    {
+        // This config file carries a @ts-nocheck for the @eslint/json/@eslint/css plugin type
+        // skew (see the header comment); allow it here only.
+        files: ["eslint.config.mts"],
+        rules: {
+            "@typescript-eslint/ban-ts-comment": "off",
         },
     },
     globalIgnores([

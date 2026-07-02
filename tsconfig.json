@@ -44,8 +44,6 @@
     "vitest.config.ts",
     "vitest.setup.ts",
     "eslint.config.mts",
-    "test",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx"
+    "test"
   ]
 }
