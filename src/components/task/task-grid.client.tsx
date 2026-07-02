@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import {useCallback, useEffect, useState} from 'react';
-import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
+import {useInfiniteList} from "@/hooks/use-infinite-list";
 import {
     Dialog,
     DialogContent,
@@ -93,20 +93,22 @@ export function TaskGrid({
 
 
     const {
-        items: allItems,
+        items,
         loading,
         error,
         hasNextPage,
         sentinelRef,
         loadMore,
-        reset
-    } = useInfiniteCursor<Task>({
+        reset,
+        isInfiniteMode,
+    } = useInfiniteList<Task>({
         fetchPageAction: fetchPageWithFilters,
         pageSize: 24,
         rootMargin: '600px',
         getKeyAction: (n) => n.id,
         initialItems,
         initialPageInfo,
+        maxItems,
     });
 
     useEffect(() => {
@@ -128,8 +130,6 @@ export function TaskGrid({
         setSearchValue(e.target.value);
     };
 
-    const items = maxItems ? allItems.slice(0, maxItems) : allItems;
-    const isInfiniteMode = !maxItems;
     const noResults = !loading && items.length === 0;
     const totalOptionCount = categories.length + 1;
     const isFiltered = filterQuery.trim() !== "" || (categories.length > 0 && selectedCategories.size < totalOptionCount);

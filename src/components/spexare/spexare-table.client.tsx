@@ -6,7 +6,8 @@ import {Button} from "@/components/ui/button";
 import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
-import {SpexareForm, SpexareView} from "@/components/spexare";
+import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client";
+import {SpexareEditSheet} from "@/components/spexare/spexare-edit-sheet.client";
 import * as React from "react";
 import {useEffect, useRef, useState} from "react";
 import {
@@ -17,21 +18,19 @@ import {
     getPageAction,
     importAction
 } from "@/app/(app)/spexare/actions.server";
-import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataFilter} from "@/components/data-filter";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {columnHelper} from "@/components/data-table-columns.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
-import {Spinner} from "@/components/ui/spinner";
 import {useIsClient} from "@/hooks/use-is-client";
+import {useLazyFull} from "@/hooks/use-lazy-full";
 
 
 export const columns: ColumnDef<Spexare>[] = [
@@ -96,73 +95,8 @@ export function SpexareTable({
         }
     );
 
-    const [viewFullItem, setViewFullItem] = useState<Spexare | null>(null);
-    const [isViewLoading, setIsViewLoading] = useState(false);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        async function loadFull() {
-            if (!viewItem?.id) {
-                setViewFullItem(null);
-                setIsViewLoading(false);
-                return;
-            }
-
-            setIsViewLoading(true);
-            setViewFullItem(null);
-
-            try {
-                const full = await getAction(viewItem.id);
-                if (!cancelled) {
-                    setViewFullItem(full ?? null);
-                }
-            } finally {
-                if (!cancelled) {
-                    setIsViewLoading(false);
-                }
-            }
-        }
-
-        void loadFull();
-        return () => {
-            cancelled = true;
-        };
-    }, [viewItem?.id]);
-
-    const [editFullItem, setEditFullItem] = useState<Spexare | null>(null);
-    const [isEditLoading, setIsEditLoading] = useState(false);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        async function loadEditFull() {
-            if (!editItem?.id) {
-                setEditFullItem(null);
-                setIsEditLoading(false);
-                return;
-            }
-
-            setIsEditLoading(true);
-            setEditFullItem(null);
-
-            try {
-                const full = await getAction(editItem.id);
-                if (!cancelled) {
-                    setEditFullItem(full ?? null);
-                }
-            } finally {
-                if (!cancelled) {
-                    setIsEditLoading(false);
-                }
-            }
-        }
-
-        void loadEditFull();
-        return () => {
-            cancelled = true;
-        };
-    }, [editItem?.id]);
+    const {full: viewFullItem, isLoading: isViewLoading} = useLazyFull(viewItem?.id ?? null, getAction);
+    const {full: editFullItem, isLoading: isEditLoading} = useLazyFull(editItem?.id ?? null, getAction);
 
     useEffect(() => {
         if (viewItem) {
@@ -325,89 +259,37 @@ export function SpexareTable({
                 </div>
             </DataTable>
 
-            <Dialog
+            <SpexareViewDialog
                 open={!!viewItem}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setViewItem(null);
-                        setViewFullItem(null);
-                    }
-                }}
-            >
-                <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    <DialogHeader className="sr-only">
-                        <DialogTitle>
-                            {viewFullItem
-                                ? `${viewFullItem.firstName} ${viewFullItem.lastName}`
-                                : viewItem
-                                    ? `${viewItem.firstName} ${viewItem.lastName}`
-                                    : t("Common.details")}
-                        </DialogTitle>
-                    </DialogHeader>
+                onClose={() => setViewItem(null)}
+                summary={viewItem}
+                full={viewFullItem}
+                isLoading={isViewLoading}
+                countries={countries}
+                isMe={viewFullItem?.id === currentSpexareId}
+                showAudit
+            />
 
-                    {isViewLoading ? (
-                        <div className="p-6">
-                            <div className="flex items-center justify-center py-16">
-                                <Spinner className="size-8"/>
-                            </div>
-                        </div>
-                    ) : viewFullItem ? (
-                        <SpexareView
-                            spexare={viewFullItem}
-                            countries={countries}
-                            showAudit
-                            isMe={viewFullItem.id === currentSpexareId}
-                        />
-                    ) : (
-                        <div className="p-6 text-sm text-muted-foreground">
-                            {t("Common.noData")}
-                        </div>
-                    )}
-
-                    <DialogFooter className="p-6 pt-0">
-                        <Button variant="outline" onClick={() => setViewItem(null)}>
-                            {t("Common.close")}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            <Sheet
+            <SpexareEditSheet
                 open={!!editItem}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setEditItem(null);
-                        setEditFullItem(null);
-                    }
+                onClose={() => setEditItem(null)}
+                full={editFullItem}
+                isLoading={isEditLoading}
+                onSuccess={() => {
+                    setEditItem(null);
+                    setFilterQuery("");
+                    setSelectedPublishedValues(new Set(["true", "false"]));
+                    setSelectedDeceasedValues(new Set(["true", "false"]));
+                    router.refresh();
                 }}
-            >
-                {isEditLoading ? (
-                    <div className="p-6">
-                        <div className="flex items-center justify-center py-16">
-                            <Spinner className="size-8"/>
-                        </div>
-                    </div>
-                ) : editFullItem ? (
-                    <SpexareForm
-                        types={types}
-                        countries={countries}
-                        tags={tags}
-                        tasks={tasks}
-                        taskCategories={taskCategories}
-                        spex={spex}
-                        spexCategories={spexCategories}
-                        item={editFullItem}
-                        onSuccess={() => {
-                            setEditItem(null);
-                            setEditFullItem(null);
-                            setFilterQuery("");
-                            setSelectedPublishedValues(new Set(["true", "false"]));
-                            setSelectedDeceasedValues(new Set(["true", "false"]));
-                            router.refresh();
-                        }}
-                    />
-                ) : null}
-            </Sheet>
+                types={types}
+                countries={countries}
+                tags={tags}
+                tasks={tasks}
+                taskCategories={taskCategories}
+                spex={spex}
+                spexCategories={spexCategories}
+            />
 
             <DataTableDeleteDialogs
                 deleteItem={deleteItem}

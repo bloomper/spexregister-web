@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import {useState} from 'react';
-import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
+import {useInfiniteList} from "@/hooks/use-infinite-list";
 import {
     Dialog,
     DialogContent,
@@ -40,13 +40,14 @@ export function NewsGrid({
     const router = useRouter();
 
     const {
-        items: allItems,
+        items,
         loading,
         error,
         hasNextPage,
         sentinelRef,
-        loadMore
-    } = useInfiniteCursor<News>({
+        loadMore,
+        isInfiniteMode,
+    } = useInfiniteList<News>({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
             first: args.pageSize
@@ -56,12 +57,11 @@ export function NewsGrid({
         getKeyAction: (n) => n.id,
         initialItems,
         initialPageInfo,
+        maxItems,
     });
 
     const [selected, setSelected] = useState<News | null>(null);
     const [editItem, setEditItem] = useState<News | null>(null);
-    const items = maxItems ? allItems.slice(0, maxItems) : allItems;
-    const isInfiniteMode = !maxItems;
 
     return (
         <>

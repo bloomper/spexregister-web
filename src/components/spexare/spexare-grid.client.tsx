@@ -1,29 +1,22 @@
 "use client";
 
-import * as React from 'react';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {useState} from 'react';
 import {useTranslations} from "next-intl";
+import {useRouter} from "next/navigation";
 import {Country, Facet, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/schema";
-import {CursorPageInfo, SpexarePage} from "@/types/pagination";
+import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
-import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getAction, getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
+import {getAction} from "@/app/(app)/spexare/actions.server";
 import {DataEmpty} from "@/components/data-empty";
-import {CheckCircle2, Circle, Pencil, Sparkles, User, UserRound, X} from "lucide-react";
+import {CheckCircle2, Circle, UserRound, X} from "lucide-react";
 import {DataFilter} from "@/components/data-filter";
 import {Input} from "@/components/ui/input";
-import Image from "next/image";
-import {cn, getProxiedImageUrl} from "@/utils/utils";
-import {Badge} from "@/components/ui/badge";
-import {SpexareView} from "@/components/spexare/spexare-view.client";
-import {usePathname, useRouter} from "next/navigation";
-import Link from "next/link";
-import {SpexareForm} from "@/components/spexare/spexare-form.client";
-import {Sheet} from "@/components/ui/sheet";
-import {Spinner} from "@/components/ui/spinner";
+import {useLazyFull} from "@/hooks/use-lazy-full";
+import {useSpexareSearch} from "@/components/spexare/use-spexare-search";
+import {SpexareCard} from "@/components/spexare/spexare-card.client";
+import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client";
+import {SpexareEditSheet} from "@/components/spexare/spexare-edit-sheet.client";
 
 export function SpexareGrid({
                                 countries = [],
@@ -60,259 +53,33 @@ export function SpexareGrid({
 }) {
     const t = useTranslations();
     const router = useRouter();
-    const pathname = usePathname();
-    const [searchValue, setSearchValue] = useState(initialSearchQuery);
-    const [filterQuery, setFilterQuery] = useState(initialSearchQuery);
-    const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
-    const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>({});
-    const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
-    const [selected, setSelected] = useState<Spexare | null>(null);
-    const [selectedFull, setSelectedFull] = useState<Spexare | null>(null);
-    const [isSelectedLoading, setIsSelectedLoading] = useState(false);
-    const [editItem, setEditItem] = useState<Spexare | null>(null);
-    const [editFullItem, setEditFullItem] = useState<Spexare | null>(null);
-    const [isEditLoading, setIsEditLoading] = useState(false);
-    const previousResetKeyRef = useRef<string | null>(null);
-    const skipNextResetRef = useRef(false);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        async function loadFull() {
-            if (!selected?.id) {
-                setSelectedFull(null);
-                setIsSelectedLoading(false);
-                return;
-            }
-
-            setIsSelectedLoading(true);
-            setSelectedFull(null);
-
-            try {
-                const full = await getAction(selected.id);
-                if (!cancelled) {
-                    setSelectedFull(full ?? null);
-                }
-            } finally {
-                if (!cancelled) {
-                    setIsSelectedLoading(false);
-                }
-            }
-        }
-
-        void loadFull();
-        return () => {
-            cancelled = true;
-        };
-    }, [selected?.id]);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        async function loadEditFull() {
-            if (!editItem?.id) {
-                setEditFullItem(null);
-                setIsEditLoading(false);
-                return;
-            }
-
-            setIsEditLoading(true);
-            setEditFullItem(null);
-
-            try {
-                const full = await getAction(editItem.id);
-                if (!cancelled) {
-                    setEditFullItem(full ?? null);
-                }
-            } finally {
-                if (!cancelled) {
-                    setIsEditLoading(false);
-                }
-            }
-        }
-
-        void loadEditFull();
-        return () => {
-            cancelled = true;
-        };
-    }, [editItem?.id]);
-
-    useEffect(() => {
-        if (mode !== "search" || !filterQuery) {
-            if (mode === "search" && !filterQuery && window.location.search) {
-                window.history.replaceState(null, '', pathname);
-            }
-            return;
-        }
-
-        const params = new URLSearchParams();
-        params.set("q", filterQuery);
-
-        const url = `${pathname}?${params.toString()}`;
-        window.history.replaceState(null, '', url);
-    }, [filterQuery, pathname, mode]);
-
-    const fetchPage = useCallback(async (args: { after: string | null; pageSize: number }): Promise<SpexarePage> => {
-        const isFirstPage = args.after === null;
-
-        if (mode === "search") {
-            const aggregationFilters: { name: string; value: string }[] = [];
-
-            Object.entries(selectedFacets).forEach(([name, values]) => {
-                values.forEach(value => {
-                    aggregationFilters.push({name, value});
-                });
-            });
-
-            const currentOffset = isFirstPage ? 0 : parseInt(args.after || "0");
-
-            const result = await searchAction({
-                q: filterQuery.trim() || "",
-                limit: args.pageSize,
-                offset: currentOffset,
-                aggregationFilters,
-            });
-
-            if (isFirstPage && result.facets) {
-                setCurrentFacets(result.facets);
-            }
-
-            const hasNextPage = result.pageInfo?.hasNextPage;
-            const resolvedHasNextPage =
-                result.items.length === args.pageSize && hasNextPage;
-
-            return {
-                ...result,
-                pageInfo: {
-                    ...result.pageInfo,
-                    endCursor: (currentOffset + result.items.length).toString(),
-                    hasNextPage: resolvedHasNextPage,
-                }
-            };
-        }
-
-        const parts: string[] = [];
-
-        if (filterQuery.trim()) {
-            const query = filterQuery.trim();
-            parts.push(`(firstName:*${query}* OR lastName:*${query}* OR nickName:*${query}*)`);
-        }
-
-        if (selectedDeceasedValues.size < 2) {
-            if (selectedDeceasedValues.size === 0) {
-                parts.push(`id:NULL`);
-            } else {
-                const val = selectedDeceasedValues.has("true") ? "TRUE" : "FALSE";
-                parts.push(`deceased:${val}`);
-            }
-        }
-
-        return getPageAction({
-            after: args.after,
-            first: args.pageSize,
-            filter: parts.join(" AND ")
-        });
-    }, [filterQuery, mode, selectedDeceasedValues, selectedFacets]);
 
     const {
-        items: allItems,
+        items,
         loading,
         error,
         hasNextPage,
         sentinelRef,
         loadMore,
-        reset
-    } = useInfiniteCursor<Spexare>({
-        fetchPageAction: fetchPage,
-        pageSize: 24,
-        rootMargin: '600px',
-        getKeyAction: (n) => n.id,
-        initialItems,
-        initialPageInfo,
-    });
+        reset,
+        searchValue,
+        setSearchValue,
+        selectedDeceasedValues,
+        setSelectedDeceasedValues,
+        selectedFacets,
+        setSelectedFacets,
+        currentFacets,
+        handleReset,
+        isInfiniteMode,
+        noResults,
+        isFiltered,
+    } = useSpexareSearch({mode, initialSearchQuery, facets, initialItems, initialPageInfo, maxItems});
 
-    useEffect(() => {
-        if (selected) {
-            const updated = allItems.find(i => i.id === selected.id);
-            if (updated) {
-                setSelected(updated);
-            }
-        }
-        if (editItem) {
-            const updated = allItems.find(i => i.id === editItem.id);
-            if (updated) {
-                setEditItem(updated);
-            }
-        }
-    }, [allItems, selected, editItem]);
-
-    useEffect(() => {
-        if (initialSearchQuery !== searchValue) {
-            skipNextResetRef.current = true;
-            setSearchValue(initialSearchQuery);
-            setFilterQuery(initialSearchQuery);
-        }
-    }, [initialSearchQuery, searchValue]);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (searchValue !== filterQuery) {
-                setFilterQuery(searchValue);
-            }
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, [searchValue, filterQuery]);
-
-    const resetKey = useMemo(() => {
-        const deceasedKey = Array.from(selectedDeceasedValues).sort().join(",");
-        const facetsKey = Object.entries(selectedFacets)
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([name, values]) => `${name}:${Array.from(values).sort().join(",")}`)
-            .join("|");
-        return `${filterQuery}__${deceasedKey}__${facetsKey}`;
-    }, [filterQuery, selectedDeceasedValues, selectedFacets]);
-
-    useEffect(() => {
-        if (previousResetKeyRef.current === null) {
-            previousResetKeyRef.current = resetKey;
-            return;
-        }
-        if (skipNextResetRef.current) {
-            skipNextResetRef.current = false;
-            previousResetKeyRef.current = resetKey;
-            return;
-        }
-        if (previousResetKeyRef.current !== resetKey) {
-            previousResetKeyRef.current = resetKey;
-            reset();
-        }
-    }, [resetKey, reset]);
-
-    const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchValue(e.target.value);
-    };
-
-    const handleReset = () => {
-        React.startTransition(() => {
-            setSearchValue("");
-            setFilterQuery("");
-            setSelectedDeceasedValues(new Set(["true", "false"]));
-            setSelectedFacets({});
-
-            if (mode === "search") {
-                router.replace(pathname, {scroll: false});
-            }
-        });
-    };
-
-    const items = maxItems ? allItems.slice(0, maxItems) : allItems;
-    const isInfiniteMode = !maxItems;
-    const noResults = !loading && items.length === 0;
-    const hasActiveFacets = Object.values(selectedFacets).some(s => s.size > 0);
-    const isFiltered = mode === "search"
-        ? filterQuery.trim() !== "" || hasActiveFacets
-        : filterQuery.trim() !== "" || selectedDeceasedValues.size < 2;
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [editId, setEditId] = useState<string | null>(null);
+    const {full: selectedFull, isLoading: isSelectedLoading} = useLazyFull(selectedId, getAction);
+    const {full: editFullItem, isLoading: isEditLoading} = useLazyFull(editId, getAction);
+    const selected = selectedId ? items.find((i) => i.id === selectedId) ?? null : null;
 
     return (
         <>
@@ -328,7 +95,7 @@ export function SpexareGrid({
                             <Input
                                 placeholder={mode === "search" ? t("Spexare.searchPlaceholder") : t("Spexare.filterPlaceholder")}
                                 value={searchValue}
-                                onChange={handleQueryChange}
+                                onChange={(e) => setSearchValue(e.target.value)}
                                 className="h-8 text-xs pr-8"
                             />
                             {searchValue && (
@@ -336,9 +103,7 @@ export function SpexareGrid({
                                     variant="ghost"
                                     size="icon"
                                     className="absolute right-0 top-0 h-8 w-8 hover:bg-transparent"
-                                    onClick={() => {
-                                        setSearchValue("");
-                                    }}
+                                    onClick={() => setSearchValue("")}
                                 >
                                     <X className="h-3 w-3"/>
                                 </Button>
@@ -414,192 +179,51 @@ export function SpexareGrid({
                 </div>
             ) : (
                 items.map((n, index) => {
-                    const isMe = currentSpexareId && n.id === currentSpexareId;
+                    const isMe = Boolean(currentSpexareId && n.id === currentSpexareId);
                     const canEdit = isMe || canManage;
 
                     return (
-                        <Card
+                        <SpexareCard
                             key={n.id}
-                            className={cn(
-                                "group h-full transition-all hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0 relative",
-                                isMe && "ring-2 ring-primary ring-offset-2 border-primary/50 shadow-lg scale-[1.02]"
-                            )}
-                        >
-                            <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
-                                {canEdit && (
-                                    <div className="absolute top-2 right-2 z-20">
-                                        {isMe ? (
-                                            <Button
-                                                variant="secondary"
-                                                size="icon"
-                                                className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
-                                                asChild
-                                            >
-                                                <Link href="/my-profile">
-                                                    <Pencil className="h-4 w-4"/>
-                                                </Link>
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="secondary"
-                                                size="icon"
-                                                className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setEditItem(n);
-                                                }}
-                                            >
-                                                <Pencil className="h-4 w-4"/>
-                                            </Button>
-                                        )}
-                                    </div>
-                                )}
-
-                                <div
-                                    className="relative flex flex-col h-full"
-                                    onClick={() => setSelected(n)}
-                                >
-                                    {n.imageUrl ? (
-                                        <Image
-                                            src={getProxiedImageUrl(n.imageUrl, n.lastModifiedAt)}
-                                            alt={`${n.firstName} ${n.lastName}`}
-                                            fill
-                                            preload={index < 2}
-                                            unoptimized
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            className="object-cover transition-transform group-hover:scale-105"
-                                        />
-                                    ) : (
-                                        <div className="flex h-full w-full items-center justify-center">
-                                            <User className="h-12 w-12 text-muted-foreground/20 stroke-[1.5]"/>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <CardHeader
-                                className="space-y-2 p-3 cursor-pointer"
-                                onClick={() => setSelected(n)}
-                            >
-                                <div className="flex flex-col gap-1">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <CardTitle className="line-clamp-1 text-sm font-bold leading-tight">
-                                            {n.firstName} {n.lastName}
-                                        </CardTitle>
-                                        <div className="flex items-center gap-1 shrink-0">
-                                            {isMe && (
-                                                <Badge
-                                                    className="bg-linear-to-r from-pink-500 to-violet-500 text-white border-none text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-bold">
-                                                    <Sparkles className="mr-0.5 h-2 w-2"/>
-                                                    {t("Common.me")}
-                                                </Badge>
-                                            )}
-                                            {!n.published && (
-                                                <Badge variant="outline"
-                                                       className="text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-normal">
-                                                    {t("Spexare.publishedBadges.false")}
-                                                </Badge>
-                                            )}
-                                            {n.deceased && (
-                                                <Badge variant="outline"
-                                                       className="text-[9px] uppercase px-1 py-0 h-3.5 leading-none shrink-0 font-normal">
-                                                    {t("Spexare.deceasedBadges.true")}
-                                                </Badge>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {n.nickName && (
-                                        <p className="text-[11px] text-muted-foreground italic truncate leading-tight">
-                                            {n.nickName}
-                                        </p>
-                                    )}
-                                </div>
-                            </CardHeader>
-                        </Card>
+                            spexare={n}
+                            index={index}
+                            isMe={isMe}
+                            canEdit={canEdit}
+                            onSelect={() => setSelectedId(n.id)}
+                            onEdit={() => setEditId(n.id)}
+                        />
                     )
                 })
             )}
 
-            <Dialog
-                open={!!selected}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setSelected(null);
-                        setSelectedFull(null);
-                    }
+            <SpexareViewDialog
+                open={!!selectedId}
+                onClose={() => setSelectedId(null)}
+                summary={selected}
+                full={selectedFull}
+                isLoading={isSelectedLoading}
+                countries={countries}
+                isMe={currentSpexareId === selectedFull?.id}
+            />
+
+            <SpexareEditSheet
+                open={!!editId}
+                onClose={() => setEditId(null)}
+                full={editFullItem}
+                isLoading={isEditLoading}
+                onSuccess={() => {
+                    setEditId(null);
+                    reset();
+                    router.refresh();
                 }}
-            >
-                <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
-                    <DialogHeader className="sr-only">
-                        <DialogTitle>
-                            {selectedFull
-                                ? `${selectedFull.firstName} ${selectedFull.lastName}`
-                                : selected
-                                    ? `${selected.firstName} ${selected.lastName}`
-                                    : t("Common.details")}
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    {isSelectedLoading ? (
-                        <div className="p-6">
-                            <div className="flex items-center justify-center py-16">
-                                <Spinner className="size-8"/>
-                            </div>
-                        </div>
-                    ) : selectedFull ? (
-                        <SpexareView
-                            spexare={selectedFull}
-                            countries={countries}
-                            isMe={currentSpexareId === selectedFull.id}
-                        />
-                    ) : (
-                        <div className="p-6 text-sm text-muted-foreground">
-                            {t("Common.noData")}
-                        </div>
-                    )}
-
-                    <DialogFooter className="p-6 pt-0">
-                        <Button variant="outline" onClick={() => setSelected(null)}>
-                            {t("Common.close")}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            <Sheet
-                open={!!editItem}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setEditItem(null);
-                        setEditFullItem(null);
-                    }
-                }}
-            >
-                {isEditLoading ? (
-                    <div className="p-6">
-                        <div className="flex items-center justify-center py-16">
-                            <Spinner className="size-8"/>
-                        </div>
-                    </div>
-                ) : editFullItem ? (
-                    <SpexareForm
-                        types={types}
-                        countries={countries}
-                        tags={tags}
-                        tasks={tasks}
-                        taskCategories={taskCategories}
-                        spex={spex}
-                        spexCategories={spexCategories}
-                        item={editFullItem}
-                        onSuccess={() => {
-                            setEditItem(null);
-                            setEditFullItem(null);
-                            reset();
-                            router.refresh();
-                        }}
-                    />
-                ) : null}
-            </Sheet>
+                types={types}
+                countries={countries}
+                tags={tags}
+                tasks={tasks}
+                taskCategories={taskCategories}
+                spex={spex}
+                spexCategories={spexCategories}
+            />
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

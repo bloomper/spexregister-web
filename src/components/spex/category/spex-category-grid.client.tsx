@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import {useState} from 'react';
-import {useInfiniteCursor} from '@/hooks/use-infinite-scrolling';
+import {useInfiniteList} from "@/hooks/use-infinite-list";
 import {
     Dialog,
     DialogContent,
@@ -43,13 +43,14 @@ export function SpexCategoryGrid({
     const [editItem, setEditItem] = useState<SpexCategory | null>(null);
 
     const {
-        items: allItems,
+        items,
         loading,
         error,
         hasNextPage,
         sentinelRef,
-        loadMore
-    } = useInfiniteCursor<SpexCategory>({
+        loadMore,
+        isInfiniteMode,
+    } = useInfiniteList<SpexCategory>({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
             first: args.pageSize
@@ -59,10 +60,9 @@ export function SpexCategoryGrid({
         getKeyAction: (n) => n.id,
         initialItems,
         initialPageInfo,
+        maxItems,
     });
 
-    const items = maxItems ? allItems.slice(0, maxItems) : allItems;
-    const isInfiniteMode = !maxItems;
 
     return (
         <>
