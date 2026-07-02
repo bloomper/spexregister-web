@@ -1,5 +1,3 @@
-"use client";
-
 import {useTranslations} from "next-intl";
 import {Country, Spexare} from "@/gql/schema";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";

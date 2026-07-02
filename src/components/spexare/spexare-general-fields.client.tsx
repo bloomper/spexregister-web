@@ -1,5 +1,3 @@
-"use client";
-
 import type {FormEventHandler} from "react";
 import type {Locale} from "date-fns";
 import {format, parse} from "date-fns";

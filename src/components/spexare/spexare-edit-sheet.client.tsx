@@ -1,5 +1,3 @@
-"use client";
-
 import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/schema";
 import {Sheet} from "@/components/ui/sheet";
 import {Spinner} from "@/components/ui/spinner";
