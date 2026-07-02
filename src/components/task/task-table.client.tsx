@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Task, TaskCategory} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
-import {TaskForm} from "@/components/task";
+import {TaskEditSheet} from "@/components/task/task-edit-sheet.client";
 import {useEffect, useRef, useState} from "react";
 import {
     bulkDeleteAction,
@@ -16,7 +16,6 @@ import {
     getPageAction,
     importAction
 } from "@/app/(app)/tasks/actions.server";
-import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
@@ -243,20 +242,17 @@ export function TaskTable({
                 </DialogContent>
             </Dialog>
 
-            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                {editItem && (
-                    <TaskForm
-                        item={editItem}
-                        categories={categories}
-                        onSuccess={() => {
-                            setEditItem(null);
-                            setFilterQuery("");
-                            setSelectedCategories(new Set(categories.map(c => c.id)));
-                            router.refresh();
-                        }}
-                    />
-                )}
-            </Sheet>
+            <TaskEditSheet
+                item={editItem}
+                categories={categories}
+                onClose={() => setEditItem(null)}
+                onSuccess={() => {
+                    setEditItem(null);
+                    setFilterQuery("");
+                    setSelectedCategories(new Set(categories.map(c => c.id)));
+                    router.refresh();
+                }}
+            />
 
             <DataTableDeleteDialogs
                 deleteItem={deleteItem}
