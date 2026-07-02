@@ -137,7 +137,7 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
                                     theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
 
                                 const logoutUrl = generateKeycloakLogoutUrl(
-                                    process.env.NEXT_PUBLIC_AUTH_URL ?? '',
+                                    process.env.NEXT_PUBLIC_AUTH_URL ?? "",
                                     null,
                                     locale,
                                     themeParam

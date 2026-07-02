@@ -2,10 +2,10 @@
 
 import type {FormEventHandler} from "react";
 import type {Locale} from "date-fns";
+import {format, parse} from "date-fns";
 import type {Control, FieldErrors, UseFormRegister} from "react-hook-form";
 import {Controller} from "react-hook-form";
 import {useTranslations} from "next-intl";
-import {format, parse} from "date-fns";
 import {CalendarIcon} from "lucide-react";
 import {SpexareFormInput, SpexareFormOutput} from "@/lib/spexare/schema";
 import {Spexare} from "@/gql/schema";

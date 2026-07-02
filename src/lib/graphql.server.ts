@@ -1,12 +1,12 @@
-import 'server-only';
+import "server-only";
 
-import type {AnyVariables, OperationContext} from '@urql/core';
-import type {TypedDocumentNode} from '@graphql-typed-document-node/core';
-import {getClient} from '@/lib/urql.server';
-import {mapConnection} from '@/utils/utils.server';
-import {Event, ImpexType, JobReference, PageInfo, SortDirection} from '@/gql/schema';
-import {CursorPage} from '@/types/pagination';
-import axios from '@/lib/axios.server';
+import type {AnyVariables, OperationContext} from "@urql/core";
+import type {TypedDocumentNode} from "@graphql-typed-document-node/core";
+import {getClient} from "@/lib/urql.server";
+import {mapConnection} from "@/utils/utils.server";
+import {Event, ImpexType, JobReference, PageInfo, SortDirection} from "@/gql/schema";
+import {CursorPage} from "@/types/pagination";
+import axios from "@/lib/axios.server";
 
 export async function runQuery<TData, TVariables extends AnyVariables>(
     query: TypedDocumentNode<TData, TVariables>,
@@ -139,7 +139,6 @@ export type PagedArgs = {
     full?: boolean;
 };
 
-/** Variables shared by every `${singular}Paged` cursor query. */
 export type PagedQueryVariables = {
     first?: number | null;
     last?: number | null;
@@ -156,30 +155,16 @@ export type ExportQueryVariables = {
     type: ImpexType;
 };
 
-/**
- * Documents + metadata for a standard CRUD resource. The resource module supplies
- * schema-validated `graphql()` documents (so operations, variables and input types are
- * type-checked against the schema); the factory owns the uniform execution shape
- * (pagination loop, `mapConnection`, error handling, cache tags, REST import). Result
- * types are cast to the domain `TNode` at extraction — the same trust boundary as before,
- * so consumers keep receiving whole domain objects.
- */
 export type ResourceClientConfig<TCreateInput, TUpdateInput> = {
-    /** camelCase operation prefix, e.g. `spex`, `taskCategory` — used to read `data[<field>]`. */
     singular: string;
-    /** Paged cursor query selecting summary fields (list views). */
     pagedSummaryQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
-    /** Paged cursor query selecting full fields (detail-heavy list reads). */
     pagedFullQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
-    createMutation: TypedDocumentNode<Record<string, unknown>, {input: TCreateInput}>;
-    updateMutation: TypedDocumentNode<Record<string, unknown>, {input: TUpdateInput}>;
-    deleteMutation: TypedDocumentNode<Record<string, unknown>, {id: string}>;
-    /** Optional: omit for resources with a bespoke export (e.g. spexare's report export). */
+    createMutation: TypedDocumentNode<Record<string, unknown>, { input: TCreateInput }>;
+    updateMutation: TypedDocumentNode<Record<string, unknown>, { input: TUpdateInput }>;
+    deleteMutation: TypedDocumentNode<Record<string, unknown>, { id: string }>;
     exportQuery?: TypedDocumentNode<Record<string, unknown>, ExportQueryVariables>;
-    eventsQuery: TypedDocumentNode<Record<string, unknown>, {sourceId: string}>;
-    /** Next.js cache tag applied to list reads. */
+    eventsQuery: TypedDocumentNode<Record<string, unknown>, { sourceId: string }>;
     cacheTag: string;
-    /** REST path segment for impex import, e.g. `spex`, `tasks`, `spex/categories`. */
     restPath: string;
     defaultSort: string[];
     defaultDirection: SortDirection;
@@ -188,9 +173,9 @@ export type ResourceClientConfig<TCreateInput, TUpdateInput> = {
 
 export function createResourceClient<
     TNode,
-    TEdge extends {cursor: string; node: TNode},
+    TEdge extends { cursor: string; node: TNode },
     TCreateInput,
-    TUpdateInput extends {id?: unknown},
+    TUpdateInput extends { id?: unknown },
 >(config: ResourceClientConfig<TCreateInput, TUpdateInput>) {
     const {singular} = config;
     const pagedField = `${singular}Paged`;
@@ -200,7 +185,7 @@ export function createResourceClient<
     const exportField = `${singular}Export`;
     const eventsField = `${singular}Events`;
 
-    async function getPaged(args: PagedArgs): Promise<CursorPage<TNode> & {edges: TEdge[]}> {
+    async function getPaged(args: PagedArgs): Promise<CursorPage<TNode> & { edges: TEdge[] }> {
         const data = await runQuery(args.full ? config.pagedFullQuery : config.pagedSummaryQuery, {
             first: args.first ?? null,
             last: args.last ?? null,
@@ -218,23 +203,23 @@ export function createResourceClient<
         return mapConnection<TNode, TEdge>(data?.[pagedField] as ConnectionShape<TEdge> | null | undefined);
     }
 
-    async function getAll(args?: {full?: boolean}): Promise<TNode[]> {
+    async function getAll(args?: { full?: boolean }): Promise<TNode[]> {
         return collectAllPages<TNode>((after) =>
-            getPaged({first: 100, after, full: args?.full, filter: ''}),
+            getPaged({first: 100, after, full: args?.full, filter: ""}),
         );
     }
 
     async function create(input: TCreateInput): Promise<TNode> {
-        const value = await mutateForData(config.createMutation, {input}, createField, 'No data created');
+        const value = await mutateForData(config.createMutation, {input}, createField, "No data created");
         return value as TNode;
     }
 
-    async function update(id: string, input: Omit<TUpdateInput, 'id'>): Promise<TNode> {
+    async function update(id: string, input: Omit<TUpdateInput, "id">): Promise<TNode> {
         const value = await mutateForData(
             config.updateMutation,
             {input: {...input, id} as TUpdateInput},
             updateField,
-            'No data updated',
+            "No data updated",
         );
         return value as TNode;
     }
@@ -255,7 +240,7 @@ export function createResourceClient<
         const arrayBuffer = await file.arrayBuffer();
         const response = await axios.post(`${process.env.API_REST_BASE_URL}/api/${config.restPath}?type=${type}`, arrayBuffer, {
             headers: {
-                'Content-Type': file.type,
+                "Content-Type": file.type,
             },
         });
         return response.data;

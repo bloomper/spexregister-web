@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {Authority, SortDirection, State, User, UserCreate, UserEdge, UserUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -86,7 +86,7 @@ const UserEventsQuery = graphql(`
 `);
 
 const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
-    singular: 'user',
+    singular: "user",
     pagedSummaryQuery: UserPagedSummary,
     pagedFullQuery: UserPagedFull,
     createMutation: UserCreateMutation,
@@ -94,11 +94,11 @@ const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
     deleteMutation: UserDeleteMutation,
     exportQuery: UserExportQuery,
     eventsQuery: UserEventsQuery,
-    cacheTag: 'user',
-    restPath: 'users',
-    defaultSort: ['id'],
+    cacheTag: "user",
+    restPath: "users",
+    defaultSort: ["id"],
     defaultDirection: SortDirection.Asc,
-    defaultFilter: '',
+    defaultFilter: "",
 });
 
 export const {getPaged, create, update, del, exp, imp, events} = client;
@@ -164,7 +164,7 @@ const StatesQuery = graphql(`
 export async function me(): Promise<User | null | undefined> {
     const data = await runQuery(MeQuery, {}, {
         fetchOptions: {
-            next: {tags: ['me']}
+            next: {tags: ["me"]}
         }
     });
 
@@ -177,11 +177,11 @@ export async function getAuthorities(): Promise<Authority[]> {
 }
 
 export async function addAuthorities(userId: string, ids: string[]) {
-    return runMutationField(AuthoritiesAddMutation, {userId, ids}, 'userAuthoritiesAdd');
+    return runMutationField(AuthoritiesAddMutation, {userId, ids}, "userAuthoritiesAdd");
 }
 
 export async function removeAuthorities(userId: string, ids: string[]) {
-    return runMutationField(AuthoritiesRemoveMutation, {userId, ids}, 'userAuthoritiesRemove');
+    return runMutationField(AuthoritiesRemoveMutation, {userId, ids}, "userAuthoritiesRemove");
 }
 
 export async function getStates(): Promise<State[]> {
@@ -190,13 +190,13 @@ export async function getStates(): Promise<State[]> {
 }
 
 export async function setState(userId: string, id: string) {
-    return runMutationField(StateSetMutation, {userId, id}, 'userStateSet');
+    return runMutationField(StateSetMutation, {userId, id}, "userStateSet");
 }
 
 export async function addSpexare(userId: string, id: string) {
-    return runMutationField(SpexareAddMutation, {userId, id}, 'userSpexareAdd');
+    return runMutationField(SpexareAddMutation, {userId, id}, "userSpexareAdd");
 }
 
 export async function removeSpexare(userId: string) {
-    return runMutationField(SpexareRemoveMutation, {userId}, 'userSpexareRemove');
+    return runMutationField(SpexareRemoveMutation, {userId}, "userSpexareRemove");
 }

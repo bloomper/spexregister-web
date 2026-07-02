@@ -110,5 +110,5 @@ export async function getEventsAction(id: string) {
 }
 
 function revalidate() {
-    revalidateTag('spex-category', 'max');
+    revalidateTag("spex-category", "max");
 }

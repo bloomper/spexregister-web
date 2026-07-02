@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from 'react';
+import {useState} from "react";
 import {useTranslations} from "next-intl";
 import {useRouter} from "next/navigation";
 import {Spex, SpexCategory} from "@/gql/schema";

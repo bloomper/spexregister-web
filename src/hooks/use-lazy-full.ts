@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from "react";
 
 export function useLazyFull<T>(
     id: string | null | undefined,
     loadAction: (id: string) => Promise<T | null | undefined>,
-): {full: T | null; isLoading: boolean} {
+): { full: T | null; isLoading: boolean } {
     const [full, setFull] = useState<T | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 

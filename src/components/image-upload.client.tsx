@@ -83,9 +83,9 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
     const {getRootProps, getInputProps, isDragActive} = useDropzone({
         onDrop,
         accept: {
-            'image/png': ['.png'],
-            'image/jpeg': ['.jpg', '.jpeg'],
-            'image/gif': ['.gif']
+            "image/png": [".png"],
+            "image/jpeg": [".jpg", ".jpeg"],
+            "image/gif": [".gif"]
         },
         maxSize: 15 * 1024 * 1024,
         multiple: false,

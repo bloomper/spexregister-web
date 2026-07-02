@@ -1,4 +1,4 @@
-export {auth as proxy} from './auth';
+export {auth as proxy} from "./auth";
 export const config = {
-    matcher: ['/((?!_next/static|_next/image|favicon.ico|static/).*)'],
+    matcher: ["/((?!_next/static|_next/image|favicon.ico|static/).*)"],
 };

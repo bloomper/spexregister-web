@@ -30,7 +30,7 @@ export function SiteHeader() {
                     </Button>
                     <Separator orientation="vertical" className="mr-2 h-4"/>
                     <h1 className="text-lg font-semibold whitespace-nowrap">
-                        {t('Meta.title')}
+                        {t("Meta.title")}
                     </h1>
                 </div>
 

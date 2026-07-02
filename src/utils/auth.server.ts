@@ -1,7 +1,7 @@
-import 'server-only';
+import "server-only";
 
-import {auth} from '@/auth';
-import {type AuthzFail, AuthzResult, type Role} from '@/types/auth';
+import {auth} from "@/auth";
+import {type AuthzFail, AuthzResult, type Role} from "@/types/auth";
 
 
 export async function requireUser() {
@@ -15,11 +15,11 @@ export async function requireUser() {
 }
 
 function notAuthenticated(): AuthzFail {
-    return {ok: false, status: 401, message: 'Not authenticated'};
+    return {ok: false, status: 401, message: "Not authenticated"};
 }
 
 function notAuthorized(): AuthzFail {
-    return {ok: false, status: 403, message: 'Not authorized'};
+    return {ok: false, status: 403, message: "Not authorized"};
 }
 
 export async function requireAnyRole(required: Role[]): Promise<AuthzResult> {

@@ -1,2 +1,2 @@
-export * from './news.server';
-export * from './schema';
+export * from "./news.server";
+export * from "./schema";

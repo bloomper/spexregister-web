@@ -1,6 +1,6 @@
-import 'server-only';
+import "server-only";
 
-import {Spex, SpexCreate, SpexEdge, SpexUpdate, SortDirection} from "@/gql/schema";
+import {SortDirection, Spex, SpexCreate, SpexEdge, SpexUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient, runMutationField} from "@/lib/graphql.server";
 import axios from "@/lib/axios.server";
@@ -82,7 +82,7 @@ const SpexEventsQuery = graphql(`
 `);
 
 const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
-    singular: 'spex',
+    singular: "spex",
     pagedSummaryQuery: SpexPagedSummary,
     pagedFullQuery: SpexPagedFull,
     createMutation: SpexCreateMutation,
@@ -90,11 +90,11 @@ const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
     deleteMutation: SpexDeleteMutation,
     exportQuery: SpexExportQuery,
     eventsQuery: SpexEventsQuery,
-    cacheTag: 'spex',
-    restPath: 'spex',
-    defaultSort: ['year'],
+    cacheTag: "spex",
+    restPath: "spex",
+    defaultSort: ["year"],
     defaultDirection: SortDirection.Desc,
-    defaultFilter: 'parent:NULL',
+    defaultFilter: "parent:NULL",
 });
 
 export const {getPaged, getAll, create, update, del, exp, imp, events} = client;
@@ -127,26 +127,26 @@ const SpexRevivalDeleteMutation = graphql(`
 `);
 
 export async function addCategory(id: string, categoryId: string) {
-    return runMutationField(SpexCategoryAddMutation, {id, categoryId}, 'spexCategoryAdd');
+    return runMutationField(SpexCategoryAddMutation, {id, categoryId}, "spexCategoryAdd");
 }
 
 export async function removeCategory(id: string) {
-    return runMutationField(SpexCategoryRemoveMutation, {id}, 'spexCategoryRemove');
+    return runMutationField(SpexCategoryRemoveMutation, {id}, "spexCategoryRemove");
 }
 
 export async function createRevival(spexId: string, year: string) {
-    return runMutationField(SpexRevivalCreateMutation, {spexId, year}, 'spexRevivalCreate');
+    return runMutationField(SpexRevivalCreateMutation, {spexId, year}, "spexRevivalCreate");
 }
 
 export async function deleteRevival(spexId: string, id: string) {
-    return runMutationField(SpexRevivalDeleteMutation, {spexId, id}, 'spexRevivalDelete');
+    return runMutationField(SpexRevivalDeleteMutation, {spexId, id}, "spexRevivalDelete");
 }
 
 export async function uploadPoster(id: string, file: File) {
     const arrayBuffer = await file.arrayBuffer();
     const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spex/${id}/poster`, arrayBuffer, {
         headers: {
-            'Content-Type': file.type,
+            "Content-Type": file.type,
         }
     });
     return response.data;

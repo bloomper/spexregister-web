@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {SortDirection, Tag, TagCreate, TagEdge, TagUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -70,7 +70,7 @@ const TagEventsQuery = graphql(`
 `);
 
 const client = createResourceClient<Tag, TagEdge, TagCreate, TagUpdate>({
-    singular: 'tag',
+    singular: "tag",
     pagedSummaryQuery: TagPagedSummary,
     pagedFullQuery: TagPagedFull,
     createMutation: TagCreateMutation,
@@ -78,11 +78,11 @@ const client = createResourceClient<Tag, TagEdge, TagCreate, TagUpdate>({
     deleteMutation: TagDeleteMutation,
     exportQuery: TagExportQuery,
     eventsQuery: TagEventsQuery,
-    cacheTag: 'tag',
-    restPath: 'tags',
-    defaultSort: ['name'],
+    cacheTag: "tag",
+    restPath: "tags",
+    defaultSort: ["name"],
     defaultDirection: SortDirection.Desc,
-    defaultFilter: '',
+    defaultFilter: "",
 });
 
 export const {getPaged, getAll, create, update, del, exp, imp, events} = client;

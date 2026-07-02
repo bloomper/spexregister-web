@@ -6,7 +6,7 @@ import {getLocale} from "next-intl/server";
 import {SpexareGrid} from "@/components/spexare";
 import {DataEmpty} from "@/components/data-empty";
 import {me} from "@/lib/user";
-import {auth} from '@/auth';
+import {auth} from "@/auth";
 import {isAdminOrEditor} from "@/utils/auth";
 import {getCountries, getTypes} from "@/lib/settings";
 import {getAll as getAllTags} from "@/lib/tag";

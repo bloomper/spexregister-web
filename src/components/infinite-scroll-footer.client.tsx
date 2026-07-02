@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {AlertCircle, RefreshCw} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {useTranslations} from "next-intl";
@@ -44,7 +44,7 @@ export function InfiniteScrollFooter({
                             onClick={onRetry}
                             className="gap-2"
                         >
-                            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`}/>
+                            <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`}/>
                             {t("Common.tryAgain")}
                         </Button>
                     </div>

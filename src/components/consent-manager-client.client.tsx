@@ -1,7 +1,7 @@
 "use client";
 
-import type {ReactNode} from 'react';
-import {ClientSideOptionsProvider} from '@c15t/nextjs/client';
+import type {ReactNode} from "react";
+import {ClientSideOptionsProvider} from "@c15t/nextjs/client";
 
 
 export function ConsentManagerClient({children}: {

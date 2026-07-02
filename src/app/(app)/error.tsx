@@ -6,7 +6,7 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 
 export default function AppError({error, reset}: {
-    error: Error & {digest?: string};
+    error: Error & { digest?: string };
     reset: () => void;
 }) {
     const t = useTranslations();

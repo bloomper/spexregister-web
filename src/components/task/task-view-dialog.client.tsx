@@ -2,12 +2,19 @@
 
 import {useTranslations} from "next-intl";
 import {Task} from "@/gql/schema";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {getEventsAction} from "@/app/(app)/tasks/actions.server";
 
-export function TaskViewDialog({selected, onClose}: {selected: Task | null; onClose: () => void}) {
+export function TaskViewDialog({selected, onClose}: { selected: Task | null; onClose: () => void }) {
     const t = useTranslations();
 
     return (
@@ -22,7 +29,8 @@ export function TaskViewDialog({selected, onClose}: {selected: Task | null; onCl
                     </DialogHeader>
                     <div className="mt-6 flex flex-col gap-4 text-sm">
                         <div>
-                            <div className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider mb-1">
+                            <div
+                                className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider mb-1">
                                 {t("Task.category")}
                             </div>
                             <div className="text-base">{selected?.category?.name ?? t("Common.none")}</div>

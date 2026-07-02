@@ -78,5 +78,5 @@ export async function getEventsAction(id: string) {
 }
 
 function revalidate() {
-    revalidateTag('task-category', 'max');
+    revalidateTag("task-category", "max");
 }

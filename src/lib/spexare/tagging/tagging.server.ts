@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {graphql} from "@/gql";
 import {runMutationField} from "@/lib/graphql.server";
@@ -33,9 +33,9 @@ const TaggingDeleteMutation = graphql(`
 `);
 
 export async function create(spexareId: string, tagId: string) {
-    return runMutationField(TaggingCreateMutation, {spexareId, tagId}, 'taggingCreate');
+    return runMutationField(TaggingCreateMutation, {spexareId, tagId}, "taggingCreate");
 }
 
 export async function del(spexareId: string, tagId: string) {
-    return runMutationField(TaggingDeleteMutation, {spexareId, tagId}, 'taggingDelete');
+    return runMutationField(TaggingDeleteMutation, {spexareId, tagId}, "taggingDelete");
 }

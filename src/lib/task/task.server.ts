@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {SortDirection, Task, TaskCreate, TaskEdge, TaskUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -75,7 +75,7 @@ const TaskEventsQuery = graphql(`
 `);
 
 const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
-    singular: 'task',
+    singular: "task",
     pagedSummaryQuery: TaskPagedSummary,
     pagedFullQuery: TaskPagedFull,
     createMutation: TaskCreateMutation,
@@ -83,11 +83,11 @@ const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
     deleteMutation: TaskDeleteMutation,
     exportQuery: TaskExportQuery,
     eventsQuery: TaskEventsQuery,
-    cacheTag: 'task',
-    restPath: 'tasks',
-    defaultSort: ['name'],
+    cacheTag: "task",
+    restPath: "tasks",
+    defaultSort: ["name"],
     defaultDirection: SortDirection.Asc,
-    defaultFilter: '',
+    defaultFilter: "",
 });
 
 export const {getPaged, getAll, create, update, del, exp, imp, events} = client;
@@ -105,9 +105,9 @@ const TaskCategoryRemoveMutation = graphql(`
 `);
 
 export async function addCategory(id: string, categoryId: string) {
-    return runMutationField(TaskCategoryAddMutation, {id, categoryId}, 'taskCategoryAdd');
+    return runMutationField(TaskCategoryAddMutation, {id, categoryId}, "taskCategoryAdd");
 }
 
 export async function removeCategory(id: string) {
-    return runMutationField(TaskCategoryRemoveMutation, {id}, 'taskCategoryRemove');
+    return runMutationField(TaskCategoryRemoveMutation, {id}, "taskCategoryRemove");
 }

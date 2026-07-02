@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {Actor, ActorCreate, ActorUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -48,13 +48,25 @@ const ActorDeleteMutation = graphql(`
 `);
 
 export async function create(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, input: ActorCreate): Promise<Actor> {
-    return mutateForData(ActorCreateMutation, {spexareId, activityId, taskActivityId, vocalId, input}, 'actorCreate', 'No data created') as Promise<Actor>;
+    return mutateForData(ActorCreateMutation, {
+        spexareId,
+        activityId,
+        taskActivityId,
+        vocalId,
+        input
+    }, "actorCreate", "No data created") as Promise<Actor>;
 }
 
 export async function update(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string, input: Omit<ActorUpdate, "id">): Promise<Actor> {
-    return mutateForData(ActorUpdateMutation, {spexareId, activityId, taskActivityId, vocalId, input: {...input, id}}, 'actorUpdate', 'No data updated') as Promise<Actor>;
+    return mutateForData(ActorUpdateMutation, {
+        spexareId,
+        activityId,
+        taskActivityId,
+        vocalId,
+        input: {...input, id}
+    }, "actorUpdate", "No data updated") as Promise<Actor>;
 }
 
 export async function del(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string) {
-    return runMutationField(ActorDeleteMutation, {spexareId, activityId, taskActivityId, vocalId, id}, 'actorDelete');
+    return runMutationField(ActorDeleteMutation, {spexareId, activityId, taskActivityId, vocalId, id}, "actorDelete");
 }

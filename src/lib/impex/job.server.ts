@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {Job, JobStatus} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -62,7 +62,7 @@ const DeleteMutation = graphql(`
     }
 `);
 
-const jobContext = {fetchOptions: {next: {tags: ['job']}}};
+const jobContext = {fetchOptions: {next: {tags: ["job"]}}};
 
 export async function jobStatus(id: string): Promise<JobStatus | null> {
     const data = await runQuery(JobStatusQuery, {id}, jobContext);
@@ -80,5 +80,5 @@ export async function jobs(): Promise<Job[]> {
 }
 
 export async function del(id: string) {
-    return runMutationField(DeleteMutation, {id}, 'jobDelete');
+    return runMutationField(DeleteMutation, {id}, "jobDelete");
 }

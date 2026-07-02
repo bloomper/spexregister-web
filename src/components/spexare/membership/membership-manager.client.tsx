@@ -7,10 +7,7 @@ import {IdCard, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {MembershipForm} from "./membership-form.client";
 import {DataEmpty} from "@/components/data-empty";
-import {
-    createMembershipAction,
-    deleteMembershipAction
-} from "@/app/(app)/spexare/actions.server";
+import {createMembershipAction, deleteMembershipAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {MembershipFormOutput} from "@/lib/spexare/membership/schema";
 import {useRouter} from "next/navigation";

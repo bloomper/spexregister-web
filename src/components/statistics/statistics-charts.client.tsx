@@ -125,8 +125,8 @@ export function StatisticsCharts({data}: StatisticsChartsProps) {
                                 <LineChart data={chart.history} margin={{top: 10, right: 10, left: 10, bottom: 0}}>
                                     <CartesianGrid vertical={false} horizontal={false}/>
                                     <XAxis dataKey="label" hide/>
-                                    <YAxis yAxisId="total" hide domain={['auto', 'auto']}/>
-                                    <YAxis yAxisId="growth" hide domain={['auto', 'auto']}/>
+                                    <YAxis yAxisId="total" hide domain={["auto", "auto"]}/>
+                                    <YAxis yAxisId="growth" hide domain={["auto", "auto"]}/>
                                     <ChartTooltip
                                         content={<ChartTooltipContent indicator="line"/>}/>
                                     <Line yAxisId="total" type="monotone" dataKey="accumulated" stroke="#94a3b8"

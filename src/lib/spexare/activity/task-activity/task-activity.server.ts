@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {TaskActivity} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -63,13 +63,22 @@ const TaskActivityDeleteMutation = graphql(`
 `);
 
 export async function create(spexareId: string, activityId: string, taskId: string): Promise<TaskActivity> {
-    return mutateForData(TaskActivityCreateMutation, {spexareId, activityId, taskId}, 'taskActivityCreate', 'No data created') as Promise<TaskActivity>;
+    return mutateForData(TaskActivityCreateMutation, {
+        spexareId,
+        activityId,
+        taskId
+    }, "taskActivityCreate", "No data created") as Promise<TaskActivity>;
 }
 
 export async function update(spexareId: string, activityId: string, taskId: string, id: string): Promise<TaskActivity> {
-    return mutateForData(TaskActivityUpdateMutation, {spexareId, activityId, taskId, id}, 'taskActivityUpdate', 'No data updated') as Promise<TaskActivity>;
+    return mutateForData(TaskActivityUpdateMutation, {
+        spexareId,
+        activityId,
+        taskId,
+        id
+    }, "taskActivityUpdate", "No data updated") as Promise<TaskActivity>;
 }
 
 export async function del(spexareId: string, activityId: string, id: string) {
-    return runMutationField(TaskActivityDeleteMutation, {spexareId, activityId, id}, 'taskActivityDelete');
+    return runMutationField(TaskActivityDeleteMutation, {spexareId, activityId, id}, "taskActivityDelete");
 }

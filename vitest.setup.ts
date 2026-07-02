@@ -1,22 +1,22 @@
-import '@testing-library/jest-dom/vitest';
-import {afterEach, vi} from 'vitest';
-import {cleanup} from '@testing-library/react';
+import "@testing-library/jest-dom/vitest";
+import {afterEach, vi} from "vitest";
+import {cleanup} from "@testing-library/react";
 
 afterEach(() => {
     cleanup();
 });
 
-vi.mock('next-intl', () => ({
+vi.mock("next-intl", () => ({
     useTranslations: () => (key: string, values?: Record<string, unknown>) =>
         values ? `${key}:${JSON.stringify(values)}` : key,
-    useLocale: () => 'sv',
+    useLocale: () => "sv",
 }));
 
 class MockIntersectionObserver implements IntersectionObserver {
     static instances: MockIntersectionObserver[] = [];
 
     readonly root: Element | Document | null = null;
-    readonly rootMargin: string = '';
+    readonly rootMargin: string = "";
     readonly thresholds: ReadonlyArray<number> = [];
 
     callback: IntersectionObserverCallback;
@@ -46,10 +46,10 @@ class MockIntersectionObserver implements IntersectionObserver {
     }
 }
 
-vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
+vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
 
 vi.stubGlobal(
-    'matchMedia',
+    "matchMedia",
     vi.fn().mockImplementation((query: string) => ({
         matches: false,
         media: query,

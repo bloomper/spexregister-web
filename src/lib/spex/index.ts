@@ -1,2 +1,2 @@
-export * from './spex.server';
-export * from './schema';
+export * from "./spex.server";
+export * from "./schema";

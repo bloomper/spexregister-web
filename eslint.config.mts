@@ -10,6 +10,19 @@ export default defineConfig([
     ...nextVitals,
     ...nextTs,
     {settings: {react: {version: "19.2.7"}}},
+    {
+        files: ["**/*.{ts,tsx,mts}"],
+        rules: {
+            quotes: ["error", "double", {avoidEscape: true, allowTemplateLiterals: true}],
+            "jsx-quotes": ["error", "prefer-double"],
+        },
+    },
+    {
+        files: ["src/app/global-error.tsx"],
+        rules: {
+            "@next/next/no-html-link-for-pages": "off",
+        },
+    },
     globalIgnores([
         "node_modules/**",
         ".next/**",

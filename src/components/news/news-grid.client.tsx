@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from 'react';
-import {useState} from 'react';
+import * as React from "react";
+import {useState} from "react";
 import {useInfiniteList} from "@/hooks/use-infinite-list";
 import {
     Dialog,
@@ -53,7 +53,7 @@ export function NewsGrid({
             first: args.pageSize
         }),
         pageSize: 24,
-        rootMargin: '600px',
+        rootMargin: "600px",
         getKeyAction: (n) => n.id,
         initialItems,
         initialPageInfo,
@@ -106,7 +106,7 @@ export function NewsGrid({
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <div className="text-xs text-muted-foreground">
-                            {selected?.visibleFrom ? formatDate(selected.visibleFrom) : ''}
+                            {selected?.visibleFrom ? formatDate(selected.visibleFrom) : ""}
                         </div>
                         <DialogTitle>{selected?.subject}</DialogTitle>
                         <DialogDescription className="sr-only">

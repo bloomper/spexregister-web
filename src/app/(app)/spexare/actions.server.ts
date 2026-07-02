@@ -19,14 +19,7 @@ import {
     uploadImage
 } from "@/lib/spexare";
 import {revalidateTag} from "next/cache";
-import {
-    AggregationFilterInput,
-    ImpexType,
-    ReportType,
-    SortDirection,
-    SpexareCreate,
-    SpexareUpdate
-} from "@/gql/schema";
+import {AggregationFilterInput, ImpexType, ReportType, SortDirection, SpexareCreate, SpexareUpdate} from "@/gql/schema";
 import {
     addressFormSchema,
     create as createAddress,
@@ -39,11 +32,7 @@ import {
     del as delConsent,
     update as updateConsent
 } from "@/lib/spexare/consent";
-import {
-    create as createMembership,
-    del as delMembership,
-    membershipFormSchema
-} from "@/lib/spexare/membership";
+import {create as createMembership, del as delMembership, membershipFormSchema} from "@/lib/spexare/membership";
 import {create as createTagging, del as delTagging} from "@/lib/spexare/tagging";
 import {create as createToggle, del as delToggle, toggleFormSchema, update as updateToggle} from "@/lib/spexare/toggle";
 import {create as createActivity, del as delActivity,} from "@/lib/spexare/activity";
@@ -429,5 +418,5 @@ export async function getEventsAction(id: string) {
 }
 
 function revalidate() {
-    revalidateTag('spexare', 'max');
+    revalidateTag("spexare", "max");
 }

@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {SortDirection, SpexCategory, SpexCategoryCreate, SpexCategoryEdge, SpexCategoryUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -73,7 +73,7 @@ const SpexCategoryEventsQuery = graphql(`
 `);
 
 const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategoryCreate, SpexCategoryUpdate>({
-    singular: 'spexCategory',
+    singular: "spexCategory",
     pagedSummaryQuery: SpexCategoryPagedSummary,
     pagedFullQuery: SpexCategoryPagedFull,
     createMutation: SpexCategoryCreateMutation,
@@ -81,11 +81,11 @@ const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategory
     deleteMutation: SpexCategoryDeleteMutation,
     exportQuery: SpexCategoryExportQuery,
     eventsQuery: SpexCategoryEventsQuery,
-    cacheTag: 'spex-category',
-    restPath: 'spex/categories',
-    defaultSort: ['name'],
+    cacheTag: "spex-category",
+    restPath: "spex/categories",
+    defaultSort: ["name"],
     defaultDirection: SortDirection.Asc,
-    defaultFilter: '',
+    defaultFilter: "",
 });
 
 export const {getPaged, getAll, create, update, del, exp, imp, events} = client;
@@ -94,7 +94,7 @@ export async function uploadLogo(id: string, file: File) {
     const arrayBuffer = await file.arrayBuffer();
     const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spex/categories/${id}/logo`, arrayBuffer, {
         headers: {
-            'Content-Type': file.type,
+            "Content-Type": file.type,
         }
     });
     return response.data;

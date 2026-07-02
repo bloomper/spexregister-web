@@ -206,7 +206,7 @@ export function NewsTable({
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground mb-1">
-                            <div>{viewItem?.visibleFrom ? formatDate(viewItem.visibleFrom) : ''}</div>
+                            <div>{viewItem?.visibleFrom ? formatDate(viewItem.visibleFrom) : ""}</div>
                             {viewItem && (
                                 <>
                                     <div className="h-3 w-px bg-border"/>

@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from 'react';
-import {useState} from 'react';
+import * as React from "react";
+import {useState} from "react";
 import {useInfiniteList} from "@/hooks/use-infinite-list";
 import {
     Dialog,
@@ -54,7 +54,7 @@ export function TaskCategoryGrid({
             first: args.pageSize
         }),
         pageSize: 24,
-        rootMargin: '600px',
+        rootMargin: "600px",
         getKeyAction: (n) => n.id,
         initialItems,
         initialPageInfo,

@@ -1,2 +1,2 @@
-export * from './consent.server';
-export * from './schema';
+export * from "./consent.server";
+export * from "./schema";

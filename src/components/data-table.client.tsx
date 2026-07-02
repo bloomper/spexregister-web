@@ -149,7 +149,7 @@ export function DataTable<TData extends { id: string }, TValue>({
             rowSelection,
         },
         onSortingChange: (updater) => {
-            const nextSorting = typeof updater === 'function' ? updater(sorting) : updater;
+            const nextSorting = typeof updater === "function" ? updater(sorting) : updater;
             setSorting(nextSorting);
 
             const sortField = nextSorting[0];

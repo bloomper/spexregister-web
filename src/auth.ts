@@ -1,11 +1,11 @@
-import 'server-only';
+import "server-only";
 
-import nextAuth, {DefaultSession} from 'next-auth';
-import Keycloak from 'next-auth/providers/keycloak';
+import nextAuth, {DefaultSession} from "next-auth";
+import Keycloak from "next-auth/providers/keycloak";
 import {Role} from "@/types/auth";
 import {gravatarImageUrl, isTokenExpired, mapInitialToken, refreshAccessToken} from "@/lib/auth-tokens";
 
-declare module 'next-auth' {
+declare module "next-auth" {
     interface Session extends DefaultSession {
         error?: "RefreshTokenError"
         access_token: string
@@ -14,7 +14,7 @@ declare module 'next-auth' {
 }
 
 export const {handlers, auth, signIn, signOut} = nextAuth({
-    debug: process.env.NODE_ENV === 'development',
+    debug: process.env.NODE_ENV === "development",
     providers: [Keycloak],
     callbacks: {
         async jwt({token, account, user}) {

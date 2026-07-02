@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {SortDirection, TaskCategory, TaskCategoryCreate, TaskCategoryEdge, TaskCategoryUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -71,7 +71,7 @@ const TaskCategoryEventsQuery = graphql(`
 `);
 
 const client = createResourceClient<TaskCategory, TaskCategoryEdge, TaskCategoryCreate, TaskCategoryUpdate>({
-    singular: 'taskCategory',
+    singular: "taskCategory",
     pagedSummaryQuery: TaskCategoryPagedSummary,
     pagedFullQuery: TaskCategoryPagedFull,
     createMutation: TaskCategoryCreateMutation,
@@ -79,11 +79,11 @@ const client = createResourceClient<TaskCategory, TaskCategoryEdge, TaskCategory
     deleteMutation: TaskCategoryDeleteMutation,
     exportQuery: TaskCategoryExportQuery,
     eventsQuery: TaskCategoryEventsQuery,
-    cacheTag: 'task-category',
-    restPath: 'tasks/categories',
-    defaultSort: ['name'],
+    cacheTag: "task-category",
+    restPath: "tasks/categories",
+    defaultSort: ["name"],
     defaultDirection: SortDirection.Asc,
-    defaultFilter: '',
+    defaultFilter: "",
 });
 
 export const {getPaged, getAll, create, update, del, exp, imp, events} = client;

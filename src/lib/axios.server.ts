@@ -1,14 +1,14 @@
-import 'server-only';
+import "server-only";
 
-import axios from 'axios';
+import axios from "axios";
 import {auth} from "@/auth";
 import {getLocale} from "next-intl/server";
 
 const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api",
     timeout: 10000,
     headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
     },
 });
 

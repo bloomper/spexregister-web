@@ -1,8 +1,8 @@
 "use client";
 
-import type {ReactNode} from 'react';
-import {ConsentManagerDialog, ConsentManagerProvider, CookieBanner} from '@c15t/nextjs';
-import {ConsentManagerClient} from './consent-manager-client.client';
+import type {ReactNode} from "react";
+import {ConsentManagerDialog, ConsentManagerProvider, CookieBanner} from "@c15t/nextjs";
+import {ConsentManagerClient} from "./consent-manager-client.client";
 import {useLocaleContext} from "@/app/provider.client";
 import {baseTranslations} from "@c15t/translations";
 
@@ -14,8 +14,8 @@ export function ConsentManager({children}: { children: ReactNode }) {
         <ConsentManagerProvider
             key={locale}
             options={{
-                mode: 'offline',
-                consentCategories: ['necessary'],
+                mode: "offline",
+                consentCategories: ["necessary"],
                 translations: {
                     defaultLanguage: locale,
                     disableAutoLanguageSwitch: true,

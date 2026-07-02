@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {
     AggregationFilterInput,
@@ -119,18 +119,18 @@ const SpexareEventsQuery = graphql(`
 `);
 
 const client = createResourceClient<Spexare, SpexareEdge, SpexareCreate, SpexareUpdate>({
-    singular: 'spexare',
+    singular: "spexare",
     pagedSummaryQuery: SpexarePagedSummary,
     pagedFullQuery: SpexarePagedFull,
     createMutation: SpexareCreateMutation,
     updateMutation: SpexareUpdateMutation,
     deleteMutation: SpexareDeleteMutation,
     eventsQuery: SpexareEventsQuery,
-    cacheTag: 'spexare',
-    restPath: 'spexare',
-    defaultSort: ['firstName'],
+    cacheTag: "spexare",
+    restPath: "spexare",
+    defaultSort: ["firstName"],
     defaultDirection: SortDirection.Asc,
-    defaultFilter: 'published:TRUE',
+    defaultFilter: "published:TRUE",
 });
 
 export const {getPaged, create, update, del, imp, events} = client;
@@ -198,7 +198,7 @@ export async function search(args: {
         direction: args.direction ?? SortDirection.Desc,
     }, {
         fetchOptions: {
-            next: {tags: ['spexare']}
+            next: {tags: ["spexare"]}
         }
     });
 
@@ -233,18 +233,18 @@ export async function exp(ids: string[] | null, filter: string | null, type: Imp
 }
 
 export async function addPartner(spexareId: string, id: string) {
-    return runMutationField(AddPartnerMutation, {spexareId, id}, 'spexarePartnerAdd');
+    return runMutationField(AddPartnerMutation, {spexareId, id}, "spexarePartnerAdd");
 }
 
 export async function removePartner(spexareId: string) {
-    return runMutationField(RemovePartnerMutation, {spexareId}, 'spexarePartnerRemove');
+    return runMutationField(RemovePartnerMutation, {spexareId}, "spexarePartnerRemove");
 }
 
 export async function uploadImage(id: string, file: File) {
     const arrayBuffer = await file.arrayBuffer();
     const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spexare/${id}/image`, arrayBuffer, {
         headers: {
-            'Content-Type': file.type,
+            "Content-Type": file.type,
         }
     });
     return response.data;

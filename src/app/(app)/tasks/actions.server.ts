@@ -10,6 +10,7 @@ import {
     exp,
     getAll as getAllTasks,
     getPaged,
+    imp,
     removeCategory,
     taskFormSchema,
     update
@@ -17,7 +18,6 @@ import {
 import {revalidateTag} from "next/cache";
 import {ImpexType, SortDirection} from "@/gql/schema";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
-import {imp} from "@/lib/task";
 
 export async function getPageAction(args: {
     first?: number;
@@ -123,5 +123,5 @@ export async function getEventsAction(id: string) {
 }
 
 function revalidate() {
-    revalidateTag('task', 'max');
+    revalidateTag("task", "max");
 }

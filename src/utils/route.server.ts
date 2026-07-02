@@ -1,9 +1,9 @@
-import 'server-only';
+import "server-only";
 
-import type {NextRequest} from 'next/server';
-import {NextResponse} from 'next/server';
-import type {AuthzFail, AuthzOk, AuthzResult} from '@/types/auth';
-import {redirect} from 'next/navigation';
+import type {NextRequest} from "next/server";
+import {NextResponse} from "next/server";
+import type {AuthzFail, AuthzOk, AuthzResult} from "@/types/auth";
+import {redirect} from "next/navigation";
 
 type RouteContext = unknown;
 

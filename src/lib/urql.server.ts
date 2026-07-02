@@ -1,14 +1,14 @@
-import 'server-only';
+import "server-only";
 
-import {cacheExchange, createClient, fetchExchange} from '@urql/core';
-import {registerUrql} from '@urql/next/rsc';
-import {auth} from '@/auth';
+import {cacheExchange, createClient, fetchExchange} from "@urql/core";
+import {registerUrql} from "@urql/next/rsc";
+import {auth} from "@/auth";
 import {authExchange} from "@urql/exchange-auth";
 import {getLocale} from "next-intl/server";
 
 const makeClient = () => {
     return createClient({
-        url: process.env.API_GRAPHQL_ENDPOINT || '',
+        url: process.env.API_GRAPHQL_ENDPOINT || "",
         exchanges: [
             cacheExchange,
             authExchange(async (utils) => {
@@ -28,8 +28,8 @@ const makeClient = () => {
                     didAuthError(error) {
                         return error.graphQLErrors.some(
                             (e) =>
-                                e.extensions?.code === 'UNAUTHENTICATED' ||
-                                e.extensions?.code === 'UNAUTHORIZED'
+                                e.extensions?.code === "UNAUTHENTICATED" ||
+                                e.extensions?.code === "UNAUTHORIZED"
                         );
                     },
 
@@ -54,7 +54,7 @@ const makeClient = () => {
         async fetch(input, init) {
             const locale = await getLocale();
             const headers = new Headers(init?.headers);
-            headers.set('Accept-Language', locale);
+            headers.set("Accept-Language", locale);
 
             return fetch(input, {
                 ...init,

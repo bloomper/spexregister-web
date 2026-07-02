@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {Consent, ConsentCreate, ConsentUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -48,13 +48,21 @@ const ConsentDeleteMutation = graphql(`
 `);
 
 export async function create(spexareId: string, typeId: string, input: ConsentCreate): Promise<Consent> {
-    return mutateForData(ConsentCreateMutation, {spexareId, typeId, input}, 'consentCreate', 'No data created') as Promise<Consent>;
+    return mutateForData(ConsentCreateMutation, {
+        spexareId,
+        typeId,
+        input
+    }, "consentCreate", "No data created") as Promise<Consent>;
 }
 
 export async function update(spexareId: string, typeId: string, id: string, input: Omit<ConsentUpdate, "id">): Promise<Consent> {
-    return mutateForData(ConsentUpdateMutation, {spexareId, typeId, input: {...input, id}}, 'consentUpdate', 'No data updated') as Promise<Consent>;
+    return mutateForData(ConsentUpdateMutation, {
+        spexareId,
+        typeId,
+        input: {...input, id}
+    }, "consentUpdate", "No data updated") as Promise<Consent>;
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    return runMutationField(ConsentDeleteMutation, {spexareId, typeId, id}, 'consentDelete');
+    return runMutationField(ConsentDeleteMutation, {spexareId, typeId, id}, "consentDelete");
 }

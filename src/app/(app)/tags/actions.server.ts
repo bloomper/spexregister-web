@@ -84,5 +84,5 @@ export async function getEventsAction(id: string) {
 }
 
 function revalidate() {
-    revalidateTag('tag', 'max');
+    revalidateTag("tag", "max");
 }

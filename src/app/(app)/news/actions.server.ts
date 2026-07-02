@@ -80,5 +80,5 @@ export async function getEventsAction(id: string) {
 }
 
 function revalidate() {
-    revalidateTag('news', 'max');
+    revalidateTag("news", "max");
 }

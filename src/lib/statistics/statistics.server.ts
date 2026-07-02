@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 
 import {Statistics} from "@/gql/schema";
 import {graphql} from "@/gql";
@@ -45,7 +45,7 @@ const StatisticsQuery = graphql(`
 export async function get(): Promise<Statistics | undefined> {
     const data = await runQuery(StatisticsQuery, {}, {
         fetchOptions: {
-            next: {tags: ['spexare', 'spex', 'task', 'user']}
+            next: {tags: ["spexare", "spex", "task", "user"]}
         }
     });
 

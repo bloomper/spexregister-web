@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from "react";
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
 
 const EMPTY_ITEMS: never[] = [];
@@ -41,7 +41,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
     const {
         fetchPageAction,
         pageSize = 10,
-        rootMargin = '600px',
+        rootMargin = "600px",
         getKeyAction,
         initialItems = EMPTY_ITEMS,
         initialPageInfo,
@@ -60,12 +60,12 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
 
     const initialSignature = [
         initialItems.length,
-        getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[0]) : '',
-        getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[initialItems.length - 1]) : '',
-        initialAfter ?? '',
-        initialPageInfo?.endCursor ?? '',
-        String(initialPageInfo?.hasNextPage ?? ''),
-    ].join('|');
+        getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[0]) : "",
+        getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[initialItems.length - 1]) : "",
+        initialAfter ?? "",
+        initialPageInfo?.endCursor ?? "",
+        String(initialPageInfo?.hasNextPage ?? ""),
+    ].join("|");
     const seededSignatureRef = useRef<string | null>(null);
     const initialItemsRef = useRef(initialItems);
     const initialPageInfoRef = useRef(initialPageInfo);
@@ -123,7 +123,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
             setHasNextPage(Boolean(page.pageInfo?.hasNextPage));
             setAfter(page.pageInfo?.endCursor ?? null);
         } catch (e) {
-            setError(e instanceof Error ? e.message : 'Failed to load data');
+            setError(e instanceof Error ? e.message : "Failed to load data");
         } finally {
             setLoading(false);
         }

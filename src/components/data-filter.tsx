@@ -1,4 +1,5 @@
 import * as React from "react";
+import {useMemo, useState} from "react";
 import {Check, Funnel} from "lucide-react";
 import {cn} from "@/utils/utils";
 import {Button} from "@/components/ui/button";
@@ -6,7 +7,6 @@ import {Separator} from "@/components/ui/separator";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {useTranslations} from "next-intl";
 import {Input} from "@/components/ui/input";
-import {useMemo, useState} from "react";
 
 interface DataFilterProps {
     title?: string

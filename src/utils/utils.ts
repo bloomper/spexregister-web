@@ -8,18 +8,18 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatDate(date: string) {
     if (!date) {
-        return '';
+        return "";
     }
     try {
         return format(parseISO(date), "yyyy-MM-dd");
     } catch {
-        return '';
+        return "";
     }
 }
 
 export function formatDateTime(date: string) {
     if (!date) {
-        return '';
+        return "";
     }
     try {
         return format(parseISO(date), "yyyy-MM-dd HH:mm");

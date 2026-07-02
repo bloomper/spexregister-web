@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import {startTransition, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {usePathname, useRouter} from 'next/navigation';
-import {useInfiniteList} from '@/hooks/use-infinite-list';
-import {Facet, Spexare} from '@/gql/schema';
-import {CursorPageInfo, SpexarePage} from '@/types/pagination';
-import {getPageAction, searchAction} from '@/app/(app)/spexare/actions.server';
+import {startTransition, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {usePathname, useRouter} from "next/navigation";
+import {useInfiniteList} from "@/hooks/use-infinite-list";
+import {Facet, Spexare} from "@/gql/schema";
+import {CursorPageInfo, SpexarePage} from "@/types/pagination";
+import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
 
 type UseSpexareSearchArgs = {
-    mode: 'filter' | 'search';
+    mode: "filter" | "search";
     initialSearchQuery: string;
     facets: Facet[];
     initialItems: Spexare[];
@@ -28,7 +28,7 @@ export function useSpexareSearch({
     const pathname = usePathname();
     const [searchValue, setSearchValue] = useState(initialSearchQuery);
     const [filterQuery, setFilterQuery] = useState(initialSearchQuery);
-    const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(['true', 'false']));
+    const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>({});
     const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
     const previousResetKeyRef = useRef<string | null>(null);
@@ -44,25 +44,25 @@ export function useSpexareSearch({
     }, [initialSearchQuery, searchValue]);
 
     useEffect(() => {
-        if (mode !== 'search' || !filterQuery) {
-            if (mode === 'search' && !filterQuery && window.location.search) {
-                window.history.replaceState(null, '', pathname);
+        if (mode !== "search" || !filterQuery) {
+            if (mode === "search" && !filterQuery && window.location.search) {
+                window.history.replaceState(null, "", pathname);
             }
             return;
         }
 
         const params = new URLSearchParams();
-        params.set('q', filterQuery);
+        params.set("q", filterQuery);
 
         const url = `${pathname}?${params.toString()}`;
-        window.history.replaceState(null, '', url);
+        window.history.replaceState(null, "", url);
     }, [filterQuery, pathname, mode]);
 
-    const fetchPage = useCallback(async (args: {after: string | null; pageSize: number}): Promise<SpexarePage> => {
+    const fetchPage = useCallback(async (args: { after: string | null; pageSize: number }): Promise<SpexarePage> => {
         const isFirstPage = args.after === null;
 
-        if (mode === 'search') {
-            const aggregationFilters: {name: string; value: string}[] = [];
+        if (mode === "search") {
+            const aggregationFilters: { name: string; value: string }[] = [];
 
             Object.entries(selectedFacets).forEach(([name, values]) => {
                 values.forEach(value => {
@@ -70,10 +70,10 @@ export function useSpexareSearch({
                 });
             });
 
-            const currentOffset = isFirstPage ? 0 : parseInt(args.after || '0');
+            const currentOffset = isFirstPage ? 0 : parseInt(args.after || "0");
 
             const result = await searchAction({
-                q: filterQuery.trim() || '',
+                q: filterQuery.trim() || "",
                 limit: args.pageSize,
                 offset: currentOffset,
                 aggregationFilters,
@@ -108,7 +108,7 @@ export function useSpexareSearch({
             if (selectedDeceasedValues.size === 0) {
                 parts.push(`id:NULL`);
             } else {
-                const val = selectedDeceasedValues.has('true') ? 'TRUE' : 'FALSE';
+                const val = selectedDeceasedValues.has("true") ? "TRUE" : "FALSE";
                 parts.push(`deceased:${val}`);
             }
         }
@@ -116,14 +116,14 @@ export function useSpexareSearch({
         return getPageAction({
             after: args.after,
             first: args.pageSize,
-            filter: parts.join(' AND ')
+            filter: parts.join(" AND ")
         });
     }, [filterQuery, mode, selectedDeceasedValues, selectedFacets]);
 
     const infinite = useInfiniteList<Spexare>({
         fetchPageAction: fetchPage,
         pageSize: 24,
-        rootMargin: '600px',
+        rootMargin: "600px",
         getKeyAction: (n) => n.id,
         initialItems,
         initialPageInfo,
@@ -143,11 +143,11 @@ export function useSpexareSearch({
     }, [searchValue, filterQuery]);
 
     const resetKey = useMemo(() => {
-        const deceasedKey = Array.from(selectedDeceasedValues).sort().join(',');
+        const deceasedKey = Array.from(selectedDeceasedValues).sort().join(",");
         const facetsKey = Object.entries(selectedFacets)
             .sort(([a], [b]) => a.localeCompare(b))
-            .map(([name, values]) => `${name}:${Array.from(values).sort().join(',')}`)
-            .join('|');
+            .map(([name, values]) => `${name}:${Array.from(values).sort().join(",")}`)
+            .join("|");
         return `${filterQuery}__${deceasedKey}__${facetsKey}`;
     }, [filterQuery, selectedDeceasedValues, selectedFacets]);
 
@@ -169,12 +169,12 @@ export function useSpexareSearch({
 
     const handleReset = useCallback(() => {
         startTransition(() => {
-            setSearchValue('');
-            setFilterQuery('');
-            setSelectedDeceasedValues(new Set(['true', 'false']));
+            setSearchValue("");
+            setFilterQuery("");
+            setSelectedDeceasedValues(new Set(["true", "false"]));
             setSelectedFacets({});
 
-            if (mode === 'search') {
+            if (mode === "search") {
                 router.replace(pathname, {scroll: false});
             }
         });
@@ -182,9 +182,9 @@ export function useSpexareSearch({
 
     const noResults = !loading && items.length === 0;
     const hasActiveFacets = Object.values(selectedFacets).some(s => s.size > 0);
-    const isFiltered = mode === 'search'
-        ? filterQuery.trim() !== '' || hasActiveFacets
-        : filterQuery.trim() !== '' || selectedDeceasedValues.size < 2;
+    const isFiltered = mode === "search"
+        ? filterQuery.trim() !== "" || hasActiveFacets
+        : filterQuery.trim() !== "" || selectedDeceasedValues.size < 2;
 
     return {
         ...infinite,

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import {useCallback, useEffect, useState} from 'react';
-import {useInfiniteList} from '@/hooks/use-infinite-list';
-import {Spex, SpexCategory} from '@/gql/schema';
-import {CursorPageInfo} from '@/types/pagination';
-import {getPageAction} from '@/app/(app)/spex/actions.server';
+import {useCallback, useEffect, useState} from "react";
+import {useInfiniteList} from "@/hooks/use-infinite-list";
+import {Spex, SpexCategory} from "@/gql/schema";
+import {CursorPageInfo} from "@/types/pagination";
+import {getPageAction} from "@/app/(app)/spex/actions.server";
 
 type UseSpexSearchArgs = {
     categories: SpexCategory[];
@@ -14,8 +14,8 @@ type UseSpexSearchArgs = {
 };
 
 export function useSpexSearch({categories, initialItems, initialPageInfo, maxItems}: UseSpexSearchArgs) {
-    const [searchValue, setSearchValue] = useState('');
-    const [filterQuery, setFilterQuery] = useState('');
+    const [searchValue, setSearchValue] = useState("");
+    const [filterQuery, setFilterQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
         new Set(categories.map((c) => c.id))
     );
@@ -28,8 +28,8 @@ export function useSpexSearch({categories, initialItems, initialPageInfo, maxIte
         return () => clearTimeout(timer);
     }, [searchValue]);
 
-    const fetchPageWithFilters = useCallback((args: {after: string | null; pageSize: number}) => {
-        const filterParts = ['parent:NULL'];
+    const fetchPageWithFilters = useCallback((args: { after: string | null; pageSize: number }) => {
+        const filterParts = ["parent:NULL"];
 
         if (filterQuery.trim()) {
             const escapedQuery = filterQuery.trim();
@@ -39,21 +39,21 @@ export function useSpexSearch({categories, initialItems, initialPageInfo, maxIte
         if (categories.length > 0 && selectedCategories.size < categories.length) {
             const categoryFilters = Array.from(selectedCategories)
                 .map(id => `details.category.id:${id}`)
-                .join(' OR ');
+                .join(" OR ");
             filterParts.push(`(${categoryFilters})`);
         }
 
         return getPageAction({
             after: args.after,
             first: args.pageSize,
-            filter: filterParts.join(' AND ')
+            filter: filterParts.join(" AND ")
         });
     }, [categories.length, selectedCategories, filterQuery]);
 
     const infinite = useInfiniteList<Spex>({
         fetchPageAction: fetchPageWithFilters,
         pageSize: 24,
-        rootMargin: '600px',
+        rootMargin: "600px",
         getKeyAction: (n) => n.id,
         initialItems,
         initialPageInfo,
@@ -78,7 +78,7 @@ export function useSpexSearch({categories, initialItems, initialPageInfo, maxIte
     };
 
     const noResults = !loading && items.length === 0;
-    const isFiltered = filterQuery.trim() !== '' || (categories.length > 0 && selectedCategories.size < categories.length);
+    const isFiltered = filterQuery.trim() !== "" || (categories.length > 0 && selectedCategories.size < categories.length);
 
     return {
         ...infinite,

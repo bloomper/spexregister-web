@@ -33,5 +33,5 @@ export async function deleteAction(id: string) {
 }
 
 function revalidate() {
-    revalidateTag('job', 'max');
+    revalidateTag("job", "max");
 }

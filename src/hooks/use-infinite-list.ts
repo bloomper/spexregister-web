@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import {useInfiniteCursor, UseInfiniteCursorOptions} from '@/hooks/use-infinite-scrolling';
+import {useInfiniteCursor, UseInfiniteCursorOptions} from "@/hooks/use-infinite-scrolling";
 
 export type UseInfiniteListOptions<TItem> = UseInfiniteCursorOptions<TItem> & {
     maxItems?: number;

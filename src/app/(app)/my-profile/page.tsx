@@ -32,7 +32,7 @@ export default async function MyProfilePage() {
 
     async function handleSuccess() {
         "use server";
-        revalidateTag('me', 'max');
+        revalidateTag("me", "max");
         redirect("/");
     }
 

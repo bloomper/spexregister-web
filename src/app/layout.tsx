@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 
 async function RootProvider({children}: { children: React.ReactNode }) {
     const store = await cookies();
-    const cookieLocale = store.get('locale')?.value;
+    const cookieLocale = store.get("locale")?.value;
     const locale = normalizeLocale(cookieLocale);
     const messages = (await import(`../../messages/${locale}.json`)).default;
 
@@ -35,11 +35,11 @@ async function RootProvider({children}: { children: React.ReactNode }) {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-    const t = await getTranslations('Meta');
+    const t = await getTranslations("Meta");
 
     return {
-        title: t('title'),
-        description: t('description'),
+        title: t("title"),
+        description: t("description"),
     };
 }
 

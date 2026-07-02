@@ -1,16 +1,16 @@
-import 'server-only';
+import "server-only";
 
-import {createHash} from 'node:crypto';
-import {jwtDecode} from 'jwt-decode';
-import {AccessTokenClaims, Role} from '@/types/auth';
-import {extractRolesFromClaims} from '@/utils/auth';
+import {createHash} from "node:crypto";
+import {jwtDecode} from "jwt-decode";
+import {AccessTokenClaims, Role} from "@/types/auth";
+import {extractRolesFromClaims} from "@/utils/auth";
 
 export type AppToken = {
     access_token?: string;
     expires_at?: number;
     refresh_token?: string;
     roles?: Role[];
-    error?: 'RefreshTokenError';
+    error?: "RefreshTokenError";
     sub?: string;
     name?: string | null;
     email?: string | null;
@@ -52,11 +52,11 @@ export async function refreshAccessToken(refreshToken: string, token: AppToken):
     try {
         const issuer = process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER!;
         const response = await fetch(`${issuer}/protocol/openid-connect/token`, {
-            method: 'POST',
+            method: "POST",
             body: new URLSearchParams({
                 client_id: process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ID!,
                 client_secret: process.env.AUTH_KEYCLOAK_SECRET!,
-                grant_type: 'refresh_token',
+                grant_type: "refresh_token",
                 refresh_token: refreshToken,
             }),
         });
@@ -83,8 +83,8 @@ export async function refreshAccessToken(refreshToken: string, token: AppToken):
             roles: extractRolesFromClaims(claims),
         };
     } catch (error) {
-        console.error('Error refreshing access_token', error);
-        return {...token, error: 'RefreshTokenError'};
+        console.error("Error refreshing access_token", error);
+        return {...token, error: "RefreshTokenError"};
     }
 }
 
@@ -95,6 +95,6 @@ export function gravatarImageUrl(email?: string | null): string | undefined {
         return undefined;
     }
 
-    const emailHash = createHash('sha256').update(normalized).digest('hex');
+    const emailHash = createHash("sha256").update(normalized).digest("hex");
     return `https://www.gravatar.com/avatar/${emailHash}?d=404&s=128`;
 }

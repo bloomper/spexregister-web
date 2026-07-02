@@ -166,5 +166,5 @@ export async function getEventsAction(id: string) {
 }
 
 function revalidate() {
-    revalidateTag('spex', 'max');
+    revalidateTag("spex", "max");
 }

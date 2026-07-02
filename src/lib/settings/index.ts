@@ -1,1 +1,1 @@
-export * from './settings.server';
+export * from "./settings.server";

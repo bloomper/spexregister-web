@@ -12,7 +12,7 @@ import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {getEventsAction} from "@/app/(app)/spexare/actions.server";
 
-export function GeneralSection({spexare, showAudit}: {spexare: Spexare; showAudit?: boolean}) {
+export function GeneralSection({spexare, showAudit}: { spexare: Spexare; showAudit?: boolean }) {
     const t = useTranslations();
     return (
         <>
@@ -44,7 +44,8 @@ export function GeneralSection({spexare, showAudit}: {spexare: Spexare; showAudi
                         <div className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">
                             {t("Spexare.comment")}
                         </div>
-                        <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed bg-muted/30 p-3 rounded-md border border-muted">
+                        <div
+                            className="text-sm text-foreground whitespace-pre-wrap leading-relaxed bg-muted/30 p-3 rounded-md border border-muted">
                             {spexare.comment}
                         </div>
                     </div>
@@ -58,7 +59,7 @@ export function GeneralSection({spexare, showAudit}: {spexare: Spexare; showAudi
     );
 }
 
-export function PartnerSection({partner}: {partner: Spexare["partner"]}) {
+export function PartnerSection({partner}: { partner: Spexare["partner"] }) {
     const t = useTranslations();
     if (!partner) {
         return (
@@ -116,7 +117,7 @@ export function PartnerSection({partner}: {partner: Spexare["partner"]}) {
     );
 }
 
-export function AddressesSection({addresses, countries}: {addresses: Spexare["addresses"]; countries: Country[]}) {
+export function AddressesSection({addresses, countries}: { addresses: Spexare["addresses"]; countries: Country[] }) {
     const getCountryLabel = (isoCode: string) => countries.find(c => c.isoCode === isoCode)?.label || isoCode;
     if (!addresses || addresses.length === 0) {
         return (
@@ -177,7 +178,7 @@ export function AddressesSection({addresses, countries}: {addresses: Spexare["ad
     );
 }
 
-export function ConsentsSection({consents}: {consents: Spexare["consents"]}) {
+export function ConsentsSection({consents}: { consents: Spexare["consents"] }) {
     const t = useTranslations();
     if (!consents || consents.length === 0) {
         return (
@@ -192,7 +193,8 @@ export function ConsentsSection({consents}: {consents: Spexare["consents"]}) {
                 <div key={consent?.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
                     <span className="text-sm font-medium">{consent?.type.label}</span>
                     {consent?.value ? (
-                        <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
+                        <Badge
+                            className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
                             {t("Spexare.Consent.granted")}
                         </Badge>
                     ) : (
@@ -206,7 +208,7 @@ export function ConsentsSection({consents}: {consents: Spexare["consents"]}) {
     );
 }
 
-export function MembershipsSection({memberships}: {memberships: Spexare["memberships"]}) {
+export function MembershipsSection({memberships}: { memberships: Spexare["memberships"] }) {
     if (!memberships || memberships.length === 0) {
         return (
             <div className="py-6">
@@ -247,7 +249,7 @@ export function MembershipsSection({memberships}: {memberships: Spexare["members
     );
 }
 
-export function TaggingsSection({taggings}: {taggings: Spexare["taggings"]}) {
+export function TaggingsSection({taggings}: { taggings: Spexare["taggings"] }) {
     if (!taggings || taggings.length === 0) {
         return (
             <div className="py-6">
@@ -267,7 +269,7 @@ export function TaggingsSection({taggings}: {taggings: Spexare["taggings"]}) {
     );
 }
 
-export function TogglesSection({toggles}: {toggles: Spexare["toggles"]}) {
+export function TogglesSection({toggles}: { toggles: Spexare["toggles"] }) {
     const t = useTranslations();
     if (!toggles || toggles.length === 0) {
         return (
@@ -285,7 +287,8 @@ export function TogglesSection({toggles}: {toggles: Spexare["toggles"]}) {
                         <span className="text-sm font-medium">{toggle?.type.label}</span>
                     </div>
                     {toggle?.value ? (
-                        <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
+                        <Badge
+                            className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
                             {t("Common.yes")}
                         </Badge>
                     ) : (
