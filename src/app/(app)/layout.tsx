@@ -9,17 +9,24 @@ import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
-import {requireUser} from "@/utils/auth.server";
+import {auth} from "@/auth";
+import {redirect} from "next/navigation";
 import {me} from "@/lib/user";
 import {LogoHome} from "@/components/logo-home";
 import Link from "next/link";
 import {Role} from "@/types/auth";
 
 export default async function AppLayout({children}: { children: React.ReactNode }) {
-    const {session, roles} = await requireUser();
+    const session = await auth();
+
+    if (session?.error === "RefreshTokenError") {
+        redirect("/api/auth/login");
+    }
+
+    const roles = session?.roles ?? [];
     const t = await getTranslations();
 
-    if (!session || session?.error === "RefreshTokenError") {
+    if (!session) {
         return (
             <div className="min-h-dvh bg-background flex flex-col">
                 <header className="px-4 py-2">

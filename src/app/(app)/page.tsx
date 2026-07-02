@@ -8,8 +8,14 @@ import {DataEmpty} from "@/components/data-empty";
 import {Newspaper} from "lucide-react";
 import * as Statistics from "@/lib/statistics";
 import {StatisticsCharts} from "@/components/statistics/statistics-charts.client";
+import {requireUser} from "@/utils/auth.server";
 
 export default async function HomePage() {
+    const {session} = await requireUser();
+    if (!session) {
+        return null;
+    }
+
     const [page, statistics, t] = await Promise.all([
         getPaged({first: 6}),
         Statistics.get(),
