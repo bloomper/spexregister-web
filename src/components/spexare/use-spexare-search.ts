@@ -33,15 +33,17 @@ export function useSpexareSearch({
     const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
     const previousResetKeyRef = useRef<string | null>(null);
     const skipNextResetRef = useRef(false);
+    const previousInitialSearchQueryRef = useRef(initialSearchQuery);
 
     useEffect(() => {
-        if (initialSearchQuery !== searchValue) {
+        if (previousInitialSearchQueryRef.current !== initialSearchQuery) {
+            previousInitialSearchQueryRef.current = initialSearchQuery;
             skipNextResetRef.current = true;
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setSearchValue(initialSearchQuery);
             setFilterQuery(initialSearchQuery);
         }
-    }, [initialSearchQuery, searchValue]);
+    }, [initialSearchQuery]);
 
     useEffect(() => {
         if (mode !== "search" || !filterQuery) {

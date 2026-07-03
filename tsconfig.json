@@ -44,6 +44,8 @@
     "vitest.config.ts",
     "vitest.setup.ts",
     "eslint.config.mts",
-    "test"
+    "test",
+    "e2e",
+    "playwright.config.ts"
   ]
 }
