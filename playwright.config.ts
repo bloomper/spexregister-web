@@ -23,7 +23,7 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 1 : 0,
     reporter: process.env.CI
-        ? [["github"], ["html", {open: "never"}]]
+        ? [["github"], ["html", {open: "never"}], ["junit", {outputFile: "test-results/e2e-results.xml"}]]
         : [["list"], ["html", {open: "never"}]],
     timeout: 30_000,
     use: {

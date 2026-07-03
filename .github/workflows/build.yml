@@ -52,13 +52,12 @@ jobs:
         with:
           files: |
             test-results/*.xml
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+      - name: Publish coverage report
+        uses: davelosert/vitest-coverage-report-action@v2
         if: always()
         with:
-          name: coverage
-          path: coverage
-          if-no-files-found: ignore
+          json-summary-path: coverage/coverage-summary.json
+          json-final-path: coverage/coverage-final.json
 
   e2e-web-project:
     runs-on: ubuntu-latest
@@ -76,6 +75,13 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
         run: npm run test:e2e
+      - name: Publish Playwright test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          check_name: Playwright Test Results
+          files: |
+            test-results/e2e-results.xml
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

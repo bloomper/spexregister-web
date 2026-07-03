@@ -22,7 +22,7 @@ export default defineConfig({
         outputFile: {junit: "./test-results/junit.xml"},
         coverage: {
             provider: "v8",
-            reporter: ["text", "html", "lcov"],
+            reporter: ["text", "html", "lcov", "json-summary", "json"],
             reportsDirectory: "./coverage",
             include: ["src/utils/**", "src/hooks/**"],
             exclude: [
