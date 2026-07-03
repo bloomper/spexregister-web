@@ -159,6 +159,7 @@ export type ResourceClientConfig<TCreateInput, TUpdateInput> = {
     singular: string;
     pagedSummaryQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
     pagedFullQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
+    getQuery?: TypedDocumentNode<Record<string, unknown>, { id: string }>;
     createMutation: TypedDocumentNode<Record<string, unknown>, { input: TCreateInput }>;
     updateMutation: TypedDocumentNode<Record<string, unknown>, { input: TUpdateInput }>;
     deleteMutation: TypedDocumentNode<Record<string, unknown>, { id: string }>;
@@ -201,6 +202,18 @@ export function createResourceClient<
         });
 
         return mapConnection<TNode, TEdge>(data?.[pagedField] as ConnectionShape<TEdge> | null | undefined);
+    }
+
+    async function get(id: string): Promise<TNode | undefined> {
+        if (!config.getQuery) {
+            throw new Error(`Resource '${singular}' has no get query configured`);
+        }
+        const data = await runQuery(config.getQuery, {id}, {
+            fetchOptions: {
+                next: {tags: [config.cacheTag]},
+            },
+        });
+        return data?.[singular] as TNode | undefined;
     }
 
     async function getAll(args?: { full?: boolean }): Promise<TNode[]> {
@@ -251,5 +264,5 @@ export function createResourceClient<
         return (data?.[eventsField] as Event[] | undefined) ?? [];
     }
 
-    return {getPaged, getAll, create, update, del, exp, imp, events};
+    return {getPaged, get, getAll, create, update, del, exp, imp, events};
 }

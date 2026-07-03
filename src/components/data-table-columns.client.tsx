@@ -12,23 +12,35 @@ import {TableThumbnail} from "@/components/data-table-thumbnail.client";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import type {DataTableMeta} from "@/components/data-table.client";
 
-function SelectAllHeader<T>({table}: { table: Table<T> }) {
+function SelectAllHeader({
+                             checked,
+                             onCheckedChange,
+                         }: {
+    checked: boolean | "indeterminate";
+    onCheckedChange: (value: boolean) => void;
+}) {
     const t = useTranslations();
     return (
         <Checkbox
-            checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            checked={checked}
+            onCheckedChange={onCheckedChange}
             aria-label={t("Common.selectAll")}
         />
     );
 }
 
-function SelectRowCell<T>({row}: { row: Row<T> }) {
+function SelectRowCell({
+                           checked,
+                           onCheckedChange,
+                       }: {
+    checked: boolean;
+    onCheckedChange: (value: boolean) => void;
+}) {
     const t = useTranslations();
     return (
         <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            checked={checked}
+            onCheckedChange={onCheckedChange}
             onClick={(e) => e.stopPropagation()}
             aria-label={t("Common.select")}
         />
@@ -50,6 +62,11 @@ function ActionsCell<T>({row, table}: { row: Row<T>; table: Table<T> }) {
                     <DropdownMenuItem onSelect={() => meta?.setEditItem?.(row.original)}>
                         {t("Common.edit")}
                     </DropdownMenuItem>
+                    {meta?.addToQueue && (
+                        <DropdownMenuItem onSelect={() => meta.addToQueue?.(row.original)}>
+                            {t("EditQueue.add")}
+                        </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem className="text-destructive" onSelect={() => meta?.setDeleteItem?.(row.original)}>
                         {t("Common.delete")}
                     </DropdownMenuItem>
@@ -62,8 +79,18 @@ function ActionsCell<T>({row, table}: { row: Row<T>; table: Table<T> }) {
 export const columnHelper = {
     select: <T, >(): ColumnDef<T> => ({
         id: "select",
-        header: ({table}) => <SelectAllHeader table={table}/>,
-        cell: ({row}) => <SelectRowCell row={row}/>,
+        header: ({table}) => (
+            <SelectAllHeader
+                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            />
+        ),
+        cell: ({row}) => (
+            <SelectRowCell
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+            />
+        ),
         enableSorting: false,
         enableHiding: false,
     }),

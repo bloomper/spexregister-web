@@ -40,6 +40,7 @@ import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client";
+import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 
 export const columns: ColumnDef<User>[] = [
@@ -109,6 +110,7 @@ export function UserTable({
     const t = useTranslations();
     const router = useRouter();
     const isClient = useIsClient();
+    const {enqueue} = useEditQueue();
     const [copied, setCopied] = useState(false);
     const [filterQuery, setFilterQuery] = useState("");
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
@@ -138,7 +140,9 @@ export function UserTable({
         return parts.join("");
     };
 
-    const lastFilterQueryRef = useRef<string>(buildFilterString(""));
+    const defaultFilterQuery = buildFilterString("");
+
+    const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
     const isFilterActive = filterQuery !== "";
 
     useEffect(() => {
@@ -169,13 +173,15 @@ export function UserTable({
             <DataTable
                 columns={columns}
                 initialData={initialData}
-                initialSorting={[{id: "externalId", desc: true}]}
+                initialSorting={[]}
+                initialFilter={defaultFilterQuery}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
                     setDeleteItem,
+                    addToQueue: (item) => enqueue("user", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
                     }
@@ -214,6 +220,8 @@ export function UserTable({
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
                             )}
+
+                            <AddSelectedToQueueButton entityType="user" items={selectedRows}/>
                         </div>
 
                         <div className="flex items-center gap-2">

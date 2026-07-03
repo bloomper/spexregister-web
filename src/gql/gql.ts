@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as types from './graphql';
-import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/core';
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 
 /**
  * Map of all GraphQL operations in the project.
@@ -24,6 +24,7 @@ type Documents = {
     "\n    fragment NewsFull on News {\n        ...NewsSummary\n        published\n        visibleTo\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.NewsFullFragmentDoc,
     "\n    query NewsPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...NewsSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.NewsPagedSummaryDocument,
     "\n    query NewsPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...NewsFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.NewsPagedFullDocument,
+    "\n    query NewsGet($id: ID!) {\n        news(id: $id) { ...NewsFull }\n    }\n": typeof types.NewsGetDocument,
     "\n    mutation NewsCreate($input: NewsCreate!) {\n        newsCreate(input: $input) { ...NewsFull }\n    }\n": typeof types.NewsCreateDocument,
     "\n    mutation NewsUpdate($input: NewsUpdate!) {\n        newsUpdate(input: $input) { ...NewsFull }\n    }\n": typeof types.NewsUpdateDocument,
     "\n    mutation NewsDelete($id: ID!) {\n        newsDelete(id: $id)\n    }\n": typeof types.NewsDeleteDocument,
@@ -35,6 +36,7 @@ type Documents = {
     "\n    fragment SpexCategoryFull on SpexCategory {\n        ...SpexCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.SpexCategoryFullFragmentDoc,
     "\n    query SpexCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.SpexCategoryPagedSummaryDocument,
     "\n    query SpexCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.SpexCategoryPagedFullDocument,
+    "\n    query SpexCategoryGet($id: ID!) {\n        spexCategory(id: $id) { ...SpexCategoryFull }\n    }\n": typeof types.SpexCategoryGetDocument,
     "\n    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {\n        spexCategoryCreate(input: $input) { ...SpexCategoryFull }\n    }\n": typeof types.SpexCategoryCreateDocument,
     "\n    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {\n        spexCategoryUpdate(input: $input) { ...SpexCategoryFull }\n    }\n": typeof types.SpexCategoryUpdateDocument,
     "\n    mutation SpexCategoryDelete($id: ID!) {\n        spexCategoryDelete(id: $id)\n    }\n": typeof types.SpexCategoryDeleteDocument,
@@ -44,6 +46,7 @@ type Documents = {
     "\n    fragment SpexFull on Spex {\n        ...SpexSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.SpexFullFragmentDoc,
     "\n    query SpexPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.SpexPagedSummaryDocument,
     "\n    query SpexPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.SpexPagedFullDocument,
+    "\n    query SpexGet($id: ID!) {\n        spex(id: $id) { ...SpexFull }\n    }\n": typeof types.SpexGetDocument,
     "\n    mutation SpexCreate($input: SpexCreate!) {\n        spexCreate(input: $input) { ...SpexFull }\n    }\n": typeof types.SpexCreateDocument,
     "\n    mutation SpexUpdate($input: SpexUpdate!) {\n        spexUpdate(input: $input) { ...SpexFull }\n    }\n": typeof types.SpexUpdateDocument,
     "\n    mutation SpexDelete($id: ID!) {\n        spexDelete(id: $id)\n    }\n": typeof types.SpexDeleteDocument,
@@ -118,6 +121,7 @@ type Documents = {
     "\n    fragment TagFull on Tag {\n        ...TagSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.TagFullFragmentDoc,
     "\n    query TagPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        tagPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TagSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.TagPagedSummaryDocument,
     "\n    query TagPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        tagPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TagFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.TagPagedFullDocument,
+    "\n    query TagGet($id: ID!) {\n        tag(id: $id) { ...TagFull }\n    }\n": typeof types.TagGetDocument,
     "\n    mutation TagCreate($input: TagCreate!) {\n        tagCreate(input: $input) { ...TagFull }\n    }\n": typeof types.TagCreateDocument,
     "\n    mutation TagUpdate($input: TagUpdate!) {\n        tagUpdate(input: $input) { ...TagFull }\n    }\n": typeof types.TagUpdateDocument,
     "\n    mutation TagDelete($id: ID!) {\n        tagDelete(id: $id)\n    }\n": typeof types.TagDeleteDocument,
@@ -127,6 +131,7 @@ type Documents = {
     "\n    fragment TaskCategoryFull on TaskCategory {\n        ...TaskCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.TaskCategoryFullFragmentDoc,
     "\n    query TaskCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.TaskCategoryPagedSummaryDocument,
     "\n    query TaskCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.TaskCategoryPagedFullDocument,
+    "\n    query TaskCategoryGet($id: ID!) {\n        taskCategory(id: $id) { ...TaskCategoryFull }\n    }\n": typeof types.TaskCategoryGetDocument,
     "\n    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {\n        taskCategoryCreate(input: $input) { ...TaskCategoryFull }\n    }\n": typeof types.TaskCategoryCreateDocument,
     "\n    mutation TaskCategoryUpdate($input: TaskCategoryUpdate!) {\n        taskCategoryUpdate(input: $input) { ...TaskCategoryFull }\n    }\n": typeof types.TaskCategoryUpdateDocument,
     "\n    mutation TaskCategoryDelete($id: ID!) {\n        taskCategoryDelete(id: $id)\n    }\n": typeof types.TaskCategoryDeleteDocument,
@@ -136,6 +141,7 @@ type Documents = {
     "\n    fragment TaskFull on Task {\n        ...TaskSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.TaskFullFragmentDoc,
     "\n    query TaskPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.TaskPagedSummaryDocument,
     "\n    query TaskPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.TaskPagedFullDocument,
+    "\n    query TaskGet($id: ID!) {\n        task(id: $id) { ...TaskFull }\n    }\n": typeof types.TaskGetDocument,
     "\n    mutation TaskCreate($input: TaskCreate!) {\n        taskCreate(input: $input) { ...TaskFull }\n    }\n": typeof types.TaskCreateDocument,
     "\n    mutation TaskUpdate($input: TaskUpdate!) {\n        taskUpdate(input: $input) { ...TaskFull }\n    }\n": typeof types.TaskUpdateDocument,
     "\n    mutation TaskDelete($id: ID!) {\n        taskDelete(id: $id)\n    }\n": typeof types.TaskDeleteDocument,
@@ -147,6 +153,7 @@ type Documents = {
     "\n    fragment UserFull on User {\n        ...UserSummary\n        temporaryPassword\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.UserFullFragmentDoc,
     "\n    query UserPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.UserPagedSummaryDocument,
     "\n    query UserPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": typeof types.UserPagedFullDocument,
+    "\n    query UserGet($id: ID!) {\n        user(id: $id) { ...UserFull }\n    }\n": typeof types.UserGetDocument,
     "\n    mutation UserCreate($input: UserCreate!) {\n        userCreate(input: $input) { ...UserFull }\n    }\n": typeof types.UserCreateDocument,
     "\n    mutation UserUpdate($input: UserUpdate!) {\n        userUpdate(input: $input) { ...UserFull }\n    }\n": typeof types.UserUpdateDocument,
     "\n    mutation UserDelete($id: ID!) {\n        userDelete(id: $id)\n    }\n": typeof types.UserDeleteDocument,
@@ -172,6 +179,7 @@ const documents: Documents = {
     "\n    fragment NewsFull on News {\n        ...NewsSummary\n        published\n        visibleTo\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.NewsFullFragmentDoc,
     "\n    query NewsPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...NewsSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.NewsPagedSummaryDocument,
     "\n    query NewsPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...NewsFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.NewsPagedFullDocument,
+    "\n    query NewsGet($id: ID!) {\n        news(id: $id) { ...NewsFull }\n    }\n": types.NewsGetDocument,
     "\n    mutation NewsCreate($input: NewsCreate!) {\n        newsCreate(input: $input) { ...NewsFull }\n    }\n": types.NewsCreateDocument,
     "\n    mutation NewsUpdate($input: NewsUpdate!) {\n        newsUpdate(input: $input) { ...NewsFull }\n    }\n": types.NewsUpdateDocument,
     "\n    mutation NewsDelete($id: ID!) {\n        newsDelete(id: $id)\n    }\n": types.NewsDeleteDocument,
@@ -183,6 +191,7 @@ const documents: Documents = {
     "\n    fragment SpexCategoryFull on SpexCategory {\n        ...SpexCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.SpexCategoryFullFragmentDoc,
     "\n    query SpexCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.SpexCategoryPagedSummaryDocument,
     "\n    query SpexCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.SpexCategoryPagedFullDocument,
+    "\n    query SpexCategoryGet($id: ID!) {\n        spexCategory(id: $id) { ...SpexCategoryFull }\n    }\n": types.SpexCategoryGetDocument,
     "\n    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {\n        spexCategoryCreate(input: $input) { ...SpexCategoryFull }\n    }\n": types.SpexCategoryCreateDocument,
     "\n    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {\n        spexCategoryUpdate(input: $input) { ...SpexCategoryFull }\n    }\n": types.SpexCategoryUpdateDocument,
     "\n    mutation SpexCategoryDelete($id: ID!) {\n        spexCategoryDelete(id: $id)\n    }\n": types.SpexCategoryDeleteDocument,
@@ -192,6 +201,7 @@ const documents: Documents = {
     "\n    fragment SpexFull on Spex {\n        ...SpexSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.SpexFullFragmentDoc,
     "\n    query SpexPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.SpexPagedSummaryDocument,
     "\n    query SpexPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.SpexPagedFullDocument,
+    "\n    query SpexGet($id: ID!) {\n        spex(id: $id) { ...SpexFull }\n    }\n": types.SpexGetDocument,
     "\n    mutation SpexCreate($input: SpexCreate!) {\n        spexCreate(input: $input) { ...SpexFull }\n    }\n": types.SpexCreateDocument,
     "\n    mutation SpexUpdate($input: SpexUpdate!) {\n        spexUpdate(input: $input) { ...SpexFull }\n    }\n": types.SpexUpdateDocument,
     "\n    mutation SpexDelete($id: ID!) {\n        spexDelete(id: $id)\n    }\n": types.SpexDeleteDocument,
@@ -266,6 +276,7 @@ const documents: Documents = {
     "\n    fragment TagFull on Tag {\n        ...TagSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.TagFullFragmentDoc,
     "\n    query TagPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        tagPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TagSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.TagPagedSummaryDocument,
     "\n    query TagPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        tagPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TagFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.TagPagedFullDocument,
+    "\n    query TagGet($id: ID!) {\n        tag(id: $id) { ...TagFull }\n    }\n": types.TagGetDocument,
     "\n    mutation TagCreate($input: TagCreate!) {\n        tagCreate(input: $input) { ...TagFull }\n    }\n": types.TagCreateDocument,
     "\n    mutation TagUpdate($input: TagUpdate!) {\n        tagUpdate(input: $input) { ...TagFull }\n    }\n": types.TagUpdateDocument,
     "\n    mutation TagDelete($id: ID!) {\n        tagDelete(id: $id)\n    }\n": types.TagDeleteDocument,
@@ -275,6 +286,7 @@ const documents: Documents = {
     "\n    fragment TaskCategoryFull on TaskCategory {\n        ...TaskCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.TaskCategoryFullFragmentDoc,
     "\n    query TaskCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.TaskCategoryPagedSummaryDocument,
     "\n    query TaskCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.TaskCategoryPagedFullDocument,
+    "\n    query TaskCategoryGet($id: ID!) {\n        taskCategory(id: $id) { ...TaskCategoryFull }\n    }\n": types.TaskCategoryGetDocument,
     "\n    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {\n        taskCategoryCreate(input: $input) { ...TaskCategoryFull }\n    }\n": types.TaskCategoryCreateDocument,
     "\n    mutation TaskCategoryUpdate($input: TaskCategoryUpdate!) {\n        taskCategoryUpdate(input: $input) { ...TaskCategoryFull }\n    }\n": types.TaskCategoryUpdateDocument,
     "\n    mutation TaskCategoryDelete($id: ID!) {\n        taskCategoryDelete(id: $id)\n    }\n": types.TaskCategoryDeleteDocument,
@@ -284,6 +296,7 @@ const documents: Documents = {
     "\n    fragment TaskFull on Task {\n        ...TaskSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.TaskFullFragmentDoc,
     "\n    query TaskPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.TaskPagedSummaryDocument,
     "\n    query TaskPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.TaskPagedFullDocument,
+    "\n    query TaskGet($id: ID!) {\n        task(id: $id) { ...TaskFull }\n    }\n": types.TaskGetDocument,
     "\n    mutation TaskCreate($input: TaskCreate!) {\n        taskCreate(input: $input) { ...TaskFull }\n    }\n": types.TaskCreateDocument,
     "\n    mutation TaskUpdate($input: TaskUpdate!) {\n        taskUpdate(input: $input) { ...TaskFull }\n    }\n": types.TaskUpdateDocument,
     "\n    mutation TaskDelete($id: ID!) {\n        taskDelete(id: $id)\n    }\n": types.TaskDeleteDocument,
@@ -295,6 +308,7 @@ const documents: Documents = {
     "\n    fragment UserFull on User {\n        ...UserSummary\n        temporaryPassword\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.UserFullFragmentDoc,
     "\n    query UserPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.UserPagedSummaryDocument,
     "\n    query UserPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n": types.UserPagedFullDocument,
+    "\n    query UserGet($id: ID!) {\n        user(id: $id) { ...UserFull }\n    }\n": types.UserGetDocument,
     "\n    mutation UserCreate($input: UserCreate!) {\n        userCreate(input: $input) { ...UserFull }\n    }\n": types.UserCreateDocument,
     "\n    mutation UserUpdate($input: UserUpdate!) {\n        userUpdate(input: $input) { ...UserFull }\n    }\n": types.UserUpdateDocument,
     "\n    mutation UserDelete($id: ID!) {\n        userDelete(id: $id)\n    }\n": types.UserDeleteDocument,
@@ -367,6 +381,10 @@ export function graphql(source: "\n    query NewsPagedFull($first: Int, $last: I
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    query NewsGet($id: ID!) {\n        news(id: $id) { ...NewsFull }\n    }\n"): (typeof documents)["\n    query NewsGet($id: ID!) {\n        news(id: $id) { ...NewsFull }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    mutation NewsCreate($input: NewsCreate!) {\n        newsCreate(input: $input) { ...NewsFull }\n    }\n"): (typeof documents)["\n    mutation NewsCreate($input: NewsCreate!) {\n        newsCreate(input: $input) { ...NewsFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -411,6 +429,10 @@ export function graphql(source: "\n    query SpexCategoryPagedFull($first: Int, 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    query SpexCategoryGet($id: ID!) {\n        spexCategory(id: $id) { ...SpexCategoryFull }\n    }\n"): (typeof documents)["\n    query SpexCategoryGet($id: ID!) {\n        spexCategory(id: $id) { ...SpexCategoryFull }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {\n        spexCategoryCreate(input: $input) { ...SpexCategoryFull }\n    }\n"): (typeof documents)["\n    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {\n        spexCategoryCreate(input: $input) { ...SpexCategoryFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -444,6 +466,10 @@ export function graphql(source: "\n    query SpexPagedSummary($first: Int, $last
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query SpexPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n"): (typeof documents)["\n    query SpexPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SpexGet($id: ID!) {\n        spex(id: $id) { ...SpexFull }\n    }\n"): (typeof documents)["\n    query SpexGet($id: ID!) {\n        spex(id: $id) { ...SpexFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -743,6 +769,10 @@ export function graphql(source: "\n    query TagPagedFull($first: Int, $last: In
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    query TagGet($id: ID!) {\n        tag(id: $id) { ...TagFull }\n    }\n"): (typeof documents)["\n    query TagGet($id: ID!) {\n        tag(id: $id) { ...TagFull }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    mutation TagCreate($input: TagCreate!) {\n        tagCreate(input: $input) { ...TagFull }\n    }\n"): (typeof documents)["\n    mutation TagCreate($input: TagCreate!) {\n        tagCreate(input: $input) { ...TagFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -779,6 +809,10 @@ export function graphql(source: "\n    query TaskCategoryPagedFull($first: Int, 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    query TaskCategoryGet($id: ID!) {\n        taskCategory(id: $id) { ...TaskCategoryFull }\n    }\n"): (typeof documents)["\n    query TaskCategoryGet($id: ID!) {\n        taskCategory(id: $id) { ...TaskCategoryFull }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {\n        taskCategoryCreate(input: $input) { ...TaskCategoryFull }\n    }\n"): (typeof documents)["\n    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {\n        taskCategoryCreate(input: $input) { ...TaskCategoryFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -812,6 +846,10 @@ export function graphql(source: "\n    query TaskPagedSummary($first: Int, $last
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query TaskPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n"): (typeof documents)["\n    query TaskPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query TaskGet($id: ID!) {\n        task(id: $id) { ...TaskFull }\n    }\n"): (typeof documents)["\n    query TaskGet($id: ID!) {\n        task(id: $id) { ...TaskFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -856,6 +894,10 @@ export function graphql(source: "\n    query UserPagedSummary($first: Int, $last
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query UserPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n"): (typeof documents)["\n    query UserPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query UserGet($id: ID!) {\n        user(id: $id) { ...UserFull }\n    }\n"): (typeof documents)["\n    query UserGet($id: ID!) {\n        user(id: $id) { ...UserFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -910,7 +952,7 @@ export function graphql(source: "\n    query Authorities {\n        authorities 
 export function graphql(source: "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n"): (typeof documents)["\n    query States {\n        states {\n            id\n            label\n        }\n    }\n"];
 
 export function graphql(source: string) {
-    return (documents as any)[source] ?? {};
+  return (documents as any)[source] ?? {};
 }
 
-export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<infer TType, any> ? TType : never;
+export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;

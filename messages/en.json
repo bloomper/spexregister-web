@@ -84,6 +84,33 @@
     "uploadSuccess": "Upload successful",
     "yes": "Yes"
   },
+  "EditQueue": {
+    "title": "Edit queue",
+    "open": "Open edit queue",
+    "add": "Add to edit queue",
+    "addSelected": "Add to edit queue ({count})",
+    "clearQueue": "Clear queue",
+    "removeFromQueue": "Remove from queue",
+    "position": "{current} / {total}",
+    "untitled": "(untitled)",
+    "prev": "Previous",
+    "next": "Next",
+    "saveAndNext": "Save & next",
+    "unsavedHeading": "Unsaved changes",
+    "unsavedConfirmation": "This item has changes that have not been saved yet. What would you like to do?",
+    "saveAndContinue": "Save and continue",
+    "discardChanges": "Discard changes",
+    "types": {
+      "spexare": "Spexare",
+      "news": "News",
+      "spex": "Spex",
+      "spexCategory": "Spex category",
+      "task": "Task",
+      "taskCategory": "Task category",
+      "tag": "Tag",
+      "user": "User"
+    }
+  },
   "Header": {
     "toggleLanguage": "Toggle language",
     "toggleTheme": "Toggle theme"

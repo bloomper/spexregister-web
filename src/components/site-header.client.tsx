@@ -9,6 +9,7 @@ import {useSidebar} from "@/components/ui/sidebar";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
 import {useIsClient} from "@/hooks/use-is-client";
+import {EditQueueButton} from "@/components/edit-queue";
 
 export function SiteHeader() {
     const {toggleSidebar} = useSidebar();
@@ -38,6 +39,7 @@ export function SiteHeader() {
                     <Separator orientation="vertical" className="hidden h-4 sm:block"/>
                     {isClient ? (
                         <>
+                            <EditQueueButton/>
                             <LanguageToggle/>
                             <ModeToggle/>
                         </>

@@ -10,22 +10,30 @@ import {toast} from "sonner";
 import {addCategoryAction, createAction, removeCategoryAction, updateAction} from "@/app/(app)/tasks/actions.server";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {SheetClose, SheetFooter} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {translateError} from "@/utils/utils";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
+import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
 
 interface TaskFormProps {
     item?: Task;
     categories: TaskCategory[];
-    onSuccess: () => void;
+    onSuccess: (updated?: { id: string }) => void;
+    onError?: () => void;
+    embedded?: boolean;
+    formId?: string;
 }
 
 export function TaskForm({
                              item,
                              categories = [],
                              onSuccess,
+                             onError,
+                             embedded,
+                             formId,
                          }: TaskFormProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
@@ -35,7 +43,7 @@ export function TaskForm({
         handleSubmit,
         control,
         setValue,
-        formState: {errors},
+        formState: {errors, isDirty},
     } = useForm<TaskFormInput, unknown, TaskFormOutput>({
         resolver: zodResolver(taskFormSchema),
         defaultValues: {
@@ -50,6 +58,8 @@ export function TaskForm({
             setValue("categoryId", item.category?.id ?? "none");
         }
     }, [item, setValue]);
+
+    useReportEditQueueFormState({isDirty});
 
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {
@@ -78,21 +88,19 @@ export function TaskForm({
                 }
 
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
-                onSuccess();
+                const updated = item ? {...item, ...data} : undefined;
+                onSuccess(updated);
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
+                onError?.();
             }
         });
     });
 
     return (
-        <SheetContent className="sm:max-w-[600px] flex flex-col gap-0 p-0 h-full">
-            <SheetHeader className="p-6 pb-4 shrink-0">
-                <SheetTitle>{item ? t("Task.editHeading") : t("Task.createHeading")}</SheetTitle>
-            </SheetHeader>
-
-            <form onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <EditFormShell embedded={embedded} title={item ? t("Task.editHeading") : t("Task.createHeading")}>
+            <form id={formId} onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <ScrollArea className="flex-1 border-t min-h-0">
                     <div className="space-y-4 px-6 py-6 pb-12">
                         <Field data-invalid={!!errors.categoryId}>
@@ -135,17 +143,19 @@ export function TaskForm({
                     </div>
                 </ScrollArea>
 
-                <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                    <SheetClose asChild>
-                        <Button type="button" variant="outline" disabled={isPending}>
-                            {item ? t("Common.close") : t("Common.cancel")}
+                {!embedded && (
+                    <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
+                        <SheetClose asChild>
+                            <Button type="button" variant="outline" disabled={isPending}>
+                                {item ? t("Common.close") : t("Common.cancel")}
+                            </Button>
+                        </SheetClose>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? t("Common.saving") : t("Common.save")}
                         </Button>
-                    </SheetClose>
-                    <Button type="submit" disabled={isPending}>
-                        {isPending ? t("Common.saving") : t("Common.save")}
-                    </Button>
-                </SheetFooter>
+                    </SheetFooter>
+                )}
             </form>
-        </SheetContent>
+        </EditFormShell>
     );
 }

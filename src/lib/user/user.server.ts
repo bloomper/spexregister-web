@@ -55,6 +55,12 @@ const UserPagedFull = graphql(`
     }
 `);
 
+const UserGetQuery = graphql(`
+    query UserGet($id: ID!) {
+        user(id: $id) { ...UserFull }
+    }
+`);
+
 const UserCreateMutation = graphql(`
     mutation UserCreate($input: UserCreate!) {
         userCreate(input: $input) { ...UserFull }
@@ -89,6 +95,7 @@ const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
     singular: "user",
     pagedSummaryQuery: UserPagedSummary,
     pagedFullQuery: UserPagedFull,
+    getQuery: UserGetQuery,
     createMutation: UserCreateMutation,
     updateMutation: UserUpdateMutation,
     deleteMutation: UserDeleteMutation,
@@ -101,7 +108,7 @@ const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
     defaultFilter: "",
 });
 
-export const {getPaged, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, create, update, del, exp, imp, events} = client;
 
 const AuthoritiesAddMutation = graphql(`
     mutation UserAuthoritiesAdd($userId: ID!, $ids: [ID]!) {

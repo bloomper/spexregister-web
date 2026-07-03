@@ -1,7 +1,7 @@
 import {useTranslations} from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import {Pencil, Sparkles, User} from "lucide-react";
+import {ClipboardPen, Pencil, Sparkles, User} from "lucide-react";
 import {Spexare} from "@/gql/schema";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
@@ -15,9 +15,10 @@ type SpexareCardProps = {
     canEdit: boolean;
     onSelect: () => void;
     onEdit: () => void;
+    onAddToQueue?: () => void;
 };
 
-export function SpexareCard({spexare, index, isMe, canEdit, onSelect, onEdit}: SpexareCardProps) {
+export function SpexareCard({spexare, index, isMe, canEdit, onSelect, onEdit, onAddToQueue}: SpexareCardProps) {
     const t = useTranslations();
 
     return (
@@ -29,7 +30,7 @@ export function SpexareCard({spexare, index, isMe, canEdit, onSelect, onEdit}: S
         >
             <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
                 {canEdit && (
-                    <div className="absolute top-2 right-2 z-20">
+                    <div className="absolute top-2 right-2 z-20 flex gap-1">
                         {isMe ? (
                             <Button
                                 variant="secondary"
@@ -42,17 +43,34 @@ export function SpexareCard({spexare, index, isMe, canEdit, onSelect, onEdit}: S
                                 </Link>
                             </Button>
                         ) : (
-                            <Button
-                                variant="secondary"
-                                size="icon"
-                                className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onEdit();
-                                }}
-                            >
-                                <Pencil className="h-4 w-4"/>
-                            </Button>
+                            <>
+                                {onAddToQueue && (
+                                    <Button
+                                        variant="secondary"
+                                        size="icon"
+                                        aria-label={t("EditQueue.add")}
+                                        className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onAddToQueue();
+                                        }}
+                                    >
+                                        <ClipboardPen className="h-4 w-4"/>
+                                    </Button>
+                                )}
+                                <Button
+                                    variant="secondary"
+                                    size="icon"
+                                    aria-label={t("Common.edit")}
+                                    className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEdit();
+                                    }}
+                                >
+                                    <Pencil className="h-4 w-4"/>
+                                </Button>
+                            </>
                         )}
                     </div>
                 )}

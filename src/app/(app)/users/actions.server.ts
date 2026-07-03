@@ -9,6 +9,7 @@ import {
     del,
     events,
     exp,
+    get,
     getAuthorities,
     getPaged,
     getStates,
@@ -45,6 +46,12 @@ export async function getPageAction(args: {
 export async function meAction() {
     return withPolicyAction(Policies.user.requireReadMe, async () => {
         return await me();
+    });
+}
+
+export async function getAction(id: string) {
+    return withPolicyAction(Policies.user.requireRead, async () => {
+        return get(id);
     });
 }
 

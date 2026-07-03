@@ -43,6 +43,12 @@ const NewsPagedFull = graphql(`
     }
 `);
 
+const NewsGetQuery = graphql(`
+    query NewsGet($id: ID!) {
+        news(id: $id) { ...NewsFull }
+    }
+`);
+
 const NewsCreateMutation = graphql(`
     mutation NewsCreate($input: NewsCreate!) {
         newsCreate(input: $input) { ...NewsFull }
@@ -77,6 +83,7 @@ const client = createResourceClient<News, NewsEdge, NewsCreate, NewsUpdate>({
     singular: "news",
     pagedSummaryQuery: NewsPagedSummary,
     pagedFullQuery: NewsPagedFull,
+    getQuery: NewsGetQuery,
     createMutation: NewsCreateMutation,
     updateMutation: NewsUpdateMutation,
     deleteMutation: NewsDeleteMutation,
@@ -89,4 +96,4 @@ const client = createResourceClient<News, NewsEdge, NewsCreate, NewsUpdate>({
     defaultFilter: "published:TRUE",
 });
 
-export const {getPaged, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, create, update, del, exp, imp, events} = client;

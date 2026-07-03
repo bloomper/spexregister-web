@@ -11,6 +11,7 @@ import {
     deleteRevival,
     events,
     exp,
+    get,
     getAll as getAllSpex,
     getPaged,
     imp,
@@ -44,6 +45,12 @@ export async function getPageAction(args: {
 export async function getAllAction() {
     return withPolicyAction(Policies.spex.requireRead, async () => {
         return getAllSpex();
+    });
+}
+
+export async function getAction(id: string) {
+    return withPolicyAction(Policies.spex.requireRead, async () => {
+        return get(id);
     });
 }
 

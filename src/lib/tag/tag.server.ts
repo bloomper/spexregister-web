@@ -39,6 +39,12 @@ const TagPagedFull = graphql(`
     }
 `);
 
+const TagGetQuery = graphql(`
+    query TagGet($id: ID!) {
+        tag(id: $id) { ...TagFull }
+    }
+`);
+
 const TagCreateMutation = graphql(`
     mutation TagCreate($input: TagCreate!) {
         tagCreate(input: $input) { ...TagFull }
@@ -73,6 +79,7 @@ const client = createResourceClient<Tag, TagEdge, TagCreate, TagUpdate>({
     singular: "tag",
     pagedSummaryQuery: TagPagedSummary,
     pagedFullQuery: TagPagedFull,
+    getQuery: TagGetQuery,
     createMutation: TagCreateMutation,
     updateMutation: TagUpdateMutation,
     deleteMutation: TagDeleteMutation,
@@ -85,4 +92,4 @@ const client = createResourceClient<Tag, TagEdge, TagCreate, TagUpdate>({
     defaultFilter: "",
 });
 
-export const {getPaged, getAll, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, getAll, create, update, del, exp, imp, events} = client;

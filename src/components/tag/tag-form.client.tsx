@@ -10,30 +10,37 @@ import {toast} from "sonner";
 import {createAction, updateAction} from "@/app/(app)/tags/actions.server";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {SheetClose, SheetFooter} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {translateError} from "@/utils/utils";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
+import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
 
 interface TagFormProps {
     item?: Tag;
-    onSuccess: () => void;
+    onSuccess: (updated?: { id: string }) => void;
+    onError?: () => void;
+    embedded?: boolean;
+    formId?: string;
 }
 
-export function TagForm({item, onSuccess}: TagFormProps) {
+export function TagForm({item, onSuccess, onError, embedded, formId}: TagFormProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
 
     const {
         register,
         handleSubmit,
-        formState: {errors},
+        formState: {errors, isDirty},
     } = useForm<TagFormInput, unknown, TagFormOutput>({
         resolver: zodResolver(tagFormSchema),
         defaultValues: {
             name: item?.name ?? "",
         },
     });
+
+    useReportEditQueueFormState({isDirty});
 
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {
@@ -45,21 +52,19 @@ export function TagForm({item, onSuccess}: TagFormProps) {
                     await createAction(data);
                     toast.success(t("Common.createSuccess"));
                 }
-                onSuccess();
+                const updated = item ? {...item, ...data} : undefined;
+                onSuccess(updated);
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
+                onError?.();
             }
         });
     });
 
     return (
-        <SheetContent className="sm:max-w-[600px] flex flex-col gap-0 p-0 h-full">
-            <SheetHeader className="p-6 pb-4 shrink-0">
-                <SheetTitle>{item ? t("Tag.editHeading") : t("Tag.createHeading")}</SheetTitle>
-            </SheetHeader>
-
-            <form onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <EditFormShell embedded={embedded} title={item ? t("Tag.editHeading") : t("Tag.createHeading")}>
+            <form id={formId} onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <ScrollArea className="flex-1 border-t min-h-0">
                     <div className="space-y-4 px-6 py-6 pb-12">
                         <Field data-invalid={!!errors.name}>
@@ -72,17 +77,19 @@ export function TagForm({item, onSuccess}: TagFormProps) {
                     </div>
                 </ScrollArea>
 
-                <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                    <SheetClose asChild>
-                        <Button type="button" variant="outline" disabled={isPending}>
-                            {item ? t("Common.close") : t("Common.cancel")}
+                {!embedded && (
+                    <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
+                        <SheetClose asChild>
+                            <Button type="button" variant="outline" disabled={isPending}>
+                                {item ? t("Common.close") : t("Common.cancel")}
+                            </Button>
+                        </SheetClose>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? t("Common.saving") : t("Common.save")}
                         </Button>
-                    </SheetClose>
-                    <Button type="submit" disabled={isPending}>
-                        {isPending ? t("Common.saving") : t("Common.save")}
-                    </Button>
-                </SheetFooter>
+                    </SheetFooter>
+                )}
             </form>
-        </SheetContent>
+        </EditFormShell>
     );
 }

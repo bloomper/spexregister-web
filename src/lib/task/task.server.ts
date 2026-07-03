@@ -44,6 +44,12 @@ const TaskPagedFull = graphql(`
     }
 `);
 
+const TaskGetQuery = graphql(`
+    query TaskGet($id: ID!) {
+        task(id: $id) { ...TaskFull }
+    }
+`);
+
 const TaskCreateMutation = graphql(`
     mutation TaskCreate($input: TaskCreate!) {
         taskCreate(input: $input) { ...TaskFull }
@@ -78,6 +84,7 @@ const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
     singular: "task",
     pagedSummaryQuery: TaskPagedSummary,
     pagedFullQuery: TaskPagedFull,
+    getQuery: TaskGetQuery,
     createMutation: TaskCreateMutation,
     updateMutation: TaskUpdateMutation,
     deleteMutation: TaskDeleteMutation,
@@ -90,7 +97,7 @@ const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
     defaultFilter: "",
 });
 
-export const {getPaged, getAll, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, getAll, create, update, del, exp, imp, events} = client;
 
 const TaskCategoryAddMutation = graphql(`
     mutation TaskCategoryAdd($id: ID!, $categoryId: ID!) {

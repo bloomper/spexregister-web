@@ -40,6 +40,7 @@ import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client";
+import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 
 export const columns: ColumnDef<News>[] = [
@@ -60,6 +61,7 @@ export function NewsTable({
     const t = useTranslations();
     const router = useRouter();
     const isClient = useIsClient();
+    const {enqueue} = useEditQueue();
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
@@ -97,7 +99,9 @@ export function NewsTable({
         return parts.join(" AND ");
     };
 
-    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(["true", "false"])));
+    const defaultFilterQuery = buildFilterString("", new Set(["true", "false"]));
+
+    const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
     const isFilterActive = filterQuery !== "" || selectedPublishedValues.size < 2;
 
     useEffect(() => {
@@ -123,12 +127,14 @@ export function NewsTable({
                 columns={columns}
                 initialData={initialData}
                 initialSorting={[{id: "visibleFrom", desc: true}]}
+                initialFilter={defaultFilterQuery}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
                     setDeleteItem,
+                    addToQueue: (item) => enqueue("news", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
                     }
@@ -179,6 +185,8 @@ export function NewsTable({
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
                             )}
+
+                            <AddSelectedToQueueButton entityType="news" items={selectedRows}/>
                         </div>
 
                         <div className="flex items-center gap-2">

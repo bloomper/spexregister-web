@@ -83,6 +83,33 @@
     "uploadSuccess": "Uppladdning lyckades",
     "yes": "Ja"
   },
+  "EditQueue": {
+    "title": "Redigeringskö",
+    "open": "Öppna redigeringskö",
+    "add": "Lägg till redigeringskö",
+    "addSelected": "Lägg till redigeringskö ({count})",
+    "clearQueue": "Töm kön",
+    "removeFromQueue": "Ta bort från kö",
+    "position": "{current} / {total}",
+    "untitled": "(namnlös)",
+    "prev": "Föregående",
+    "next": "Nästa",
+    "saveAndNext": "Spara & nästa",
+    "unsavedHeading": "Osparade ändringar",
+    "unsavedConfirmation": "Posten har ändringar som inte har sparats. Vad vill du göra?",
+    "saveAndContinue": "Spara och fortsätt",
+    "discardChanges": "Kasta ändringarna",
+    "types": {
+      "spexare": "Spexare",
+      "news": "Nyhet",
+      "spex": "Spex",
+      "spexCategory": "Spexkategori",
+      "task": "Funktion",
+      "taskCategory": "Funktionskategori",
+      "tag": "Tagg",
+      "user": "Användare"
+    }
+  },
   "Header": {
     "toggleLanguage": "Byt språk",
     "toggleTheme": "Byt tema"

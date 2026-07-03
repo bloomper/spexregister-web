@@ -19,7 +19,7 @@ import {
 } from "@/app/(app)/users/actions.server";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {SheetClose, SheetFooter} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {cn, translateError} from "@/utils/utils";
 import {ScrollArea} from "@/components/ui/scroll-area";
@@ -28,15 +28,20 @@ import {Check, ChevronsUpDown, X} from "lucide-react";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import {Checkbox} from "@/components/ui/checkbox";
+import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
+import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
 
 interface UserFormProps {
     item?: User;
     authorities: Authority[];
     states: State[];
-    onSuccess: () => void;
+    onSuccess: (updated?: { id: string }) => void;
+    onError?: () => void;
+    embedded?: boolean;
+    formId?: string;
 }
 
-export function UserForm({item, authorities, states, onSuccess}: UserFormProps) {
+export function UserForm({item, authorities, states, onSuccess, onError, embedded, formId}: UserFormProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
     const [spexareResults, setSpexareResults] = useState<Spexare[]>([]);
@@ -49,7 +54,7 @@ export function UserForm({item, authorities, states, onSuccess}: UserFormProps) 
         control,
         setValue,
         watch,
-        formState: {errors},
+        formState: {errors, isDirty},
     } = useForm<UserFormInput, unknown, UserFormOutput>({
         resolver: zodResolver(userFormSchema),
         defaultValues: {
@@ -74,6 +79,8 @@ export function UserForm({item, authorities, states, onSuccess}: UserFormProps) 
             setIsSearching(false);
         }
     };
+
+    useReportEditQueueFormState({isDirty});
 
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {
@@ -120,21 +127,19 @@ export function UserForm({item, authorities, states, onSuccess}: UserFormProps) 
                 await Promise.all(tasks);
 
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
-                onSuccess();
+                const updated = item ? {...item, ...data} : undefined;
+                onSuccess(updated);
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
+                onError?.();
             }
         });
     });
 
     return (
-        <SheetContent className="sm:max-w-[600px] flex flex-col gap-0 p-0 h-full">
-            <SheetHeader className="p-6 pb-4 shrink-0">
-                <SheetTitle>{item ? t("User.editHeading") : t("User.createHeading")}</SheetTitle>
-            </SheetHeader>
-
-            <form onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <EditFormShell embedded={embedded} title={item ? t("User.editHeading") : t("User.createHeading")}>
+            <form id={formId} onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <ScrollArea className="flex-1 border-t min-h-0">
                     <div className="space-y-6 px-6 py-6 pb-12">
                         {item && (
@@ -278,17 +283,19 @@ export function UserForm({item, authorities, states, onSuccess}: UserFormProps) 
                     </div>
                 </ScrollArea>
 
-                <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                    <SheetClose asChild>
-                        <Button type="button" variant="outline" disabled={isPending}>
-                            {item ? t("Common.close") : t("Common.cancel")}
+                {!embedded && (
+                    <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
+                        <SheetClose asChild>
+                            <Button type="button" variant="outline" disabled={isPending}>
+                                {item ? t("Common.close") : t("Common.cancel")}
+                            </Button>
+                        </SheetClose>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? t("Common.saving") : t("Common.save")}
                         </Button>
-                    </SheetClose>
-                    <Button type="submit" disabled={isPending}>
-                        {isPending ? t("Common.saving") : t("Common.save")}
-                    </Button>
-                </SheetFooter>
+                    </SheetFooter>
+                )}
             </form>
-        </SheetContent>
+        </EditFormShell>
     );
 }

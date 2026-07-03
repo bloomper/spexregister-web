@@ -40,6 +40,7 @@ import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client";
+import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 export const columns: ColumnDef<SpexCategory>[] = [
     columnHelper.select<SpexCategory>(),
@@ -56,6 +57,7 @@ export function SpexCategoryTable({
     const t = useTranslations();
     const router = useRouter();
     const isClient = useIsClient();
+    const {enqueue} = useEditQueue();
     const [filterQuery, setFilterQuery] = useState("");
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
 
@@ -84,7 +86,9 @@ export function SpexCategoryTable({
         return parts.join("");
     };
 
-    const lastFilterQueryRef = useRef<string>(buildFilterString(""));
+    const defaultFilterQuery = buildFilterString("");
+
+    const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
     const isFilterActive = filterQuery !== "";
 
     useEffect(() => {
@@ -110,12 +114,14 @@ export function SpexCategoryTable({
                 columns={columns}
                 initialData={initialData}
                 initialSorting={[{id: "name", desc: false}]}
+                initialFilter={defaultFilterQuery}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
                     setDeleteItem,
+                    addToQueue: (item) => enqueue("spexCategory", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
                     }
@@ -154,6 +160,8 @@ export function SpexCategoryTable({
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
                             )}
+
+                            <AddSelectedToQueueButton entityType="spexCategory" items={selectedRows}/>
                         </div>
 
                         <div className="flex items-center gap-2">

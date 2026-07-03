@@ -51,6 +51,12 @@ const SpexPagedFull = graphql(`
     }
 `);
 
+const SpexGetQuery = graphql(`
+    query SpexGet($id: ID!) {
+        spex(id: $id) { ...SpexFull }
+    }
+`);
+
 const SpexCreateMutation = graphql(`
     mutation SpexCreate($input: SpexCreate!) {
         spexCreate(input: $input) { ...SpexFull }
@@ -85,6 +91,7 @@ const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
     singular: "spex",
     pagedSummaryQuery: SpexPagedSummary,
     pagedFullQuery: SpexPagedFull,
+    getQuery: SpexGetQuery,
     createMutation: SpexCreateMutation,
     updateMutation: SpexUpdateMutation,
     deleteMutation: SpexDeleteMutation,
@@ -97,7 +104,7 @@ const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
     defaultFilter: "parent:NULL",
 });
 
-export const {getPaged, getAll, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, getAll, create, update, del, exp, imp, events} = client;
 
 const SpexCategoryAddMutation = graphql(`
     mutation SpexCategoryAdd($id: ID!, $categoryId: ID!) {

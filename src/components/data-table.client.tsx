@@ -21,12 +21,14 @@ import {SortDirection} from "@/gql/schema";
 import {DataEmpty} from "@/components/data-empty";
 import {cn} from "@/utils/utils";
 import {Spinner} from "@/components/ui/spinner";
+import {useDataRefresh} from "@/hooks/use-data-refresh";
 
 export type DataTableMeta<TData> = {
     setRefresh?: (handler: () => void) => void;
     setFilter?: (handler: (filter: string) => void) => void;
     setEditItem?: (item: TData | null) => void;
     setDeleteItem?: (item: TData | null) => void;
+    addToQueue?: (item: TData) => void;
 };
 
 interface DataTableProps<TData extends { id: string }, TValue> {
@@ -34,6 +36,7 @@ interface DataTableProps<TData extends { id: string }, TValue> {
     initialData: CursorPage<TData>
     initialPageSize?: number
     initialSorting?: SortingState
+    initialFilter?: string
     meta?: DataTableMeta<TData>
     children?: React.ReactNode
     onRowClick?: (data: TData) => void
@@ -56,6 +59,7 @@ export function DataTable<TData extends { id: string }, TValue>({
                                                                     initialData,
                                                                     initialPageSize = 15,
                                                                     initialSorting = [],
+                                                                    initialFilter,
                                                                     onFetch,
                                                                     meta: extraMeta,
                                                                     children,
@@ -69,7 +73,7 @@ export function DataTable<TData extends { id: string }, TValue>({
     const [pageSize, setPageSize] = useState(initialPageSize);
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-    const [filter, setFilter] = useState<string>("");
+    const [filter, setFilter] = useState<string | undefined>(initialFilter);
     const [loading, setLoading] = useState(false);
     const lastInitialData = useRef(initialData);
 
@@ -90,9 +94,16 @@ export function DataTable<TData extends { id: string }, TValue>({
         [columns]
     );
 
-    const handleFetch = useCallback(async (args: Parameters<typeof onFetch>[0]) => {
+    const lastFetchArgsRef = useRef<Parameters<typeof onFetch>[0]>({first: initialPageSize});
+
+    const handleFetch = useCallback(async (args: Parameters<typeof onFetch>[0], options?: {
+        keepSelection?: boolean
+    }) => {
         setLoading(true);
-        setRowSelection({});
+        if (!options?.keepSelection) {
+            setRowSelection({});
+        }
+        lastFetchArgsRef.current = args;
         const currentSort = sorting[0];
         let sort = args.sort;
         if (!sort && currentSort) {
@@ -111,8 +122,11 @@ export function DataTable<TData extends { id: string }, TValue>({
     }, [filter, getSortKey, onFetch, sorting]);
 
     const refresh = useCallback(() => {
-        void handleFetch({first: pageSize});
-    }, [handleFetch, pageSize]);
+        void handleFetch(lastFetchArgsRef.current, {keepSelection: true});
+    }, [handleFetch]);
+
+    // Re-fetch when a mutation elsewhere (e.g. the edit-queue drawer) signals a data change.
+    useDataRefresh(refresh);
 
     const handleFilterChange = useCallback((newFilter: string) => {
         setFilter(newFilter);

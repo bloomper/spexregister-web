@@ -31,6 +31,7 @@ import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client";
+import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 
 export const columns: ColumnDef<Task>[] = [
@@ -51,6 +52,7 @@ export function TaskTable({
     const t = useTranslations();
     const router = useRouter();
     const isClient = useIsClient();
+    const {enqueue} = useEditQueue();
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
         new Set([...categories.map(c => c.id), "none"])
@@ -102,7 +104,8 @@ export function TaskTable({
     };
 
     const totalOptionCount = categories.length + 1;
-    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set([...categories.map(c => c.id), "none"]), categories));
+    const defaultFilterQuery = buildFilterString("", new Set([...categories.map(c => c.id), "none"]), categories);
+    const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
     const isFilterActive = filterQuery !== "" || selectedCategories.size !== totalOptionCount;
 
     useEffect(() => {
@@ -128,12 +131,14 @@ export function TaskTable({
                 columns={columns}
                 initialData={initialData}
                 initialSorting={[{id: "name", desc: false}]}
+                initialFilter={defaultFilterQuery}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
                     setDeleteItem,
+                    addToQueue: (item) => enqueue("task", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
                     }
@@ -189,6 +194,8 @@ export function TaskTable({
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
                             )}
+
+                            <AddSelectedToQueueButton entityType="task" items={selectedRows}/>
                         </div>
 
                         <div className="flex items-center gap-2">

@@ -30,6 +30,7 @@ import {columnHelper} from "@/components/data-table-columns.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client";
+import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 import {useLazyFull} from "@/hooks/use-lazy-full";
 
 
@@ -71,6 +72,7 @@ export function SpexareTable({
     const t = useTranslations();
     const router = useRouter();
     const isClient = useIsClient();
+    const {enqueue} = useEditQueue();
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
@@ -137,7 +139,9 @@ export function SpexareTable({
         return parts.join(" AND ");
     };
 
-    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(["true", "false"]), new Set(["true", "false"])));
+    const defaultFilterQuery = buildFilterString("", new Set(["true", "false"]), new Set(["true", "false"]));
+
+    const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
     const isFilterActive = filterQuery !== "" || selectedPublishedValues.size < 2 || selectedDeceasedValues.size < 2;
 
     useEffect(() => {
@@ -162,7 +166,8 @@ export function SpexareTable({
             <DataTable
                 columns={columns}
                 initialData={initialData}
-                initialSorting={[{id: "firstName", desc: true}]}
+                initialSorting={[{id: "firstName", desc: false}]}
+                initialFilter={defaultFilterQuery}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: false})}
@@ -174,6 +179,7 @@ export function SpexareTable({
                 meta={{
                     setEditItem,
                     setDeleteItem,
+                    addToQueue: (item) => enqueue("spexare", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
                     }
@@ -236,6 +242,8 @@ export function SpexareTable({
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
                             )}
+
+                            <AddSelectedToQueueButton entityType="spexare" items={selectedRows}/>
                         </div>
 
                         <div className="flex items-center gap-2">

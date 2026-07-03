@@ -8,6 +8,7 @@ import {
     deleteLogo,
     events,
     exp,
+    get,
     getPaged,
     imp,
     spexCategoryFormSchema,
@@ -32,6 +33,12 @@ export async function getPageAction(args: {
             ...args,
             full: args.full === true || args.full === "true"
         });
+    });
+}
+
+export async function getAction(id: string) {
+    return withPolicyAction(Policies.spexCategory.requireRead, async () => {
+        return get(id);
     });
 }
 

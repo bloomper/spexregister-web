@@ -42,6 +42,7 @@ import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client";
+import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 
 export const columns: ColumnDef<Spex>[] = [
@@ -129,6 +130,7 @@ export function SpexTable({
     const t = useTranslations();
     const router = useRouter();
     const isClient = useIsClient();
+    const {enqueue} = useEditQueue();
     const [filterQuery, setFilterQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
         new Set(categories.map(c => c.id))
@@ -167,7 +169,9 @@ export function SpexTable({
         return parts.join(" AND ");
     };
 
-    const lastFilterQueryRef = useRef<string>(buildFilterString("", new Set(categories.map(c => c.id)), categories));
+    const defaultFilterQuery = buildFilterString("", new Set(categories.map(c => c.id)), categories);
+
+    const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
     const isFilterActive = filterQuery !== "" || selectedCategories.size !== categories.length;
 
     useEffect(() => {
@@ -193,12 +197,14 @@ export function SpexTable({
                 columns={columns}
                 initialData={initialData}
                 initialSorting={[{id: "year", desc: true}]}
+                initialFilter={defaultFilterQuery}
                 onRowClick={setViewItem}
                 onSelectionChange={setSelectedRows}
                 onFetch={(args) => getPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
                     setDeleteItem,
+                    addToQueue: (item) => enqueue("spex", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
                     }
@@ -251,6 +257,8 @@ export function SpexTable({
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
                             )}
+
+                            <AddSelectedToQueueButton entityType="spex" items={selectedRows}/>
                         </div>
 
                         <div className="flex items-center gap-2">

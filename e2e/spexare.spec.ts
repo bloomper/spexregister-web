@@ -46,7 +46,7 @@ test.describe("spexare grid", () => {
 
         const card = page.locator('[data-slot="card"]').filter({hasText: "Ada Lovelace"});
         await card.hover();
-        await card.getByRole("button").first().click();
+        await card.getByRole("button", {name: "Ändra"}).click();
 
         await expect(page.getByText("Ändra spexare")).toBeVisible();
         await expect(page.locator("#spexare-general-form input").first()).toHaveValue("Ada");

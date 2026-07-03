@@ -19,7 +19,7 @@ import {
 } from "@/app/(app)/spex/actions.server";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {SheetClose, SheetFooter} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {ImageUpload} from "@/components/image-upload.client";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
@@ -27,17 +27,25 @@ import {Plus, X} from "lucide-react";
 import {translateError} from "@/utils/utils";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
+import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
 
 interface SpexFormProps {
     item?: Spex;
     categories: SpexCategory[];
-    onSuccess: () => void;
+    onSuccess: (updated?: { id: string }) => void;
+    onError?: () => void;
+    embedded?: boolean;
+    formId?: string;
 }
 
 export function SpexForm({
                              item,
                              categories = [],
                              onSuccess,
+                             onError,
+                             embedded,
+                             formId,
                          }: SpexFormProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
@@ -51,7 +59,7 @@ export function SpexForm({
         control,
         watch,
         setValue,
-        formState: {errors},
+        formState: {errors, isDirty},
     } = useForm<SpexFormInput, unknown, SpexFormOutput>({
         resolver: zodResolver(spexFormSchema),
         defaultValues: {
@@ -83,6 +91,8 @@ export function SpexForm({
     const availableRevivalYears = availableYears.filter(y =>
         parseInt(y) > parseInt(selectedYear) && !revivalYears.includes(y)
     );
+
+    useReportEditQueueFormState({isDirty});
 
     const onSubmit = handleSubmit((data) => {
         startTransition(async () => {
@@ -127,20 +137,23 @@ export function SpexForm({
                 }
 
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
-                onSuccess();
+                const updated = item ? {...item, ...data} : undefined;
+                onSuccess(updated);
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
+                onError?.();
             }
         });
     });
 
     return (
-        <SheetContent className="sm:max-w-150 flex flex-col gap-0 p-0 h-full">
-            <SheetHeader className="p-6 pb-2 shrink-0">
-                <SheetTitle>{item ? t("Spex.editHeading") : t("Spex.createHeading")}</SheetTitle>
-            </SheetHeader>
-            <form onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <EditFormShell
+            embedded={embedded}
+            title={item ? t("Spex.editHeading") : t("Spex.createHeading")}
+            className="sm:max-w-150 flex flex-col gap-0 p-0 h-full"
+        >
+            <form id={formId} onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <Tabs defaultValue="general" className="flex-1 flex flex-col min-h-0">
                     <div className="px-6 pb-4 shrink-0">
                         <TabsList className="grid w-full h-auto! min-h-9 p-1 bg-muted/50 grid-cols-2">
@@ -302,17 +315,19 @@ export function SpexForm({
                     </ScrollArea>
                 </Tabs>
 
-                <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                    <SheetClose asChild>
-                        <Button type="button" variant="outline" disabled={isPending}>
-                            {item ? t("Common.close") : t("Common.cancel")}
+                {!embedded && (
+                    <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
+                        <SheetClose asChild>
+                            <Button type="button" variant="outline" disabled={isPending}>
+                                {item ? t("Common.close") : t("Common.cancel")}
+                            </Button>
+                        </SheetClose>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? t("Common.saving") : t("Common.save")}
                         </Button>
-                    </SheetClose>
-                    <Button type="submit" disabled={isPending}>
-                        {isPending ? t("Common.saving") : t("Common.save")}
-                    </Button>
-                </SheetFooter>
+                    </SheetFooter>
+                )}
             </form>
-        </SheetContent>
+        </EditFormShell>
     );
 }

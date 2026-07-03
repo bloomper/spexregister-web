@@ -42,6 +42,12 @@ const SpexCategoryPagedFull = graphql(`
     }
 `);
 
+const SpexCategoryGetQuery = graphql(`
+    query SpexCategoryGet($id: ID!) {
+        spexCategory(id: $id) { ...SpexCategoryFull }
+    }
+`);
+
 const SpexCategoryCreateMutation = graphql(`
     mutation SpexCategoryCreate($input: SpexCategoryCreate!) {
         spexCategoryCreate(input: $input) { ...SpexCategoryFull }
@@ -76,6 +82,7 @@ const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategory
     singular: "spexCategory",
     pagedSummaryQuery: SpexCategoryPagedSummary,
     pagedFullQuery: SpexCategoryPagedFull,
+    getQuery: SpexCategoryGetQuery,
     createMutation: SpexCategoryCreateMutation,
     updateMutation: SpexCategoryUpdateMutation,
     deleteMutation: SpexCategoryDeleteMutation,
@@ -88,7 +95,7 @@ const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategory
     defaultFilter: "",
 });
 
-export const {getPaged, getAll, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, getAll, create, update, del, exp, imp, events} = client;
 
 export async function uploadLogo(id: string, file: File) {
     const arrayBuffer = await file.arrayBuffer();

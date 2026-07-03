@@ -59,9 +59,17 @@ function spexarePaged(variables) {
             [s.firstName, s.lastName, s.nickName].some((v) => v && v.toLowerCase().includes(term)))
         : spexareList;
 
+    const sortField = variables?.sort?.[0] ?? "firstName";
+    const descending = String(variables?.direction ?? "ASC").toUpperCase() === "DESC";
+    const sorted = [...matched].sort((a, b) =>
+        String(a[sortField] ?? "").localeCompare(String(b[sortField] ?? ""), "sv"));
+    if (descending) {
+        sorted.reverse();
+    }
+
     const start = variables?.after ? Number(variables.after) : 0;
     const first = Number(variables?.first ?? matched.length);
-    const slice = matched.slice(start, start + first);
+    const slice = sorted.slice(start, start + first);
     const end = start + slice.length;
     const pageEdges = slice.map((node, i) => ({cursor: `c${start + i}`, node}));
     return {spexarePaged: {edges: pageEdges, pageInfo: pageInfo(end < matched.length, String(end))}};
@@ -89,6 +97,17 @@ const tagList = [
     {id: "1", name: "Hedersmedlem"},
     {id: "2", name: "Grundare"},
 ];
+
+function applyTagUpdate(input) {
+    const id = String(input?.id ?? "");
+    const existing = tagList.find((tag) => tag.id === id);
+    if (existing) {
+        existing.name = input?.name ?? existing.name;
+        return existing;
+    }
+    const created = {id: id || "new-tag", name: input?.name ?? ""};
+    return created;
+}
 const userList = [
     {id: "1", externalId: "ext-1", email: "admin@example.com", authorities: [{id: "1", label: "ADMIN"}], state: {id: "1", label: "ACTIVE"}, spexare: null},
     {id: "2", externalId: "ext-2", email: "redaktor@example.com", authorities: [{id: "2", label: "EDITOR"}], state: {id: "1", label: "ACTIVE"}, spexare: null},
@@ -106,6 +125,17 @@ const resolvers = {
 
     NewsPagedSummary: () => ({newsPaged: {edges: edges(newsList), pageInfo: pageInfo(false, null)}}),
     NewsPagedFull: () => ({newsPaged: {edges: edges(newsList), pageInfo: pageInfo(false, null)}}),
+    NewsUpdate: (v) => ({
+        newsUpdate: {
+            id: v?.input?.id ?? "1",
+            subject: v?.input?.subject ?? "",
+            text: v?.input?.text ?? "",
+            visibleFrom: v?.input?.visibleFrom ?? null,
+            visibleTo: v?.input?.visibleTo ?? null,
+            published: v?.input?.published ?? false,
+            ...audit,
+        },
+    }),
 
     SpexarePagedSummary: (v) => spexarePaged(v),
     SpexarePagedFull: (v) => spexarePaged(v),
@@ -121,7 +151,11 @@ const resolvers = {
     TagPagedSummary: () => paged("tagPaged", tagList),
     TagPagedFull: () => paged("tagPaged", tagList.map(withAudit)),
     TagCreate: (v) => ({tagCreate: withAudit({id: "new-tag", name: v?.input?.name ?? ""})}),
-    TagUpdate: (v) => ({tagUpdate: withAudit({id: v?.input?.id ?? "new-tag", name: v?.input?.name ?? ""})}),
+    TagUpdate: (v) => ({tagUpdate: withAudit(applyTagUpdate(v?.input))}),
+    TagGet: (v) => {
+        const tag = tagList.find((t) => t.id === String(v?.id));
+        return {tag: tag ? withAudit(tag) : null};
+    },
 
     TaskPagedSummary: () => paged("taskPaged", taskList),
     TaskPagedFull: () => paged("taskPaged", taskList.map(withAudit)),

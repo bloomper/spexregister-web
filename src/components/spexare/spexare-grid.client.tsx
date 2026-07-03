@@ -17,6 +17,8 @@ import {useSpexareSearch} from "@/components/spexare/use-spexare-search";
 import {SpexareCard} from "@/components/spexare/spexare-card.client";
 import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client";
 import {SpexareEditSheet} from "@/components/spexare/spexare-edit-sheet.client";
+import {useEditQueue} from "@/components/edit-queue";
+import {useDataRefresh} from "@/hooks/use-data-refresh";
 
 export function SpexareGrid({
                                 countries = [],
@@ -53,6 +55,7 @@ export function SpexareGrid({
 }) {
     const t = useTranslations();
     const router = useRouter();
+    const {enqueue} = useEditQueue();
 
     const {
         items,
@@ -74,6 +77,8 @@ export function SpexareGrid({
         noResults,
         isFiltered,
     } = useSpexareSearch({mode, initialSearchQuery, facets, initialItems, initialPageInfo, maxItems});
+
+    useDataRefresh(reset);
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [editId, setEditId] = useState<string | null>(null);
@@ -191,6 +196,7 @@ export function SpexareGrid({
                             canEdit={canEdit}
                             onSelect={() => setSelectedId(n.id)}
                             onEdit={() => setEditId(n.id)}
+                            onAddToQueue={canManage ? () => enqueue("spexare", n) : undefined}
                         />
                     )
                 })

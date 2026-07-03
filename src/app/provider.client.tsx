@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {Toaster} from "@/components/ui/sonner.client";
 import {SessionProvider} from "next-auth/react";
 import type {AbstractIntlMessages} from "use-intl/core";
+import {EditQueueDrawer, EditQueueProvider} from "@/components/edit-queue";
 
 export default function Provider({
                                      children,
@@ -49,7 +50,10 @@ export default function Provider({
                         disableTransitionOnChange
                     >
                         <ConsentManager>
-                            {children}
+                            <EditQueueProvider>
+                                {children}
+                                <EditQueueDrawer/>
+                            </EditQueueProvider>
                             <Toaster/>
                         </ConsentManager>
                     </ThemeProvider>

@@ -11,6 +11,7 @@ import {createAction, deleteImageAction, updateAction, uploadImageAction} from "
 import {Button} from "@/components/ui/button";
 import {SheetClose, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import {cn} from "@/utils/utils";
+import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
 import {enUS, sv} from "react-day-picker/locale";
 import {useIsMobile} from "@/hooks/use-mobile";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -27,8 +28,10 @@ interface SpexareFormProps {
     taskCategories?: TaskCategory[],
     spex?: Spex[],
     spexCategories?: SpexCategory[],
-    onSuccess: () => void;
+    onSuccess: (updated?: { id: string }) => void;
+    onError?: () => void;
     mode?: "sheet" | "page";
+    embedded?: boolean;
 }
 
 export function SpexareForm({
@@ -41,7 +44,9 @@ export function SpexareForm({
                                 spex = [],
                                 spexCategories = [],
                                 onSuccess,
-                                mode = "sheet"
+                                onError,
+                                mode = "sheet",
+                                embedded = false
                             }: SpexareFormProps) {
     const t = useTranslations();
     const currentLocale = useLocale();
@@ -53,12 +58,13 @@ export function SpexareForm({
     const [shouldDeleteImage, setShouldDeleteImage] = useState(false);
 
     const isSheet = mode === "sheet";
+    const showSheetChrome = isSheet && !embedded;
 
     const {
         register,
         handleSubmit,
         control,
-        formState: {errors},
+        formState: {errors, isDirty},
     } = useForm<SpexareFormInput, unknown, SpexareFormOutput>({
         resolver: zodResolver(spexareFormSchema),
         defaultValues: {
@@ -77,6 +83,8 @@ export function SpexareForm({
             comment: item?.comment ?? "",
         },
     });
+
+    useReportEditQueueFormState({isDirty, canSubmit: activeTab === "general"});
 
     const onSubmit = handleSubmit((data) => {
         const formattedSsn = data.birthDate
@@ -113,10 +121,12 @@ export function SpexareForm({
                 }
 
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
-                onSuccess();
+                const updated = item ? {...item, ...data, socialSecurityNumber: formattedSsn} : undefined;
+                onSuccess(updated);
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
+                onError?.();
             }
         });
     });
@@ -202,33 +212,35 @@ export function SpexareForm({
                 </ScrollArea>
             </Tabs>
 
-            <div className={cn(
-                "pt-4 shrink-0 mt-auto flex justify-end gap-2",
-                isSheet ? "p-6 border-t bg-muted/30" : "mt-6"
-            )}>
-                {isSheet ? (
-                    <SheetClose asChild>
-                        <Button type="button" variant="outline" disabled={isPending}>
-                            {item ? t("Common.close") : t("Common.cancel")}
+            {!embedded && (
+                <div className={cn(
+                    "pt-4 shrink-0 mt-auto flex justify-end gap-2",
+                    isSheet ? "p-6 border-t bg-muted/30" : "mt-6"
+                )}>
+                    {isSheet ? (
+                        <SheetClose asChild>
+                            <Button type="button" variant="outline" disabled={isPending}>
+                                {item ? t("Common.close") : t("Common.cancel")}
+                            </Button>
+                        </SheetClose>
+                    ) : (
+                        <Button type="button" variant="outline" disabled={isPending} onClick={() => onSuccess()}>
+                            {t("Common.close")}
                         </Button>
-                    </SheetClose>
-                ) : (
-                    <Button type="button" variant="outline" disabled={isPending} onClick={() => onSuccess()}>
-                        {t("Common.close")}
+                    )}
+                    <Button
+                        type="submit"
+                        form="spexare-general-form"
+                        disabled={isPending || activeTab !== "general"}
+                    >
+                        {isPending ? t("Common.saving") : t("Common.save")}
                     </Button>
-                )}
-                <Button
-                    type="submit"
-                    form="spexare-general-form"
-                    disabled={isPending || activeTab !== "general"}
-                >
-                    {isPending ? t("Common.saving") : t("Common.save")}
-                </Button>
-            </div>
+                </div>
+            )}
         </div>
     );
 
-    if (!isSheet) {
+    if (!showSheetChrome) {
         return (
             <div className="flex flex-col h-full">
                 {formContent}

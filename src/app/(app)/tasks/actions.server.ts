@@ -8,6 +8,7 @@ import {
     del,
     events,
     exp,
+    get,
     getAll as getAllTasks,
     getPaged,
     imp,
@@ -40,6 +41,12 @@ export async function getPageAction(args: {
 export async function getAllAction() {
     return withPolicyAction(Policies.task.requireRead, async () => {
         return getAllTasks();
+    });
+}
+
+export async function getAction(id: string) {
+    return withPolicyAction(Policies.task.requireRead, async () => {
+        return get(id);
     });
 }
 

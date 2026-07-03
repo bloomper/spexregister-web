@@ -2,7 +2,7 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {create, del, events, exp, getPaged, imp, newsFormSchema, update} from "@/lib/news";
+import {create, del, events, exp, get, getPaged, imp, newsFormSchema, update} from "@/lib/news";
 import {revalidateTag} from "next/cache";
 import {ImpexType, SortDirection} from "@/gql/schema";
 
@@ -21,6 +21,12 @@ export async function getPageAction(args: {
             ...args,
             full: args.full === true || args.full === "true"
         });
+    });
+}
+
+export async function getAction(id: string) {
+    return withPolicyAction(Policies.news.requireRead, async () => {
+        return get(id);
     });
 }
 
