@@ -90,7 +90,7 @@
     "eslint-config-next": "^16.2.12",
     "globals": "^17.8.0",
     "jiti": "^2.7.0",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwind-csstree": "^0.3.3",
