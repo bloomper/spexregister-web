@@ -1,7 +1,6 @@
 "use client";
 
 import {useRef, useState} from "react";
-import {ColumnDef} from "@tanstack/react-table";
 import {Download, MoreHorizontal} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {toast} from "sonner";
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import {DataTable} from "@/components/data-table.client";
 import {columnHelper} from "@/components/data-table-columns.client";
+import type {DataTableColumnDef} from "@/components/data-table-features";
 import {ImportResultViewer} from "./import-result-viewer.client";
 import {deleteAction, getJobAction, getJobsAction} from "@/app/(app)/impex/actions.server";
 import {formatDateTime} from "@/utils/utils";
@@ -85,7 +85,7 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
         }
     };
 
-    const columns: ColumnDef<Job>[] = [
+    const columns: DataTableColumnDef<Job>[] = [
         {
             ...columnHelper.text("id", "Impex.id", "id"),
             enableSorting: false,

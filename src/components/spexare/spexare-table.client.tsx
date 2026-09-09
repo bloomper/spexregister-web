@@ -1,6 +1,5 @@
 "use client";
 
-import {ColumnDef} from "@tanstack/react-table";
 import {CheckCircle2, Circle, Plus, User, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/schema";
@@ -27,6 +26,7 @@ import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataFilter} from "@/components/data-filter";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {columnHelper} from "@/components/data-table-columns.client";
+import type {DataTableColumnDef} from "@/components/data-table-features";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client";
@@ -34,7 +34,7 @@ import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 import {useLazyFull} from "@/hooks/use-lazy-full";
 
 
-export const columns: ColumnDef<Spexare>[] = [
+export const columns: DataTableColumnDef<Spexare>[] = [
     columnHelper.select(),
     columnHelper.text("firstName", "Spexare.firstName"),
     columnHelper.text("lastName", "Spexare.lastName"),

@@ -1,6 +1,6 @@
 "use client";
 
-import {ColumnDef, type Row, type Table} from "@tanstack/react-table";
+import type {Row, RowData, Table} from "@tanstack/react-table";
 import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, LucideIcon, MoreHorizontal} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -10,7 +10,7 @@ import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/compon
 import {formatDate, formatDateTime} from "@/utils/utils";
 import {TableThumbnail} from "@/components/data-table-thumbnail.client";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import type {DataTableMeta} from "@/components/data-table.client";
+import type {DataTableColumnDef, DataTableFeatures} from "@/components/data-table-features";
 
 function SelectAllHeader({
                              checked,
@@ -47,9 +47,12 @@ function SelectRowCell({
     );
 }
 
-function ActionsCell<T>({row, table}: { row: Row<T>; table: Table<T> }) {
+function ActionsCell<T extends RowData>({row, table}: {
+    row: Row<DataTableFeatures, T>;
+    table: Table<DataTableFeatures, T>;
+}) {
     const t = useTranslations();
-    const meta = table.options.meta as DataTableMeta<T> | undefined;
+    const meta = table.options.meta;
     return (
         <div onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
@@ -77,7 +80,7 @@ function ActionsCell<T>({row, table}: { row: Row<T>; table: Table<T> }) {
 }
 
 export const columnHelper = {
-    select: <T, >(): ColumnDef<T> => ({
+    select: <T extends RowData, >(): DataTableColumnDef<T> => ({
         id: "select",
         header: ({table}) => (
             <SelectAllHeader
@@ -92,9 +95,8 @@ export const columnHelper = {
             />
         ),
         enableSorting: false,
-        enableHiding: false,
     }),
-    text: <T, >(id: string, translationId: string, accessorKey: string = id, className?: string): ColumnDef<T> => ({
+    text: <T extends RowData, >(id: string, translationId: string, accessorKey: string = id, className?: string): DataTableColumnDef<T> => ({
         id,
         accessorKey,
         header: ({column}) => {
@@ -130,7 +132,7 @@ export const columnHelper = {
         },
         meta: className ? {className} : undefined,
     }),
-    date: <T, >(id: string, translationId: string, accessorKey: string = id, className?: string): ColumnDef<T> => ({
+    date: <T extends RowData, >(id: string, translationId: string, accessorKey: string = id, className?: string): DataTableColumnDef<T> => ({
         id,
         accessorKey,
         header: ({column}) => {
@@ -157,7 +159,7 @@ export const columnHelper = {
         },
         meta: className ? {className} : undefined,
     }),
-    dateTime: <T, >(id: string, translationId: string, accessorKey: string = id, className?: string): ColumnDef<T> => ({
+    dateTime: <T extends RowData, >(id: string, translationId: string, accessorKey: string = id, className?: string): DataTableColumnDef<T> => ({
         id,
         accessorKey,
         header: ({column}) => {
@@ -185,12 +187,12 @@ export const columnHelper = {
         meta: className ? {className} : undefined,
     }),
 
-    image: <T extends { lastModifiedAt?: string | null }, >(
+    image: <T extends RowData & { lastModifiedAt?: string | null }, >(
         id: string,
         translationId: string,
         accessorKey: string,
         fallbackIcon: LucideIcon
-    ): ColumnDef<T> => ({
+    ): DataTableColumnDef<T> => ({
         id,
         accessorKey,
         header: () => <Translated id={translationId}/>,
@@ -202,7 +204,7 @@ export const columnHelper = {
             />
         ),
     }),
-    boolean: <T, >(id: string, translationId: string, className?: string): ColumnDef<T> => ({
+    boolean: <T extends RowData, >(id: string, translationId: string, className?: string): DataTableColumnDef<T> => ({
         id,
         accessorKey: id,
         header: () => <Translated id={translationId}/>,
@@ -214,7 +216,7 @@ export const columnHelper = {
         ),
         meta: className ? {className} : undefined,
     }),
-    audit: <T, >(): ColumnDef<T>[] => [
+    audit: <T extends RowData, >(): DataTableColumnDef<T>[] => [
         {
             id: "createdAt",
             accessorKey: "createdAt",
@@ -258,7 +260,7 @@ export const columnHelper = {
             meta: {className: "hidden xl:table-cell"}
         }
     ],
-    actions: <T, >(): ColumnDef<T> => ({
+    actions: <T extends RowData, >(): DataTableColumnDef<T> => ({
         id: "actions",
         cell: ({row, table}) => <ActionsCell row={row} table={table}/>,
     })

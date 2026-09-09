@@ -1,6 +1,5 @@
 "use client";
 
-import {ColumnDef} from "@tanstack/react-table";
 import {Check, CheckCircle2, Circle, Copy, Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Authority, State, User} from "@/gql/schema";
@@ -34,6 +33,7 @@ import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
+import type {DataTableColumnDef} from "@/components/data-table-features";
 import {Translated} from "@/components/translated.client";
 import {Badge} from "@/components/ui/badge";
 import {AuditTrail} from "@/components/data-audit-trail.client";
@@ -43,7 +43,7 @@ import {useIsClient} from "@/hooks/use-is-client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 
-export const columns: ColumnDef<User>[] = [
+export const columns: DataTableColumnDef<User>[] = [
     columnHelper.select(),
     columnHelper.text("externalId", "User.externalId", "externalId", "max-w-[150px]"),
     {

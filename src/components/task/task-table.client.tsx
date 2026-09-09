@@ -1,6 +1,5 @@
 "use client";
 
-import {ColumnDef} from "@tanstack/react-table";
 import {Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Task, TaskCategory} from "@/gql/schema";
@@ -27,6 +26,7 @@ import {useDataTableActions} from "@/hooks/use-data-table-actions";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
+import type {DataTableColumnDef} from "@/components/data-table-features";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
@@ -34,10 +34,13 @@ import {useIsClient} from "@/hooks/use-is-client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 
-export const columns: ColumnDef<Task>[] = [
+export const columns: DataTableColumnDef<Task>[] = [
     columnHelper.select(),
     columnHelper.text("name", "Task.name"),
-    columnHelper.text("categoryName", "Task.category", "category.name", "hidden md:table-cell"),
+    {
+        ...columnHelper.text<Task>("categoryName", "Task.category", "category.name", "hidden md:table-cell"),
+        meta: {sortKey: "category.name", className: "hidden md:table-cell"}
+    },
     ...columnHelper.audit<Task>(),
     columnHelper.actions<Task>(),
 ];

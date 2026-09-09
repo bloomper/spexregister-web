@@ -2,14 +2,7 @@
 
 import * as React from "react";
 import {useCallback, useEffect, useRef, useState} from "react";
-import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    RowSelectionState,
-    SortingState,
-    useReactTable
-} from "@tanstack/react-table";
+import {RowSelectionState, SortingState, useTable} from "@tanstack/react-table";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
@@ -22,17 +15,10 @@ import {DataEmpty} from "@/components/data-empty";
 import {cn} from "@/utils/utils";
 import {Spinner} from "@/components/ui/spinner";
 import {useDataRefresh} from "@/hooks/use-data-refresh";
+import {dataTableFeatures, type DataTableColumnDef, type DataTableMeta} from "@/components/data-table-features";
 
-export type DataTableMeta<TData> = {
-    setRefresh?: (handler: () => void) => void;
-    setFilter?: (handler: (filter: string) => void) => void;
-    setEditItem?: (item: TData | null) => void;
-    setDeleteItem?: (item: TData | null) => void;
-    addToQueue?: (item: TData) => void;
-};
-
-interface DataTableProps<TData extends { id: string }, TValue> {
-    columns: ColumnDef<TData, TValue>[]
+interface DataTableProps<TData extends { id: string }> {
+    columns: DataTableColumnDef<TData>[]
     initialData: CursorPage<TData>
     initialPageSize?: number
     initialSorting?: SortingState
@@ -54,7 +40,7 @@ interface DataTableProps<TData extends { id: string }, TValue> {
     }) => Promise<CursorPage<TData>>
 }
 
-export function DataTable<TData extends { id: string }, TValue>({
+export function DataTable<TData extends { id: string }>({
                                                                     columns,
                                                                     initialData,
                                                                     initialPageSize = 15,
@@ -67,7 +53,7 @@ export function DataTable<TData extends { id: string }, TValue>({
                                                                     onSelectionChange,
                                                                     rowClassName,
                                                                     showPagination = true,
-                                                                }: DataTableProps<TData, TValue>) {
+                                                                }: DataTableProps<TData>) {
     const [data, setData] = useState<TData[]>(initialData.items);
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
     const [pageSize, setPageSize] = useState(initialPageSize);
@@ -88,8 +74,7 @@ export function DataTable<TData extends { id: string }, TValue>({
             const column = columns.find(
                 (col) => col.id === sortId || ("accessorKey" in col && col.accessorKey === sortId)
             );
-            const meta = (column?.meta as { sortKey?: string } | undefined) ?? undefined;
-            return meta?.sortKey ?? sortId;
+            return column?.meta?.sortKey ?? sortId;
         },
         [columns]
     );
@@ -155,7 +140,8 @@ export function DataTable<TData extends { id: string }, TValue>({
         }
     };
 
-    const table = useReactTable({
+    const table = useTable({
+        features: dataTableFeatures,
         data,
         columns,
         state: {
@@ -178,22 +164,15 @@ export function DataTable<TData extends { id: string }, TValue>({
         enableRowSelection: true,
         onRowSelectionChange: setRowSelection,
         getRowId: (row) => row.id,
-        getCoreRowModel: getCoreRowModel(),
-        manualPagination: true,
         manualSorting: true,
-        meta: {
-            refresh,
-            setFilter: handleFilterChange,
-            ...extraMeta
-        }
+        meta: extraMeta
     });
 
+    // Derived from the selection state rather than from the table instance: `useTable` hands back a
+    // new table object on every state change, so depending on it here would re-run every render.
     useEffect(() => {
-        if (onSelectionChange) {
-            const selectedData = table.getSelectedRowModel().rows.map((row) => row.original);
-            onSelectionChange(selectedData);
-        }
-    }, [rowSelection, table, onSelectionChange]);
+        onSelectionChange?.(data.filter((item) => rowSelection[item.id]));
+    }, [data, onSelectionChange, rowSelection]);
 
     const t = useTranslations();
 
@@ -221,19 +200,11 @@ export function DataTable<TData extends { id: string }, TValue>({
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    const meta = header.column.columnDef.meta as { className?: string };
-                                    return (
-                                        <TableHead key={header.id} className={meta?.className}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                        </TableHead>
-                                    );
-                                })}
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead key={header.id} className={header.column.columnDef.meta?.className}>
+                                        {header.isPlaceholder ? null : <table.FlexRender header={header}/>}
+                                    </TableHead>
+                                ))}
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -249,22 +220,19 @@ export function DataTable<TData extends { id: string }, TValue>({
                                     )}
                                     onClick={() => onRowClick?.(row.original)}
                                 >
-                                    {row.getVisibleCells().map((cell) => {
-                                        const meta = cell.column.columnDef.meta as { className?: string };
-                                        return (
-                                            <TableCell
-                                                key={cell.id}
-                                                className={meta?.className}
-                                                onClick={(e) => {
-                                                    if (cell.column.id === "select") {
-                                                        e.stopPropagation();
-                                                    }
-                                                }}
-                                            >
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
-                                        );
-                                    })}
+                                    {row.getAllCells().map((cell) => (
+                                        <TableCell
+                                            key={cell.id}
+                                            className={cell.column.columnDef.meta?.className}
+                                            onClick={(e) => {
+                                                if (cell.column.id === "select") {
+                                                    e.stopPropagation();
+                                                }
+                                            }}
+                                        >
+                                            <table.FlexRender cell={cell}/>
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
                             ))
                         ) : (

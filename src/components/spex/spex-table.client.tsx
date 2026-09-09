@@ -1,6 +1,5 @@
 "use client";
 
-import {ColumnDef} from "@tanstack/react-table";
 import {ArrowDown, ArrowUp, ArrowUpDown, Image as ImageIcon, Plus, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Spex, SpexCategory} from "@/gql/schema";
@@ -38,6 +37,7 @@ import Image from "next/image";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
+import type {DataTableColumnDef} from "@/components/data-table-features";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
@@ -45,7 +45,7 @@ import {useIsClient} from "@/hooks/use-is-client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 
-export const columns: ColumnDef<Spex>[] = [
+export const columns: DataTableColumnDef<Spex>[] = [
     columnHelper.select(),
     {
         id: "year",
@@ -86,7 +86,10 @@ export const columns: ColumnDef<Spex>[] = [
             );
         },
     },
-    columnHelper.text("title", "Spex.title", "title"),
+    {
+        ...columnHelper.text<Spex>("title", "Spex.title", "title"),
+        meta: {sortKey: "details.title"}
+    },
     columnHelper.image("poster", "Spex.posterUrl", "posterUrl", ImageIcon),
     {
         id: "categoryName",
