@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     reactCompiler: true,
     cacheComponents: true,
     experimental: {
+        instantInsights: {
+            validationLevel: "manual-warning",
+        },
         serverActions: {
             bodySizeLimit: "15mb",
         },

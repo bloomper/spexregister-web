@@ -16,6 +16,8 @@ import {LogoHome} from "@/components/logo-home";
 import Link from "next/link";
 import {Role} from "@/types/auth";
 
+export const instant = false;
+
 export default async function AppLayout({children}: { children: React.ReactNode }) {
     const session = await auth();
 

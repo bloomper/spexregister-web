@@ -1,13 +1,14 @@
 import type {Metadata} from "next";
 import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
-import {getTranslations} from "next-intl/server";
 import {cookies} from "next/headers";
 import Provider from "@/app/provider.client";
 import {AuthCheck} from "@/components/auth-check.client";
 import React, {Suspense} from "react";
 import {normalizeLocale} from "@/utils/utils.server";
 import {Spinner} from "@/components/ui/spinner";
+import enMessages from "../../messages/en.json";
+import svMessages from "../../messages/sv.json";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -34,24 +35,22 @@ async function RootProvider({children}: { children: React.ReactNode }) {
     );
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-    const t = await getTranslations("Meta");
+const metaByLocale: Record<string, { title: string; description: string }> = {
+    en: enMessages.Meta,
+    sv: svMessages.Meta,
+};
 
-    return {
-        title: t("title"),
-        description: t("description"),
-    };
-}
+const defaultLocale = normalizeLocale(undefined);
+
+export const metadata: Metadata = metaByLocale[defaultLocale] ?? metaByLocale.sv;
 
 export default async function RootLayout({
                                              children,
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const initialHtmlLang = normalizeLocale(undefined);
-
     return (
-        <html lang={initialHtmlLang} suppressHydrationWarning>
+        <html lang={defaultLocale} suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Suspense
             fallback={

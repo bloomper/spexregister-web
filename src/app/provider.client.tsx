@@ -36,7 +36,13 @@ export default function Provider({
 
     useEffect(() => {
         document.documentElement.lang = locale;
-    }, [locale]);
+
+        const title = (messages as { Meta?: { title?: string } })?.Meta?.title;
+
+        if (title) {
+            document.title = title;
+        }
+    }, [locale, messages]);
 
     return (
         <NextIntlClientProvider locale={locale} messages={messages} onError={() => {
