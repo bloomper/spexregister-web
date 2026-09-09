@@ -5,8 +5,7 @@ import {UserRound} from "lucide-react";
 import {getLocale} from "next-intl/server";
 import {SpexareGrid} from "@/components/spexare";
 import {DataEmpty} from "@/components/data-empty";
-import {me} from "@/lib/user";
-import {auth} from "@/auth";
+import {meOrNull} from "@/lib/user";
 import {isAdminOrEditor} from "@/utils/auth";
 import {getCountries, getTypes} from "@/lib/settings";
 import {getAll as getAllTags} from "@/lib/tag";
@@ -20,10 +19,8 @@ export default async function SpexareSearchPage({
                                                 }: {
     searchParams: Promise<{ q?: string }>;
 }) {
-    return withPolicyPage(Policies.spexare.requireRead, async () => {
-        const session = await auth();
-        const roles = session?.roles || [];
-        const isManager = isAdminOrEditor(roles);
+    return withPolicyPage(Policies.spexare.requireRead, async (authz) => {
+        const isManager = isAdminOrEditor(authz.roles);
         const {q = ""} = await searchParams;
         const locale = await getLocale();
 
@@ -36,7 +33,7 @@ export default async function SpexareSearchPage({
             getAllTaskCategories(),
             getAllSpex(),
             getAllSpexCategories(),
-            me(),
+            meOrNull(),
         ]);
         const initialItems = page.edges.map((e) => e.node);
 

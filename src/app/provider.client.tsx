@@ -7,7 +7,6 @@ import {ThemeProvider} from "@/components/theme-provider.client";
 import {ConsentManager} from "@/components/consent-manager.client";
 import {useRouter} from "next/navigation";
 import {Toaster} from "@/components/ui/sonner.client";
-import {SessionProvider} from "next-auth/react";
 import type {AbstractIntlMessages} from "use-intl/core";
 import {EditQueueDrawer, EditQueueProvider} from "@/components/edit-queue";
 
@@ -48,22 +47,20 @@ export default function Provider({
         <NextIntlClientProvider locale={locale} messages={messages} onError={() => {
         }}>
             <LocaleContext.Provider value={{locale, changeLocale}}>
-                <SessionProvider>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        <ConsentManager>
-                            <EditQueueProvider>
-                                {children}
-                                <EditQueueDrawer/>
-                            </EditQueueProvider>
-                            <Toaster/>
-                        </ConsentManager>
-                    </ThemeProvider>
-                </SessionProvider>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <ConsentManager>
+                        <EditQueueProvider>
+                            {children}
+                            <EditQueueDrawer/>
+                        </EditQueueProvider>
+                        <Toaster/>
+                    </ConsentManager>
+                </ThemeProvider>
             </LocaleContext.Provider>
         </NextIntlClientProvider>
     );

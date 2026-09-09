@@ -1,7 +1,7 @@
-import {afterEach, describe, expect, it, vi} from "vitest";
+import {describe, expect, it} from "vitest";
 import {
+    appendLogoutParams,
     extractRolesFromClaims,
-    generateKeycloakLogoutUrl,
     isAdmin,
     isAdminOrEditor,
     isEditor,
@@ -70,45 +70,28 @@ describe("normalizeTheme", () => {
     });
 });
 
-describe("generateKeycloakLogoutUrl", () => {
-    afterEach(() => {
-        vi.unstubAllEnvs();
+describe("appendLogoutParams", () => {
+    const endSession = "https://kc.example/realms/r/protocol/openid-connect/logout";
+
+    it("returns the URL untouched when there is nothing to append", () => {
+        expect(appendLogoutParams(endSession)).toBe(endSession);
     });
 
-    it("builds the logout URL with client id and post-logout redirect", () => {
-        vi.stubEnv("NEXT_PUBLIC_AUTH_KEYCLOAK_ID", "spexregister");
-        vi.stubEnv("NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER", "https://kc.example/realms/r");
-
-        const url = new URL(generateKeycloakLogoutUrl("https://app.example"));
-
-        expect(url.origin + url.pathname).toBe("https://kc.example/realms/r/protocol/openid-connect/logout");
-        expect(url.searchParams.get("client_id")).toBe("spexregister");
-        expect(url.searchParams.get("post_logout_redirect_uri")).toBe("https://app.example/api/auth/logout");
-        expect(url.searchParams.get("ui_locales")).toBeNull();
-        expect(url.searchParams.get("theme")).toBeNull();
-        expect(url.searchParams.get("id_token_hint")).toBeNull();
-    });
-
-    it("includes optional locale, theme and id_token_hint when provided", () => {
-        vi.stubEnv("NEXT_PUBLIC_AUTH_KEYCLOAK_ID", "spexregister");
-        vi.stubEnv("NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER", "https://kc.example/realms/r");
-
-        const url = new URL(
-            generateKeycloakLogoutUrl("https://app.example", "id-token-123", "sv", "dark"),
-        );
+    it("appends locale and theme", () => {
+        const url = new URL(appendLogoutParams(endSession, "sv", "dark"));
 
         expect(url.searchParams.get("ui_locales")).toBe("sv");
         expect(url.searchParams.get("theme")).toBe("dark");
-        expect(url.searchParams.get("id_token_hint")).toBe("id-token-123");
     });
 
-    it("falls back to empty client id / issuer when env is unset", () => {
-        vi.stubEnv("NEXT_PUBLIC_AUTH_KEYCLOAK_ID", "");
-        vi.stubEnv("NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER", "");
+    it("preserves the params Better Auth already put on the URL", () => {
+        const withHint = `${endSession}?id_token_hint=abc&post_logout_redirect_uri=https%3A%2F%2Fapp.example`;
 
-        const url = generateKeycloakLogoutUrl("https://app.example");
+        const url = new URL(appendLogoutParams(withHint, "en"));
 
-        expect(url).toContain("/protocol/openid-connect/logout?");
-        expect(url).toContain("client_id=");
+        expect(url.searchParams.get("id_token_hint")).toBe("abc");
+        expect(url.searchParams.get("post_logout_redirect_uri")).toBe("https://app.example");
+        expect(url.searchParams.get("ui_locales")).toBe("en");
+        expect(url.searchParams.get("theme")).toBeNull();
     });
 });

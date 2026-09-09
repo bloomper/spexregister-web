@@ -3,7 +3,6 @@ import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import {cookies} from "next/headers";
 import Provider from "@/app/provider.client";
-import {AuthCheck} from "@/components/auth-check.client";
 import React, {Suspense} from "react";
 import {normalizeLocale} from "@/utils/utils.server";
 import {Spinner} from "@/components/ui/spinner";
@@ -28,9 +27,7 @@ async function RootProvider({children}: { children: React.ReactNode }) {
 
     return (
         <Provider locale={locale} messages={messages}>
-            <AuthCheck>
-                {children}
-            </AuthCheck>
+            {children}
         </Provider>
     );
 }

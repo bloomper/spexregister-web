@@ -2,7 +2,7 @@
 
 import {useTranslations} from "next-intl";
 import {Mail, Wrench} from "lucide-react";
-import {useIsClient} from "@/hooks/use-is-client";
+import {useIsClient} from "@/hooks/use-is-client.client";
 
 export default function SupportPage() {
     const t = useTranslations("Support");

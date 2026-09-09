@@ -2,7 +2,7 @@ import "server-only";
 
 import {cacheExchange, createClient, fetchExchange} from "@urql/core";
 import {registerUrql} from "@urql/next/rsc";
-import {auth} from "@/auth";
+import {getAccessToken} from "@/utils/auth.server";
 import {authExchange} from "@urql/exchange-auth";
 import {getLocale} from "next-intl/server";
 
@@ -34,14 +34,7 @@ const makeClient = () => {
                     },
 
                     async refreshAuth() {
-                        const session = await auth();
-
-                        if (session?.error === "RefreshTokenError") {
-                            token = null;
-                            return;
-                        }
-
-                        token = session?.access_token || null;
+                        token = await getAccessToken();
                     },
 
                     willAuthError() {

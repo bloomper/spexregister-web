@@ -12,7 +12,7 @@ Spexregister Web is the second generation of the frontend responsible for servin
 - **Data Fetching:** [urql](https://formidable.com/open-source/urql/) (GraphQL) & [Axios](https://axios-http.com/) (
   REST)
 - **State Management:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/) for validation
-- **Authentication:** [NextAuth.js](https://next-auth.js.org/) (Keycloak integration)
+- **Authentication:** [Better Auth](https://better-auth.com/) (Keycloak integration, stateless sessions)
 - **Internationalization:** [next-intl](https://next-intl-docs.vercel.app/) (Supports English & Swedish)
 
 ## Getting Started

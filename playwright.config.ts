@@ -3,15 +3,12 @@ import {APP_PORT, AUTH_SECRET, BASE_URL, MOCK_PORT, STORAGE_STATE} from "./e2e/c
 
 const appEnv: Record<string, string> = {
     AUTH_SECRET,
-    AUTH_TRUST_HOST: "true",
-    AUTH_URL: BASE_URL,
     AUTH_KEYCLOAK_ID: "e2e",
     AUTH_KEYCLOAK_SECRET: "e2e",
     AUTH_KEYCLOAK_ISSUER: `http://localhost:${MOCK_PORT}/realms/e2e`,
     API_GRAPHQL_ENDPOINT: `http://localhost:${MOCK_PORT}/api/graphql`,
     API_REST_BASE_URL: `http://localhost:${MOCK_PORT}`,
     NEXT_PUBLIC_AUTH_URL: BASE_URL,
-    NEXT_PUBLIC_AUTH_KEYCLOAK_ID: "e2e",
     NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER: `http://localhost:${MOCK_PORT}/realms/e2e`,
     NEXT_PUBLIC_API_BASE_URL: `http://localhost:${MOCK_PORT}/api`,
 };

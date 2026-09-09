@@ -17,8 +17,8 @@ import * as React from "react";
 import {useMemo, useState} from "react";
 import {useLocale, useTranslations} from "next-intl";
 import {toast} from "sonner";
-import {useSession} from "next-auth/react";
-import {generateKeycloakLogoutUrl} from "@/utils/auth";
+import {signOut, useSession} from "@/lib/auth-client";
+import {appendLogoutParams} from "@/utils/auth";
 import {Spexare} from "@/gql/schema";
 import Link from "next/link";
 import {useTheme} from "next-themes";
@@ -41,12 +41,12 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
     const t = useTranslations();
     const locale = useLocale();
     const {data: session} = useSession();
-    const user = session?.user ?? {};
+    const user = session?.user;
     const {theme} = useTheme();
 
-    const initials = useMemo(() => getInitials(user.name, user.email), [user.name, user.email]);
+    const initials = useMemo(() => getInitials(user?.name, user?.email), [user?.name, user?.email]);
     const [avatarFailed, setAvatarFailed] = useState(false);
-    const avatarSrc = !avatarFailed && user.image ? user.image : undefined;
+    const avatarSrc = !avatarFailed && user?.image ? user.image : undefined;
 
     const accountUrl = `${process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}/account`;
 
@@ -76,13 +76,13 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage src={avatarSrc} alt={user.name ?? ""}
+                                <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
                                              onError={() => setAvatarFailed(true)}/>
                                 <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{user.name}</span>
-                                <span className="truncate text-xs">{user.email}</span>
+                                <span className="truncate font-medium">{user?.name}</span>
+                                <span className="truncate text-xs">{user?.email}</span>
                             </div>
                             <ChevronsUpDown className="ml-auto size-4"/>
                         </SidebarMenuButton>
@@ -96,13 +96,13 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={avatarSrc} alt={user.name ?? ""}
+                                    <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
                                                  onError={() => setAvatarFailed(true)}/>
                                     <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium">{user.name}</span>
-                                    <span className="truncate text-xs">{user.email}</span>
+                                    <span className="truncate font-medium">{user?.name}</span>
+                                    <span className="truncate text-xs">{user?.email}</span>
                                 </div>
                             </div>
                         </DropdownMenuLabel>
@@ -132,19 +132,18 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem
                             className="flex items-center gap-2"
-                            onSelect={() => {
+                            onSelect={async () => {
                                 const themeParam =
                                     theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
 
-                                const logoutUrl = generateKeycloakLogoutUrl(
-                                    process.env.NEXT_PUBLIC_AUTH_URL ?? "",
-                                    null,
-                                    locale,
-                                    themeParam
-                                );
+                                const {data} = await signOut({disableRedirect: true});
 
                                 toast.message(t("Common.loggedOut"));
-                                window.location.href = logoutUrl;
+                                window.location.assign(
+                                    data?.url
+                                        ? appendLogoutParams(data.url, locale, themeParam)
+                                        : process.env.NEXT_PUBLIC_AUTH_URL ?? "/"
+                                );
                             }}
                         >
                             <LogOut className="h-4 w-4"/>

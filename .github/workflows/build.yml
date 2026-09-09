@@ -43,7 +43,6 @@ jobs:
           API_GRAPHQL_ENDPOINT: https://api.example/api/graphql
           API_REST_BASE_URL: https://api.example
           NEXT_PUBLIC_AUTH_URL: https://app.example
-          NEXT_PUBLIC_AUTH_KEYCLOAK_ID: dummy
           NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER: https://keycloak.example/realms/spexregister
           NEXT_PUBLIC_API_BASE_URL: https://api.example/api
       - name: Publish test results

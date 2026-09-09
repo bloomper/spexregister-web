@@ -9,9 +9,8 @@ import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
-import {auth} from "@/auth";
-import {redirect} from "next/navigation";
-import {me} from "@/lib/user";
+import {requireUser} from "@/utils/auth.server";
+import {meOrNull} from "@/lib/user";
 import {LogoHome} from "@/components/logo-home";
 import Link from "next/link";
 import {Role} from "@/types/auth";
@@ -19,13 +18,7 @@ import {Role} from "@/types/auth";
 export const instant = false;
 
 export default async function AppLayout({children}: { children: React.ReactNode }) {
-    const session = await auth();
-
-    if (session?.error === "RefreshTokenError") {
-        redirect("/api/auth/login");
-    }
-
-    const roles = session?.roles ?? [];
+    const {session, roles} = await requireUser();
     const t = await getTranslations();
 
     if (!session) {
@@ -103,7 +96,7 @@ export default async function AppLayout({children}: { children: React.ReactNode 
 }
 
 async function SidebarWithUser({roles}: { roles: Role[] }) {
-    const currentUser = await me();
+    const currentUser = await meOrNull();
 
     return (
         <AppSidebar

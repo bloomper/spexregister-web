@@ -6,6 +6,7 @@ import {
     getPaged,
     getStates,
     me,
+    meOrNull,
     removeAuthorities,
     removeSpexare,
     setState,
@@ -89,5 +90,31 @@ describe("user relation mutations", () => {
     it("propagates mutation errors", async () => {
         toPromise.mockResolvedValue({error: new Error("denied")});
         await expect(setState("u1", "s1")).rejects.toThrow("denied");
+    });
+});
+
+describe("meOrNull", () => {
+    it("returns the current user when the backend answers", async () => {
+        toPromise.mockResolvedValue({data: {me: {id: "u1"}}});
+        await expect(meOrNull()).resolves.toEqual({id: "u1"});
+    });
+
+    it("normalizes an absent user to null", async () => {
+        toPromise.mockResolvedValue({data: {me: null}});
+        await expect(meOrNull()).resolves.toBeNull();
+    });
+
+    // The `(app)` layout fetches the current user, so a throw here would replace every page with
+    // the error boundary — an authorization failure on this one query must not do that.
+    it("degrades to null when the backend denies the query", async () => {
+        const warn = vi.spyOn(console, "warn").mockImplementation(() => {
+        });
+        toPromise.mockResolvedValue({error: new Error("[GraphQL] Åtkomst nekad")});
+
+        await expect(me()).rejects.toThrow("Åtkomst nekad");
+        await expect(meOrNull()).resolves.toBeNull();
+        expect(warn).toHaveBeenCalled();
+
+        warn.mockRestore();
     });
 });

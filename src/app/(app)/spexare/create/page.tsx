@@ -10,7 +10,7 @@ import {getAll as getAllTasks} from "@/lib/task";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
-import {me} from "@/lib/user";
+import {meOrNull} from "@/lib/user";
 
 export default async function SpexareCreatePage() {
     return withPolicyPage(Policies.spexare.requireCreate, async () => {
@@ -30,7 +30,7 @@ export default async function SpexareCreatePage() {
             getAllTaskCategories(),
             getAllSpex(),
             getAllSpexCategories(),
-            me(),
+            meOrNull(),
             getTranslations()
         ]);
 

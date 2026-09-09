@@ -30,7 +30,18 @@ ESLint enforces double quotes.
 
 ## File conventions
 
-- `*.client.tsx` = Client Component; `*.server.ts` = server-only module (starts with `import "server-only"`).
+- **A module's directive and its filename must agree**, both ways:
+  - `"use client"` ⇔ `*.client.ts(x)` — components *and* hooks (`use-lazy-full.client.ts`).
+  - `import "server-only"` ⇔ `*.server.ts` (libs, utils).
+  - `"use server"` ⇔ `*.server.ts` too — the `actions.server.ts` server-action modules. Don't add
+    `server-only` to a `"use server"` file; the directive already pins it to the server.
+- Three standing exceptions, all deliberate:
+  - `src/auth.ts` — `server-only`, but keeps the conventional Better Auth entry-point name.
+  - Next.js reserved filenames (`page.tsx`, `layout.tsx`, `error.tsx`, `global-error.tsx`) cannot
+    be renamed, so a `"use client"` one keeps its required name.
+  - shadcn-owned files keep their upstream names so `shadcn add` stays a clean overwrite. That is
+    `src/components/ui/**` *and* `src/hooks/use-mobile.ts`, which ships with the sidebar component
+    and is imported by it as `@/hooks/use-mobile`.
 - `src/gql/**` (generated) and `src/components/ui/**` (shadcn) are ESLint-ignored — don't hand-edit.
 
 ## Rendering and caching — Cache Components is ON
@@ -64,14 +75,39 @@ changing routing or data fetching; this area differs sharply from older Next.
 
 ## Auth and authorization
 
-- Auth.js v5 (`next-auth@5` beta) + Keycloak, configured in `src/auth.ts`. Token refresh happens in
-  the `jwt` callback via `src/lib/auth-tokens.ts`; a failed refresh sets
-  `session.error = "RefreshTokenError"`.
-- `src/proxy.ts` (Next 16's middleware file) runs `auth` on nearly every request.
+- **Better Auth** (`better-auth@1.7`) + Keycloak, configured in `src/auth.ts` via the
+  `genericOAuth` plugin's `keycloak()` helper. There is **no database**: omitting `database`
+  puts Better Auth in stateless mode — the session lives in a JWE `better-auth.session_data`
+  cookie and the Keycloak access/refresh/id tokens in an encrypted, chunked
+  `better-auth.account_data` cookie.
+- Discovery runs once at boot and supplies the JWKS used to verify Keycloak's `id_token`.
+  `src/auth.ts` also pins the fixed `…/protocol/openid-connect/*` paths explicitly — they are the
+  fallback that keeps login working if discovery is unreachable at startup (without them Better
+  Auth drops the provider until the server restarts).
+- **`getSessionContext()` in `src/utils/auth.server.ts` is the single entry point for server-side
+  auth.** It resolves the session, then the Keycloak access token from the account cookie
+  (refreshing when near expiry), then decodes the roles out of that token's
+  `resource_access.spexregister.roles`. It is wrapped in React `cache()` — the layout, urql, axios
+  and every policy check call it within one render. `requireUser()` and `getAccessToken()` are thin
+  wrappers over it; a token that cannot be refreshed reads as logged out.
+- `src/proxy.ts` (Next 16's middleware file) refreshes the account cookie and forwards the
+  resulting `Set-Cookie`. It exists because **RSC renders cannot write cookies** — without it a
+  token rotated during a plain navigation would be recomputed every render and never persist. It
+  never blocks or redirects.
 - Gate server code with `Policies` (`src/utils/policy.server.ts`) plus `withPolicyPage` /
   `withPolicyAction` / `withPolicyRoute` (`src/utils/route.server.ts`). Pages wrap their body in
-  `withPolicyPage(Policies.<entity>.require<Op>, async () => …)`. Don't hand-roll role checks —
+  `withPolicyPage(Policies.<entity>.require<Op>, async (authz) => …)` — take roles from `authz`
+  rather than calling the session again. Don't hand-roll role checks —
   `requireUser` / `requireAnyRole` are in `src/utils/auth.server.ts`. Roles: `USER | EDITOR | ADMIN`.
+- Client side: `src/lib/auth-client.ts` (`useSession`, `signOut`); no session provider is needed.
+  Logout uses `signOut({disableRedirect: true})` and appends `ui_locales`/`theme` to the returned
+  Keycloak `end_session` URL via `appendLogoutParams` (`src/utils/auth.ts`).
+- Env: Better Auth reads only `AUTH_SECRET` (legacy alias), `BETTER_AUTH_SECRET`,
+  `BETTER_AUTH_SECRETS`, `BETTER_AUTH_TRUSTED_ORIGINS` and `BETTER_AUTH_URL` — Auth.js's
+  `AUTH_URL` / `AUTH_TRUST_HOST` do nothing. `NEXT_PUBLIC_AUTH_URL` is inlined at build time
+  (the browser needs it), so **`BETTER_AUTH_URL` is the runtime override** that lets a built image
+  be retargeted without a rebuild; `src/auth.ts` prefers it. `NEXT_PUBLIC_AUTH_KEYCLOAK_ID` is
+  gone — only the server needs the client id now, because Better Auth builds the logout URL.
 
 ## Data layer
 
@@ -113,8 +149,10 @@ an entity means registering it in `registry.tsx` (form, label, `getById`, option
 - Unit: Vitest, tests in `__tests__/` beside the code.
 - E2E: Playwright against a real `next build && next start` on port 3100, with
   `e2e/mock-backend.mjs` standing in for the backend on 4100 (wired through `API_*` env in
-  `playwright.config.ts`). Auth is a session cookie minted directly in `e2e/auth.setup.ts` — no
-  Keycloak round-trip.
+  `playwright.config.ts`). The same mock also acts as a **mini-Keycloak** (discovery, authorize,
+  token, JWKS, userinfo, logout), and `e2e/auth.setup.ts` signs in through a real OIDC
+  authorization-code round-trip before saving `storageState`. Better Auth's cookies are encrypted
+  blobs with no public minting API, so this is the supported way — don't try to forge them.
 
 ## Dependency notes
 

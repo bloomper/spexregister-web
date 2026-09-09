@@ -1,53 +1,41 @@
 import "server-only";
 
-import nextAuth, {DefaultSession} from "next-auth";
-import Keycloak from "next-auth/providers/keycloak";
-import {Role} from "@/types/auth";
-import {gravatarImageUrl, isTokenExpired, mapInitialToken, refreshAccessToken} from "@/lib/auth-tokens";
+import {betterAuth} from "better-auth";
+import {genericOAuth, type GenericOAuthUserInfo, keycloak} from "better-auth/plugins/generic-oauth";
+import {nextCookies} from "better-auth/next-js";
+import {gravatarImageUrl} from "@/lib/gravatar.server";
 
-declare module "next-auth" {
-    interface Session extends DefaultSession {
-        error?: "RefreshTokenError"
-        access_token: string
-        roles: Role[]
-    }
-}
+// The browser needs NEXT_PUBLIC_AUTH_URL, and Next inlines `NEXT_PUBLIC_*` at build time — into
+// the server bundle too. BETTER_AUTH_URL is the runtime override, so a built image can still be
+// retargeted at another hostname without a rebuild, the way Auth.js's AUTH_URL allowed.
+const appUrl = process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_AUTH_URL;
 
-export const {handlers, auth, signIn, signOut} = nextAuth({
-    debug: process.env.NODE_ENV === "development",
-    providers: [Keycloak],
-    callbacks: {
-        async jwt({token, account, user}) {
-            if (account && user) {
-                return mapInitialToken(account, user);
-            }
+const issuer = (process.env.AUTH_KEYCLOAK_ISSUER ?? "").replace(/\/$/, "");
+const endpoint = (name: string) => `${issuer}/protocol/openid-connect/${name}`;
 
-            if (!isTokenExpired(token)) {
-                return token;
-            }
-
-            if (!token.refresh_token) {
-                throw new TypeError("Missing refresh_token");
-            }
-
-            return refreshAccessToken(token.refresh_token as string, token);
-        },
-        async session({session, token}) {
-            session.access_token = token.access_token as string;
-            session.roles = (token.roles as Role[]) || [];
-            session.error = token.error === "RefreshTokenError" ? "RefreshTokenError" : undefined;
-
-            if (session.user) {
-                session.user.id = token.sub as string;
-
-                const image = gravatarImageUrl(token.email);
-
-                if (image) {
-                    session.user.image = image;
-                }
-            }
-
-            return session;
-        },
-    },
-})
+export const auth = betterAuth({
+    baseURL: appUrl,
+    secret: process.env.AUTH_SECRET,
+    plugins: [
+        genericOAuth({
+            config: [
+                {
+                    ...keycloak({
+                        issuer,
+                        clientId: process.env.AUTH_KEYCLOAK_ID ?? "",
+                        clientSecret: process.env.AUTH_KEYCLOAK_SECRET ?? "",
+                        postLogoutRedirectURI: appUrl,
+                    }),
+                    authorizationUrl: endpoint("auth"),
+                    tokenUrl: endpoint("token"),
+                    userInfoUrl: endpoint("userinfo"),
+                    endSessionEndpoint: endpoint("logout"),
+                    mapProfileToUser: (profile: GenericOAuthUserInfo) => ({
+                        image: profile.image ?? gravatarImageUrl(profile.email),
+                    }),
+                },
+            ],
+        }),
+        nextCookies(),
+    ],
+});

@@ -6,8 +6,7 @@ import {Policies} from "@/utils/policy.server";
 import {UserRound} from "lucide-react";
 import {getCountries, getTypes} from "@/lib/settings";
 import {getLocale} from "next-intl/server";
-import {me} from "@/lib/user";
-import {auth} from "@/auth";
+import {meOrNull} from "@/lib/user";
 import {isAdminOrEditor} from "@/utils/auth";
 import {getAll as getAllTags} from "@/lib/tag";
 import {getAll as getAllTasks} from "@/lib/task";
@@ -16,10 +15,8 @@ import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
 export default async function SpexarePage() {
-    return withPolicyPage(Policies.spexare.requireRead, async () => {
-        const session = await auth();
-        const roles = session?.roles || [];
-        const canUpdate = isAdminOrEditor(roles);
+    return withPolicyPage(Policies.spexare.requireRead, async (authz) => {
+        const canUpdate = isAdminOrEditor(authz.roles);
         const locale = await getLocale();
 
         const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, currentUser] = await Promise.all([
@@ -31,7 +28,7 @@ export default async function SpexarePage() {
             getAllTaskCategories(),
             getAllSpex(),
             getAllSpexCategories(),
-            me(),
+            meOrNull(),
         ]);
         const initialItems = page.items;
 

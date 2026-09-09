@@ -178,6 +178,15 @@ export async function me(): Promise<User | null | undefined> {
     return data?.me as User | null | undefined;
 }
 
+export async function meOrNull(): Promise<User | null> {
+    try {
+        return (await me()) ?? null;
+    } catch (error) {
+        console.warn("Could not load the current user; rendering without it", error);
+        return null;
+    }
+}
+
 export async function getAuthorities(): Promise<Authority[]> {
     const data = await runQuery(AuthoritiesQuery, {});
     return (data?.authorities ?? []) as Authority[];

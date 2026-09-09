@@ -1,7 +1,7 @@
 import "server-only";
 
 import axios from "axios";
-import {auth} from "@/auth";
+import {getAccessToken} from "@/utils/auth.server";
 import {getLocale} from "next-intl/server";
 
 const instance = axios.create({
@@ -15,14 +15,10 @@ const instance = axios.create({
 instance.interceptors.request.use(
     async (config) => {
         try {
-            const session = await auth();
+            const accessToken = await getAccessToken();
 
-            if (session?.error === "RefreshTokenError") {
-                return config;
-            }
-
-            if (session?.access_token) {
-                config.headers.Authorization = `Bearer ${session.access_token}`;
+            if (accessToken) {
+                config.headers.Authorization = `Bearer ${accessToken}`;
             }
 
             config.headers.AcceptLanguage = await getLocale();

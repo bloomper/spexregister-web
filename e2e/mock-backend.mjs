@@ -1,4 +1,6 @@
 import {createServer} from "node:http";
+import {randomUUID} from "node:crypto";
+import {exportJWK, generateKeyPair, SignJWT} from "jose";
 
 const PORT = Number(process.env.MOCK_PORT || 4000);
 
@@ -236,22 +238,137 @@ const oidcConfig = {
     id_token_signing_alg_values_supported: ["RS256"],
 };
 
+const KID = "e2e-key";
+const CLIENT_ID = "e2e";
+const TOKEN_TTL = 3600;
+
+const E2E_USER = {
+    sub: "user-1",
+    name: "E2E Admin",
+    email: "e2e@example.com",
+    email_verified: true,
+    preferred_username: "e2e",
+};
+
+const {privateKey, publicKey} = await generateKeyPair("RS256", {extractable: true});
+const publicJwk = {...(await exportJWK(publicKey)), kid: KID, alg: "RS256", use: "sig"};
+
+const pendingCodes = new Map();
+
+const signJwt = (claims, {audience, expiresIn = TOKEN_TTL}) =>
+    new SignJWT(claims)
+        .setProtectedHeader({alg: "RS256", kid: KID, typ: "JWT"})
+        .setIssuer(ISSUER)
+        .setSubject(E2E_USER.sub)
+        .setAudience(audience)
+        .setIssuedAt()
+        .setExpirationTime(`${expiresIn}s`)
+        .sign(privateKey);
+
+const accessToken = () =>
+    signJwt(
+        {
+            ...E2E_USER,
+            typ: "Bearer",
+            azp: CLIENT_ID,
+            resource_access: {spexregister: {roles: ["ADMIN"]}},
+        },
+        {audience: "account"},
+    );
+
+const idToken = (nonce) =>
+    signJwt({...E2E_USER, ...(nonce ? {nonce} : {})}, {audience: CLIENT_ID});
+
+function handleAuthorize(url, res) {
+    const redirectUri = url.searchParams.get("redirect_uri");
+
+    if (!redirectUri) {
+        res.writeHead(400).end("missing redirect_uri");
+        return;
+    }
+
+    const code = randomUUID();
+    pendingCodes.set(code, url.searchParams.get("nonce"));
+
+    const target = new URL(redirectUri);
+    target.searchParams.set("code", code);
+
+    const state = url.searchParams.get("state");
+    if (state) {
+        target.searchParams.set("state", state);
+    }
+
+    res.writeHead(302, {location: target.toString()}).end();
+}
+
+async function handleToken(body, res) {
+    const params = new URLSearchParams(body);
+    const grantType = params.get("grant_type");
+
+    let nonce = null;
+    if (grantType === "authorization_code") {
+        const code = params.get("code");
+        if (!pendingCodes.has(code)) {
+            res.writeHead(400, {"content-type": "application/json"});
+            res.end(JSON.stringify({error: "invalid_grant"}));
+            return;
+        }
+        nonce = pendingCodes.get(code);
+        pendingCodes.delete(code);
+    }
+
+    res.writeHead(200, {"content-type": "application/json"});
+    res.end(JSON.stringify({
+        access_token: await accessToken(),
+        id_token: await idToken(nonce),
+        refresh_token: `refresh-${randomUUID()}`,
+        token_type: "Bearer",
+        expires_in: TOKEN_TTL,
+        scope: "openid profile email",
+    }));
+}
+
+function handleLogout(url, res) {
+    const redirectUri = url.searchParams.get("post_logout_redirect_uri");
+    res.writeHead(302, {location: redirectUri || `http://localhost:${PORT}/`}).end();
+}
+
 const server = createServer((req, res) => {
     const chunks = [];
     req.on("data", (c) => chunks.push(c));
-    req.on("end", () => {
-        const url = req.url || "";
-        if (url.includes("/.well-known/openid-configuration")) {
+    req.on("end", async () => {
+        const raw = req.url || "";
+        const url = new URL(raw, `http://localhost:${PORT}`);
+        const path = url.pathname;
+
+        if (path.endsWith("/.well-known/openid-configuration")) {
             res.writeHead(200, {"content-type": "application/json"});
             res.end(JSON.stringify(oidcConfig));
             return;
         }
-        if (url.endsWith("/protocol/openid-connect/certs")) {
+        if (path.endsWith("/protocol/openid-connect/certs")) {
             res.writeHead(200, {"content-type": "application/json"});
-            res.end(JSON.stringify({keys: []}));
+            res.end(JSON.stringify({keys: [publicJwk]}));
             return;
         }
-        if (req.method === "POST" && url.includes("/api/graphql")) {
+        if (path.endsWith("/protocol/openid-connect/auth")) {
+            handleAuthorize(url, res);
+            return;
+        }
+        if (path.endsWith("/protocol/openid-connect/token")) {
+            await handleToken(Buffer.concat(chunks).toString("utf8"), res);
+            return;
+        }
+        if (path.endsWith("/protocol/openid-connect/userinfo")) {
+            res.writeHead(200, {"content-type": "application/json"});
+            res.end(JSON.stringify(E2E_USER));
+            return;
+        }
+        if (path.endsWith("/protocol/openid-connect/logout")) {
+            handleLogout(url, res);
+            return;
+        }
+        if (req.method === "POST" && path.includes("/api/graphql")) {
             handleGraphql(Buffer.concat(chunks).toString("utf8"), res);
             return;
         }
