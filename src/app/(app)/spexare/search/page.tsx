@@ -25,7 +25,7 @@ export default async function SpexareSearchPage({
         const locale = await getLocale();
 
         const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, currentUser] = await Promise.all([
-            search({q}),
+            search({q, first: 24}),
             getCountries(locale),
             getTypes(locale),
             getAllTags(),

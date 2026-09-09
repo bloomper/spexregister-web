@@ -4,7 +4,7 @@ import {PageInfo} from "@/gql/schema";
 import {CursorPage} from "@/types/pagination";
 
 export function mapConnection<T, E extends { cursor: string; node: T }>(
-    connection: { edges: (E | null | undefined)[]; pageInfo: PageInfo } | null | undefined
+    connection: { edges: (E | null | undefined)[]; pageInfo: PageInfo; totalCount?: number | null } | null | undefined
 ): CursorPage<T> & { edges: E[] } {
     const edges = (connection?.edges ?? []).filter((e): e is E => Boolean(e?.cursor && e?.node));
 
@@ -17,6 +17,7 @@ export function mapConnection<T, E extends { cursor: string; node: T }>(
             startCursor: connection?.pageInfo?.startCursor ?? null,
             endCursor: connection?.pageInfo?.endCursor ?? null,
         },
+        totalCount: connection?.totalCount ?? 0,
     };
 }
 

@@ -100,11 +100,13 @@ describe("collectAllPages", () => {
         const pages: Record<string, CursorPage<{ id: string }>> = {
             "null": {
                 items: [{id: "1"}, {id: "2"}],
-                pageInfo: {hasNextPage: true, hasPreviousPage: false, startCursor: null, endCursor: "c2"}
+                pageInfo: {hasNextPage: true, hasPreviousPage: false, startCursor: null, endCursor: "c2"},
+                totalCount: 3
             },
             "c2": {
                 items: [{id: "3"}],
-                pageInfo: {hasNextPage: false, hasPreviousPage: false, startCursor: null, endCursor: null}
+                pageInfo: {hasNextPage: false, hasPreviousPage: false, startCursor: null, endCursor: null},
+                totalCount: 3
             },
         };
         const fetchPage = vi.fn(async (after: string | null) => pages[String(after)]);
@@ -120,6 +122,7 @@ describe("collectAllPages", () => {
         const fetchPage = vi.fn(async () => ({
             items: [],
             pageInfo: {hasNextPage: false, hasPreviousPage: false, startCursor: null, endCursor: null},
+            totalCount: 0,
         }));
         await expect(collectAllPages(fetchPage)).resolves.toEqual([]);
         expect(fetchPage).toHaveBeenCalledTimes(1);
@@ -129,6 +132,7 @@ describe("collectAllPages", () => {
         const fetchPage = vi.fn(async () => ({
             items: [{id: "x"}],
             pageInfo: {hasNextPage: true, hasPreviousPage: false, startCursor: null, endCursor: "stuck"},
+            totalCount: 1,
         }));
         await expect(collectAllPages(fetchPage)).rejects.toThrow(/exceeded 1000 pages/);
     });

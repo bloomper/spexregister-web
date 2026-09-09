@@ -64,6 +64,7 @@
     "noMoreDataFound": "No more data found",
     "none": "None",
     "openMenu": "Open menu",
+    "pageOf": "Page {page} of {pages}",
     "reset": "Reset",
     "resetFilters": "Reset filters",
     "rowsPerPage": "Rows per page",

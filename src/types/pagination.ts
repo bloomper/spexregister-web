@@ -42,6 +42,7 @@ export type CursorPageInfo = {
 export type CursorPage<TItem> = {
     items: TItem[];
     pageInfo: CursorPageInfo;
+    totalCount: number;
 };
 
 export type ActivityPage = CursorPage<Activity> & {

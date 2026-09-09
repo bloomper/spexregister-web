@@ -38,6 +38,7 @@ const SpexPagedSummary = graphql(`
         spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...SpexSummary } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);
@@ -47,6 +48,7 @@ const SpexPagedFull = graphql(`
         spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...SpexFull } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);

@@ -72,12 +72,10 @@ export function useSpexareSearch({
                 });
             });
 
-            const currentOffset = isFirstPage ? 0 : parseInt(args.after || "0");
-
             const result = await searchAction({
                 q: filterQuery.trim() || "",
-                limit: args.pageSize,
-                offset: currentOffset,
+                first: args.pageSize,
+                after: args.after,
                 aggregationFilters,
             });
 
@@ -85,18 +83,7 @@ export function useSpexareSearch({
                 setCurrentFacets(result.facets);
             }
 
-            const hasNextPage = result.pageInfo?.hasNextPage;
-            const resolvedHasNextPage =
-                result.items.length === args.pageSize && hasNextPage;
-
-            return {
-                ...result,
-                pageInfo: {
-                    ...result.pageInfo,
-                    endCursor: (currentOffset + result.items.length).toString(),
-                    hasNextPage: resolvedHasNextPage,
-                }
-            };
+            return result;
         }
 
         const parts: string[] = [];

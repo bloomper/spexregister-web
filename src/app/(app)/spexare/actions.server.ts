@@ -74,8 +74,10 @@ export async function getPageAction(args: {
 export async function searchAction(args: {
     q: string;
     aggregationFilters: AggregationFilterInput[];
-    limit?: number;
-    offset?: number;
+    first?: number;
+    last?: number;
+    after?: string | null;
+    before?: string | null;
     sort?: string[];
     direction?: SortDirection;
 }) {

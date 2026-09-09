@@ -42,6 +42,7 @@ const UserPagedSummary = graphql(`
         userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...UserSummary } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);
@@ -51,6 +52,7 @@ const UserPagedFull = graphql(`
         userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...UserFull } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);

@@ -31,6 +31,7 @@ const TaskPagedSummary = graphql(`
         taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...TaskSummary } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);
@@ -40,6 +41,7 @@ const TaskPagedFull = graphql(`
         taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...TaskFull } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);

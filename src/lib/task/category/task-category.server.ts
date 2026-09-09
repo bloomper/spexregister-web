@@ -27,6 +27,7 @@ const TaskCategoryPagedSummary = graphql(`
         taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...TaskCategorySummary } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);
@@ -36,6 +37,7 @@ const TaskCategoryPagedFull = graphql(`
         taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...TaskCategoryFull } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);

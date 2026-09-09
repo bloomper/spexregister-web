@@ -10,17 +10,7 @@ import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 import {getAuthorities, getStates} from "@/lib/user";
-import {
-    Authority,
-    Country,
-    Spex,
-    SpexCategory,
-    State,
-    Tag,
-    Task,
-    TaskCategory,
-    Type,
-} from "@/gql/schema";
+import {Authority, Country, Spex, SpexCategory, State, Tag, Task, TaskCategory, Type,} from "@/gql/schema";
 import type {EntityType} from "@/components/edit-queue/edit-queue-provider.client";
 
 export type EditQueueOptions = {

@@ -10,6 +10,7 @@ vi.mock("@/hooks/use-infinite-scrolling.client", () => ({
 const noopFetch = async () => ({
     items: [],
     pageInfo: {hasNextPage: false, hasPreviousPage: false, startCursor: null, endCursor: null},
+    totalCount: 0,
 });
 
 beforeEach(() => {

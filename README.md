@@ -9,8 +9,8 @@ Spexregister Web is the second generation of the frontend responsible for servin
 - **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
 - **UI & Styling:
   ** [shadcn/ui](https://ui.shadcn.com/), [Radix UI](https://www.radix-ui.com/) & [Tailwind CSS 4](https://tailwindcss.com/)
-- **Data Fetching:** [urql](https://formidable.com/open-source/urql/) (GraphQL) & [Axios](https://axios-http.com/) (
-  REST)
+- **Data Fetching:** [urql](https://formidable.com/open-source/urql/) (GraphQL) & [Axios](https://axios-http.com/)
+  (REST)
 - **State Management:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/) for validation
 - **Authentication:** [Better Auth](https://better-auth.com/) (Keycloak integration, stateless sessions)
 - **Internationalization:** [next-intl](https://next-intl-docs.vercel.app/) (Supports English & Swedish)

@@ -19,7 +19,7 @@ import {getAction as getTaskAction} from "@/app/(app)/tasks/actions.server";
 import {getAction as getTaskCategoryAction} from "@/app/(app)/tasks/categories/actions.server";
 import {getAction as getTagAction} from "@/app/(app)/tags/actions.server";
 import {getAction as getUserAction} from "@/app/(app)/users/actions.server";
-import {News, Spex, SpexCategory, Spexare, Tag, Task, TaskCategory, User} from "@/gql/schema";
+import {News, Spex, Spexare, SpexCategory, Tag, Task, TaskCategory, User} from "@/gql/schema";
 
 export const EDIT_QUEUE_FORM_ID = "edit-queue-form";
 
@@ -95,7 +95,8 @@ export const editQueueRegistry: Record<EntityType, RegistryEntry> = {
         getById: (id) => getSpexCategoryAction(id),
         labelOf: (i) => (i as SpexCategory).name ?? "",
         Form: ({item, onSuccess, onError}) => (
-            <SpexCategoryForm item={item as SpexCategory} onSuccess={onSuccess} onError={onError} embedded formId={EDIT_QUEUE_FORM_ID}/>
+            <SpexCategoryForm item={item as SpexCategory} onSuccess={onSuccess} onError={onError} embedded
+                              formId={EDIT_QUEUE_FORM_ID}/>
         ),
     },
     task: {
@@ -120,7 +121,8 @@ export const editQueueRegistry: Record<EntityType, RegistryEntry> = {
         getById: (id) => getTaskCategoryAction(id),
         labelOf: (i) => (i as TaskCategory).name ?? "",
         Form: ({item, onSuccess, onError}) => (
-            <TaskCategoryForm item={item as TaskCategory} onSuccess={onSuccess} onError={onError} embedded formId={EDIT_QUEUE_FORM_ID}/>
+            <TaskCategoryForm item={item as TaskCategory} onSuccess={onSuccess} onError={onError} embedded
+                              formId={EDIT_QUEUE_FORM_ID}/>
         ),
     },
     tag: {

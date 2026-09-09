@@ -1,10 +1,10 @@
 import {
+    type ColumnDef,
     metaHelper,
+    type RowData,
     rowSelectionFeature,
     rowSortingFeature,
     tableFeatures,
-    type ColumnDef,
-    type RowData,
     type TableFeatures
 } from "@tanstack/react-table";
 

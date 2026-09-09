@@ -126,6 +126,7 @@ export async function collectAllPages<TItem>(
 type ConnectionShape<TEdge> = {
     edges: (TEdge | null | undefined)[];
     pageInfo: PageInfo;
+    totalCount?: number | null;
 };
 
 export type PagedArgs = {

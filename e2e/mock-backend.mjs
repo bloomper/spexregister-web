@@ -74,18 +74,42 @@ function spexarePaged(variables) {
     const slice = sorted.slice(start, start + first);
     const end = start + slice.length;
     const pageEdges = slice.map((node, i) => ({cursor: `c${start + i}`, node}));
-    return {spexarePaged: {edges: pageEdges, pageInfo: pageInfo(end < matched.length, String(end))}};
+    return {
+        spexarePaged: {
+            edges: pageEdges,
+            pageInfo: pageInfo(end < matched.length, String(end)),
+            totalCount: matched.length,
+        },
+    };
 }
 
-const paged = (field, items) => ({[field]: {edges: edges(items), pageInfo: pageInfo(false, null)}});
+const paged = (field, items) => ({
+    [field]: {edges: edges(items), pageInfo: pageInfo(false, null), totalCount: items.length},
+});
 
 const spexCategoryList = [
     {id: "1", name: "Chalmersspexet", logoUrl: null, firstYear: 1948},
     {id: "2", name: "Veraspexet", logoUrl: null, firstYear: 2002},
 ];
 const spexList = [
-    {id: "1", year: 1996, title: "Nobel", posterUrl: null, revival: false, revivals: [], category: {id: "1", name: "Chalmersspexet"}},
-    {id: "2", year: 2018, title: "Ada Lovelace", posterUrl: null, revival: false, revivals: [], category: {id: "2", name: "Veraspexet"}},
+    {
+        id: "1",
+        year: 1996,
+        title: "Nobel",
+        posterUrl: null,
+        revival: false,
+        revivals: [],
+        category: {id: "1", name: "Chalmersspexet"}
+    },
+    {
+        id: "2",
+        year: 2018,
+        title: "Ada Lovelace",
+        posterUrl: null,
+        revival: false,
+        revivals: [],
+        category: {id: "2", name: "Veraspexet"}
+    },
 ];
 const taskCategoryList = [
     {id: "1", name: "Ensemble", actorPresent: true},
@@ -110,9 +134,24 @@ function applyTagUpdate(input) {
     const created = {id: id || "new-tag", name: input?.name ?? ""};
     return created;
 }
+
 const userList = [
-    {id: "1", externalId: "ext-1", email: "admin@example.com", authorities: [{id: "1", label: "ADMIN"}], state: {id: "1", label: "ACTIVE"}, spexare: null},
-    {id: "2", externalId: "ext-2", email: "redaktor@example.com", authorities: [{id: "2", label: "EDITOR"}], state: {id: "1", label: "ACTIVE"}, spexare: null},
+    {
+        id: "1",
+        externalId: "ext-1",
+        email: "admin@example.com",
+        authorities: [{id: "1", label: "ADMIN"}],
+        state: {id: "1", label: "ACTIVE"},
+        spexare: null
+    },
+    {
+        id: "2",
+        externalId: "ext-2",
+        email: "redaktor@example.com",
+        authorities: [{id: "2", label: "EDITOR"}],
+        state: {id: "1", label: "ACTIVE"},
+        spexare: null
+    },
 ];
 
 const withAudit = (s) => ({...s, ...audit});
@@ -125,8 +164,8 @@ const resolvers = {
     Countries: () => ({countries: [{isoCode: "SE", label: "Sverige"}, {isoCode: "NO", label: "Norge"}]}),
     Types: () => ({types: []}),
 
-    NewsPagedSummary: () => ({newsPaged: {edges: edges(newsList), pageInfo: pageInfo(false, null)}}),
-    NewsPagedFull: () => ({newsPaged: {edges: edges(newsList), pageInfo: pageInfo(false, null)}}),
+    NewsPagedSummary: () => paged("newsPaged", newsList),
+    NewsPagedFull: () => paged("newsPaged", newsList),
     NewsUpdate: (v) => ({
         newsUpdate: {
             id: v?.input?.id ?? "1",
@@ -144,10 +183,22 @@ const resolvers = {
     SpexareGet: (v) => ({spexare: spexareFull(spexareList.find((s) => s.id === String(v?.id)) ?? spexareList[0])}),
     SpexareSearch: (v) => {
         const {spexarePaged: p} = spexarePaged({filter: `firstName:*${v?.q ?? ""}*`});
-        return {spexareSearchPaged: {edges: p.edges, pageInfo: pageInfo(false, null), facets: []}};
+        return {
+            spexareSearchPaged: {
+                edges: p.edges,
+                pageInfo: pageInfo(false, null),
+                totalCount: p.totalCount,
+                facets: [],
+            },
+        };
     },
     SpexareCreate: (v) => ({spexareCreate: spexareFull({...blankSpexare, id: "new-1", ...(v?.input ?? {})})}),
-    SpexareUpdate: (v) => ({spexareUpdate: spexareFull({...blankSpexare, id: v?.input?.id ?? "new-1", ...(v?.input ?? {})})}),
+    SpexareUpdate: (v) => ({
+        spexareUpdate: spexareFull({
+            ...blankSpexare,
+            id: v?.input?.id ?? "new-1", ...(v?.input ?? {})
+        })
+    }),
     SpexareExport: () => ({spexareExport: {id: "export-job-1"}}),
 
     TagPagedSummary: () => paged("tagPaged", tagList),

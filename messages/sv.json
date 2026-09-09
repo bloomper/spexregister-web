@@ -64,6 +64,7 @@
     "noMoreDataFound": "Ingen mer data hittades",
     "none": "Ingen",
     "openMenu": "Öppna meny",
+    "pageOf": "Sida {page} av {pages}",
     "reset": "Återställ",
     "resetFilters": "Återställ filter",
     "rowsPerPage": "Rader per sida",

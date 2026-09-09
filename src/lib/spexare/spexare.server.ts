@@ -81,6 +81,7 @@ const SpexarePagedSummary = graphql(`
         spexarePaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...SpexareSummary } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);
@@ -90,6 +91,7 @@ const SpexarePagedFull = graphql(`
         spexarePaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {
             edges { cursor node { ...SpexareFull } }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);
@@ -160,8 +162,8 @@ const ExportQuery = graphql(`
 `);
 
 const SearchQuery = graphql(`
-    query SpexareSearch($q: String!, $aggregationFilters: [AggregationFilterInput], $limit: Int, $offset: Int, $sort: [String], $direction: SortDirection) {
-        spexareSearchPaged(q: $q, aggregationFilters: $aggregationFilters, limit: $limit, offset: $offset, sort: $sort, direction: $direction) {
+    query SpexareSearch($q: String!, $aggregationFilters: [AggregationFilterInput], $first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection) {
+        spexareSearchPaged(q: $q, aggregationFilters: $aggregationFilters, first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction) {
             edges { cursor node { ...SpexareSummary } }
             facets {
                 id
@@ -177,6 +179,7 @@ const SearchQuery = graphql(`
                 }
             }
             pageInfo { hasNextPage hasPreviousPage startCursor endCursor }
+            totalCount
         }
     }
 `);
@@ -184,16 +187,20 @@ const SearchQuery = graphql(`
 export async function search(args: {
     q: string;
     aggregationFilters?: AggregationFilterInput[];
-    limit?: number;
-    offset?: number;
+    first?: number;
+    last?: number;
+    after?: string | null;
+    before?: string | null;
     sort?: string[];
     direction?: SortDirection;
 }): Promise<SpexareWithFacetsPage> {
     const data = await runQuery(SearchQuery, {
         q: args.q,
         aggregationFilters: args.aggregationFilters ?? [],
-        limit: args.limit ?? 24,
-        offset: args.offset ?? 0,
+        first: args.first ?? null,
+        last: args.last ?? null,
+        after: args.after ?? null,
+        before: args.before ?? null,
         sort: args.sort ?? ["score"],
         direction: args.direction ?? SortDirection.Desc,
     }, {
@@ -212,6 +219,7 @@ export async function search(args: {
                 startCursor: null,
                 endCursor: null,
             },
+            totalCount: connection.totalCount ?? 0,
         }
         : undefined;
     const page = mapConnection<Spexare, SpexareEdge>(safeConnection as Parameters<typeof mapConnection<Spexare, SpexareEdge>>[0]);

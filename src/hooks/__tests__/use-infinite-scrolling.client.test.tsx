@@ -11,6 +11,7 @@ const EMPTY: Item[] = [];
 const page = (items: Item[], hasNextPage: boolean, endCursor: string | null): CursorPage<Item> => ({
     items,
     pageInfo: {hasNextPage, hasPreviousPage: false, startCursor: null, endCursor},
+    totalCount: items.length,
 });
 
 function renderCursor(options: UseInfiniteCursorOptions<Item>) {
@@ -147,4 +148,37 @@ describe("useInfiniteCursor", () => {
         expect(result.current.hasNextPage).toBe(false);
         expect(fetchPageAction).not.toHaveBeenCalled();
     });
+
+    it("drops a response that was already in flight when reset() was called", async () => {
+        // Reproduces the faceting symptom: changing the facet selection resets the list, but a
+        // request issued under the previous selection was still in flight and its (non-matching)
+        // rows were appended to the freshly reset list.
+        let releaseStale: (value: CursorPage<Item>) => void = () => {
+        };
+        const stale = new Promise<CursorPage<Item>>((resolve) => {
+            releaseStale = resolve;
+        });
+
+        const fetchPageAction = vi
+            .fn()
+            .mockReturnValueOnce(stale)
+            .mockResolvedValue(page([{id: "matches-new-facet"}], false, null));
+
+        const {result} = renderCursor({fetchPageAction, pageSize: 2, getKeyAction: getKey, initialItems: EMPTY});
+        await waitFor(() => expect(fetchPageAction).toHaveBeenCalledTimes(1));
+
+        act(() => {
+            result.current.reset();
+        });
+        await waitFor(() => expect(result.current.items.map(getKey)).toEqual(["matches-new-facet"]));
+
+        await act(async () => {
+            releaseStale(page([{id: "matches-old-facet"}], false, null));
+            await stale;
+        });
+
+        expect(result.current.items.map(getKey)).toEqual(["matches-new-facet"]);
+        expect(result.current.loading).toBe(false);
+    });
+
 });

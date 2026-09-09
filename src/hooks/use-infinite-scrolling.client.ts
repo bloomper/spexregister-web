@@ -58,6 +58,8 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const generationRef = useRef(0);
+
     const initialSignature = [
         initialItems.length,
         getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[0]) : "",
@@ -79,6 +81,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
             return;
         }
         seededSignatureRef.current = initialSignature;
+        generationRef.current += 1;
 
         setItems(initialItemsRef.current);
         if (initialPageInfoRef.current) {
@@ -97,11 +100,17 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
             return;
         }
 
+        const generation = generationRef.current;
+
         setLoading(true);
         setError(null);
 
         try {
             const page = await fetchPageAction({after, pageSize});
+
+            if (generation !== generationRef.current) {
+                return;
+            }
 
             setItems((prev) => {
                 if (!getKeyAction) {
@@ -123,9 +132,14 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
             setHasNextPage(Boolean(page.pageInfo?.hasNextPage));
             setAfter(page.pageInfo?.endCursor ?? null);
         } catch (e) {
+            if (generation !== generationRef.current) {
+                return;
+            }
             setError(e instanceof Error ? e.message : "Failed to load data");
         } finally {
-            setLoading(false);
+            if (generation === generationRef.current) {
+                setLoading(false);
+            }
         }
     }, [after, fetchPageAction, getKeyAction, hasNextPage, loading, pageSize, error]);
 
@@ -143,6 +157,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
     }, [inView, loadMore]);
 
     const reset = useCallback(() => {
+        generationRef.current += 1;
         setItems([]);
         setAfter(null);
         setHasNextPage(true);

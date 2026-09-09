@@ -16,7 +16,8 @@ export default async function ImpexManagePage() {
                 hasPreviousPage: false,
                 startCursor: null,
                 endCursor: null
-            }
+            },
+            totalCount: jobs.length
         };
 
         return (

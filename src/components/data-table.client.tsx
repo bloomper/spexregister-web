@@ -7,7 +7,7 @@ import {RowSelectionState, SortingState, useTable} from "@tanstack/react-table";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
-import {ChevronLeft, ChevronRight, ChevronsLeft} from "lucide-react";
+import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useTranslations} from "next-intl";
 import {SortDirection} from "@/gql/schema";
@@ -15,7 +15,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {cn} from "@/utils/utils";
 import {Spinner} from "@/components/ui/spinner";
 import {useDataRefresh} from "@/hooks/use-data-refresh.client";
-import {dataTableFeatures, type DataTableColumnDef, type DataTableMeta} from "@/components/data-table-features";
+import {type DataTableColumnDef, dataTableFeatures, type DataTableMeta} from "@/components/data-table-features";
 
 interface DataTableProps<TData extends { id: string }> {
     columns: DataTableColumnDef<TData>[]
@@ -41,21 +41,23 @@ interface DataTableProps<TData extends { id: string }> {
 }
 
 export function DataTable<TData extends { id: string }>({
-                                                                    columns,
-                                                                    initialData,
-                                                                    initialPageSize = 15,
-                                                                    initialSorting = [],
-                                                                    initialFilter,
-                                                                    onFetch,
-                                                                    meta: extraMeta,
-                                                                    children,
-                                                                    onRowClick,
-                                                                    onSelectionChange,
-                                                                    rowClassName,
-                                                                    showPagination = true,
-                                                                }: DataTableProps<TData>) {
+                                                            columns,
+                                                            initialData,
+                                                            initialPageSize = 15,
+                                                            initialSorting = [],
+                                                            initialFilter,
+                                                            onFetch,
+                                                            meta: extraMeta,
+                                                            children,
+                                                            onRowClick,
+                                                            onSelectionChange,
+                                                            rowClassName,
+                                                            showPagination = true,
+                                                        }: DataTableProps<TData>) {
     const [data, setData] = useState<TData[]>(initialData.items);
     const [pageInfo, setPageInfo] = useState<CursorPageInfo>(initialData.pageInfo);
+    const [totalCount, setTotalCount] = useState(initialData.totalCount);
+    const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(initialPageSize);
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -66,6 +68,8 @@ export function DataTable<TData extends { id: string }>({
     if (lastInitialData.current !== initialData) {
         setData(initialData.items);
         setPageInfo(initialData.pageInfo);
+        setTotalCount(initialData.totalCount);
+        setPageIndex(0);
         lastInitialData.current = initialData;
     }
 
@@ -81,9 +85,13 @@ export function DataTable<TData extends { id: string }>({
 
     const lastFetchArgsRef = useRef<Parameters<typeof onFetch>[0]>({first: initialPageSize});
 
+    const fetchGenerationRef = useRef(0);
+
     const handleFetch = useCallback(async (args: Parameters<typeof onFetch>[0], options?: {
         keepSelection?: boolean
     }) => {
+        const generation = ++fetchGenerationRef.current;
+
         setLoading(true);
         if (!options?.keepSelection) {
             setRowSelection({});
@@ -99,10 +107,18 @@ export function DataTable<TData extends { id: string }>({
 
         try {
             const result = await onFetch({...args, sort, direction, filter: currentFilter});
+
+            if (generation !== fetchGenerationRef.current) {
+                return;
+            }
+
             setData(result.items);
             setPageInfo(result.pageInfo);
+            setTotalCount(result.totalCount);
         } finally {
-            setLoading(false);
+            if (generation === fetchGenerationRef.current) {
+                setLoading(false);
+            }
         }
     }, [filter, getSortKey, onFetch, sorting]);
 
@@ -110,11 +126,11 @@ export function DataTable<TData extends { id: string }>({
         void handleFetch(lastFetchArgsRef.current, {keepSelection: true});
     }, [handleFetch]);
 
-    // Re-fetch when a mutation elsewhere (e.g. the edit-queue drawer) signals a data change.
     useDataRefresh(refresh);
 
     const handleFilterChange = useCallback((newFilter: string) => {
         setFilter(newFilter);
+        setPageIndex(0);
         void handleFetch({first: pageSize, filter: newFilter});
     }, [handleFetch, pageSize]);
 
@@ -126,16 +142,25 @@ export function DataTable<TData extends { id: string }>({
         extraMetaRef.current?.setFilter?.(handleFilterChange);
     }, [handleFilterChange, refresh]);
 
-    const handlePageChange = (direction: "next" | "prev" | "first") => {
+    const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
+
+    const handlePageChange = (direction: "next" | "prev" | "first" | "last") => {
         if (!showPagination) {
             return;
         }
 
         if (direction === "first") {
+            setPageIndex(0);
             void handleFetch({first: pageSize});
+        } else if (direction === "last") {
+            // No cursor: the server resolves "the last page" from the total element count.
+            setPageIndex(pageCount - 1);
+            void handleFetch({last: pageSize});
         } else if (direction === "next" && pageInfo.endCursor) {
+            setPageIndex((current) => current + 1);
             void handleFetch({first: pageSize, after: pageInfo.endCursor});
         } else if (direction === "prev" && pageInfo.startCursor) {
+            setPageIndex((current) => Math.max(0, current - 1));
             void handleFetch({last: pageSize, before: pageInfo.startCursor});
         }
     };
@@ -155,6 +180,7 @@ export function DataTable<TData extends { id: string }>({
             const sortField = nextSorting[0];
             const sortId = sortField ? getSortKey(sortField.id) : undefined;
 
+            setPageIndex(0);
             void handleFetch({
                 first: pageSize,
                 sort: sortId ? [sortId] : undefined,
@@ -183,6 +209,7 @@ export function DataTable<TData extends { id: string }>({
 
         const newSize = parseInt(value, 10);
         setPageSize(newSize);
+        setPageIndex(0);
         void handleFetch({first: newSize});
     };
 
@@ -262,6 +289,9 @@ export function DataTable<TData extends { id: string }>({
                         </Select>
                     </div>
                     <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                        <p className="text-sm font-medium whitespace-nowrap">
+                            {t("Common.pageOf", {page: Math.min(pageIndex + 1, pageCount), pages: pageCount})}
+                        </p>
                         <Button
                             variant="outline"
                             className="hidden h-8 w-8 p-0 lg:flex"
@@ -285,6 +315,14 @@ export function DataTable<TData extends { id: string }>({
                             disabled={!pageInfo.hasNextPage || loading}
                         >
                             <ChevronRight className="h-4 w-4"/>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="hidden h-8 w-8 p-0 lg:flex"
+                            onClick={() => handlePageChange("last")}
+                            disabled={!pageInfo.hasNextPage || loading}
+                        >
+                            <ChevronsRight className="h-4 w-4"/>
                         </Button>
                     </div>
                 </div>

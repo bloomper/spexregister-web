@@ -84,10 +84,10 @@ describe("useSpexareSearch (filter mode)", () => {
 });
 
 describe("useSpexareSearch (search mode)", () => {
-    it("dispatches a faceted search with the query, limit and offset", async () => {
+    it("dispatches a faceted search with the query and cursor", async () => {
         renderHook(() => useSpexareSearch({mode: "search", initialSearchQuery: "q", facets: [], initialItems: []}));
         await fetchWith();
-        expect(searchAction).toHaveBeenCalledWith({q: "q", limit: 24, offset: 0, aggregationFilters: []});
+        expect(searchAction).toHaveBeenCalledWith({q: "q", first: 24, after: null, aggregationFilters: []});
         expect(getPageAction).not.toHaveBeenCalled();
     });
 });

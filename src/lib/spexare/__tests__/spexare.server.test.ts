@@ -64,8 +64,10 @@ describe("spexare search", () => {
         expect(result.facets).toEqual([{id: "f1", label: "F1"}]);
         expect(query.mock.calls[0][1]).toMatchObject({
             q: "ann",
-            limit: 24,
-            offset: 0,
+            first: null,
+            last: null,
+            after: null,
+            before: null,
             sort: ["score"],
             direction: SortDirection.Desc
         });

@@ -2,9 +2,13 @@
 
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read
+the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next`
+package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+This block is written and re-added by `next dev` — verify at
+`node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted
+change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
 
@@ -31,17 +35,17 @@ ESLint enforces double quotes.
 ## File conventions
 
 - **A module's directive and its filename must agree**, both ways:
-  - `"use client"` ⇔ `*.client.ts(x)` — components *and* hooks (`use-lazy-full.client.ts`).
-  - `import "server-only"` ⇔ `*.server.ts` (libs, utils).
-  - `"use server"` ⇔ `*.server.ts` too — the `actions.server.ts` server-action modules. Don't add
-    `server-only` to a `"use server"` file; the directive already pins it to the server.
+    - `"use client"` ⇔ `*.client.ts(x)` — components *and* hooks (`use-lazy-full.client.ts`).
+    - `import "server-only"` ⇔ `*.server.ts` (libs, utils).
+    - `"use server"` ⇔ `*.server.ts` too — the `actions.server.ts` server-action modules. Don't add
+      `server-only` to a `"use server"` file; the directive already pins it to the server.
 - Three standing exceptions, all deliberate:
-  - `src/auth.ts` — `server-only`, but keeps the conventional Better Auth entry-point name.
-  - Next.js reserved filenames (`page.tsx`, `layout.tsx`, `error.tsx`, `global-error.tsx`) cannot
-    be renamed, so a `"use client"` one keeps its required name.
-  - shadcn-owned files keep their upstream names so `shadcn add` stays a clean overwrite. That is
-    `src/components/ui/**` *and* `src/hooks/use-mobile.ts`, which ships with the sidebar component
-    and is imported by it as `@/hooks/use-mobile`.
+    - `src/auth.ts` — `server-only`, but keeps the conventional Better Auth entry-point name.
+    - Next.js reserved filenames (`page.tsx`, `layout.tsx`, `error.tsx`, `global-error.tsx`) cannot
+      be renamed, so a `"use client"` one keeps its required name.
+    - shadcn-owned files keep their upstream names so `shadcn add` stays a clean overwrite. That is
+      `src/components/ui/**` *and* `src/hooks/use-mobile.ts`, which ships with the sidebar component
+      and is imported by it as `@/hooks/use-mobile`.
 - `src/gql/**` (generated) and `src/components/ui/**` (shadcn) are ESLint-ignored — don't hand-edit.
 
 ## Rendering and caching — Cache Components is ON
@@ -85,8 +89,8 @@ changing routing or data fetching; this area differs sharply from older Next.
   fallback that keeps login working if discovery is unreachable at startup (without them Better
   Auth drops the provider until the server restarts).
 - **`getSessionContext()` in `src/utils/auth.server.ts` is the single entry point for server-side
-  auth.** It resolves the session, then the Keycloak access token from the account cookie
-  (refreshing when near expiry), then decodes the roles out of that token's
+  auth.** It resolves the session, then the Keycloak access token from the account cookie (refreshing when near expiry),
+  then decodes the roles out of that token's
   `resource_access.spexregister.roles`. It is wrapped in React `cache()` — the layout, urql, axios
   and every policy check call it within one render. `requireUser()` and `getAccessToken()` are thin
   wrappers over it; a token that cannot be refreshed reads as logged out.
@@ -104,8 +108,8 @@ changing routing or data fetching; this area differs sharply from older Next.
   Keycloak `end_session` URL via `appendLogoutParams` (`src/utils/auth.ts`).
 - Env: Better Auth reads only `AUTH_SECRET` (legacy alias), `BETTER_AUTH_SECRET`,
   `BETTER_AUTH_SECRETS`, `BETTER_AUTH_TRUSTED_ORIGINS` and `BETTER_AUTH_URL` — Auth.js's
-  `AUTH_URL` / `AUTH_TRUST_HOST` do nothing. `NEXT_PUBLIC_AUTH_URL` is inlined at build time
-  (the browser needs it), so **`BETTER_AUTH_URL` is the runtime override** that lets a built image
+  `AUTH_URL` / `AUTH_TRUST_HOST` do nothing. `NEXT_PUBLIC_AUTH_URL` is inlined at build time (the browser needs it), so
+  **`BETTER_AUTH_URL` is the runtime override** that lets a built image
   be retargeted without a rebuild; `src/auth.ts` prefers it. `NEXT_PUBLIC_AUTH_KEYCLOAK_ID` is
   gone — only the server needs the client id now, because Better Auth builds the logout URL.
 
@@ -130,7 +134,7 @@ changing routing or data fetching; this area differs sharply from older Next.
 previously hit in this codebase:
 
 - `useTable()` returns a **new object on every state change**. Never put `table` in a `useEffect`
-  dependency array — derive from state instead (see the comment at `src/components/data-table.client.tsx:171`).
+  dependency array — derive from state instead (see the comment at `src/components/data-table.client.tsx:187`).
 - A column's `id` is **not** the backend sort path. Put the entity path in `meta.sortKey`
   (`"category.name"`, `"details.title"`); `getSortKey` reads it. A wrong key silently returns an
   empty page.

@@ -197,6 +197,7 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
                             startCursor: null,
                             endCursor: null
                         },
+                        totalCount: jobs.length,
                     };
                 }}
                 meta={{
