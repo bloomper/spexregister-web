@@ -2,7 +2,7 @@
 
 import {startTransition, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
-import {useInfiniteList} from "@/hooks/use-infinite-list";
+import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {Facet, Spexare} from "@/gql/schema";
 import {CursorPageInfo, SpexarePage} from "@/types/pagination";
 import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";

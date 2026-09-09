@@ -1,9 +1,9 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {renderHook} from "@testing-library/react";
-import {useInfiniteList} from "@/hooks/use-infinite-list";
+import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 
 const cursor = vi.fn();
-vi.mock("@/hooks/use-infinite-scrolling", () => ({
+vi.mock("@/hooks/use-infinite-scrolling.client", () => ({
     useInfiniteCursor: (opts: unknown) => cursor(opts),
 }));
 

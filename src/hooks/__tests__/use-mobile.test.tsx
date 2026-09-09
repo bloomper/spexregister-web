@@ -1,7 +1,7 @@
 import {afterEach, describe, expect, it} from "vitest";
 import {renderHook} from "@testing-library/react";
 import {useIsMobile} from "@/hooks/use-mobile";
-import {useIsClient} from "@/hooks/use-is-client";
+import {useIsClient} from "@/hooks/use-is-client.client";
 
 const originalWidth = window.innerWidth;
 

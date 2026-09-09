@@ -1,3 +1,5 @@
+"use client";
+
 import {useEffect, useRef} from "react";
 import {toast} from "sonner";
 import {getJobStatusAction} from "@/app/(app)/impex/actions.server";

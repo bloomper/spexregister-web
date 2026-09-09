@@ -18,14 +18,14 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import {Spinner} from "@/components/ui/spinner";
 import {useEditQueue, type EntityType} from "@/components/edit-queue/edit-queue-provider.client";
-import {editQueueRegistry} from "@/components/edit-queue/registry";
+import {editQueueRegistry} from "@/components/edit-queue/registry.client";
 import {
     EditQueueFormStateProvider,
     IDLE_FORM_STATE,
     type EditQueueFormState,
 } from "@/components/edit-queue/edit-queue-form-state.client";
 import {getEditQueueOptions, type EditQueueOptions} from "@/app/(app)/edit-queue/actions.server";
-import {emitDataRefresh} from "@/hooks/use-data-refresh";
+import {emitDataRefresh} from "@/hooks/use-data-refresh.client";
 
 const EMPTY_OPTIONS: EditQueueOptions = {
     types: [], countries: [], tags: [], tasks: [], taskCategories: [],

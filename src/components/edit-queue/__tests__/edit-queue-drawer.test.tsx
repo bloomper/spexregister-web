@@ -11,7 +11,7 @@ const getById = vi.fn(async (id: string) => ({id}));
 const onSubmitSpy = vi.fn();
 let submitShouldFail = false;
 
-vi.mock("@/hooks/use-data-refresh", () => ({
+vi.mock("@/hooks/use-data-refresh.client", () => ({
     emitDataRefresh: (...args: unknown[]) => emitDataRefresh(...args),
     useDataRefresh: () => undefined,
 }));
@@ -46,7 +46,7 @@ function FakeForm({item, onSuccess, onError}: {
     );
 }
 
-vi.mock("@/components/edit-queue/registry", () => ({
+vi.mock("@/components/edit-queue/registry.client", () => ({
     EDIT_QUEUE_FORM_ID: "edit-queue-form",
     editQueueRegistry: {
         tag: {

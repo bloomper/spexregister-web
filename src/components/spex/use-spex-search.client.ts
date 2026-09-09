@@ -1,7 +1,7 @@
 "use client";
 
 import {useCallback, useEffect, useState} from "react";
-import {useInfiniteList} from "@/hooks/use-infinite-list";
+import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {Spex, SpexCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {getPageAction} from "@/app/(app)/spex/actions.server";

@@ -11,7 +11,7 @@ import {DataFilter} from "@/components/data-filter";
 import {ClipboardList, X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
-import {useTaskSearch} from "@/components/task/use-task-search";
+import {useTaskSearch} from "@/components/task/use-task-search.client";
 import {TaskCard} from "@/components/task/task-card.client";
 import {TaskViewDialog} from "@/components/task/task-view-dialog.client";
 import {TaskEditSheet} from "@/components/task/task-edit-sheet.client";

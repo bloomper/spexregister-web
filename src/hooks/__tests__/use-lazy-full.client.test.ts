@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from "vitest";
 import {renderHook, waitFor} from "@testing-library/react";
-import {useLazyFull} from "@/hooks/use-lazy-full";
+import {useLazyFull} from "@/hooks/use-lazy-full.client";
 
 type Item = { id: string; name?: string };
 

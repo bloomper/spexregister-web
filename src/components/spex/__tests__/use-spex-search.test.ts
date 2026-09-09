@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {act, renderHook} from "@testing-library/react";
-import {useSpexSearch} from "@/components/spex/use-spex-search";
+import {useSpexSearch} from "@/components/spex/use-spex-search.client";
 import type {SpexCategory} from "@/gql/schema";
 
 const getPageAction = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
@@ -11,7 +11,7 @@ vi.mock("@/app/(app)/spex/actions.server", () => ({getPageAction: (...a: unknown
 
 let capturedFetch: ((args: { after: string | null; pageSize: number }) => unknown) | undefined;
 const reset = vi.fn();
-vi.mock("@/hooks/use-infinite-scrolling", () => ({
+vi.mock("@/hooks/use-infinite-scrolling.client", () => ({
     useInfiniteCursor: (opts: { fetchPageAction: NonNullable<typeof capturedFetch> }) => {
         capturedFetch = opts.fetchPageAction;
         return {

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useState} from "react";
-import {useInfiniteList} from "@/hooks/use-infinite-list";
+import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {
     Dialog,
     DialogContent,

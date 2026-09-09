@@ -24,7 +24,7 @@ import {ImportResultViewer} from "./import-result-viewer.client";
 import {deleteAction, getJobAction, getJobsAction} from "@/app/(app)/impex/actions.server";
 import {formatDateTime} from "@/utils/utils";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import {useDataTableActions} from "@/hooks/use-data-table-actions";
+import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 
 export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {

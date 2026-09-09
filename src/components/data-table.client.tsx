@@ -14,7 +14,7 @@ import {SortDirection} from "@/gql/schema";
 import {DataEmpty} from "@/components/data-empty";
 import {cn} from "@/utils/utils";
 import {Spinner} from "@/components/ui/spinner";
-import {useDataRefresh} from "@/hooks/use-data-refresh";
+import {useDataRefresh} from "@/hooks/use-data-refresh.client";
 import {dataTableFeatures, type DataTableColumnDef, type DataTableMeta} from "@/components/data-table-features";
 
 interface DataTableProps<TData extends { id: string }> {

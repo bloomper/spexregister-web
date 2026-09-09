@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {act, renderHook} from "@testing-library/react";
-import {useTaskSearch} from "@/components/task/use-task-search";
+import {useTaskSearch} from "@/components/task/use-task-search.client";
 import type {TaskCategory} from "@/gql/schema";
 
 const getPageAction = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
@@ -11,7 +11,7 @@ vi.mock("@/app/(app)/tasks/actions.server", () => ({getPageAction: (...a: unknow
 
 let capturedFetch: ((args: { after: string | null; pageSize: number }) => unknown) | undefined;
 const reset = vi.fn();
-vi.mock("@/hooks/use-infinite-scrolling", () => ({
+vi.mock("@/hooks/use-infinite-scrolling.client", () => ({
     useInfiniteCursor: (opts: { fetchPageAction: NonNullable<typeof capturedFetch> }) => {
         capturedFetch = opts.fetchPageAction;
         return {

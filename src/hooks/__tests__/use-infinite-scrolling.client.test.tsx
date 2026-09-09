@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from "vitest";
 import {act, renderHook, waitFor} from "@testing-library/react";
-import {useInfiniteCursor, type UseInfiniteCursorOptions} from "@/hooks/use-infinite-scrolling";
+import {useInfiniteCursor, type UseInfiniteCursorOptions} from "@/hooks/use-infinite-scrolling.client";
 import type {CursorPage, CursorPageInfo} from "@/types/pagination";
 
 type Item = { id: string };

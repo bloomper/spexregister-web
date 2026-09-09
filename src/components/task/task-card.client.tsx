@@ -1,3 +1,5 @@
+"use client";
+
 import {useTranslations} from "next-intl";
 import {Pencil} from "lucide-react";
 import {Task} from "@/gql/schema";

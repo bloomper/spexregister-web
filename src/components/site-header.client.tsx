@@ -8,7 +8,7 @@ import {Separator} from "@/components/ui/separator";
 import {useSidebar} from "@/components/ui/sidebar";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
-import {useIsClient} from "@/hooks/use-is-client";
+import {useIsClient} from "@/hooks/use-is-client.client";
 import {EditQueueButton} from "@/components/edit-queue";
 
 export function SiteHeader() {

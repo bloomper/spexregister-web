@@ -36,7 +36,7 @@ import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {usePathname} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {Spexare} from "@/gql/schema";
-import {useIsClient} from "@/hooks/use-is-client";
+import {useIsClient} from "@/hooks/use-is-client.client";
 
 interface NavItem {
     title: string;

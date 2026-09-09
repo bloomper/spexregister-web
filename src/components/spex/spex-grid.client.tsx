@@ -11,7 +11,7 @@ import {DataFilter} from "@/components/data-filter";
 import {Clapperboard, X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
-import {useSpexSearch} from "@/components/spex/use-spex-search";
+import {useSpexSearch} from "@/components/spex/use-spex-search.client";
 import {SpexCard} from "@/components/spex/spex-card.client";
 import {SpexViewDialog} from "@/components/spex/spex-view-dialog.client";
 import {SpexEditSheet} from "@/components/spex/spex-edit-sheet.client";

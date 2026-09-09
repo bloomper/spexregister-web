@@ -29,7 +29,7 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
-import {useDataTableActions} from "@/hooks/use-data-table-actions";
+import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
@@ -39,7 +39,7 @@ import {Badge} from "@/components/ui/badge";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
-import {useIsClient} from "@/hooks/use-is-client";
+import {useIsClient} from "@/hooks/use-is-client.client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
 

@@ -1,3 +1,5 @@
+"use client";
+
 import {Task, TaskCategory} from "@/gql/schema";
 import {Sheet} from "@/components/ui/sheet";
 import {TaskForm} from "@/components/task/task-form.client";

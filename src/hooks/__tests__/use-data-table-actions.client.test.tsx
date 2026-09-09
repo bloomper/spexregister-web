@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {act, renderHook, waitFor} from "@testing-library/react";
-import {useDataTableActions} from "@/hooks/use-data-table-actions";
+import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
 
 const refresh = vi.fn();
 vi.mock("next/navigation", () => ({useRouter: () => ({refresh})}));

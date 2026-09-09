@@ -22,16 +22,16 @@ import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
-import {useDataTableActions} from "@/hooks/use-data-table-actions";
+import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
 import {DataFilter} from "@/components/data-filter";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {columnHelper} from "@/components/data-table-columns.client";
 import type {DataTableColumnDef} from "@/components/data-table-features";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
-import {useIsClient} from "@/hooks/use-is-client";
+import {useIsClient} from "@/hooks/use-is-client.client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
-import {useLazyFull} from "@/hooks/use-lazy-full";
+import {useLazyFull} from "@/hooks/use-lazy-full.client";
 
 
 export const columns: DataTableColumnDef<Spexare>[] = [

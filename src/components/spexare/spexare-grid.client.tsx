@@ -12,13 +12,13 @@ import {DataEmpty} from "@/components/data-empty";
 import {CheckCircle2, Circle, UserRound, X} from "lucide-react";
 import {DataFilter} from "@/components/data-filter";
 import {Input} from "@/components/ui/input";
-import {useLazyFull} from "@/hooks/use-lazy-full";
-import {useSpexareSearch} from "@/components/spexare/use-spexare-search";
+import {useLazyFull} from "@/hooks/use-lazy-full.client";
+import {useSpexareSearch} from "@/components/spexare/use-spexare-search.client";
 import {SpexareCard} from "@/components/spexare/spexare-card.client";
 import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client";
 import {SpexareEditSheet} from "@/components/spexare/spexare-edit-sheet.client";
 import {useEditQueue} from "@/components/edit-queue";
-import {useDataRefresh} from "@/hooks/use-data-refresh";
+import {useDataRefresh} from "@/hooks/use-data-refresh.client";
 
 export function SpexareGrid({
                                 countries = [],

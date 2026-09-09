@@ -1,3 +1,5 @@
+"use client";
+
 import {Spex, SpexCategory} from "@/gql/schema";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexForm} from "@/components/spex/spex-form.client";
