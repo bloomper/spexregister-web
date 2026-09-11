@@ -2,6 +2,7 @@ import "server-only";
 
 import {
     AggregationFilterInput,
+    AuditedType,
     Facet,
     ImpexType,
     JobReference,
@@ -10,7 +11,7 @@ import {
     Spexare,
     SpexareCreate,
     SpexareEdge,
-    SpexareUpdate,
+    SpexareUpdate
 } from "@/gql/schema";
 import {SpexareWithFacetsPage} from "@/types/pagination";
 import {mapConnection} from "@/utils/utils.server";
@@ -114,12 +115,6 @@ const SpexareDeleteMutation = graphql(`
     }
 `);
 
-const SpexareEventsQuery = graphql(`
-    query SpexareEvents($sourceId: ID!) {
-        spexareEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
-    }
-`);
-
 const client = createResourceClient<Spexare, SpexareEdge, SpexareCreate, SpexareUpdate>({
     singular: "spexare",
     pagedSummaryQuery: SpexarePagedSummary,
@@ -127,7 +122,7 @@ const client = createResourceClient<Spexare, SpexareEdge, SpexareCreate, Spexare
     createMutation: SpexareCreateMutation,
     updateMutation: SpexareUpdateMutation,
     deleteMutation: SpexareDeleteMutation,
-    eventsQuery: SpexareEventsQuery,
+    auditedType: AuditedType.Spexare,
     cacheTag: "spexare",
     restPath: "spexare",
     defaultSort: ["firstName"],
@@ -135,7 +130,7 @@ const client = createResourceClient<Spexare, SpexareEdge, SpexareCreate, Spexare
     defaultFilter: "published:TRUE",
 });
 
-export const {getPaged, create, update, del, imp, events} = client;
+export const {getPaged, create, update, del, imp, revisions} = client;
 
 const GetQuery = graphql(`
     query SpexareGet($id: ID!) {

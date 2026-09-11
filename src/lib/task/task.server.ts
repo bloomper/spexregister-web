@@ -1,6 +1,6 @@
 import "server-only";
 
-import {SortDirection, Task, TaskCreate, TaskEdge, TaskUpdate} from "@/gql/schema";
+import {AuditedType, SortDirection, Task, TaskCreate, TaskEdge, TaskUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient, runMutationField} from "@/lib/graphql.server";
 
@@ -76,12 +76,6 @@ const TaskExportQuery = graphql(`
     }
 `);
 
-const TaskEventsQuery = graphql(`
-    query TaskEvents($sourceId: ID!) {
-        taskEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
-    }
-`);
-
 const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
     singular: "task",
     pagedSummaryQuery: TaskPagedSummary,
@@ -91,7 +85,7 @@ const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
     updateMutation: TaskUpdateMutation,
     deleteMutation: TaskDeleteMutation,
     exportQuery: TaskExportQuery,
-    eventsQuery: TaskEventsQuery,
+    auditedType: AuditedType.Task,
     cacheTag: "task",
     restPath: "tasks",
     defaultSort: ["name"],
@@ -99,7 +93,7 @@ const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
     defaultFilter: "",
 });
 
-export const {getPaged, get, getAll, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;
 
 const TaskCategoryAddMutation = graphql(`
     mutation TaskCategoryAdd($id: ID!, $categoryId: ID!) {

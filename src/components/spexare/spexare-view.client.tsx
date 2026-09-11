@@ -3,11 +3,12 @@
 import Image from "next/image";
 import {useTranslations} from "next-intl";
 import {Sparkles, User} from "lucide-react";
-import {Activity, Country, Spexare} from "@/gql/schema";
+import {Activity, AuditedType, Country, Spexare} from "@/gql/schema";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ActivityTimeline} from "@/components/spexare/activity/activity-timeline.client";
+import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {
     AddressesSection,
@@ -24,9 +25,10 @@ interface SpexareViewProps {
     countries: Country[];
     showAudit?: boolean;
     isMe?: boolean;
+    onRestored?: () => void;
 }
 
-export function SpexareView({spexare, countries, showAudit, isMe}: SpexareViewProps) {
+export function SpexareView({spexare, countries, showAudit, isMe, onRestored}: SpexareViewProps) {
     const t = useTranslations();
 
     return (
@@ -97,29 +99,30 @@ export function SpexareView({spexare, countries, showAudit, isMe}: SpexareViewPr
                     </TabsList>
 
                     <TabsContent value="general" className="space-y-6 pt-4">
-                        <GeneralSection spexare={spexare} showAudit={showAudit}/>
+                        <GeneralSection spexare={spexare} showAudit={showAudit}onRestored={onRestored}/>
                     </TabsContent>
 
-                    <TabsContent value="activities" className="pt-2">
+                    <TabsContent value="activities" className="pt-2 space-y-4">
                         <ActivityTimeline
                             activities={(spexare.activities ?? []).filter((activity): activity is Activity => !!activity)}
                         />
+                        <AggregateAuditTrail spexareId={spexare.id} relatedType={AuditedType.Activity} onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="partner" className="pt-4 space-y-4">
-                        <PartnerSection partner={spexare.partner}/>
+                        <PartnerSection partner={spexare.partner} spexareId={spexare.id}onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="addresses" className="pt-4 space-y-4">
-                        <AddressesSection addresses={spexare.addresses} countries={countries}/>
+                        <AddressesSection addresses={spexare.addresses} countries={countries} spexareId={spexare.id}onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="consents" className="pt-4 space-y-4">
-                        <ConsentsSection consents={spexare.consents}/>
+                        <ConsentsSection consents={spexare.consents} spexareId={spexare.id}onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="memberships" className="pt-4 space-y-4">
-                        <MembershipsSection memberships={spexare.memberships}/>
+                        <MembershipsSection memberships={spexare.memberships} spexareId={spexare.id}onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="taggings" className="pt-4 space-y-4">
@@ -127,7 +130,7 @@ export function SpexareView({spexare, countries, showAudit, isMe}: SpexareViewPr
                     </TabsContent>
 
                     <TabsContent value="toggles" className="pt-4 space-y-4">
-                        <TogglesSection toggles={spexare.toggles}/>
+                        <TogglesSection toggles={spexare.toggles} spexareId={spexare.id}onRestored={onRestored}/>
                     </TabsContent>
                 </Tabs>
             </div>

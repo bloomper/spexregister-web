@@ -4,15 +4,22 @@ import Image from "next/image";
 import {format, parse} from "date-fns";
 import {useTranslations} from "next-intl";
 import {Fingerprint, Heart, IdCard, Mail, MapPin, Phone, ShieldCheck, Tag, ToggleLeft, User} from "lucide-react";
-import {Country, Spexare} from "@/gql/schema";
+import {AuditedType, Country, Spexare} from "@/gql/schema";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {DataEmpty} from "@/components/data-empty";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
-import {getEventsAction} from "@/app/(app)/spexare/actions.server";
+import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
+import {PartnerAuditTrail} from "@/components/audit/partner-audit-trail.client";
+import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/spexare/actions.server";
 
-export function GeneralSection({spexare, showAudit}: { spexare: Spexare; showAudit?: boolean }) {
+const restoreActions = {
+    preview: getRestorePreviewAction,
+    restore: restoreRevisionAction,
+};
+
+export function GeneralSection({spexare, showAudit, onRestored}: { spexare: Spexare; showAudit?: boolean; onRestored?: () => void }) {
     const t = useTranslations();
     return (
         <>
@@ -53,22 +60,27 @@ export function GeneralSection({spexare, showAudit}: { spexare: Spexare; showAud
             </div>
             <div className="space-y-4 pt-4 border-t border-muted/50">
                 {showAudit && <AuditInfo item={spexare}/>}
-                <AuditTrail id={spexare.id} fetchAction={getEventsAction}/>
+                <AuditTrail id={spexare.id} fetchAction={getRevisionsAction}
+                            restoreActions={restoreActions} onRestored={onRestored}/>
             </div>
         </>
     );
 }
 
-export function PartnerSection({partner}: { partner: Spexare["partner"] }) {
+export function PartnerSection({partner, spexareId, onRestored}: { partner: Spexare["partner"]; spexareId: string; onRestored?: () => void }) {
     const t = useTranslations();
     if (!partner) {
         return (
-            <div className="py-6">
-                <DataEmpty icon={Heart}/>
+            <div className="space-y-4">
+                <div className="py-6">
+                    <DataEmpty icon={Heart}/>
+                </div>
+                <PartnerAuditTrail spexareId={spexareId} onRestored={onRestored}/>
             </div>
         );
     }
     return (
+        <div className="space-y-4">
         <div className="rounded-lg border p-4 bg-muted/30 relative overflow-hidden">
             <div
                 className={`flex items-center gap-4 ${!partner.published ? "blur-sm select-none pointer-events-none opacity-50" : ""}`}>
@@ -114,20 +126,31 @@ export function PartnerSection({partner}: { partner: Spexare["partner"] }) {
                 </div>
             )}
         </div>
+            <PartnerAuditTrail spexareId={spexareId} onRestored={onRestored}/>
+        </div>
     );
 }
 
-export function AddressesSection({addresses, countries}: { addresses: Spexare["addresses"]; countries: Country[] }) {
+export function AddressesSection({addresses, countries, spexareId, onRestored}: {
+    addresses: Spexare["addresses"];
+    countries: Country[];
+    spexareId: string;
+    onRestored?: () => void;
+}) {
     const getCountryLabel = (isoCode: string) => countries.find(c => c.isoCode === isoCode)?.label || isoCode;
     if (!addresses || addresses.length === 0) {
         return (
-            <div className="py-6">
-                <DataEmpty icon={MapPin}/>
+            <div className="space-y-4">
+                <div className="py-6">
+                    <DataEmpty icon={MapPin}/>
+                </div>
+                <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Address}/>
             </div>
         );
     }
     return (
-        <div className="grid grid-cols-1 gap-4">
+        <>
+            <div className="grid grid-cols-1 gap-4">
             {addresses.map((address) => (
                 <div key={address?.id} className="rounded-lg border p-4 space-y-3">
                     <div className="flex items-center justify-between border-b pb-2">
@@ -175,20 +198,26 @@ export function AddressesSection({addresses, countries}: { addresses: Spexare["a
                 </div>
             ))}
         </div>
+            <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Address}/>
+        </>
     );
 }
 
-export function ConsentsSection({consents}: { consents: Spexare["consents"] }) {
+export function ConsentsSection({consents, spexareId, onRestored}: { consents: Spexare["consents"]; spexareId: string; onRestored?: () => void }) {
     const t = useTranslations();
     if (!consents || consents.length === 0) {
         return (
-            <div className="py-6">
-                <DataEmpty icon={ShieldCheck}/>
+            <div className="space-y-4">
+                <div className="py-6">
+                    <DataEmpty icon={ShieldCheck}/>
+                </div>
+                <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Consent}/>
             </div>
         );
     }
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {consents.map((consent) => (
                 <div key={consent?.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
                     <span className="text-sm font-medium">{consent?.type.label}</span>
@@ -205,14 +234,23 @@ export function ConsentsSection({consents}: { consents: Spexare["consents"] }) {
                 </div>
             ))}
         </div>
+            <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Consent}/>
+        </>
     );
 }
 
-export function MembershipsSection({memberships}: { memberships: Spexare["memberships"] }) {
+export function MembershipsSection({memberships, spexareId, onRestored}: {
+    memberships: Spexare["memberships"];
+    spexareId: string;
+    onRestored?: () => void;
+}) {
     if (!memberships || memberships.length === 0) {
         return (
-            <div className="py-6">
-                <DataEmpty icon={IdCard}/>
+            <div className="space-y-4">
+                <div className="py-6">
+                    <DataEmpty icon={IdCard}/>
+                </div>
+                <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Membership}/>
             </div>
         );
     }
@@ -230,7 +268,8 @@ export function MembershipsSection({memberships}: { memberships: Spexare["member
         }, {} as Record<string, string[]>),
     );
     return (
-        <div className="grid grid-cols-1 gap-3">
+        <>
+            <div className="grid grid-cols-1 gap-3">
             {grouped.map(([type, years]) => (
                 <div key={type} className="flex flex-col p-3 rounded-lg border bg-muted/30 gap-2">
                     <span className="text-sm font-bold border-b pb-1">{type}</span>
@@ -246,6 +285,8 @@ export function MembershipsSection({memberships}: { memberships: Spexare["member
                 </div>
             ))}
         </div>
+            <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Membership}/>
+        </>
     );
 }
 
@@ -269,17 +310,21 @@ export function TaggingsSection({taggings}: { taggings: Spexare["taggings"] }) {
     );
 }
 
-export function TogglesSection({toggles}: { toggles: Spexare["toggles"] }) {
+export function TogglesSection({toggles, spexareId, onRestored}: { toggles: Spexare["toggles"]; spexareId: string; onRestored?: () => void }) {
     const t = useTranslations();
     if (!toggles || toggles.length === 0) {
         return (
-            <div className="py-6">
-                <DataEmpty icon={ToggleLeft}/>
+            <div className="space-y-4">
+                <div className="py-6">
+                    <DataEmpty icon={ToggleLeft}/>
+                </div>
+                <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Toggle}/>
             </div>
         );
     }
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {toggles.map((toggle) => (
                 <div key={toggle?.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
                     <div className="flex items-center gap-3">
@@ -299,5 +344,7 @@ export function TogglesSection({toggles}: { toggles: Spexare["toggles"] }) {
                 </div>
             ))}
         </div>
+            <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Toggle}/>
+        </>
     );
 }

@@ -7,7 +7,11 @@ import {TaskEditSheet} from "@/components/task/task-edit-sheet.client";
 import type {Task} from "@/gql/schema";
 
 vi.mock("@/components/data-audit-trail.client", () => ({AuditTrail: () => <div data-testid="audit-trail"/>}));
-vi.mock("@/app/(app)/tasks/actions.server", () => ({getEventsAction: vi.fn()}));
+vi.mock("@/app/(app)/tasks/actions.server", () => ({
+    getRevisionsAction: vi.fn(),
+    getRestorePreviewAction: vi.fn(),
+    restoreRevisionAction: vi.fn()
+}));
 vi.mock("@/components/task/task-form.client", () => ({TaskForm: () => <div data-testid="task-form"/>}));
 
 const task = {id: "t1", name: "Lighting", category: {id: "c1", name: "Technical"}} as unknown as Task;

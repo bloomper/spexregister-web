@@ -18,12 +18,22 @@ import {formatDate} from "@/utils/utils";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getEventsAction, getPageAction} from "@/app/(app)/news/actions.server";
+import {
+    getPageAction,
+    getRestorePreviewAction,
+    getRevisionsAction,
+    restoreRevisionAction
+} from "@/app/(app)/news/actions.server";
 import {useRouter} from "next/navigation";
 import {Sheet} from "@/components/ui/sheet";
 import {NewsForm} from "@/components/news/news-form.client";
 import {Pencil} from "lucide-react";
 import {AuditTrail} from "../data-audit-trail.client";
+
+const restoreActions = {
+    preview: getRestorePreviewAction,
+    restore: restoreRevisionAction,
+};
 
 export function NewsGrid({
                              initialItems = [],
@@ -120,7 +130,8 @@ export function NewsGrid({
 
                         {selected && (
                             <div className="space-y-4">
-                                <AuditTrail id={selected.id} fetchAction={getEventsAction}/>
+                                <AuditTrail id={selected.id} fetchAction={getRevisionsAction}
+                                            restoreActions={restoreActions} onRestored={() => setSelected(null)}/>
                             </div>
                         )}
                     </div>

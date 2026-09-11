@@ -17,12 +17,22 @@ import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getEventsAction, getPageAction} from "@/app/(app)/tags/actions.server";
+import {
+    getPageAction,
+    getRestorePreviewAction,
+    getRevisionsAction,
+    restoreRevisionAction
+} from "@/app/(app)/tags/actions.server";
 import {useRouter} from "next/navigation";
 import {Pencil} from "lucide-react";
 import {Sheet} from "@/components/ui/sheet";
 import {TagForm} from "@/components/tag/tag-form.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
+
+const restoreActions = {
+    preview: getRestorePreviewAction,
+    restore: restoreRevisionAction,
+};
 
 export function TagGrid({
                             initialItems = [],
@@ -106,7 +116,8 @@ export function TagGrid({
                     </DialogHeader>
                     {selected && (
                         <div className="space-y-4">
-                            <AuditTrail id={selected.id} fetchAction={getEventsAction}/>
+                            <AuditTrail id={selected.id} fetchAction={getRevisionsAction}
+                                        restoreActions={restoreActions} onRestored={() => setSelected(null)}/>
                         </div>
                     )}
                     <DialogFooter>

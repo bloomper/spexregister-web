@@ -1,10 +1,11 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {Toggle, Type, TypeType} from "@/gql/schema";
+import {AuditedType, Toggle, Type, TypeType} from "@/gql/schema";
 import {Button} from "@/components/ui/button";
 import {Edit2, Fingerprint, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
+import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {ToggleForm} from "./toggle-form.client";
 import {DataEmpty} from "@/components/data-empty";
 import {createToggleAction, deleteToggleAction, updateToggleAction} from "@/app/(app)/spexare/actions.server";
@@ -145,6 +146,7 @@ export function ToggleManager({
                     </div>
                 )}
             </div>
+            <AggregateAuditTrail spexareId={spexareId} relatedType={AuditedType.Toggle}/>
         </div>
     );
 }

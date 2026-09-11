@@ -1,6 +1,13 @@
 import "server-only";
 
-import {SortDirection, SpexCategory, SpexCategoryCreate, SpexCategoryEdge, SpexCategoryUpdate} from "@/gql/schema";
+import {
+    AuditedType,
+    SortDirection,
+    SpexCategory,
+    SpexCategoryCreate,
+    SpexCategoryEdge,
+    SpexCategoryUpdate
+} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient} from "@/lib/graphql.server";
 import axios from "@/lib/axios.server";
@@ -74,12 +81,6 @@ const SpexCategoryExportQuery = graphql(`
     }
 `);
 
-const SpexCategoryEventsQuery = graphql(`
-    query SpexCategoryEvents($sourceId: ID!) {
-        spexCategoryEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
-    }
-`);
-
 const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategoryCreate, SpexCategoryUpdate>({
     singular: "spexCategory",
     pagedSummaryQuery: SpexCategoryPagedSummary,
@@ -89,7 +90,7 @@ const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategory
     updateMutation: SpexCategoryUpdateMutation,
     deleteMutation: SpexCategoryDeleteMutation,
     exportQuery: SpexCategoryExportQuery,
-    eventsQuery: SpexCategoryEventsQuery,
+    auditedType: AuditedType.SpexCategory,
     cacheTag: "spex-category",
     restPath: "spex/categories",
     defaultSort: ["name"],
@@ -97,7 +98,7 @@ const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategory
     defaultFilter: "",
 });
 
-export const {getPaged, get, getAll, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;
 
 export async function uploadLogo(id: string, file: File) {
     const arrayBuffer = await file.arrayBuffer();

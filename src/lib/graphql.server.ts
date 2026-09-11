@@ -4,9 +4,10 @@ import type {AnyVariables, OperationContext} from "@urql/core";
 import type {TypedDocumentNode} from "@graphql-typed-document-node/core";
 import {getClient} from "@/lib/urql.server";
 import {mapConnection} from "@/utils/utils.server";
-import {Event, ImpexType, JobReference, PageInfo, SortDirection} from "@/gql/schema";
+import {AuditedType, ImpexType, JobReference, PageInfo, Revision, SortDirection} from "@/gql/schema";
 import {CursorPage} from "@/types/pagination";
 import axios from "@/lib/axios.server";
+import {getRevisions} from "@/lib/audit/audit.server";
 
 export async function runQuery<TData, TVariables extends AnyVariables>(
     query: TypedDocumentNode<TData, TVariables>,
@@ -165,7 +166,7 @@ export type ResourceClientConfig<TCreateInput, TUpdateInput> = {
     updateMutation: TypedDocumentNode<Record<string, unknown>, { input: TUpdateInput }>;
     deleteMutation: TypedDocumentNode<Record<string, unknown>, { id: string }>;
     exportQuery?: TypedDocumentNode<Record<string, unknown>, ExportQueryVariables>;
-    eventsQuery: TypedDocumentNode<Record<string, unknown>, { sourceId: string }>;
+    auditedType: AuditedType;
     cacheTag: string;
     restPath: string;
     defaultSort: string[];
@@ -185,7 +186,6 @@ export function createResourceClient<
     const updateField = `${singular}Update`;
     const deleteField = `${singular}Delete`;
     const exportField = `${singular}Export`;
-    const eventsField = `${singular}Events`;
 
     async function getPaged(args: PagedArgs): Promise<CursorPage<TNode> & { edges: TEdge[] }> {
         const data = await runQuery(args.full ? config.pagedFullQuery : config.pagedSummaryQuery, {
@@ -260,10 +260,9 @@ export function createResourceClient<
         return response.data;
     }
 
-    async function events(sourceId: string): Promise<Event[]> {
-        const data = await runQuery(config.eventsQuery, {sourceId});
-        return (data?.[eventsField] as Event[] | undefined) ?? [];
+    async function revisions(id: string): Promise<Revision[]> {
+        return getRevisions(config.auditedType, id);
     }
 
-    return {getPaged, get, getAll, create, update, del, exp, imp, events};
+    return {getPaged, get, getAll, create, update, del, exp, imp, revisions};
 }

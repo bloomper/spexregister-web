@@ -62,6 +62,7 @@ export function SpexareViewDialog({
                         countries={countries}
                         isMe={isMe}
                         showAudit={showAudit}
+                        onRestored={onClose}
                     />
                 ) : (
                     <div className="p-6 text-sm text-muted-foreground">

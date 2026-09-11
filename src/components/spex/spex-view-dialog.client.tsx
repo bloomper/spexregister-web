@@ -15,7 +15,12 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {AuditTrail} from "@/components/data-audit-trail.client";
-import {getEventsAction} from "@/app/(app)/spex/actions.server";
+import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/spex/actions.server";
+
+const restoreActions = {
+    preview: getRestorePreviewAction,
+    restore: restoreRevisionAction,
+};
 
 export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onClose: () => void }) {
     const t = useTranslations();
@@ -81,7 +86,8 @@ export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onC
 
                         {selected && (
                             <div className="space-y-4">
-                                <AuditTrail id={selected.id} fetchAction={getEventsAction}/>
+                                <AuditTrail id={selected.id} fetchAction={getRevisionsAction}
+                                            restoreActions={restoreActions} onRestored={onClose}/>
                             </div>
                         )}
                     </div>

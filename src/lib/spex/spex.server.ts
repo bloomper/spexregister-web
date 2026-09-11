@@ -1,6 +1,6 @@
 import "server-only";
 
-import {SortDirection, Spex, SpexCreate, SpexEdge, SpexUpdate} from "@/gql/schema";
+import {AuditedType, SortDirection, Spex, SpexCreate, SpexEdge, SpexUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient, runMutationField} from "@/lib/graphql.server";
 import axios from "@/lib/axios.server";
@@ -83,12 +83,6 @@ const SpexExportQuery = graphql(`
     }
 `);
 
-const SpexEventsQuery = graphql(`
-    query SpexEvents($sourceId: ID!) {
-        spexEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
-    }
-`);
-
 const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
     singular: "spex",
     pagedSummaryQuery: SpexPagedSummary,
@@ -98,7 +92,7 @@ const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
     updateMutation: SpexUpdateMutation,
     deleteMutation: SpexDeleteMutation,
     exportQuery: SpexExportQuery,
-    eventsQuery: SpexEventsQuery,
+    auditedType: AuditedType.Spex,
     cacheTag: "spex",
     restPath: "spex",
     defaultSort: ["year"],
@@ -106,7 +100,7 @@ const client = createResourceClient<Spex, SpexEdge, SpexCreate, SpexUpdate>({
     defaultFilter: "parent:NULL",
 });
 
-export const {getPaged, get, getAll, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;
 
 const SpexCategoryAddMutation = graphql(`
     mutation SpexCategoryAdd($id: ID!, $categoryId: ID!) {

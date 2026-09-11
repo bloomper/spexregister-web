@@ -2,6 +2,7 @@ import * as React from "react";
 import {Suspense} from "react";
 import {getTranslations} from "next-intl/server";
 import {AppSidebar} from "@/components/app-sidebar.client";
+import {RolesProvider} from "@/components/roles-provider.client";
 import {SiteHeader} from "@/components/site-header.client";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 import {Button} from "@/components/ui/button";
@@ -80,17 +81,19 @@ export default async function AppLayout({children}: { children: React.ReactNode 
 
     return (
         <div className="[--header-height:calc(--spacing(14))]">
-            <SidebarProvider className="flex flex-col">
-                <SiteHeader/>
-                <div className="flex flex-1">
-                    <Suspense fallback={<AppSidebar roles={roles} spexare={undefined}/>}>
-                        <SidebarWithUser roles={roles}/>
-                    </Suspense>
-                    <SidebarInset>
-                        {children}
-                    </SidebarInset>
-                </div>
-            </SidebarProvider>
+            <RolesProvider roles={roles}>
+                <SidebarProvider className="flex flex-col">
+                    <SiteHeader/>
+                    <div className="flex flex-1">
+                        <Suspense fallback={<AppSidebar roles={roles} spexare={undefined}/>}>
+                            <SidebarWithUser roles={roles}/>
+                        </Suspense>
+                        <SidebarInset>
+                            {children}
+                        </SidebarInset>
+                    </div>
+                </SidebarProvider>
+            </RolesProvider>
         </div>
     );
 }

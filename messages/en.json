@@ -8,11 +8,54 @@
     "heading": "About the register",
     "title": "About"
   },
-  "Common": {
-    "eventTypes": {
-      "CREATE": "Created",
+  "Audit": {
+    "restore": "Restore",
+    "restoreTitle": "Restore this version?",
+    "restoreDescription": "The current values are replaced by those from revision {revision}. Nothing is erased — the restore is recorded as a new version.",
+    "cascade": "Include related records",
+    "cascadeDescription": "Also restore addresses, memberships, consents, toggles and activities as they were at this revision.",
+    "impact": "{updated} updated · {created} re-created · {deleted} removed",
+    "noChanges": "No differences to restore.",
+    "loadingPreview": "Calculating impact…",
+    "confirm": "Restore",
+    "restored": "The version was restored",
+    "restoreFailed": "The version could not be restored",
+    "empty": "—",
+    "binaryChanged": "changed",
+    "fields": {
+      "activity": "Activity",
+      "details": "Spex details",
+      "enabled": "Enabled",
+      "imageContentType": "Image file type",
+      "initial": "Initial state",
+      "labels": "Labels",
+      "logoContentType": "Logo file type",
+      "parent": "Original spex",
+      "posterContentType": "Poster file type",
+      "spexActivity": "Spex",
+      "spexare": "Spexare",
+      "taskActivity": "Task",
+      "type": "Type",
+      "value": "Value"
+    },
+    "actions": {
       "UPDATE": "Updated",
-      "REMOVE": "Deleted"
+      "CREATE": "Re-created",
+      "DELETE": "Removed"
+    },
+    "warnings": {
+      "ID_REASSIGNED": "Re-created records get a new id",
+      "REFERENCE_MISSING": "A referenced record no longer exists"
+    },
+    "title": "Change log",
+    "feedDescription": "Every change recorded across the register.",
+    "allTypes": "All types"
+  },
+  "Common": {
+    "revisionTypes": {
+      "ADD": "Created",
+      "MOD": "Updated",
+      "DEL": "Deleted"
     },
     "add": "Add",
     "cancel": "Cancel",
@@ -45,6 +88,7 @@
     "history": "History",
     "imageUploadHint": "PNG, JPEG or GIF (max. 15MB)",
     "insufficientPermissions": "Insufficient permissions",
+    "loadMore": "Load more",
     "lastModifiedAt": "Last modified at",
     "lastModifiedBy": "Last modified by",
     "loading": "Loading…",

@@ -1,6 +1,6 @@
 import "server-only";
 
-import {Authority, SortDirection, State, User, UserCreate, UserEdge, UserUpdate} from "@/gql/schema";
+import {AuditedType, Authority, SortDirection, State, User, UserCreate, UserEdge, UserUpdate} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient, runMutationField, runQuery} from "@/lib/graphql.server";
 
@@ -87,12 +87,6 @@ const UserExportQuery = graphql(`
     }
 `);
 
-const UserEventsQuery = graphql(`
-    query UserEvents($sourceId: ID!) {
-        userEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
-    }
-`);
-
 const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
     singular: "user",
     pagedSummaryQuery: UserPagedSummary,
@@ -102,7 +96,7 @@ const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
     updateMutation: UserUpdateMutation,
     deleteMutation: UserDeleteMutation,
     exportQuery: UserExportQuery,
-    eventsQuery: UserEventsQuery,
+    auditedType: AuditedType.User,
     cacheTag: "user",
     restPath: "users",
     defaultSort: ["id"],
@@ -110,7 +104,7 @@ const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
     defaultFilter: "",
 });
 
-export const {getPaged, get, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, create, update, del, exp, imp, revisions} = client;
 
 const AuthoritiesAddMutation = graphql(`
     mutation UserAuthoritiesAdd($userId: ID!, $ids: [ID]!) {

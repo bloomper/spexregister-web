@@ -2,9 +2,10 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {create, del, events, exp, get, getAll, getPaged, imp, tagFormSchema, update} from "@/lib/tag";
+import {create, del, exp, get, getAll, getPaged, imp, revisions, tagFormSchema, update} from "@/lib/tag";
+import {getRestorePreview, restore} from "@/lib/audit/audit.server";
 import {revalidateTag} from "next/cache";
-import {ImpexType, SortDirection} from "@/gql/schema";
+import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
 
 export async function getPageAction(args: {
     first?: number;
@@ -83,9 +84,23 @@ export async function getAllTagsAction() {
     });
 }
 
-export async function getEventsAction(id: string) {
+export async function getRevisionsAction(id: string) {
     return withPolicyAction(Policies.tag.requireRead, async () => {
-        return events(id);
+        return revisions(id);
+    });
+}
+
+export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        return getRestorePreview(type, id, revision, cascade);
+    });
+}
+
+export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        const result = await restore(type, id, revision, cascade);
+        revalidate();
+        return result;
     });
 }
 

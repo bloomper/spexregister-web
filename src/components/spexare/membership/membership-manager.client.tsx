@@ -1,10 +1,11 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {Membership, Type, TypeType} from "@/gql/schema";
+import {AuditedType, Membership, Type, TypeType} from "@/gql/schema";
 import {Button} from "@/components/ui/button";
 import {IdCard, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
+import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {MembershipForm} from "./membership-form.client";
 import {DataEmpty} from "@/components/data-empty";
 import {createMembershipAction, deleteMembershipAction} from "@/app/(app)/spexare/actions.server";
@@ -86,23 +87,25 @@ export function MembershipManager({
                 {initialMemberships.length > 0 ? (
                     initialMemberships.sort((a, b) => Number(b.year) - Number(a.year)).map((membership) => (
                         <div key={membership.id}
-                             className="group flex items-center justify-between p-3 rounded-lg border bg-muted/10">
-                            <div className="flex items-center gap-3">
-                                <IdCard className="h-4 w-4 text-muted-foreground"/>
-                                <div className="flex flex-col">
+                             className="group p-3 rounded-lg border bg-muted/10">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <IdCard className="h-4 w-4 text-muted-foreground"/>
+                                    <div className="flex flex-col">
                                         <span
                                             className="text-sm font-medium leading-none mb-1">{membership.type.label}</span>
-                                    <Badge variant="outline" className="w-fit text-[10px] py-0 h-4">
-                                        {membership.year}
-                                    </Badge>
+                                        <Badge variant="outline" className="w-fit text-[10px] py-0 h-4">
+                                            {membership.year}
+                                        </Badge>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive"
-                                        onClick={() => handleDelete(membership.id, membership.type.id)}
-                                        disabled={isPending}>
-                                    <Trash2 className="h-4 w-4"/>
-                                </Button>
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive"
+                                            onClick={() => handleDelete(membership.id, membership.type.id)}
+                                            disabled={isPending}>
+                                        <Trash2 className="h-4 w-4"/>
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     ))
@@ -112,6 +115,7 @@ export function MembershipManager({
                     </div>
                 )}
             </div>
+            <AggregateAuditTrail spexareId={spexareId} relatedType={AuditedType.Membership}/>
         </div>
     );
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {Consent, Type, TypeType} from "@/gql/schema";
+import {AuditedType, Consent, Type, TypeType} from "@/gql/schema";
 import {Button} from "@/components/ui/button";
 import {Edit2, Plus, ShieldCheck, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
+import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {ConsentForm} from "./consent-form.client";
 import {DataEmpty} from "@/components/data-empty";
 import {createConsentAction, deleteConsentAction, updateConsentAction} from "@/app/(app)/spexare/actions.server";
@@ -145,6 +146,7 @@ export function ConsentManager({
                     </div>
                 )}
             </div>
+            <AggregateAuditTrail spexareId={spexareId} relatedType={AuditedType.Consent}/>
         </div>
     );
 }
