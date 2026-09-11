@@ -17,12 +17,22 @@ import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {getEventsAction, getPageAction} from "@/app/(app)/tasks/categories/actions.server";
+import {
+    getPageAction,
+    getRestorePreviewAction,
+    getRevisionsAction,
+    restoreRevisionAction
+} from "@/app/(app)/tasks/categories/actions.server";
 import {useRouter} from "next/navigation";
 import {Pencil} from "lucide-react";
 import {Sheet} from "@/components/ui/sheet";
 import {TaskCategoryForm} from "@/components/task/category/task-category-form.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
+
+const restoreActions = {
+    preview: getRestorePreviewAction,
+    restore: restoreRevisionAction,
+};
 
 export function TaskCategoryGrid({
                                      initialItems = [],
@@ -60,7 +70,6 @@ export function TaskCategoryGrid({
         initialPageInfo,
         maxItems,
     });
-
 
     return (
         <>
@@ -111,7 +120,8 @@ export function TaskCategoryGrid({
                         </div>
                         {selected && (
                             <div className="space-y-4">
-                                <AuditTrail id={selected.id} fetchAction={getEventsAction}/>
+                                <AuditTrail id={selected.id}
+                                            fetchAction={getRevisionsAction} restoreActions={restoreActions} onRestored={() => setSelected(null)}/>
                             </div>
                         )}
                     </div>

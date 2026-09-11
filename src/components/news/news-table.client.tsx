@@ -12,9 +12,11 @@ import {
     bulkDeleteAction,
     deleteAction,
     exportAction,
-    getEventsAction,
     getPageAction,
-    importAction
+    getRestorePreviewAction,
+    getRevisionsAction,
+    importAction,
+    restoreRevisionAction
 } from "@/app/(app)/news/actions.server";
 import {Sheet} from "@/components/ui/sheet";
 import {CursorPage} from "@/types/pagination";
@@ -42,6 +44,10 @@ import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client.client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 
+const restoreActions = {
+    preview: getRestorePreviewAction,
+    restore: restoreRevisionAction,
+};
 
 export const columns: DataTableColumnDef<News>[] = [
     columnHelper.select(),
@@ -241,7 +247,8 @@ export function NewsTable({
                         {viewItem && (
                             <div className="space-y-4">
                                 <AuditInfo item={viewItem}/>
-                                <AuditTrail id={viewItem.id} fetchAction={getEventsAction}/>
+                                <AuditTrail id={viewItem.id} fetchAction={getRevisionsAction}
+                                            restoreActions={restoreActions} onRestored={() => setViewItem(null)}/>
                             </div>
                         )}
                     </div>

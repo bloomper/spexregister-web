@@ -1,6 +1,6 @@
 import "server-only";
 
-import {News, NewsCreate, NewsEdge, NewsUpdate, SortDirection} from "@/gql/schema";
+import {AuditedType, News, NewsCreate, NewsEdge, NewsUpdate, SortDirection} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient} from "@/lib/graphql.server";
 
@@ -75,12 +75,6 @@ const NewsExportQuery = graphql(`
     }
 `);
 
-const NewsEventsQuery = graphql(`
-    query NewsEvents($sourceId: ID!) {
-        newsEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
-    }
-`);
-
 const client = createResourceClient<News, NewsEdge, NewsCreate, NewsUpdate>({
     singular: "news",
     pagedSummaryQuery: NewsPagedSummary,
@@ -90,7 +84,7 @@ const client = createResourceClient<News, NewsEdge, NewsCreate, NewsUpdate>({
     updateMutation: NewsUpdateMutation,
     deleteMutation: NewsDeleteMutation,
     exportQuery: NewsExportQuery,
-    eventsQuery: NewsEventsQuery,
+    auditedType: AuditedType.News,
     cacheTag: "news",
     restPath: "news",
     defaultSort: ["visibleFrom"],
@@ -98,4 +92,4 @@ const client = createResourceClient<News, NewsEdge, NewsCreate, NewsUpdate>({
     defaultFilter: "published:TRUE",
 });
 
-export const {getPaged, get, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, create, update, del, exp, imp, revisions} = client;

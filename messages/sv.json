@@ -8,11 +8,54 @@
     "heading": "Om registret",
     "title": "Om"
   },
-  "Common": {
-    "eventTypes": {
-      "CREATE": "Skapad",
+  "Audit": {
+    "restore": "Återställ",
+    "restoreTitle": "Återställ den här versionen?",
+    "restoreDescription": "Nuvarande värden ersätts med dem från version {revision}. Ingenting raderas — återställningen sparas som en ny version.",
+    "cascade": "Inkludera relaterade poster",
+    "cascadeDescription": "Återställ även adresser, medlemskap, samtycken, inställningar och aktiviteter som de var vid den här versionen.",
+    "impact": "{updated} uppdaterade · {created} återskapade · {deleted} borttagna",
+    "noChanges": "Inga skillnader att återställa.",
+    "loadingPreview": "Beräknar påverkan…",
+    "confirm": "Återställ",
+    "restored": "Versionen återställdes",
+    "restoreFailed": "Versionen kunde inte återställas",
+    "empty": "—",
+    "binaryChanged": "ändrad",
+    "fields": {
+      "activity": "Aktivitet",
+      "details": "Spexdetaljer",
+      "enabled": "Aktiverad",
+      "imageContentType": "Bildens filtyp",
+      "initial": "Initialt tillstånd",
+      "labels": "Benämningar",
+      "logoContentType": "Logons filtyp",
+      "parent": "Ursprungsspex",
+      "posterContentType": "Posterns filtyp",
+      "spexActivity": "Spex",
+      "spexare": "Spexare",
+      "taskActivity": "Funktion",
+      "type": "Typ",
+      "value": "Värde"
+    },
+    "actions": {
       "UPDATE": "Uppdaterad",
-      "REMOVE": "Raderad"
+      "CREATE": "Återskapad",
+      "DELETE": "Borttagen"
+    },
+    "warnings": {
+      "ID_REASSIGNED": "Återskapade poster får ett nytt id",
+      "REFERENCE_MISSING": "En refererad post finns inte längre"
+    },
+    "title": "Ändringslogg",
+    "feedDescription": "Alla ändringar som registrerats i registret.",
+    "allTypes": "Alla typer"
+  },
+  "Common": {
+    "revisionTypes": {
+      "ADD": "Skapad",
+      "MOD": "Uppdaterad",
+      "DEL": "Raderad"
     },
     "add": "Lägg till",
     "cancel": "Avbryt",
@@ -45,6 +88,7 @@
     "history": "Historik",
     "imageUploadHint": "PNG, JPEG eller GIF (max 15MB)",
     "insufficientPermissions": "Otillräckliga rättigheter",
+    "loadMore": "Ladda fler",
     "lastModifiedAt": "Senast uppdaterad",
     "lastModifiedBy": "Senast uppdaterad av",
     "loading": "Laddar…",

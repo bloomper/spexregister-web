@@ -4,6 +4,14 @@ import {requireAnyRole} from "@/utils/auth.server";
 import {AuthzResult} from "@/types/auth";
 
 export const Policies = {
+    audit: {
+        async requireRead(): Promise<AuthzResult> {
+            return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
+        },
+        async requireRestore(): Promise<AuthzResult> {
+            return requireAnyRole(["ADMIN"]);
+        },
+    },
     impex: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(["EDITOR", "ADMIN"]);

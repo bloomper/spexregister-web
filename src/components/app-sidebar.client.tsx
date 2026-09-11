@@ -6,6 +6,7 @@ import {
     Clapperboard,
     ClipboardList,
     Drama,
+    History,
     House,
     ListTodo,
     type LucideIcon,
@@ -167,6 +168,15 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                     {title: t("Common.manage"), url: "/users/manage"},
                     {title: t("Common.create"), url: "/users/create"},
                 ],
+            });
+        }
+
+        if (isCurrentUserAdmin) {
+            mainItems.push({
+                title: t("Audit.title"),
+                url: "/change-log",
+                icon: History,
+                isActive: pathname.startsWith("/change-log"),
             });
         }
 

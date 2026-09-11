@@ -1,6 +1,13 @@
 import "server-only";
 
-import {SortDirection, TaskCategory, TaskCategoryCreate, TaskCategoryEdge, TaskCategoryUpdate} from "@/gql/schema";
+import {
+    AuditedType,
+    SortDirection,
+    TaskCategory,
+    TaskCategoryCreate,
+    TaskCategoryEdge,
+    TaskCategoryUpdate
+} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient} from "@/lib/graphql.server";
 
@@ -72,12 +79,6 @@ const TaskCategoryExportQuery = graphql(`
     }
 `);
 
-const TaskCategoryEventsQuery = graphql(`
-    query TaskCategoryEvents($sourceId: ID!) {
-        taskCategoryEvents(sourceId: $sourceId) { id eventType createdAt createdBy }
-    }
-`);
-
 const client = createResourceClient<TaskCategory, TaskCategoryEdge, TaskCategoryCreate, TaskCategoryUpdate>({
     singular: "taskCategory",
     pagedSummaryQuery: TaskCategoryPagedSummary,
@@ -87,7 +88,7 @@ const client = createResourceClient<TaskCategory, TaskCategoryEdge, TaskCategory
     updateMutation: TaskCategoryUpdateMutation,
     deleteMutation: TaskCategoryDeleteMutation,
     exportQuery: TaskCategoryExportQuery,
-    eventsQuery: TaskCategoryEventsQuery,
+    auditedType: AuditedType.TaskCategory,
     cacheTag: "task-category",
     restPath: "tasks/categories",
     defaultSort: ["name"],
@@ -95,4 +96,4 @@ const client = createResourceClient<TaskCategory, TaskCategoryEdge, TaskCategory
     defaultFilter: "",
 });
 
-export const {getPaged, get, getAll, create, update, del, exp, imp, events} = client;
+export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;

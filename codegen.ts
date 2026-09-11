@@ -1,11 +1,12 @@
 import {CodegenConfig} from "@graphql-codegen/cli";
 
 const enumValues = {
-    EventType: "./schema#EventType",
+    AuditedType: "./schema#AuditedType",
     ImpexType: "./schema#ImpexType",
     ReportType: "./schema#ReportType",
+    RestoreAction: "./schema#RestoreAction",
+    RevisionType: "./schema#RevisionType",
     SortDirection: "./schema#SortDirection",
-    SourceType: "./schema#SourceType",
     TypeType: "./schema#TypeType",
 };
 
@@ -15,7 +16,7 @@ const config: CodegenConfig = {
     ignoreNoDocuments: true,
     generates: {
         // Full schema object types + real enums. The app imports domain types
-        // (`Spexare`, `Event`, `SortDirection`, …) from `@/gql/schema`.
+        // (`Spexare`, `Revision`, `SortDirection`, …) from `@/gql/schema`.
         "./src/gql/schema.ts": {
             plugins: ["typescript"],
             config: {

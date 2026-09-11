@@ -225,7 +225,22 @@ const resolvers = {
     UserPagedSummary: () => paged("userPaged", userList),
     UserPagedFull: () => paged("userPaged", userList.map(withAudit)),
 
-    SpexareEvents: () => ({spexareEvents: []}),
+    revisions: () => ({
+        revisions: [
+            {
+                revision: 2, type: "TAG", entityId: 1, revisionType: "MOD",
+                modifiedAt: audit.createdAt, modifiedBy: "admin@example.com",
+                changes: [{field: "name", oldValue: "Hedersledamot", newValue: "Hedersmedlem", binary: false}],
+            },
+            {
+                revision: 1, type: "TAG", entityId: 1, revisionType: "ADD",
+                modifiedAt: audit.createdAt, modifiedBy: "admin@example.com", changes: [],
+            },
+        ],
+    }),
+    revisionFeedPaged: () => paged("revisionFeedPaged", []),
+    restorePreview: () => ({restorePreview: {entries: [], warnings: []}}),
+    restore: () => ({restore: {revision: 1, updated: 1, created: 0, deleted: 0, warnings: []}}),
 
     Jobs: () => ({
         jobs: [{

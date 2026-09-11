@@ -1,10 +1,11 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {Address, Country, Type, TypeType} from "@/gql/schema";
+import {Address, AuditedType, Country, Type, TypeType} from "@/gql/schema";
 import {Button} from "@/components/ui/button";
 import {Edit2, MapPin, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
+import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {AddressForm} from "./address-form.client";
 import {DataEmpty} from "@/components/data-empty";
 import {createAddressAction, deleteAddressAction, updateAddressAction} from "@/app/(app)/spexare/actions.server";
@@ -158,6 +159,7 @@ export function AddressManager({
                     </div>
                 )}
             </div>
+            <AggregateAuditTrail spexareId={spexareId} relatedType={AuditedType.Address}/>
         </div>
     );
 }

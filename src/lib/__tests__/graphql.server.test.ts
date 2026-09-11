@@ -7,7 +7,7 @@ import {
     runMutationField,
     runQuery,
 } from "@/lib/graphql.server";
-import {ImpexType, SortDirection} from "@/gql/schema";
+import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
 import type {CursorPage} from "@/types/pagination";
 
 const toPromise = vi.fn();
@@ -18,11 +18,15 @@ vi.mock("@/lib/urql.server", () => ({getClient: () => ({query, mutation})}));
 const axiosPost = vi.fn();
 vi.mock("@/lib/axios.server", () => ({default: {post: (...a: unknown[]) => axiosPost(...a)}}));
 
+const getRevisions = vi.fn();
+vi.mock("@/lib/audit/audit.server", () => ({getRevisions: (...a: unknown[]) => getRevisions(...a)}));
+
 beforeEach(() => {
     toPromise.mockReset();
     query.mockClear();
     mutation.mockClear();
     axiosPost.mockReset();
+    getRevisions.mockReset();
 });
 
 describe("runQuery", () => {
@@ -151,7 +155,6 @@ describe("createResourceClient", () => {
     const updateDoc = {doc: "update"};
     const deleteDoc = {doc: "delete"};
     const exportDoc = {doc: "export"};
-    const eventsDoc = {doc: "events"};
 
     const client = createResourceClient<Thing, ThingEdge, { name: string }, { id?: string; name?: string }>({
         singular: "thing",
@@ -167,8 +170,7 @@ describe("createResourceClient", () => {
         deleteMutation: deleteDoc as any,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         exportQuery: exportDoc as any,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        eventsQuery: eventsDoc as any,
+        auditedType: AuditedType.Tag,
         cacheTag: "thing",
         restPath: "things",
         defaultSort: ["name"],
@@ -260,13 +262,10 @@ describe("createResourceClient", () => {
         expect(query.mock.calls[0][0]).toBe(exportDoc);
     });
 
-    it("events returns the list, defaulting to empty", async () => {
-        toPromise.mockResolvedValueOnce({data: {thingEvents: [{id: "e1"}]}});
-        await expect(client.events("1")).resolves.toEqual([{id: "e1"}]);
-        expect(query.mock.calls[0][0]).toBe(eventsDoc);
-
-        toPromise.mockResolvedValueOnce({data: {}});
-        await expect(client.events("1")).resolves.toEqual([]);
+    it("revisions delegates to the audit client with the configured audited type", async () => {
+        getRevisions.mockResolvedValueOnce([{revision: 1}]);
+        await expect(client.revisions("1")).resolves.toEqual([{revision: 1}]);
+        expect(getRevisions).toHaveBeenCalledWith(AuditedType.Tag, "1");
     });
 
     it("imp posts the file bytes to the REST endpoint with the impex type", async () => {

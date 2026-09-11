@@ -7,8 +7,10 @@ afterEach(() => {
 });
 
 vi.mock("next-intl", () => ({
-    useTranslations: () => (key: string, values?: Record<string, unknown>) =>
-        values ? `${key}:${JSON.stringify(values)}` : key,
+    useTranslations: () => Object.assign(
+        (key: string, values?: Record<string, unknown>) => (values ? `${key}:${JSON.stringify(values)}` : key),
+        {has: () => false},
+    ),
     useLocale: () => "sv",
 }));
 

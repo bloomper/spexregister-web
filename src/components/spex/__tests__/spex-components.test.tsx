@@ -8,7 +8,11 @@ import type {Spex} from "@/gql/schema";
 
 vi.mock("next/image", () => ({default: () => <span data-slot="mock-image"/>}));
 vi.mock("@/components/data-audit-trail.client", () => ({AuditTrail: () => <div data-testid="audit-trail"/>}));
-vi.mock("@/app/(app)/spex/actions.server", () => ({getEventsAction: vi.fn()}));
+vi.mock("@/app/(app)/spex/actions.server", () => ({
+    getRevisionsAction: vi.fn(),
+    getRestorePreviewAction: vi.fn(),
+    restoreRevisionAction: vi.fn()
+}));
 vi.mock("@/components/spex/spex-form.client", () => ({SpexForm: () => <div data-testid="spex-form"/>}));
 
 const spex = {

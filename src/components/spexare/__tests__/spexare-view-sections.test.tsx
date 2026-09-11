@@ -12,8 +12,15 @@ import type {Country, Spexare} from "@/gql/schema";
 
 vi.mock("next/image", () => ({default: () => <span data-slot="mock-image"/>}));
 vi.mock("@/components/data-audit-trail.client", () => ({AuditTrail: () => <div data-testid="audit-trail"/>}));
+vi.mock("@/components/audit/aggregate-audit-trail.client", () => ({
+    AggregateAuditTrail: () => <div data-testid="aggregate-audit-trail"/>
+}));
 vi.mock("@/components/data-table-audit-info.client", () => ({AuditInfo: () => <div data-testid="audit-info"/>}));
-vi.mock("@/app/(app)/spexare/actions.server", () => ({getEventsAction: vi.fn()}));
+vi.mock("@/app/(app)/spexare/actions.server", () => ({
+    getRevisionsAction: vi.fn(),
+    getRestorePreviewAction: vi.fn(),
+    restoreRevisionAction: vi.fn()
+}));
 
 type Slice<K extends keyof Spexare> = Spexare[K];
 
@@ -25,7 +32,7 @@ describe("MembershipsSection", () => {
             {id: "m3", year: "2021", type: {id: "t2", label: "Treasurer"}},
         ] as unknown as Slice<"memberships">;
 
-        render(<MembershipsSection memberships={memberships}/>);
+        render(<MembershipsSection memberships={memberships} spexareId="1"/>);
 
         expect(screen.getByText("Chairman")).toBeInTheDocument();
         expect(screen.getByText("Treasurer")).toBeInTheDocument();
@@ -34,7 +41,7 @@ describe("MembershipsSection", () => {
     });
 
     it("renders an empty state when there are no memberships", () => {
-        render(<MembershipsSection memberships={[]}/>);
+        render(<MembershipsSection memberships={[]} spexareId="1"/>);
         expect(screen.getByText("Common.noDataHeading")).toBeInTheDocument();
     });
 });
@@ -46,7 +53,7 @@ describe("ConsentsSection", () => {
             {id: "c2", value: false, type: {id: "t2", label: "Photo"}},
         ] as unknown as Slice<"consents">;
 
-        render(<ConsentsSection consents={consents}/>);
+        render(<ConsentsSection consents={consents} spexareId="1"/>);
 
         expect(screen.getByText("Spexare.Consent.granted")).toBeInTheDocument();
         expect(screen.getByText("Spexare.Consent.withdrawn")).toBeInTheDocument();
@@ -62,7 +69,7 @@ describe("AddressesSection", () => {
         }] as unknown as Slice<"addresses">;
         const countries = [{isoCode: "SE", label: "Sweden"}] as unknown as Country[];
 
-        render(<AddressesSection addresses={addresses} countries={countries}/>);
+        render(<AddressesSection addresses={addresses} countries={countries} spexareId="1"/>);
 
         expect(screen.getByText("Main St 1")).toBeInTheDocument();
         expect(screen.getByText("Sweden")).toBeInTheDocument();
@@ -77,7 +84,7 @@ describe("TogglesSection", () => {
             {id: "tg2", value: false, type: {id: "t2", label: "SMS"}},
         ] as unknown as Slice<"toggles">;
 
-        render(<TogglesSection toggles={toggles}/>);
+        render(<TogglesSection toggles={toggles} spexareId="1"/>);
 
         expect(screen.getByText("Common.yes")).toBeInTheDocument();
         expect(screen.getByText("Common.no")).toBeInTheDocument();
@@ -97,12 +104,12 @@ describe("PartnerSection", () => {
         const partner = {
             id: "p1", firstName: "Bob", lastName: "Byron", published: true, deceased: false, imageUrl: null,
         } as unknown as Slice<"partner">;
-        render(<PartnerSection partner={partner}/>);
+        render(<PartnerSection partner={partner} spexareId="1"/>);
         expect(screen.getByText("Bob Byron")).toBeInTheDocument();
     });
 
     it("renders an empty state without a partner", () => {
-        render(<PartnerSection partner={null}/>);
+        render(<PartnerSection partner={null} spexareId="1"/>);
         expect(screen.getByText("Common.noDataHeading")).toBeInTheDocument();
     });
 });

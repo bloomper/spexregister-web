@@ -9,19 +9,20 @@ import {
     del,
     deletePoster,
     deleteRevival,
-    events,
     exp,
     get,
     getAll as getAllSpex,
     getPaged,
     imp,
     removeCategory,
+    revisions,
     spexFormSchema,
     update,
     uploadPoster
 } from "@/lib/spex";
+import {getRestorePreview, restore} from "@/lib/audit/audit.server";
 import {revalidateTag} from "next/cache";
-import {ImpexType, SortDirection} from "@/gql/schema";
+import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
 export async function getPageAction(args: {
@@ -166,9 +167,23 @@ export async function deletePosterAction(id: string) {
     });
 }
 
-export async function getEventsAction(id: string) {
+export async function getRevisionsAction(id: string) {
     return withPolicyAction(Policies.spex.requireRead, async () => {
-        return events(id);
+        return revisions(id);
+    });
+}
+
+export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        return getRestorePreview(type, id, revision, cascade);
+    });
+}
+
+export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        const result = await restore(type, id, revision, cascade);
+        revalidate();
+        return result;
     });
 }
 

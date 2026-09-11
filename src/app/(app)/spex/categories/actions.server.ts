@@ -6,17 +6,18 @@ import {
     create,
     del,
     deleteLogo,
-    events,
     exp,
     get,
     getPaged,
     imp,
+    revisions,
     spexCategoryFormSchema,
     update,
     uploadLogo
 } from "@/lib/spex/category";
+import {getRestorePreview, restore} from "@/lib/audit/audit.server";
 import {revalidateTag} from "next/cache";
-import {ImpexType, SortDirection} from "@/gql/schema";
+import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
 
 export async function getPageAction(args: {
     first?: number;
@@ -110,9 +111,23 @@ export async function deleteLogoAction(id: string) {
     });
 }
 
-export async function getEventsAction(id: string) {
+export async function getRevisionsAction(id: string) {
     return withPolicyAction(Policies.spexCategory.requireRead, async () => {
-        return events(id);
+        return revisions(id);
+    });
+}
+
+export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        return getRestorePreview(type, id, revision, cascade);
+    });
+}
+
+export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        const result = await restore(type, id, revision, cascade);
+        revalidate();
+        return result;
     });
 }
 

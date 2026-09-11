@@ -12,6 +12,8 @@ import {
     MembershipEdge,
     News,
     NewsEdge,
+    RevisionFeedEdge,
+    RevisionFeedEntry,
     Spex,
     Spexare,
     SpexareEdge,
@@ -67,6 +69,10 @@ export type MembershipPage = CursorPage<Membership> & {
 
 export type NewsPage = CursorPage<News> & {
     edges: Array<Omit<NewsEdge, "node"> & { node: News }>;
+};
+
+export type RevisionFeedPage = CursorPage<RevisionFeedEntry> & {
+    edges: Array<Omit<RevisionFeedEdge, "node"> & { node: RevisionFeedEntry }>;
 };
 
 export type SpexPage = CursorPage<Spex> & {

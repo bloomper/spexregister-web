@@ -7,19 +7,28 @@ import {
     create,
     del,
     deleteImage,
-    events,
     exp,
     get,
     getPaged,
     imp,
     removePartner,
+    revisions,
     search,
     spexareFormSchema,
     update,
     uploadImage
 } from "@/lib/spexare";
+import {getRelatedRevisions, getRestorePreview, restore} from "@/lib/audit/audit.server";
 import {revalidateTag} from "next/cache";
-import {AggregationFilterInput, ImpexType, ReportType, SortDirection, SpexareCreate, SpexareUpdate} from "@/gql/schema";
+import {
+    AggregationFilterInput,
+    AuditedType,
+    ImpexType,
+    ReportType,
+    SortDirection,
+    SpexareCreate,
+    SpexareUpdate
+} from "@/gql/schema";
 import {
     addressFormSchema,
     create as createAddress,
@@ -413,9 +422,29 @@ export async function deleteActorAction(spexareId: string, activityId: string, t
     });
 }
 
-export async function getEventsAction(id: string) {
+export async function getRevisionsAction(id: string) {
     return withPolicyAction(Policies.spexare.requireRead, async () => {
-        return events(id);
+        return revisions(id);
+    });
+}
+
+export async function getRelatedTypeRevisionsAction(id: string, relatedType: AuditedType) {
+    return withPolicyAction(Policies.spexare.requireRead, async () => {
+        return getRelatedRevisions(AuditedType.Spexare, id, relatedType);
+    });
+}
+
+export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        return getRestorePreview(type, id, revision, cascade);
+    });
+}
+
+export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        const result = await restore(type, id, revision, cascade);
+        revalidate();
+        return result;
     });
 }
 
