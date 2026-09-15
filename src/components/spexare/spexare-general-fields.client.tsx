@@ -167,21 +167,23 @@ export function SpexareGeneralFields({
                                 />
                             ) : (
                                 <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant={"outline"}
-                                            className={cn(
-                                                "w-full justify-start text-left font-normal",
-                                                !field.value && "text-muted-foreground"
-                                            )}
-                                        >
-                                            <CalendarIcon className="mr-2 h-4 w-4"/>
-                                            {field.value ? (
-                                                format(parse(field.value, "yyyyMMdd", new Date()), "yyyy-MM-dd")
-                                            ) : (
-                                                <span>{t("Common.selectDate")}</span>
-                                            )}
-                                        </Button>
+                                    <PopoverTrigger
+                                        render={
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-full justify-start text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            />
+                                        }
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4"/>
+                                        {field.value ? (
+                                            format(parse(field.value, "yyyyMMdd", new Date()), "yyyy-MM-dd")
+                                        ) : (
+                                            <span>{t("Common.selectDate")}</span>
+                                        )}
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0" align="start">
                                         <Calendar

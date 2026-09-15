@@ -219,11 +219,9 @@ export function TaskTable({
                         </div>
                     </div>
 
-                    <Button asChild size="sm" className="h-8 w-full lg:w-auto">
-                        <Link href="/tasks/create">
-                            <Plus className="mr-2 h-4 w-4"/>
-                            {t("Task.createHeading")}
-                        </Link>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/tasks/create"/>}>
+                        <Plus className="mr-2 h-4 w-4"/>
+                        {t("Task.createHeading")}
                     </Button>
                 </div>
             </DataTable>

@@ -48,46 +48,44 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
     const isActive = item.isActive || item.items?.some(sub => pathname === sub.url || sub.items?.some(inner => pathname === inner.url));
 
     return (
-        <Collapsible asChild defaultOpen={isActive} className="group/menu-item">
-            <SidebarMenuItem>
-                {hasSubItems ? (
-                    <div
-                        className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isActive ? "bg-sidebar-accent" : ""}`}>
-                        <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}
-                                           className="hover:bg-transparent! active:bg-transparent!">
-                            <LinkComponent {...linkProps}>
-                                {item.icon && <item.icon/>}
-                                <span>{item.title}</span>
-                            </LinkComponent>
-                        </SidebarMenuButton>
-                        <CollapsibleTrigger asChild>
-                            <button
-                                className="mr-1 flex size-7 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform group-data-[collapsible=icon]:hidden">
-                                <ChevronRight
-                                    className="size-4 transition-transform duration-200 group-data-[state=open]/menu-item:rotate-90"/>
-                                <span className="sr-only">{t("Common.toggle")}</span>
-                            </button>
-                        </CollapsibleTrigger>
-                    </div>
-                ) : (
-                    <SidebarMenuButton tooltip={item.title} asChild isActive={pathname === item.url}>
-                        <LinkComponent {...linkProps}>
-                            {item.icon && <item.icon/>}
-                            <span>{item.title}</span>
-                        </LinkComponent>
+        <Collapsible defaultOpen={isActive} className="group/menu-item" render={<SidebarMenuItem/>}>
+            {hasSubItems ? (
+                <div
+                    className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isActive ? "bg-sidebar-accent" : ""}`}>
+                    <SidebarMenuButton tooltip={item.title} isActive={isActive}
+                                       className="hover:bg-transparent! active:bg-transparent!"
+                                       render={<LinkComponent {...linkProps}/>}>
+                        {item.icon && <item.icon/>}
+                        <span>{item.title}</span>
                     </SidebarMenuButton>
-                )}
+                    <CollapsibleTrigger
+                        render={
+                            <button
+                                className="mr-1 flex size-7 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform group-data-[collapsible=icon]:hidden"/>
+                        }
+                    >
+                        <ChevronRight
+                            className="size-4 transition-transform duration-200 group-data-open/menu-item:rotate-90"/>
+                        <span className="sr-only">{t("Common.toggle")}</span>
+                    </CollapsibleTrigger>
+                </div>
+            ) : (
+                <SidebarMenuButton tooltip={item.title} isActive={pathname === item.url}
+                                   render={<LinkComponent {...linkProps}/>}>
+                    {item.icon && <item.icon/>}
+                    <span>{item.title}</span>
+                </SidebarMenuButton>
+            )}
 
-                {hasSubItems && (
-                    <CollapsibleContent>
-                        <SidebarMenuSub className="mr-0! pr-0!">
-                            {item.items?.map((subItem) => (
-                                <NavSubItem key={subItem.title} item={subItem} pathname={pathname}/>
-                            ))}
-                        </SidebarMenuSub>
-                    </CollapsibleContent>
-                )}
-            </SidebarMenuItem>
+            {hasSubItems && (
+                <CollapsibleContent>
+                    <SidebarMenuSub className="mr-0! pr-0!">
+                        {item.items?.map((subItem) => (
+                            <NavSubItem key={subItem.title} item={subItem} pathname={pathname}/>
+                        ))}
+                    </SidebarMenuSub>
+                </CollapsibleContent>
+            )}
         </Collapsible>
     );
 }
@@ -100,11 +98,9 @@ function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
     if (!hasInnerItems) {
         return (
             <SidebarMenuSubItem>
-                <SidebarMenuSubButton asChild isActive={pathname === item.url}>
-                    <Link href={item.url}>
-                        {item.icon && <item.icon className="size-4"/>}
-                        <span>{item.title}</span>
-                    </Link>
+                <SidebarMenuSubButton isActive={pathname === item.url} render={<Link href={item.url}/>}>
+                    {item.icon && <item.icon className="size-4"/>}
+                    <span>{item.title}</span>
                 </SidebarMenuSubButton>
             </SidebarMenuSubItem>
         );
@@ -120,23 +116,24 @@ function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
                         {item.icon && <item.icon className="size-4"/>}
                         <span className="truncate">{item.title}</span>
                     </Link>
-                    <CollapsibleTrigger asChild>
-                        <button
-                            className="mr-1 flex size-6 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform">
-                            <ChevronRight
-                                className="size-4 transition-transform duration-200 group-data-[state=open]/sub-menu-item:rotate-90"/>
-                            <span className="sr-only">{t("Common.toggle")}</span>
-                        </button>
+                    <CollapsibleTrigger
+                        render={
+                            <button
+                                className="mr-1 flex size-6 items-center justify-center rounded-md hover:bg-sidebar-accent-foreground/10 transition-transform"/>
+                        }
+                    >
+                        <ChevronRight
+                            className="size-4 transition-transform duration-200 group-data-open/sub-menu-item:rotate-90"/>
+                        <span className="sr-only">{t("Common.toggle")}</span>
                     </CollapsibleTrigger>
                 </div>
                 <CollapsibleContent>
                     <SidebarMenuSub className="mr-0! pr-0!">
                         {item.items?.map((innerItem) => (
                             <SidebarMenuSubItem key={innerItem.title}>
-                                <SidebarMenuSubButton asChild isActive={pathname === innerItem.url}>
-                                    <Link href={innerItem.url}>
-                                        <span>{innerItem.title}</span>
-                                    </Link>
+                                <SidebarMenuSubButton isActive={pathname === innerItem.url}
+                                                      render={<Link href={innerItem.url}/>}>
+                                    <span>{innerItem.title}</span>
                                 </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                         ))}

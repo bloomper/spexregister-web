@@ -14,15 +14,18 @@ import type {DataTableColumnDef, DataTableFeatures} from "@/components/data-tabl
 
 function SelectAllHeader({
                              checked,
+                             indeterminate,
                              onCheckedChange,
                          }: {
-    checked: boolean | "indeterminate";
+    checked: boolean;
+    indeterminate: boolean;
     onCheckedChange: (value: boolean) => void;
 }) {
     const t = useTranslations();
     return (
         <Checkbox
             checked={checked}
+            indeterminate={indeterminate}
             onCheckedChange={onCheckedChange}
             aria-label={t("Common.selectAll")}
         />
@@ -56,21 +59,19 @@ function ActionsCell<T extends RowData>({row, table}: {
     return (
         <div onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4"/>
-                    </Button>
+                <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0"/>}>
+                    <MoreHorizontal className="h-4 w-4"/>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onSelect={() => meta?.setEditItem?.(row.original)}>
+                    <DropdownMenuItem onClick={() => meta?.setEditItem?.(row.original)}>
                         {t("Common.edit")}
                     </DropdownMenuItem>
                     {meta?.addToQueue && (
-                        <DropdownMenuItem onSelect={() => meta.addToQueue?.(row.original)}>
+                        <DropdownMenuItem onClick={() => meta.addToQueue?.(row.original)}>
                             {t("EditQueue.add")}
                         </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem className="text-destructive" onSelect={() => meta?.setDeleteItem?.(row.original)}>
+                    <DropdownMenuItem className="text-destructive" onClick={() => meta?.setDeleteItem?.(row.original)}>
                         {t("Common.delete")}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -84,7 +85,8 @@ export const columnHelper = {
         id: "select",
         header: ({table}) => (
             <SelectAllHeader
-                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+                checked={table.getIsAllPageRowsSelected()}
+                indeterminate={!table.getIsAllPageRowsSelected() && table.getIsSomePageRowsSelected()}
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             />
         ),
@@ -109,7 +111,7 @@ export const columnHelper = {
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                    className="-ml-4 h-8 data-popup-open:bg-accent"
                 >
                     <Translated id={translationId}/>
                     {isSorted === "desc" ? <ArrowDown className="ml-2 h-4 w-4"/> : isSorted === "asc" ?
@@ -122,9 +124,7 @@ export const columnHelper = {
             return (
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div className="max-w-[300px] truncate font-medium cursor-default">{value}</div>
-                        </TooltipTrigger>
+                        <TooltipTrigger render={<div className="max-w-[300px] truncate font-medium cursor-default"/>}>{value}</TooltipTrigger>
                         <TooltipContent className="max-w-[400px] wrap-break-word">{value}</TooltipContent>
                     </Tooltip>
                 </TooltipProvider>

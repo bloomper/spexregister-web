@@ -40,15 +40,23 @@ export function ChangeLogTable({initialData}: { initialData: RevisionFeedPage })
         });
     };
 
-    const handleTypeChange = (next: string) => {
+    const handleTypeChange = (next: string | null) => {
+        if (next === null) {
+            return;
+        }
         setType(next);
         load(next, null);
     };
 
+    const typeItems = [
+        {value: ALL, label: t("Audit.allTypes")},
+        ...Object.values(AuditedType).map((value) => ({value, label: value})),
+    ];
+
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-                <Select value={type} onValueChange={handleTypeChange}>
+                <Select value={type} onValueChange={handleTypeChange} items={typeItems}>
                     <SelectTrigger className="h-8 w-full sm:w-62.5">
                         <SelectValue/>
                     </SelectTrigger>

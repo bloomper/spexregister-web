@@ -217,20 +217,23 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <a
-                                href="https://www.fgv.nu"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-3 flex-nowrap bg-transparent! hover:bg-transparent! active:bg-transparent! focus:bg-transparent!"
-                            >
-                                <div className="flex aspect-square size-10 items-center justify-center rounded-lg">
-                                    <Logo/>
-                                </div>
-                                <div className="min-w-0 flex-1 overflow-hidden">
-                                    <LogoText className="h-10 w-auto text-foreground"/>
-                                </div>
-                            </a>
+                        <SidebarMenuButton
+                            size="lg"
+                            render={
+                                <a
+                                    href="https://www.fgv.nu"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 flex-nowrap bg-transparent! hover:bg-transparent! active:bg-transparent! focus:bg-transparent!"
+                                />
+                            }
+                        >
+                            <div className="flex aspect-square size-10 items-center justify-center rounded-lg">
+                                <Logo/>
+                            </div>
+                            <div className="min-w-0 flex-1 overflow-hidden">
+                                <LogoText className="h-10 w-auto text-foreground"/>
+                            </div>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

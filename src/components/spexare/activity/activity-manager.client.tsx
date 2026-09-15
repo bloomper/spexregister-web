@@ -11,6 +11,7 @@ import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
+    AlertDialogClose,
     AlertDialogContent,
     AlertDialogDescription,
     AlertDialogFooter,
@@ -137,11 +138,13 @@ export function ActivityManager({
                                         )}
 
                                         <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <Button variant="ghost" size="icon"
-                                                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
-                                                    <Trash2 className="h-4 w-4"/>
-                                                </Button>
+                                            <AlertDialogTrigger
+                                                render={
+                                                    <Button variant="ghost" size="icon"
+                                                            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"/>
+                                                }
+                                            >
+                                                <Trash2 className="h-4 w-4"/>
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
                                                 <AlertDialogHeader>
@@ -150,10 +153,13 @@ export function ActivityManager({
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
                                                     <AlertDialogCancel>{t("Common.cancel")}</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={() => handleDeleteActivity(activity.id)}
-                                                                       className="bg-destructive text-destructive-foreground">
+                                                    <AlertDialogClose
+                                                        render={<AlertDialogAction
+                                                            className="bg-destructive text-destructive-foreground"/>}
+                                                        onClick={() => handleDeleteActivity(activity.id)}
+                                                    >
                                                         {t("Common.delete")}
-                                                    </AlertDialogAction>
+                                                    </AlertDialogClose>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>

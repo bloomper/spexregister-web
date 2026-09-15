@@ -202,9 +202,18 @@ export function ImportButton({importAction}: ImportButtonProps) {
                             </p>
 
                             <Select
-                                value={selectedType ?? undefined}
-                                onValueChange={(v) => setSelectedType(v as ImpexType)}
+                                value={selectedType ?? null}
+                                onValueChange={(v) => setSelectedType(v as ImpexType | null)}
                                 disabled={!pendingFile || loading}
+                                items={allowedTypes.map((type) => ({
+                                    value: type,
+                                    label: (
+                                        <span className="flex items-center">
+                                            <FileSpreadsheet className="mr-2 h-4 w-4"/>
+                                            {t(`Impex.types.${type}`)}
+                                        </span>
+                                    ),
+                                }))}
                             >
                                 <SelectTrigger className="w-full">
                                     <SelectValue

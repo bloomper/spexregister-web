@@ -15,6 +15,7 @@ import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
+    AlertDialogClose,
     AlertDialogContent,
     AlertDialogDescription,
     AlertDialogFooter,
@@ -125,15 +126,17 @@ export function TaskActivityManager({
                                                 </Button>
 
                                                 <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="h-4 w-4 text-muted-foreground hover:text-destructive p-0"
-                                                            disabled={isPending || !actor.vocal?.id}
-                                                        >
-                                                            <X className="h-2.5 w-2.5"/>
-                                                        </Button>
+                                                    <AlertDialogTrigger
+                                                        render={
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-4 w-4 text-muted-foreground hover:text-destructive p-0"
+                                                                disabled={isPending || !actor.vocal?.id}
+                                                            />
+                                                        }
+                                                    >
+                                                        <X className="h-2.5 w-2.5"/>
                                                     </AlertDialogTrigger>
                                                     <AlertDialogContent>
                                                         <AlertDialogHeader>
@@ -142,16 +145,17 @@ export function TaskActivityManager({
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>
                                                             <AlertDialogCancel>{t("Common.cancel")}</AlertDialogCancel>
-                                                            <AlertDialogAction
+                                                            <AlertDialogClose
+                                                                render={<AlertDialogAction
+                                                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"/>}
                                                                 onClick={() => {
                                                                     if (actor.vocal?.id) {
                                                                         handleDeleteActor(actor.id, actor.vocal.id, taskActivity.id);
                                                                     }
                                                                 }}
-                                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                                             >
                                                                 {t("Common.delete")}
-                                                            </AlertDialogAction>
+                                                            </AlertDialogClose>
                                                         </AlertDialogFooter>
                                                     </AlertDialogContent>
                                                 </AlertDialog>
@@ -171,15 +175,17 @@ export function TaskActivityManager({
                                         </Button>
 
                                         <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors shrink-0"
-                                                    disabled={isPending}
-                                                >
-                                                    <Trash2 className="h-3.5 w-3.5"/>
-                                                </Button>
+                                            <AlertDialogTrigger
+                                                render={
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                                                        disabled={isPending}
+                                                    />
+                                                }
+                                            >
+                                                <Trash2 className="h-3.5 w-3.5"/>
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
                                                 <AlertDialogHeader>
@@ -188,12 +194,13 @@ export function TaskActivityManager({
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
                                                     <AlertDialogCancel>{t("Common.cancel")}</AlertDialogCancel>
-                                                    <AlertDialogAction
+                                                    <AlertDialogClose
+                                                        render={<AlertDialogAction
+                                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"/>}
                                                         onClick={() => handleDeleteTaskActivity(taskActivity.id)}
-                                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                                     >
                                                         {t("Common.delete")}
-                                                    </AlertDialogAction>
+                                                    </AlertDialogClose>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>

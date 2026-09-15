@@ -44,7 +44,12 @@ export function ConsentForm({defaultValues, types, onSubmit, onCancel, isPending
                         control={control}
                         name="typeId"
                         render={({field}) => (
-                            <Select onValueChange={field.onChange} value={field.value} disabled={isPending}>
+                            <Select
+                                onValueChange={field.onChange}
+                                value={field.value}
+                                disabled={isPending}
+                                items={consentTypes.map((type) => ({value: type.id, label: type.label}))}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder={t("Common.selectType")}/>
                                 </SelectTrigger>

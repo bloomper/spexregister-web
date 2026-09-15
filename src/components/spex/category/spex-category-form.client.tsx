@@ -156,10 +156,8 @@ export function SpexCategoryForm({item, onSuccess, onError, embedded, formId}: S
 
                 {!embedded && (
                     <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                        <SheetClose asChild>
-                            <Button type="button" variant="outline" disabled={isPending}>
-                                {item ? t("Common.close") : t("Common.cancel")}
-                            </Button>
+                        <SheetClose render={<Button type="button" variant="outline" disabled={isPending}/>}>
+                            {item ? t("Common.close") : t("Common.cancel")}
                         </SheetClose>
                         <Button type="submit" disabled={isPending}>
                             {isPending ? t("Common.saving") : t("Common.save")}

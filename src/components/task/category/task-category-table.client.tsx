@@ -181,11 +181,9 @@ export function TaskCategoryTable({
                         </div>
                     </div>
 
-                    <Button asChild size="sm" className="h-8 w-full lg:w-auto">
-                        <Link href="/tasks/categories/create">
-                            <Plus className="mr-2 h-4 w-4"/>
-                            {t("Task.Category.createHeading")}
-                        </Link>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/tasks/categories/create"/>}>
+                        <Plus className="mr-2 h-4 w-4"/>
+                        {t("Task.Category.createHeading")}
                     </Button>
                 </div>
             </DataTable>

@@ -68,21 +68,19 @@ export function DataFilter({
 
     return (
         <Popover onOpenChange={(open) => !open && setSearchTerm("")}>
-            <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 border-dashed">
-                    <Funnel className="mr-2 h-4 w-4"/>
-                    {title}
-                    {selectedValues?.size > 0 && (
-                        <>
-                            <Separator orientation="vertical" className="mx-2 h-4"/>
-                            <div className="flex space-x-1">
-                                <span className="text-xs">
-                                   {t("Common.selected", {count: selectedValues.size})}
-                                </span>
-                            </div>
-                        </>
-                    )}
-                </Button>
+            <PopoverTrigger render={<Button variant="outline" size="sm" className="h-8 border-dashed"/>}>
+                <Funnel className="mr-2 h-4 w-4"/>
+                {title}
+                {selectedValues?.size > 0 && (
+                    <>
+                        <Separator orientation="vertical" className="mx-2 h-4"/>
+                        <div className="flex space-x-1">
+                            <span className="text-xs">
+                               {t("Common.selected", {count: selectedValues.size})}
+                            </span>
+                        </div>
+                    </>
+                )}
             </PopoverTrigger>
             <PopoverContent className="w-auto min-w-50 max-w-75 p-0" align="start">
                 <div className="flex flex-col p-1">

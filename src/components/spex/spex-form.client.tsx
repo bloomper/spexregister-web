@@ -176,7 +176,14 @@ export function SpexForm({
                                             control={control}
                                             name="categoryId"
                                             render={({field}) => (
-                                                <Select onValueChange={field.onChange} value={field.value}>
+                                                <Select
+                                                    onValueChange={field.onChange}
+                                                    value={field.value}
+                                                    items={categories.map((category) => ({
+                                                        value: category.id,
+                                                        label: category.name
+                                                    }))}
+                                                >
                                                     <SelectTrigger className="w-full">
                                                         <SelectValue placeholder={t("Spex.selectCategory")}/>
                                                     </SelectTrigger>
@@ -275,7 +282,8 @@ export function SpexForm({
                                             <div className="flex-1 space-y-1">
                                                 <span
                                                     className="text-xs font-medium text-muted-foreground uppercase">{t("Spex.year")}</span>
-                                                <Select value={newRevivalYear} onValueChange={setNewRevivalYear}>
+                                                <Select value={newRevivalYear}
+                                                        onValueChange={(value) => setNewRevivalYear(value ?? "")}>
                                                     <SelectTrigger className="h-10 w-full bg-background">
                                                         <SelectValue placeholder={t("Spex.year")}/>
                                                     </SelectTrigger>
@@ -317,10 +325,8 @@ export function SpexForm({
 
                 {!embedded && (
                     <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                        <SheetClose asChild>
-                            <Button type="button" variant="outline" disabled={isPending}>
-                                {item ? t("Common.close") : t("Common.cancel")}
-                            </Button>
+                        <SheetClose render={<Button type="button" variant="outline" disabled={isPending}/>}>
+                            {item ? t("Common.close") : t("Common.cancel")}
                         </SheetClose>
                         <Button type="submit" disabled={isPending}>
                             {isPending ? t("Common.saving") : t("Common.save")}

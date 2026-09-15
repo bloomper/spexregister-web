@@ -207,11 +207,9 @@ export function NewsTable({
                         </div>
                     </div>
 
-                    <Button asChild size="sm" className="h-8 w-full lg:w-auto">
-                        <Link href="/news/create">
-                            <Plus className="mr-2 h-4 w-4"/>
-                            {t("News.createHeading")}
-                        </Link>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/news/create"/>}>
+                        <Plus className="mr-2 h-4 w-4"/>
+                        {t("News.createHeading")}
                     </Button>
                 </div>
             </DataTable>

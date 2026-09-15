@@ -99,11 +99,9 @@ export function RestoreDialog({id, type, revision, actions, onRestored}: Restore
 
     return (
         <AlertDialog open={open} onOpenChange={handleOpenChange}>
-            <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-5 px-1 text-[10px]">
-                    <History className="h-3 w-3"/>
-                    {t("Audit.restore")}
-                </Button>
+            <AlertDialogTrigger render={<Button variant="ghost" size="sm" className="h-5 px-1 text-[10px]"/>}>
+                <History className="h-3 w-3"/>
+                {t("Audit.restore")}
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
