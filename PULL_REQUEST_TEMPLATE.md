@@ -14,7 +14,7 @@ What kind of change does this PR introduce?
 [ ] Other
 ```
 
-[Issue Link](https://github.com/bloomper/spexregister-server/issues)
+[Issue Link](https://github.com/bloomper/spexregister-web/issues)
 
 ## What's new?
 
