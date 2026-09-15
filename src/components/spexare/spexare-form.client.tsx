@@ -164,7 +164,7 @@ export function SpexareForm({
                                     "py-2 text-xs sm:text-sm transition-all whitespace-nowrap",
                                     isSheet
                                         ? "rounded-md"
-                                        : "px-2 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                                        : "px-2 rounded-lg data-active:bg-background data-active:text-foreground data-active:shadow-sm"
                                 )}
                             >
                                 {tab.label}
@@ -218,10 +218,8 @@ export function SpexareForm({
                     isSheet ? "p-6 border-t bg-muted/30" : "mt-6"
                 )}>
                     {isSheet ? (
-                        <SheetClose asChild>
-                            <Button type="button" variant="outline" disabled={isPending}>
-                                {item ? t("Common.close") : t("Common.cancel")}
-                            </Button>
+                        <SheetClose render={<Button type="button" variant="outline" disabled={isPending}/>}>
+                            {item ? t("Common.close") : t("Common.cancel")}
                         </SheetClose>
                     ) : (
                         <Button type="button" variant="outline" disabled={isPending} onClick={() => onSuccess()}>

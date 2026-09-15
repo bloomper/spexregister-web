@@ -79,7 +79,11 @@ export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, 
                             control={control}
                             name="vocalId"
                             render={({field}) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value}
+                                    items={vocals.map((v) => ({value: v.id, label: v.label}))}
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder={t("Common.select")}/>
                                     </SelectTrigger>

@@ -62,7 +62,7 @@ export const columns: DataTableColumnDef<Spex>[] = [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                    className="-ml-4 h-8 data-popup-open:bg-accent"
                 >
                     <Translated id="Spex.year"/>
                     {isSorted === "desc" ? (
@@ -106,7 +106,7 @@ export const columns: DataTableColumnDef<Spex>[] = [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                    className="-ml-4 h-8 data-popup-open:bg-accent"
                 >
                     <Translated id="Spex.category"/>
                     {isSorted === "desc" ? (
@@ -282,11 +282,9 @@ export function SpexTable({
                         </div>
                     </div>
 
-                    <Button asChild size="sm" className="h-8 w-full lg:w-auto">
-                        <Link href="/spex/create">
-                            <Plus className="mr-2 h-4 w-4"/>
-                            {t("Spex.createHeading")}
-                        </Link>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/spex/create"/>}>
+                        <Plus className="mr-2 h-4 w-4"/>
+                        {t("Spex.createHeading")}
                     </Button>
                 </div>
             </DataTable>

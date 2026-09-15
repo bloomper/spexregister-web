@@ -166,7 +166,12 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
                                     control={control}
                                     name="stateId"
                                     render={({field}) => (
-                                        <Select onValueChange={field.onChange} value={field.value} disabled={isPending}>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value}
+                                            disabled={isPending}
+                                            items={states.map(s => ({value: s.id, label: s.label}))}
+                                        >
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t("Common.select")}/>
                                             </SelectTrigger>
@@ -221,20 +226,16 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
                             <FieldContent>
                                 <div className="flex items-center gap-2">
                                     <Popover open={spexareSearchOpen} onOpenChange={setSpexareSearchOpen}>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant="outline"
+                                        <PopoverTrigger render={<Button variant="outline"
                                                 role="combobox"
                                                 className="flex-1 justify-between font-normal text-left h-auto min-h-10 py-2"
-                                                disabled={isPending}
-                                            >
-                                                <div className="truncate">
-                                                    {selectedSpexareId
-                                                        ? (spexareResults.find(s => s.id === selectedSpexareId) ?? item?.spexare)?.firstName + " " + (spexareResults.find(s => s.id === selectedSpexareId) ?? item?.spexare)?.lastName
-                                                        : t("Common.select")}
-                                                </div>
-                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
-                                            </Button>
+                                                disabled={isPending}/>}>
+                                            <div className="truncate">
+                                                {selectedSpexareId
+                                                    ? (spexareResults.find(s => s.id === selectedSpexareId) ?? item?.spexare)?.firstName + " " + (spexareResults.find(s => s.id === selectedSpexareId) ?? item?.spexare)?.lastName
+                                                    : t("Common.select")}
+                                            </div>
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-[350px] p-0" align="start">
                                             <Command shouldFilter={false}>
@@ -285,10 +286,8 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
 
                 {!embedded && (
                     <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                        <SheetClose asChild>
-                            <Button type="button" variant="outline" disabled={isPending}>
-                                {item ? t("Common.close") : t("Common.cancel")}
-                            </Button>
+                        <SheetClose render={<Button type="button" variant="outline" disabled={isPending}/>}>
+                            {item ? t("Common.close") : t("Common.cancel")}
                         </SheetClose>
                         <Button type="submit" disabled={isPending}>
                             {isPending ? t("Common.saving") : t("Common.save")}

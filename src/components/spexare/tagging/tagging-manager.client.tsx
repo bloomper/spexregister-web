@@ -59,11 +59,9 @@ export function TaggingManager({
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <Popover>
-                    <PopoverTrigger asChild>
-                        <Button size="sm" variant="outline" disabled={isPending || availableTags.length === 0}>
-                            <Plus className="h-4 w-4 mr-2"/>
-                            {t("Common.add")}
-                        </Button>
+                    <PopoverTrigger render={<Button size="sm" variant="outline" disabled={isPending || availableTags.length === 0}/>}>
+                        <Plus className="h-4 w-4 mr-2"/>
+                        {t("Common.add")}
                     </PopoverTrigger>
                     <PopoverContent className="p-0" align="start">
                         <Command>

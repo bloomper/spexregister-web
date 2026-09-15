@@ -8,6 +8,7 @@ import {ImpexType, JobReference, ReportType} from "@/gql/schema";
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -69,33 +70,36 @@ export function ExportButton({
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8" disabled={loading}>
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Download className="mr-2 h-4 w-4"/>}
-                    {label}
-                </Button>
+            <DropdownMenuTrigger render={<Button variant="outline" size="sm" className="h-8" disabled={loading}/>}>
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Download className="mr-2 h-4 w-4"/>}
+                {label}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>{t("Impex.selectFormat")}</DropdownMenuLabel>
-                <DropdownMenuSeparator/>
+                <DropdownMenuGroup>
+                    <DropdownMenuLabel>{t("Impex.selectFormat")}</DropdownMenuLabel>
+                    <DropdownMenuSeparator/>
 
-                {standardTypes.map((type) => (
-                    <DropdownMenuItem key={type} onClick={() => handleExport(type)}>
-                        <FileSpreadsheet className="mr-2 h-4 w-4"/>
-                        {t(`Impex.types.${type}`)}
-                    </DropdownMenuItem>
-                ))}
+                    {standardTypes.map((type) => (
+                        <DropdownMenuItem key={type} onClick={() => handleExport(type)}>
+                            <FileSpreadsheet className="mr-2 h-4 w-4"/>
+                            {t(`Impex.types.${type}`)}
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuGroup>
 
                 {requiresReportType && (
                     <>
                         <DropdownMenuSeparator/>
-                        <DropdownMenuLabel>{t("Impex.types.PDF")}</DropdownMenuLabel>
-                        {Object.values(ReportType).map((reportType) => (
-                            <DropdownMenuItem key={reportType} onClick={() => handleExport(ImpexType.Pdf, reportType)}>
-                                <FileText className="mr-2 h-4 w-4"/>
-                                {t(`Impex.reportTypes.${reportType}`)}
-                            </DropdownMenuItem>
-                        ))}
+                        <DropdownMenuGroup>
+                            <DropdownMenuLabel>{t("Impex.types.PDF")}</DropdownMenuLabel>
+                            {Object.values(ReportType).map((reportType) => (
+                                <DropdownMenuItem key={reportType}
+                                                  onClick={() => handleExport(ImpexType.Pdf, reportType)}>
+                                    <FileText className="mr-2 h-4 w-4"/>
+                                    {t(`Impex.reportTypes.${reportType}`)}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuGroup>
                     </>
                 )}
             </DropdownMenuContent>

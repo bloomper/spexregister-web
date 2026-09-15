@@ -62,7 +62,12 @@ export function AddressForm({
                         control={control}
                         name="typeId"
                         render={({field}) => (
-                            <Select onValueChange={field.onChange} value={field.value} disabled={isPending}>
+                            <Select
+                                onValueChange={field.onChange}
+                                value={field.value}
+                                disabled={isPending}
+                                items={addressTypes.map((type) => ({value: type.id, label: type.label}))}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder={t("Common.selectType")}/>
                                 </SelectTrigger>
@@ -114,21 +119,23 @@ export function AddressForm({
                         name="country"
                         render={({field}) => (
                             <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        className={cn(
-                                            "w-full justify-between font-normal",
-                                            !field.value && "text-muted-foreground"
-                                        )}
-                                        disabled={isPending}
-                                    >
-                                        {field.value
-                                            ? countries.find((c) => c.isoCode === field.value)?.label
-                                            : t("Spexare.Address.selectCountry")}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
-                                    </Button>
+                                <PopoverTrigger
+                                    render={
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            className={cn(
+                                                "w-full justify-between font-normal",
+                                                !field.value && "text-muted-foreground"
+                                            )}
+                                            disabled={isPending}
+                                        />
+                                    }
+                                >
+                                    {field.value
+                                        ? countries.find((c) => c.isoCode === field.value)?.label
+                                        : t("Spexare.Address.selectCountry")}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-full p-0">
                                     <Command>

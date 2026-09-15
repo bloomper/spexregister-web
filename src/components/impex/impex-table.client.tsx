@@ -149,26 +149,22 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
                 return (
                     <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0" aria-label={t("Common.openMenu")}>
-                                    <MoreHorizontal className="h-4 w-4"/>
-                                </Button>
+                            <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" aria-label={t("Common.openMenu")}/>}>
+                                <MoreHorizontal className="h-4 w-4"/>
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent align="end">
                                 {hasDownload && (
-                                    <DropdownMenuItem asChild>
-                                        <a href={`/api/impex-result-download-proxy?id=${row.original.id}`} download>
-                                            <Download className="mr-0 h-4 w-4"/>
-                                            {t("Impex.download")}
-                                        </a>
+                                    <DropdownMenuItem render={<a href={`/api/impex-result-download-proxy?id=${row.original.id}`} download/>}>
+                                        <Download className="mr-0 h-4 w-4"/>
+                                        {t("Impex.download")}
                                     </DropdownMenuItem>
                                 )}
 
                                 <DropdownMenuItem
                                     className="text-destructive"
                                     disabled={isRunning}
-                                    onSelect={() => setDeleteItem(row.original)}
+                                    onClick={() => setDeleteItem(row.original)}
                                 >
                                     {t("Common.delete")}
                                 </DropdownMenuItem>

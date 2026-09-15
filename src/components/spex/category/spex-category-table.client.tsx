@@ -183,11 +183,9 @@ export function SpexCategoryTable({
                         </div>
                     </div>
 
-                    <Button asChild size="sm" className="h-8 w-full lg:w-auto">
-                        <Link href="/spex/categories/create">
-                            <Plus className="mr-2 h-4 w-4"/>
-                            {t("Spex.Category.createHeading")}
-                        </Link>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/spex/categories/create"/>}>
+                        <Plus className="mr-2 h-4 w-4"/>
+                        {t("Spex.Category.createHeading")}
                     </Button>
                 </div>
             </DataTable>

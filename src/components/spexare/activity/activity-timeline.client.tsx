@@ -44,10 +44,8 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                             <div className="flex flex-col gap-2">
                                 <div className="flex flex-wrap items-baseline gap-x-2">
                                     <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <h4 className="text-sm font-bold cursor-help underline decoration-dotted decoration-muted-foreground/30 underline-offset-4">
-                                                {activity.spexActivity?.spex?.title || t("Common.none")}
-                                            </h4>
+                                        <TooltipTrigger render={<h4 className="text-sm font-bold cursor-help underline decoration-dotted decoration-muted-foreground/30 underline-offset-4"/>}>
+                                            {activity.spexActivity?.spex?.title || t("Common.none")}
                                         </TooltipTrigger>
                                         {activity.spexActivity?.spex?.category?.name && (
                                             <TooltipContent>
@@ -78,13 +76,15 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                                             >
                                                 <div className="flex items-center gap-2">
                                                     <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <Badge
-                                                                variant="secondary"
-                                                                className="text-[9px] font-bold uppercase px-2 h-5 tracking-tight shadow-none border-transparent shrink-0 cursor-help"
-                                                            >
-                                                                {taskActivity.task?.name}
-                                                            </Badge>
+                                                        <TooltipTrigger
+                                                            render={
+                                                                <Badge
+                                                                    variant="secondary"
+                                                                    className="text-[9px] font-bold uppercase px-2 h-5 tracking-tight shadow-none border-transparent shrink-0 cursor-help"
+                                                                />
+                                                            }
+                                                        >
+                                                            {taskActivity.task?.name}
                                                         </TooltipTrigger>
                                                         {taskActivity.task?.category?.name && (
                                                             <TooltipContent>

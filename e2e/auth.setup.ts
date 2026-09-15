@@ -5,6 +5,7 @@ setup("authenticate", async ({page}) => {
     await page.goto("/api/auth/login");
 
     await expect(page.locator('a[href="/api/auth/login"]')).toHaveCount(0);
+    await page.getByRole("button", {name: "Jag förstår"}).click();
     await expect(page.getByRole("link", {name: "Hem"})).toBeVisible();
 
     await page.context().storageState({path: STORAGE_STATE});

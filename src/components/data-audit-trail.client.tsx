@@ -124,17 +124,19 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
     return (
         <Collapsible open={isOpen} onOpenChange={setIsOpen}
                      className="w-full rounded-lg border bg-muted/30 shadow-sm">
-            <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm"
-                        className="flex w-full items-center justify-between px-3 py-2 h-auto hover:bg-muted/50 transition-colors">
-                    <div
-                        className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-foreground/70">
-                        <History className="h-3.5 w-3.5 text-muted-foreground"/>
-                        <span>{t("Common.history")}</span>
-                    </div>
-                    {isOpen ? <ChevronUp className="h-3.5 w-3.5 text-muted-foreground"/> :
-                        <ChevronDown className="h-3.5 w-3.5 text-muted-foreground"/>}
-                </Button>
+            <CollapsibleTrigger
+                render={
+                    <Button variant="ghost" size="sm"
+                            className="flex w-full items-center justify-between px-3 py-2 h-auto hover:bg-muted/50 transition-colors"/>
+                }
+            >
+                <div
+                    className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-foreground/70">
+                    <History className="h-3.5 w-3.5 text-muted-foreground"/>
+                    <span>{t("Common.history")}</span>
+                </div>
+                {isOpen ? <ChevronUp className="h-3.5 w-3.5 text-muted-foreground"/> :
+                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground"/>}
             </CollapsibleTrigger>
 
             <CollapsibleContent className="px-3 pb-3">

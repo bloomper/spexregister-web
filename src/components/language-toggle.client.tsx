@@ -26,19 +26,17 @@ export function LanguageToggle() {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8">
-                    {FlagIcon ? (
-                        <FlagIcon
-                            className="h-[1.2rem] w-[1.2rem] rounded-[2px]"
-                            aria-hidden="true"
-                            focusable="false"
-                        />
-                    ) : (
-                        <Languages className="h-[1.2rem] w-[1.2rem]"/>
-                    )}
-                    <span className="sr-only">{t("Header.toggleLanguage")}</span>
-                </Button>
+            <DropdownMenuTrigger render={<Button variant="outline" size="icon" className="h-8 w-8"/>}>
+                {FlagIcon ? (
+                    <FlagIcon
+                        className="h-[1.2rem] w-[1.2rem] rounded-[2px]"
+                        aria-hidden="true"
+                        focusable="false"
+                    />
+                ) : (
+                    <Languages className="h-[1.2rem] w-[1.2rem]"/>
+                )}
+                <span className="sr-only">{t("Header.toggleLanguage")}</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 {languages.map((language) => {

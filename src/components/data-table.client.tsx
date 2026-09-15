@@ -277,7 +277,8 @@ export function DataTable<TData extends { id: string }>({
                 <div className="flex flex-col gap-4 sm:flex-row items-center justify-between py-4">
                     <div className="flex items-center space-x-2">
                         <p className="text-sm font-medium">{t("Common.rowsPerPage")}</p>
-                        <Select value={`${pageSize}`} onValueChange={handlePageSizeChange}>
+                        <Select value={`${pageSize}`}
+                                onValueChange={(value) => value !== null && handlePageSizeChange(value)}>
                             <SelectTrigger className="h-8 w-17.5">
                                 <SelectValue placeholder={pageSize}/>
                             </SelectTrigger>

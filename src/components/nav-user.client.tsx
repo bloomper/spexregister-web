@@ -70,50 +70,53 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
         <SidebarMenu>
             <SidebarMenuItem>
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton
-                            size="lg"
-                            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                        >
-                            <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
-                                             onError={() => setAvatarFailed(true)}/>
-                                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-                            </Avatar>
-                            <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{user?.name}</span>
-                                <span className="truncate text-xs">{user?.email}</span>
-                            </div>
-                            <ChevronsUpDown className="ml-auto size-4"/>
-                        </SidebarMenuButton>
+                    <DropdownMenuTrigger
+                        render={
+                            <SidebarMenuButton
+                                size="lg"
+                                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
+                            />
+                        }
+                    >
+                        <Avatar className="h-8 w-8 rounded-lg">
+                            <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
+                                         onError={() => setAvatarFailed(true)}/>
+                            <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                        </Avatar>
+                        <div className="grid flex-1 text-left text-sm leading-tight">
+                            <span className="truncate font-medium">{user?.name}</span>
+                            <span className="truncate text-xs">{user?.email}</span>
+                        </div>
+                        <ChevronsUpDown className="ml-auto size-4"/>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                        className="w-(--anchor-width) min-w-56 rounded-lg"
                         side={isMobile ? "bottom" : "right"}
                         align="end"
                         sideOffset={4}
                     >
-                        <DropdownMenuLabel className="p-0 font-normal">
-                            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
-                                                 onError={() => setAvatarFailed(true)}/>
-                                    <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-                                </Avatar>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium">{user?.name}</span>
-                                    <span className="truncate text-xs">{user?.email}</span>
+                        <DropdownMenuGroup>
+                            <DropdownMenuLabel className="p-0 font-normal">
+                                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                    <Avatar className="h-8 w-8 rounded-lg">
+                                        <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
+                                                     onError={() => setAvatarFailed(true)}/>
+                                        <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="grid flex-1 text-left text-sm leading-tight">
+                                        <span className="truncate font-medium">{user?.name}</span>
+                                        <span className="truncate text-xs">{user?.email}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </DropdownMenuLabel>
+                            </DropdownMenuLabel>
+                        </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
                             {spexare && (
-                                <DropdownMenuItem asChild>
-                                    <Link href="/my-profile" className="flex w-full items-center gap-2">
-                                        <UserRound className="size-4"/>
-                                        <span>{t("Common.myProfile")}</span>
-                                    </Link>
+                                <DropdownMenuItem
+                                    render={<Link href="/my-profile" className="flex w-full items-center gap-2"/>}>
+                                    <UserRound className="size-4"/>
+                                    <span>{t("Common.myProfile")}</span>
                                 </DropdownMenuItem>
                             )}
                             <DropdownMenuItem>
@@ -132,7 +135,7 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem
                             className="flex items-center gap-2"
-                            onSelect={async () => {
+                            onClick={async () => {
                                 const themeParam =
                                     theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
 

@@ -114,6 +114,13 @@ export function TaskForm({
                                             onValueChange={field.onChange}
                                             value={field.value}
                                             disabled={isPending}
+                                            items={[
+                                                {value: "none", label: t("Common.none")},
+                                                ...categories.map((category) => ({
+                                                    value: category.id,
+                                                    label: category.name
+                                                })),
+                                            ]}
                                         >
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t("Task.selectCategory")}/>
@@ -145,10 +152,8 @@ export function TaskForm({
 
                 {!embedded && (
                     <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                        <SheetClose asChild>
-                            <Button type="button" variant="outline" disabled={isPending}>
-                                {item ? t("Common.close") : t("Common.cancel")}
-                            </Button>
+                        <SheetClose render={<Button type="button" variant="outline" disabled={isPending}/>}>
+                            {item ? t("Common.close") : t("Common.cancel")}
                         </SheetClose>
                         <Button type="submit" disabled={isPending}>
                             {isPending ? t("Common.saving") : t("Common.save")}

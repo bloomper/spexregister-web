@@ -84,9 +84,10 @@ export function SpexActivityForm({
                     <Select
                         value={selectedCategoryId}
                         onValueChange={(val) => {
-                            setSelectedCategoryId(val);
+                            setSelectedCategoryId(val ?? "");
                             setValue("spexId", "");
                         }}
+                        items={spexCategories.map((cat) => ({value: cat.id, label: cat.name}))}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder={t("Spexare.Activity.SpexActivity.selectCategory")}/>
@@ -110,21 +111,23 @@ export function SpexActivityForm({
                         name="spexId"
                         render={({field}) => (
                             <Popover open={open} onOpenChange={setOpen}>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        disabled={!selectedCategoryId}
-                                        aria-expanded={open}
-                                        className="w-full justify-between font-normal"
-                                    >
-                                        {field.value
-                                            ? spex.find((s) => s.id === field.value)?.year + " - " + spex.find((s) => s.id === field.value)?.title
-                                            : t("Spexare.Activity.SpexActivity.selectYear")}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
-                                    </Button>
+                                <PopoverTrigger
+                                    render={
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            disabled={!selectedCategoryId}
+                                            aria-expanded={open}
+                                            className="w-full justify-between font-normal"
+                                        />
+                                    }
+                                >
+                                    {field.value
+                                        ? spex.find((s) => s.id === field.value)?.year + " - " + spex.find((s) => s.id === field.value)?.title
+                                        : t("Spexare.Activity.SpexActivity.selectYear")}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                                <PopoverContent className="w-(--anchor-width) p-0" align="start">
                                     <Command className="flex flex-col">
                                         <CommandInput placeholder={t("Common.search")}/>
                                         <CommandList

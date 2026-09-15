@@ -68,9 +68,7 @@ export default async function AppLayout({children}: { children: React.ReactNode 
                             </p>
 
                             <div className="pt-2">
-                                <Button asChild>
-                                    <Link href="/api/auth/login">{t("Common.login")}</Link>
-                                </Button>
+                                <Button nativeButton={false} render={<Link href="/api/auth/login"/>}>{t("Common.login")}</Button>
                             </div>
                         </div>
                     </div>

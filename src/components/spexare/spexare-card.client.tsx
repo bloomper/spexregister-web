@@ -38,11 +38,10 @@ export function SpexareCard({spexare, index, isMe, canEdit, onSelect, onEdit, on
                                 variant="secondary"
                                 size="icon"
                                 className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
-                                asChild
+                                nativeButton={false}
+                                render={<Link href="/my-profile"/>}
                             >
-                                <Link href="/my-profile">
-                                    <Pencil className="h-4 w-4"/>
-                                </Link>
+                                <Pencil className="h-4 w-4"/>
                             </Button>
                         ) : (
                             <>

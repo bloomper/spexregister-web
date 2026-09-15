@@ -87,9 +87,10 @@ export function TaskActivityForm({
                     <Select
                         value={selectedCategoryId}
                         onValueChange={(val) => {
-                            setSelectedCategoryId(val);
+                            setSelectedCategoryId(val ?? "");
                             setValue("taskId", "");
                         }}
+                        items={taskCategories.map((cat) => ({value: cat.id, label: cat.name}))}
                     >
                         <SelectTrigger className="h-9">
                             <SelectValue placeholder={t("Spexare.Activity.TaskActivity.selectCategory")}/>
@@ -113,20 +114,22 @@ export function TaskActivityForm({
                         name="taskId"
                         render={({field}) => (
                             <Popover open={open} onOpenChange={setOpen}>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        disabled={!selectedCategoryId}
-                                        className="h-9 justify-between font-normal"
-                                    >
-                                        {field.value
-                                            ? tasks.find((t) => t.id === field.value)?.name
-                                            : t("Spexare.Activity.TaskActivity.selectTask")}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
-                                    </Button>
+                                <PopoverTrigger
+                                    render={
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            disabled={!selectedCategoryId}
+                                            className="h-9 justify-between font-normal"
+                                        />
+                                    }
+                                >
+                                    {field.value
+                                        ? tasks.find((t) => t.id === field.value)?.name
+                                        : t("Spexare.Activity.TaskActivity.selectTask")}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                                <PopoverContent className="w-(--anchor-width) p-0" align="start">
                                     <Command>
                                         <CommandInput placeholder={t("Common.search")}/>
                                         <CommandList className="max-h-64 overflow-y-auto"
