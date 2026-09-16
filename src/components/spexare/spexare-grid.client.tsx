@@ -28,6 +28,7 @@ export function SpexareGrid({
                                 mode = "filter",
                                 initialSearchQuery = "",
                                 facets = [],
+                                initialSelectedFacets,
                                 currentSpexareId,
                                 canManage = false,
                                 types = [],
@@ -44,6 +45,7 @@ export function SpexareGrid({
     mode?: "filter" | "search";
     initialSearchQuery?: string;
     facets?: Facet[];
+    initialSelectedFacets?: Record<string, Set<string>>;
     currentSpexareId?: string | null;
     canManage?: boolean;
     types?: Type[];
@@ -76,7 +78,15 @@ export function SpexareGrid({
         isInfiniteMode,
         noResults,
         isFiltered,
-    } = useSpexareSearch({mode, initialSearchQuery, facets, initialItems, initialPageInfo, maxItems});
+    } = useSpexareSearch({
+        mode,
+        initialSearchQuery,
+        facets,
+        initialItems,
+        initialPageInfo,
+        maxItems,
+        initialSelectedFacets
+    });
 
     useDataRefresh(reset);
 

@@ -1,12 +1,11 @@
 import {SpexareGrid} from "@/components/spexare";
-import {getPaged} from "@/lib/spexare";
+import {getMine, getPaged} from "@/lib/spexare";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {UserRound} from "lucide-react";
 import {getCountries, getTypes} from "@/lib/settings";
 import {getLocale} from "next-intl/server";
-import {meOrNull} from "@/lib/user";
 import {isAdminOrEditor} from "@/utils/auth";
 import {getAll as getAllTags} from "@/lib/tag";
 import {getAll as getAllTasks} from "@/lib/task";
@@ -19,7 +18,7 @@ export default async function SpexarePage() {
         const canUpdate = isAdminOrEditor(authz.roles);
         const locale = await getLocale();
 
-        const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, currentUser] = await Promise.all([
+        const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, mySpexare] = await Promise.all([
             getPaged({first: 24, after: null}),
             getCountries(locale),
             getTypes(locale),
@@ -28,7 +27,7 @@ export default async function SpexarePage() {
             getAllTaskCategories(),
             getAllSpex(),
             getAllSpexCategories(),
-            meOrNull(),
+            getMine(),
         ]);
         const initialItems = page.items;
 
@@ -46,7 +45,7 @@ export default async function SpexarePage() {
                             spexCategories={spexCategories}
                             initialItems={initialItems}
                             initialPageInfo={page.pageInfo}
-                            currentSpexareId={currentUser?.spexare?.id ?? null}
+                            currentSpexareId={mySpexare?.id ?? null}
                             canManage={canUpdate}
                         />
                     ) : (

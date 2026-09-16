@@ -1,5 +1,14 @@
 import {describe, expect, it, vi} from "vitest";
-import {cn, formatDate, formatDateTime, getProxiedImageUrl, translateError} from "@/utils/utils";
+import {
+    appendFacetParams,
+    cn,
+    formatDate,
+    formatDateTime,
+    getProxiedImageUrl,
+    parseFacetParams,
+    toAggregationFilters,
+    translateError
+} from "@/utils/utils";
 
 describe("cn", () => {
     it("merges class names and dedupes conflicting tailwind classes", () => {
@@ -78,5 +87,67 @@ describe("translateError", () => {
             message: "translated:Common.errorOccurred",
             field: "year",
         });
+    });
+});
+
+describe("parseFacetParams", () => {
+    it("collects repeated f.<facetId> params from a URLSearchParams", () => {
+        const params = new URLSearchParams("q=ada&f.tags=Grundare&f.tags=Hedersmedlem&f.deceased=true");
+        expect(parseFacetParams(params)).toEqual({
+            tags: new Set(["Grundare", "Hedersmedlem"]),
+            deceased: new Set(["true"]),
+        });
+    });
+
+    it("accepts a Next searchParams object with both string and array values", () => {
+        expect(parseFacetParams({q: "ada", "f.tags": ["Grundare", "Hedersmedlem"], "f.deceased": "true"})).toEqual({
+            tags: new Set(["Grundare", "Hedersmedlem"]),
+            deceased: new Set(["true"]),
+        });
+    });
+
+    it("ignores non-facet params, empty values, a bare prefix and undefined entries", () => {
+        expect(parseFacetParams({q: "ada", "f.": "x", "f.tags": "", "f.spex": undefined})).toEqual({});
+    });
+
+    it("returns an empty selection when there is nothing to read", () => {
+        expect(parseFacetParams(new URLSearchParams())).toEqual({});
+    });
+});
+
+describe("appendFacetParams", () => {
+    it("writes a sorted, therefore stable, query string", () => {
+        const params = new URLSearchParams();
+        params.set("q", "ada");
+        appendFacetParams(params, {tags: new Set(["Hedersmedlem", "Grundare"]), deceased: new Set(["true"])});
+        expect(params.toString()).toBe("q=ada&f.deceased=true&f.tags=Grundare&f.tags=Hedersmedlem");
+    });
+
+    it("leaves the params untouched for an empty selection", () => {
+        const params = new URLSearchParams("q=ada");
+        appendFacetParams(params, {});
+        expect(params.toString()).toBe("q=ada");
+    });
+});
+
+describe("toAggregationFilters", () => {
+    it("flattens a selection into sorted name/value pairs", () => {
+        expect(toAggregationFilters({tags: new Set(["Hedersmedlem", "Grundare"]), deceased: new Set(["true"])})).toEqual([
+            {name: "deceased", value: "true"},
+            {name: "tags", value: "Grundare"},
+            {name: "tags", value: "Hedersmedlem"},
+        ]);
+    });
+
+    it("returns an empty array for an empty selection", () => {
+        expect(toAggregationFilters({})).toEqual([]);
+    });
+});
+
+describe("facet params round-trip", () => {
+    it("survives parse -> append -> parse unchanged", () => {
+        const selected = {tags: new Set(["Grundare", "Hedersmedlem"]), deceased: new Set(["true"])};
+        const params = appendFacetParams(new URLSearchParams(), selected);
+        expect(parseFacetParams(params)).toEqual(selected);
     });
 });

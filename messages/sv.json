@@ -128,6 +128,16 @@
     "uploadSuccess": "Uppladdning lyckades",
     "yes": "Ja"
   },
+  "CommandPalette": {
+    "title": "Kommandopalett",
+    "description": "Hoppa till en sida eller starta en åtgärd",
+    "open": "Öppna kommandopaletten",
+    "hint": "Hoppa till…",
+    "placeholder": "Hoppa till sida eller åtgärd…",
+    "navigation": "Navigering",
+    "create": "Skapa",
+    "empty": "Inga träffar"
+  },
   "EditQueue": {
     "title": "Redigeringskö",
     "open": "Öppna redigeringskö",

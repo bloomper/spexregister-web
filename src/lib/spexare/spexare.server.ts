@@ -138,6 +138,18 @@ const GetQuery = graphql(`
     }
 `);
 
+const MineSummaryQuery = graphql(`
+    query SpexareMeSummary {
+        spexareMe { ...SpexareSummary }
+    }
+`);
+
+const MineFullQuery = graphql(`
+    query SpexareMeFull {
+        spexareMe { ...SpexareFull }
+    }
+`);
+
 const AddPartnerMutation = graphql(`
     mutation SpexarePartnerAdd($spexareId: ID!, $id: ID!) {
         spexarePartnerAdd(spexareId: $spexareId, id: $id)
@@ -228,6 +240,22 @@ export async function search(args: {
 export async function get(id: string) {
     const data = await runQuery(GetQuery, {id});
     return data?.spexare as Spexare | undefined;
+}
+
+export async function getMine(args?: { full?: boolean }): Promise<Spexare | null> {
+    const context = {
+        fetchOptions: {
+            next: {tags: ["spexare", "me"]}
+        }
+    };
+
+    if (args?.full) {
+        const data = await runQuery(MineFullQuery, {}, context);
+        return (data?.spexareMe as Spexare | undefined) ?? null;
+    }
+
+    const data = await runQuery(MineSummaryQuery, {}, context);
+    return (data?.spexareMe as Spexare | undefined) ?? null;
 }
 
 export async function exp(ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType): Promise<JobReference> {

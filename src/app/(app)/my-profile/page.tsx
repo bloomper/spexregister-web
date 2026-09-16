@@ -1,4 +1,4 @@
-import {meOrNull} from "@/lib/user";
+import {getMine} from "@/lib/spexare";
 import {getLocale, getTranslations} from "next-intl/server";
 import {getCountries, getTypes} from "@/lib/settings";
 import {getAll as getAllTags} from "@/lib/tag";
@@ -11,8 +11,7 @@ import {redirect} from "next/navigation";
 import {revalidateTag} from "next/cache";
 
 export default async function MyProfilePage() {
-    const user = await meOrNull();
-    const item = user?.spexare;
+    const item = await getMine({full: true});
 
     if (!item) {
         redirect("/");

@@ -884,6 +884,7 @@ export type Query = {
   spexRevival?: Maybe<Spex>;
   spexare?: Maybe<Spexare>;
   spexareExport?: Maybe<JobReference>;
+  spexareMe?: Maybe<Spexare>;
   spexarePaged?: Maybe<SpexareConnection>;
   spexareSearchPaged?: Maybe<SpexareWithFacetsConnection>;
   state?: Maybe<State>;

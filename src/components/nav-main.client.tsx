@@ -1,5 +1,6 @@
 "use client";
 
+import {useState} from "react";
 import Link from "next/link";
 import {ChevronRight, type LucideIcon} from "lucide-react";
 
@@ -45,10 +46,20 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
     const LinkComponent = isInternal ? Link : "a";
     const linkProps = {href: item.url};
 
-    const isActive = item.isActive || item.items?.some(sub => pathname === sub.url || sub.items?.some(inner => pathname === inner.url));
+    const isActive = Boolean(item.isActive || item.items?.some(sub => pathname === sub.url || sub.items?.some(inner => pathname === inner.url)));
+
+    const [open, setOpen] = useState(isActive);
+    const [wasActive, setWasActive] = useState(isActive);
+
+    if (isActive !== wasActive) {
+        setWasActive(isActive);
+        if (isActive) {
+            setOpen(true);
+        }
+    }
 
     return (
-        <Collapsible defaultOpen={isActive} className="group/menu-item" render={<SidebarMenuItem/>}>
+        <Collapsible open={open} onOpenChange={setOpen} className="group/menu-item" render={<SidebarMenuItem/>}>
             {hasSubItems ? (
                 <div
                     className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isActive ? "bg-sidebar-accent" : ""}`}>
@@ -93,7 +104,18 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
 function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
     const t = useTranslations();
     const hasInnerItems = !!item.items?.length;
-    const isSubActive = pathname === item.url || item.items?.some(inner => pathname === inner.url);
+    const isSubActive = Boolean(pathname === item.url || item.items?.some(inner => pathname === inner.url));
+
+    // Same controlled-open reasoning as NavMainItem above.
+    const [subOpen, setSubOpen] = useState(isSubActive);
+    const [wasSubActive, setWasSubActive] = useState(isSubActive);
+
+    if (isSubActive !== wasSubActive) {
+        setWasSubActive(isSubActive);
+        if (isSubActive) {
+            setSubOpen(true);
+        }
+    }
 
     if (!hasInnerItems) {
         return (
@@ -108,7 +130,7 @@ function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
 
     return (
         <SidebarMenuSubItem>
-            <Collapsible defaultOpen={isSubActive} className="group/sub-menu-item">
+            <Collapsible open={subOpen} onOpenChange={setSubOpen} className="group/sub-menu-item">
                 <div
                     className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isSubActive ? "bg-sidebar-accent" : ""}`}>
                     <Link href={item.url}

@@ -33,12 +33,21 @@ test.describe("spexare grid", () => {
     test("infinite scroll loads the next page of results", async ({page}) => {
         await page.goto("/spexare");
 
-        await expect(page.getByText("Testperson 23")).toBeVisible();
-        await expect(page.getByText("Testperson 24", {exact: true})).toHaveCount(0);
+        // Scoped and count-asserted on purpose. This has failed once with the locator resolving to
+        // two card titles; asserting the count first reports that as "expected 1, received 2"
+        // instead of an opaque strict-mode violation, so a duplicate render stays visible.
+        const grid = page.getByRole("main");
+        const lastOfFirstPage = grid.getByText("Testperson 23", {exact: true});
+        const firstOfNextPage = grid.getByText("Testperson 24", {exact: true});
 
-        await page.getByText("Testperson 23").scrollIntoViewIfNeeded();
+        await expect(lastOfFirstPage).toHaveCount(1);
+        await expect(lastOfFirstPage).toBeVisible();
+        await expect(firstOfNextPage).toHaveCount(0);
 
-        await expect(page.getByText("Testperson 24", {exact: true})).toBeVisible();
+        await lastOfFirstPage.scrollIntoViewIfNeeded();
+
+        await expect(firstOfNextPage).toBeVisible();
+        await expect(firstOfNextPage).toHaveCount(1);
     });
 
     test("editing a card opens the edit form sheet seeded with the person", async ({page}) => {

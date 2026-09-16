@@ -9,6 +9,7 @@ import {
     deleteImage,
     exp,
     get,
+    getMine,
     getPaged,
     imp,
     removePartner,
@@ -92,6 +93,12 @@ export async function searchAction(args: {
 }) {
     return withPolicyAction(Policies.spexare.requireRead, async () => {
         return search(args);
+    });
+}
+
+export async function getMineAction() {
+    return withPolicyAction(Policies.spexare.requireRead, async () => {
+        return getMine();
     });
 }
 

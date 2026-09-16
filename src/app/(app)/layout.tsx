@@ -11,7 +11,7 @@ import {LogoText} from "@/components/logo-text";
 import {ModeToggle} from "@/components/mode-toggle.client";
 import {LanguageToggle} from "@/components/language-toggle.client";
 import {requireUser} from "@/utils/auth.server";
-import {meOrNull} from "@/lib/user";
+import {getMine} from "@/lib/spexare";
 import {LogoHome} from "@/components/logo-home";
 import Link from "next/link";
 import {Role} from "@/types/auth";
@@ -97,12 +97,12 @@ export default async function AppLayout({children}: { children: React.ReactNode 
 }
 
 async function SidebarWithUser({roles}: { roles: Role[] }) {
-    const currentUser = await meOrNull();
+    const mySpexare = await getMine();
 
     return (
         <AppSidebar
             roles={roles}
-            spexare={currentUser?.spexare ?? null}
+            spexare={mySpexare}
         />
     );
 }

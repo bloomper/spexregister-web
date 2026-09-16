@@ -52,13 +52,18 @@ const statistics = {
     taskCount: 5, taskCountHistory: [{label: "2025", count: 5}],
 };
 
+const nameHaystack = (s) => [s.firstName, s.lastName, s.nickName].filter(Boolean).join(" ").toLowerCase();
+
 function spexarePaged(variables) {
     const filter = String(variables?.filter ?? "");
     const m = filter.match(/firstName:\*([^*]+)\*/);
     const term = m ? m[1].toLowerCase() : "";
-    const matched = term
-        ? spexareList.filter((s) =>
-            [s.firstName, s.lastName, s.nickName].some((v) => v && v.toLowerCase().includes(term)))
+    // Every whitespace-separated token has to land somewhere in the name fields, rather than
+    // the whole term having to sit inside a single one. A full name like "Grace Hopper" spans
+    // two fields, and the real backend fuzzy-matches it across all of them.
+    const tokens = term.split(/\s+/).filter(Boolean);
+    const matched = tokens.length
+        ? spexareList.filter((s) => tokens.every((token) => nameHaystack(s).includes(token)))
         : spexareList;
 
     const sortField = variables?.sort?.[0] ?? "firstName";
@@ -181,14 +186,43 @@ const resolvers = {
     SpexarePagedSummary: (v) => spexarePaged(v),
     SpexarePagedFull: (v) => spexarePaged(v),
     SpexareGet: (v) => ({spexare: spexareFull(spexareList.find((s) => s.id === String(v?.id)) ?? spexareList[0])}),
+    // The mock account is not linked to a spexare, matching UserMe above.
+    SpexareMeSummary: () => ({spexareMe: null}),
+    SpexareMeFull: () => ({spexareMe: null}),
     SpexareSearch: (v) => {
-        const {spexarePaged: p} = spexarePaged({filter: `firstName:*${v?.q ?? ""}*`});
+        const q = String(v?.q ?? "");
+        const {spexarePaged: p} = spexarePaged(q ? {filter: `firstName:*${q}*`} : {});
+        const matched = p.edges.map((e) => e.node);
+
+        const filters = Array.isArray(v?.aggregationFilters) ? v.aggregationFilters : [];
+        const nodes = filters.reduce(
+            (acc, f) => (f?.name === "deceased"
+                ? acc.filter((s) => String(Boolean(s.deceased)) === String(f.value))
+                : acc),
+            matched,
+        );
+
+        // Counts are reported over the query-matched set, before the facet narrows it, the
+        // way a real faceted search reports them.
+        const deceasedFacet = {
+            id: "deceased",
+            label: "Avliden",
+            groups: [{
+                id: "deceased",
+                label: "Avliden",
+                values: [
+                    {id: "true", label: "Ja", count: matched.filter((s) => s.deceased).length},
+                    {id: "false", label: "Nej", count: matched.filter((s) => !s.deceased).length},
+                ],
+            }],
+        };
+
         return {
             spexareSearchPaged: {
-                edges: p.edges,
+                edges: nodes.map((node, i) => ({cursor: `c${i}`, node})),
                 pageInfo: pageInfo(false, null),
-                totalCount: p.totalCount,
-                facets: [],
+                totalCount: nodes.length,
+                facets: [deceasedFacet],
             },
         };
     },

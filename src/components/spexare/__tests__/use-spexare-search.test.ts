@@ -49,6 +49,7 @@ beforeEach(() => {
     searchAction.mockClear();
     reset.mockClear();
     capturedFetch = undefined;
+    window.history.replaceState(null, "", "/spexare");
 });
 
 describe("useSpexareSearch (filter mode)", () => {
@@ -89,5 +90,71 @@ describe("useSpexareSearch (search mode)", () => {
         await fetchWith();
         expect(searchAction).toHaveBeenCalledWith({q: "q", first: 24, after: null, aggregationFilters: []});
         expect(getPageAction).not.toHaveBeenCalled();
+    });
+});
+
+describe("useSpexareSearch (facet selection in the URL)", () => {
+    it("seeds the selection from initialSelectedFacets and sends it as aggregation filters", async () => {
+        renderHook(() => useSpexareSearch({
+            mode: "search",
+            initialSearchQuery: "",
+            facets: [],
+            initialItems: [],
+            initialSelectedFacets: {tags: new Set(["Hedersmedlem", "Grundare"])},
+        }));
+        await fetchWith();
+        expect(searchAction).toHaveBeenCalledWith({
+            q: "",
+            first: 24,
+            after: null,
+            aggregationFilters: [
+                {name: "tags", value: "Grundare"},
+                {name: "tags", value: "Hedersmedlem"},
+            ],
+        });
+    });
+
+    it("mirrors the seeded selection into the URL alongside the query", () => {
+        renderHook(() => useSpexareSearch({
+            mode: "search",
+            initialSearchQuery: "ada",
+            facets: [],
+            initialItems: [],
+            initialSelectedFacets: {tags: new Set(["Grundare"])},
+        }));
+        expect(window.location.search).toBe("?q=ada&f.tags=Grundare");
+    });
+
+    it("updates the URL when the selection changes", () => {
+        const {result} = renderHook(() => useSpexareSearch({
+            mode: "search",
+            initialSearchQuery: "",
+            facets: [],
+            initialItems: []
+        }));
+        expect(window.location.search).toBe("");
+
+        act(() => result.current.setSelectedFacets({deceased: new Set(["true"])}));
+        expect(window.location.search).toBe("?f.deceased=true");
+    });
+
+    it("clears the selection from state and URL on reset", () => {
+        const {result} = renderHook(() => useSpexareSearch({
+            mode: "search",
+            initialSearchQuery: "ada",
+            facets: [],
+            initialItems: [],
+            initialSelectedFacets: {deceased: new Set(["true"])},
+        }));
+        expect(window.location.search).toBe("?q=ada&f.deceased=true");
+
+        act(() => result.current.handleReset());
+        expect(result.current.selectedFacets).toEqual({});
+        expect(window.location.search).toBe("");
+    });
+
+    it("leaves the URL alone in filter mode", () => {
+        renderHook(() => useSpexareSearch({mode: "filter", initialSearchQuery: "ada", facets: [], initialItems: []}));
+        expect(window.location.search).toBe("");
     });
 });

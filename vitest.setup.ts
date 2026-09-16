@@ -51,6 +51,21 @@ class MockIntersectionObserver implements IntersectionObserver {
 
 vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
 
+// jsdom ships no ResizeObserver, and cmdk (the command palette) constructs one on mount.
+class MockResizeObserver implements ResizeObserver {
+    observe = () => {
+    };
+    unobserve = () => {
+    };
+    disconnect = () => {
+    };
+}
+
+vi.stubGlobal("ResizeObserver", MockResizeObserver);
+
+// cmdk also scrolls the highlighted item into view. jsdom has no layout, so this is a no-op.
+Element.prototype.scrollIntoView = vi.fn();
+
 vi.stubGlobal(
     "matchMedia",
     vi.fn().mockImplementation((query: string) => ({

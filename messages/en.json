@@ -129,6 +129,16 @@
     "uploadSuccess": "Upload successful",
     "yes": "Yes"
   },
+  "CommandPalette": {
+    "title": "Command palette",
+    "description": "Jump to a page or start an action",
+    "open": "Open the command palette",
+    "hint": "Jump to…",
+    "placeholder": "Jump to a page or action…",
+    "navigation": "Navigation",
+    "create": "Create",
+    "empty": "No matches"
+  },
   "EditQueue": {
     "title": "Edit queue",
     "open": "Open edit queue",

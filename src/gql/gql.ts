@@ -103,6 +103,8 @@ type Documents = {
     "\n    mutation SpexareUpdate($input: SpexareUpdate!) {\n        spexareUpdate(input: $input) { ...SpexareFull }\n    }\n": typeof types.SpexareUpdateDocument,
     "\n    mutation SpexareDelete($id: ID!) {\n        spexareDelete(id: $id)\n    }\n": typeof types.SpexareDeleteDocument,
     "\n    query SpexareGet($id: ID!) {\n        spexare(id: $id) { ...SpexareFull }\n    }\n": typeof types.SpexareGetDocument,
+    "\n    query SpexareMeSummary {\n        spexareMe { ...SpexareSummary }\n    }\n": typeof types.SpexareMeSummaryDocument,
+    "\n    query SpexareMeFull {\n        spexareMe { ...SpexareFull }\n    }\n": typeof types.SpexareMeFullDocument,
     "\n    mutation SpexarePartnerAdd($spexareId: ID!, $id: ID!) {\n        spexarePartnerAdd(spexareId: $spexareId, id: $id)\n    }\n": typeof types.SpexarePartnerAddDocument,
     "\n    mutation SpexarePartnerRemove($spexareId: ID!) {\n        spexarePartnerRemove(spexareId: $spexareId)\n    }\n": typeof types.SpexarePartnerRemoveDocument,
     "\n    query SpexareExport($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {\n        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) { id }\n    }\n": typeof types.SpexareExportDocument,
@@ -255,6 +257,8 @@ const documents: Documents = {
     "\n    mutation SpexareUpdate($input: SpexareUpdate!) {\n        spexareUpdate(input: $input) { ...SpexareFull }\n    }\n": types.SpexareUpdateDocument,
     "\n    mutation SpexareDelete($id: ID!) {\n        spexareDelete(id: $id)\n    }\n": types.SpexareDeleteDocument,
     "\n    query SpexareGet($id: ID!) {\n        spexare(id: $id) { ...SpexareFull }\n    }\n": types.SpexareGetDocument,
+    "\n    query SpexareMeSummary {\n        spexareMe { ...SpexareSummary }\n    }\n": types.SpexareMeSummaryDocument,
+    "\n    query SpexareMeFull {\n        spexareMe { ...SpexareFull }\n    }\n": types.SpexareMeFullDocument,
     "\n    mutation SpexarePartnerAdd($spexareId: ID!, $id: ID!) {\n        spexarePartnerAdd(spexareId: $spexareId, id: $id)\n    }\n": types.SpexarePartnerAddDocument,
     "\n    mutation SpexarePartnerRemove($spexareId: ID!) {\n        spexarePartnerRemove(spexareId: $spexareId)\n    }\n": types.SpexarePartnerRemoveDocument,
     "\n    query SpexareExport($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {\n        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) { id }\n    }\n": types.SpexareExportDocument,
@@ -688,6 +692,14 @@ export function graphql(source: "\n    mutation SpexareDelete($id: ID!) {\n     
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query SpexareGet($id: ID!) {\n        spexare(id: $id) { ...SpexareFull }\n    }\n"): (typeof documents)["\n    query SpexareGet($id: ID!) {\n        spexare(id: $id) { ...SpexareFull }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SpexareMeSummary {\n        spexareMe { ...SpexareSummary }\n    }\n"): (typeof documents)["\n    query SpexareMeSummary {\n        spexareMe { ...SpexareSummary }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SpexareMeFull {\n        spexareMe { ...SpexareFull }\n    }\n"): (typeof documents)["\n    query SpexareMeFull {\n        spexareMe { ...SpexareFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -6,6 +6,7 @@ import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {Facet, Spexare} from "@/gql/schema";
 import {CursorPageInfo, SpexarePage} from "@/types/pagination";
 import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
+import {appendFacetParams, toAggregationFilters} from "@/utils/utils";
 
 type UseSpexareSearchArgs = {
     mode: "filter" | "search";
@@ -14,6 +15,7 @@ type UseSpexareSearchArgs = {
     initialItems: Spexare[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
+    initialSelectedFacets?: Record<string, Set<string>>;
 };
 
 export function useSpexareSearch({
@@ -23,13 +25,14 @@ export function useSpexareSearch({
                                      initialItems,
                                      initialPageInfo,
                                      maxItems,
+                                     initialSelectedFacets,
                                  }: UseSpexareSearchArgs) {
     const router = useRouter();
     const pathname = usePathname();
     const [searchValue, setSearchValue] = useState(initialSearchQuery);
     const [filterQuery, setFilterQuery] = useState(initialSearchQuery);
     const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
-    const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>({});
+    const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>(() => initialSelectedFacets ?? {});
     const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
     const previousResetKeyRef = useRef<string | null>(null);
     const skipNextResetRef = useRef(false);
@@ -42,35 +45,38 @@ export function useSpexareSearch({
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setSearchValue(initialSearchQuery);
             setFilterQuery(initialSearchQuery);
+            // A fresh query arriving as a prop comes from a navigation whose URL carries no
+            // facet params, so the selection has to fall away with it or state and URL diverge.
+            setSelectedFacets({});
         }
     }, [initialSearchQuery]);
 
+    // Mirror the whole search — query *and* facet selection — into the URL, so it survives a
+    // reload and can be shared or bookmarked.
     useEffect(() => {
-        if (mode !== "search" || !filterQuery) {
-            if (mode === "search" && !filterQuery && window.location.search) {
-                window.history.replaceState(null, "", pathname);
-            }
+        if (mode !== "search") {
             return;
         }
 
         const params = new URLSearchParams();
-        params.set("q", filterQuery);
+        if (filterQuery) {
+            params.set("q", filterQuery);
+        }
+        appendFacetParams(params, selectedFacets);
 
-        const url = `${pathname}?${params.toString()}`;
-        window.history.replaceState(null, "", url);
-    }, [filterQuery, pathname, mode]);
+        const query = params.toString();
+        const url = query ? `${pathname}?${query}` : pathname;
+
+        if (`${window.location.pathname}${window.location.search}` !== url) {
+            window.history.replaceState(null, "", url);
+        }
+    }, [filterQuery, selectedFacets, pathname, mode]);
 
     const fetchPage = useCallback(async (args: { after: string | null; pageSize: number }): Promise<SpexarePage> => {
         const isFirstPage = args.after === null;
 
         if (mode === "search") {
-            const aggregationFilters: { name: string; value: string }[] = [];
-
-            Object.entries(selectedFacets).forEach(([name, values]) => {
-                values.forEach(value => {
-                    aggregationFilters.push({name, value});
-                });
-            });
+            const aggregationFilters = toAggregationFilters(selectedFacets);
 
             const result = await searchAction({
                 q: filterQuery.trim() || "",
