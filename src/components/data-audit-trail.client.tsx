@@ -145,24 +145,24 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
 
                     <div className="space-y-3">
                         {revisions.map((revision) => {
-                                    const key = keyOf(revision);
-                                    const isExpanded = expanded === key;
-                                    const hasChanges = revision.changes.length > 0;
-                                    const latest = latestFor(revisions, revision);
-                                    const isCurrent = latest?.revision === revision.revision;
-                                    const isRemoved = latest?.revisionType === RevisionType.Del;
-                                    const isRestorable = !isCurrent && !isRemoved;
+                            const key = keyOf(revision);
+                            const isExpanded = expanded === key;
+                            const hasChanges = revision.changes.length > 0;
+                            const latest = latestFor(revisions, revision);
+                            const isCurrent = latest?.revision === revision.revision;
+                            const isRemoved = latest?.revisionType === RevisionType.Del;
+                            const isRestorable = !isCurrent && !isRemoved;
 
-                                    return (
-                                        <div key={key}
-                                             className="relative flex items-start gap-3 text-[11px] text-muted-foreground">
-                                            <div
-                                                className="relative z-10 flex h-3 w-3 items-center justify-center bg-muted/30 ring-[3px] ring-muted/30">
-                                                {REVISION_ICONS[revision.revisionType] ||
-                                                    <History className="h-3 w-3"/>}
-                                            </div>
-                                            <div className="flex flex-1 flex-col gap-0.5 leading-tight">
-                                                <div className="flex items-center justify-between gap-2">
+                            return (
+                                <div key={key}
+                                     className="relative flex items-start gap-3 text-[11px] text-muted-foreground">
+                                    <div
+                                        className="relative z-10 flex h-3 w-3 items-center justify-center bg-muted/30 ring-[3px] ring-muted/30">
+                                        {REVISION_ICONS[revision.revisionType] ||
+                                            <History className="h-3 w-3"/>}
+                                    </div>
+                                    <div className="flex flex-1 flex-col gap-0.5 leading-tight">
+                                        <div className="flex items-center justify-between gap-2">
                                                     <span className="flex items-baseline gap-1.5 min-w-0">
                                                         <span
                                                             className="font-bold text-foreground/80 uppercase tracking-tight">
@@ -175,52 +175,52 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
                                                             </span>
                                                         )}
                                                     </span>
-                                                    <span className="text-[10px] opacity-80">
+                                            <span className="text-[10px] opacity-80">
                                                         {formatDateTime(revision.modifiedAt)}
                                                     </span>
-                                                </div>
-                                                <div className="flex items-center justify-between gap-2">
+                                        </div>
+                                        <div className="flex items-center justify-between gap-2">
                                                     <span className="text-foreground/60 italic">
                                                         {revision.modifiedBy || "-"}
                                                     </span>
-                                                    <div className="flex items-center gap-1">
-                                                        {hasChanges && (
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                className="h-5 px-1 text-[10px]"
-                                                                onClick={() => setExpanded(isExpanded ? null : key)}
-                                                            >
-                                                                {isExpanded
-                                                                    ? <ChevronDown className="h-3 w-3"/>
-                                                                    : <ChevronRight className="h-3 w-3"/>}
-                                                                {revision.changes.length}
-                                                            </Button>
-                                                        )}
-                                                        {canRestore && restoreActions && isRestorable && (
-                                                            <RestoreDialog
-                                                                id={String(revision.entityId ?? id)}
-                                                                type={revision.type}
-                                                                revision={revision.revision}
-                                                                actions={restoreActions}
-                                                                onRestored={() => {
-                                                                    load();
-                                                                    onRestored?.();
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </div>
+                                            <div className="flex items-center gap-1">
+                                                {hasChanges && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-5 px-1 text-[10px]"
+                                                        onClick={() => setExpanded(isExpanded ? null : key)}
+                                                    >
+                                                        {isExpanded
+                                                            ? <ChevronDown className="h-3 w-3"/>
+                                                            : <ChevronRight className="h-3 w-3"/>}
+                                                        {revision.changes.length}
+                                                    </Button>
+                                                )}
+                                                {canRestore && restoreActions && isRestorable && (
+                                                    <RestoreDialog
+                                                        id={String(revision.entityId ?? id)}
+                                                        type={revision.type}
+                                                        revision={revision.revision}
+                                                        actions={restoreActions}
+                                                        onRestored={() => {
+                                                            load();
+                                                            onRestored?.();
+                                                        }}
+                                                    />
+                                                )}
+                                            </div>
+                                        </div>
 
-                                                {isExpanded && (
-                                                    <dl className="mt-1 space-y-0.5 rounded border border-border/60 bg-background/40 p-1.5">
-                                                        {revision.changes.map((change, changeIndex) => (
-                                                            <div key={`${change.field}-${changeIndex}`}
-                                                                 className="flex flex-wrap items-baseline gap-1">
-                                                                <dt className="font-medium text-foreground/70">{auditFieldLabel(t, ownerOf(revision, change).type, change.field)}:</dt>
-                                                                <dd className="flex items-baseline gap-1">
-                                                                    {change.binary ? (
-                                                                        <span className="flex items-baseline gap-1">
+                                        {isExpanded && (
+                                            <dl className="mt-1 space-y-0.5 rounded border border-border/60 bg-background/40 p-1.5">
+                                                {revision.changes.map((change, changeIndex) => (
+                                                    <div key={`${change.field}-${changeIndex}`}
+                                                         className="flex flex-wrap items-baseline gap-1">
+                                                        <dt className="font-medium text-foreground/70">{auditFieldLabel(t, ownerOf(revision, change).type, change.field)}:</dt>
+                                                        <dd className="flex items-baseline gap-1">
+                                                            {change.binary ? (
+                                                                <span className="flex items-baseline gap-1">
                                                                             {change.oldValue && previousRevisionOf(revisions, revision, change)
                                                                                 ? <AuditBinaryThumbnail
                                                                                     type={revision.type}
@@ -228,38 +228,38 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
                                                                                     revision={previousRevisionOf(revisions, revision, change)!}
                                                                                     field={change.field}/>
                                                                                 : <span>{t("Audit.empty")}</span>}
-                                                                            <span aria-hidden="true">→</span>
-                                                                            {change.newValue
-                                                                                ? <AuditBinaryThumbnail
-                                                                                    type={revision.type}
-                                                                                    entityId={String(revision.entityId ?? id)}
-                                                                                    revision={revision.revision}
-                                                                                    field={change.field}/>
-                                                                                : <span>{t("Audit.empty")}</span>}
+                                                                    <span aria-hidden="true">→</span>
+                                                                    {change.newValue
+                                                                        ? <AuditBinaryThumbnail
+                                                                            type={revision.type}
+                                                                            entityId={String(revision.entityId ?? id)}
+                                                                            revision={revision.revision}
+                                                                            field={change.field}/>
+                                                                        : <span>{t("Audit.empty")}</span>}
                                                                         </span>
-                                                                    ) : (
-                                                                        <>
+                                                            ) : (
+                                                                <>
                                                                             <span className="line-through opacity-70">
                                                                                 {change.oldValue === null || change.oldValue === undefined
                                                                                     ? t("Audit.empty")
                                                                                     : auditFieldValue(t, ownerOf(revision, change).type, change.field, change.oldValue)}
                                                                             </span>
-                                                                            <span aria-hidden="true">→</span>
-                                                                            <span className="text-foreground/80">
+                                                                    <span aria-hidden="true">→</span>
+                                                                    <span className="text-foreground/80">
                                                                                 {change.newValue === null || change.newValue === undefined
                                                                                     ? t("Audit.empty")
                                                                                     : auditFieldValue(t, ownerOf(revision, change).type, change.field, change.newValue)}
                                                                             </span>
-                                                                        </>
-                                                                    )}
-                                                                </dd>
-                                                            </div>
-                                                        ))}
-                                                    </dl>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
+                                                                </>
+                                                            )}
+                                                        </dd>
+                                                    </div>
+                                                ))}
+                                            </dl>
+                                        )}
+                                    </div>
+                                </div>
+                            );
                         })}
                     </div>
                 </div>

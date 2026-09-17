@@ -181,7 +181,8 @@ export function TaskCategoryTable({
                         </div>
                     </div>
 
-                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/tasks/categories/create"/>}>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false}
+                            render={<Link href="/tasks/categories/create"/>}>
                         <Plus className="mr-2 h-4 w-4"/>
                         {t("Task.Category.createHeading")}
                     </Button>
@@ -208,7 +209,8 @@ export function TaskCategoryTable({
                             <div className="space-y-4">
                                 <AuditInfo item={viewItem}/>
                                 <AuditTrail id={viewItem.id}
-                                            fetchAction={getRevisionsAction} restoreActions={restoreActions} onRestored={() => setViewItem(null)}/>
+                                            fetchAction={getRevisionsAction} restoreActions={restoreActions}
+                                            onRestored={() => setViewItem(null)}/>
                             </div>
                         )}
                     </div>

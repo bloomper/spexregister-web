@@ -34,6 +34,12 @@ type Documents = {
     "\n    mutation NewsUpdate($input: NewsUpdate!) {\n        newsUpdate(input: $input) { ...NewsFull }\n    }\n": typeof types.NewsUpdateDocument,
     "\n    mutation NewsDelete($id: ID!) {\n        newsDelete(id: $id)\n    }\n": typeof types.NewsDeleteDocument,
     "\n    query NewsExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        newsExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": typeof types.NewsExportDocument,
+    "\n    fragment SavedSearchFields on SavedSearch {\n        id\n        name\n        query\n        createdBy\n        createdAt\n        lastModifiedBy\n        lastModifiedAt\n    }\n": typeof types.SavedSearchFieldsFragmentDoc,
+    "\n    query SavedSearches {\n        savedSearches { ...SavedSearchFields }\n    }\n": typeof types.SavedSearchesDocument,
+    "\n    query SavedSearchGet($id: ID!) {\n        savedSearch(id: $id) { ...SavedSearchFields }\n    }\n": typeof types.SavedSearchGetDocument,
+    "\n    mutation SavedSearchCreate($input: SavedSearchCreate!) {\n        savedSearchCreate(input: $input) { ...SavedSearchFields }\n    }\n": typeof types.SavedSearchCreateDocument,
+    "\n    mutation SavedSearchUpdate($input: SavedSearchUpdate!) {\n        savedSearchUpdate(input: $input) { ...SavedSearchFields }\n    }\n": typeof types.SavedSearchUpdateDocument,
+    "\n    mutation SavedSearchDelete($id: ID!) {\n        savedSearchDelete(id: $id)\n    }\n": typeof types.SavedSearchDeleteDocument,
     "\n    query Countries {\n        countries {\n            isoCode\n            label\n        }\n    }\n": typeof types.CountriesDocument,
     "\n    query Types {\n        types {\n            id\n            label\n            type\n        }\n    }\n": typeof types.TypesDocument,
     "\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n    }\n": typeof types.SpexCategorySummaryFragmentDoc,
@@ -188,6 +194,12 @@ const documents: Documents = {
     "\n    mutation NewsUpdate($input: NewsUpdate!) {\n        newsUpdate(input: $input) { ...NewsFull }\n    }\n": types.NewsUpdateDocument,
     "\n    mutation NewsDelete($id: ID!) {\n        newsDelete(id: $id)\n    }\n": types.NewsDeleteDocument,
     "\n    query NewsExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        newsExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": types.NewsExportDocument,
+    "\n    fragment SavedSearchFields on SavedSearch {\n        id\n        name\n        query\n        createdBy\n        createdAt\n        lastModifiedBy\n        lastModifiedAt\n    }\n": types.SavedSearchFieldsFragmentDoc,
+    "\n    query SavedSearches {\n        savedSearches { ...SavedSearchFields }\n    }\n": types.SavedSearchesDocument,
+    "\n    query SavedSearchGet($id: ID!) {\n        savedSearch(id: $id) { ...SavedSearchFields }\n    }\n": types.SavedSearchGetDocument,
+    "\n    mutation SavedSearchCreate($input: SavedSearchCreate!) {\n        savedSearchCreate(input: $input) { ...SavedSearchFields }\n    }\n": types.SavedSearchCreateDocument,
+    "\n    mutation SavedSearchUpdate($input: SavedSearchUpdate!) {\n        savedSearchUpdate(input: $input) { ...SavedSearchFields }\n    }\n": types.SavedSearchUpdateDocument,
+    "\n    mutation SavedSearchDelete($id: ID!) {\n        savedSearchDelete(id: $id)\n    }\n": types.SavedSearchDeleteDocument,
     "\n    query Countries {\n        countries {\n            isoCode\n            label\n        }\n    }\n": types.CountriesDocument,
     "\n    query Types {\n        types {\n            id\n            label\n            type\n        }\n    }\n": types.TypesDocument,
     "\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n    }\n": types.SpexCategorySummaryFragmentDoc,
@@ -416,6 +428,30 @@ export function graphql(source: "\n    mutation NewsDelete($id: ID!) {\n        
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query NewsExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        newsExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"): (typeof documents)["\n    query NewsExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        newsExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    fragment SavedSearchFields on SavedSearch {\n        id\n        name\n        query\n        createdBy\n        createdAt\n        lastModifiedBy\n        lastModifiedAt\n    }\n"): (typeof documents)["\n    fragment SavedSearchFields on SavedSearch {\n        id\n        name\n        query\n        createdBy\n        createdAt\n        lastModifiedBy\n        lastModifiedAt\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SavedSearches {\n        savedSearches { ...SavedSearchFields }\n    }\n"): (typeof documents)["\n    query SavedSearches {\n        savedSearches { ...SavedSearchFields }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SavedSearchGet($id: ID!) {\n        savedSearch(id: $id) { ...SavedSearchFields }\n    }\n"): (typeof documents)["\n    query SavedSearchGet($id: ID!) {\n        savedSearch(id: $id) { ...SavedSearchFields }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation SavedSearchCreate($input: SavedSearchCreate!) {\n        savedSearchCreate(input: $input) { ...SavedSearchFields }\n    }\n"): (typeof documents)["\n    mutation SavedSearchCreate($input: SavedSearchCreate!) {\n        savedSearchCreate(input: $input) { ...SavedSearchFields }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation SavedSearchUpdate($input: SavedSearchUpdate!) {\n        savedSearchUpdate(input: $input) { ...SavedSearchFields }\n    }\n"): (typeof documents)["\n    mutation SavedSearchUpdate($input: SavedSearchUpdate!) {\n        savedSearchUpdate(input: $input) { ...SavedSearchFields }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation SavedSearchDelete($id: ID!) {\n        savedSearchDelete(id: $id)\n    }\n"): (typeof documents)["\n    mutation SavedSearchDelete($id: ID!) {\n        savedSearchDelete(id: $id)\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

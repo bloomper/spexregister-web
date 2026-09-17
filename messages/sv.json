@@ -248,6 +248,25 @@
     "visibleFrom": "Synlig från",
     "visibleTo": "Synlig till"
   },
+  "SavedSearch": {
+    "heading": "Sparade sökningar",
+    "save": "Spara sökning",
+    "saveHeading": "Spara sökningen",
+    "namePlaceholder": "T.ex. inaktiva medlemmar",
+    "saveSuccess": "Sökningen sparades",
+    "update": "Uppdatera",
+    "updateSuccess": "Sökningen uppdaterades",
+    "updateLabel": "Uppdatera {name} med nuvarande sökning",
+    "overwriteHint": "En sökning med det namnet finns redan och skrivs över",
+    "renameLabel": "Byt namn på {name}",
+    "renameSuccess": "Namnet ändrades",
+    "nameTaken": "Det finns redan en sökning med det namnet",
+    "existing": "Befintliga sökningar",
+    "deleteSuccess": "Sökningen togs bort",
+    "deleteLabel": "Ta bort {name}",
+    "empty": "Inga sparade sökningar",
+    "nothingToSave": "Det finns ingen sökning att spara"
+  },
   "Spex": {
     "Category": {
       "createHeading": "Skapa spexkategori",

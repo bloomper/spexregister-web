@@ -242,7 +242,8 @@ export function UserTable({
                         </div>
                     </div>
 
-                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/users/create"/>}>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false}
+                            render={<Link href="/users/create"/>}>
                         <Plus className="mr-2 h-4 w-4"/>
                         {t("User.createHeading")}
                     </Button>

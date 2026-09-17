@@ -121,7 +121,8 @@ export function TaskCategoryGrid({
                         {selected && (
                             <div className="space-y-4">
                                 <AuditTrail id={selected.id}
-                                            fetchAction={getRevisionsAction} restoreActions={restoreActions} onRestored={() => setSelected(null)}/>
+                                            fetchAction={getRevisionsAction} restoreActions={restoreActions}
+                                            onRestored={() => setSelected(null)}/>
                             </div>
                         )}
                     </div>

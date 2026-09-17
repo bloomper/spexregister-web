@@ -44,7 +44,8 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                             <div className="flex flex-col gap-2">
                                 <div className="flex flex-wrap items-baseline gap-x-2">
                                     <Tooltip>
-                                        <TooltipTrigger render={<h4 className="text-sm font-bold cursor-help underline decoration-dotted decoration-muted-foreground/30 underline-offset-4"/>}>
+                                        <TooltipTrigger render={<h4
+                                            className="text-sm font-bold cursor-help underline decoration-dotted decoration-muted-foreground/30 underline-offset-4"/>}>
                                             {activity.spexActivity?.spex?.title || t("Common.none")}
                                         </TooltipTrigger>
                                         {activity.spexActivity?.spex?.category?.name && (

@@ -183,7 +183,8 @@ export function SpexCategoryTable({
                         </div>
                     </div>
 
-                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/spex/categories/create"/>}>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false}
+                            render={<Link href="/spex/categories/create"/>}>
                         <Plus className="mr-2 h-4 w-4"/>
                         {t("Spex.Category.createHeading")}
                     </Button>
@@ -230,7 +231,8 @@ export function SpexCategoryTable({
                             <div className="space-y-4">
                                 <AuditInfo item={viewItem}/>
                                 <AuditTrail id={viewItem.id}
-                                            fetchAction={getRevisionsAction} restoreActions={restoreActions} onRestored={() => setViewItem(null)}/>
+                                            fetchAction={getRevisionsAction} restoreActions={restoreActions}
+                                            onRestored={() => setViewItem(null)}/>
                             </div>
                         )}
                     </div>

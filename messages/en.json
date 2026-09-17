@@ -249,6 +249,25 @@
     "visibleFrom": "Visible from",
     "visibleTo": "Visible to"
   },
+  "SavedSearch": {
+    "heading": "Saved searches",
+    "save": "Save search",
+    "saveHeading": "Save this search",
+    "namePlaceholder": "E.g. inactive members",
+    "saveSuccess": "Search saved",
+    "update": "Update",
+    "updateSuccess": "Search updated",
+    "updateLabel": "Update {name} with the current search",
+    "overwriteHint": "A search with this name already exists and will be overwritten",
+    "renameLabel": "Rename {name}",
+    "renameSuccess": "Name changed",
+    "nameTaken": "A search with that name already exists",
+    "existing": "Existing searches",
+    "deleteSuccess": "Search deleted",
+    "deleteLabel": "Delete {name}",
+    "empty": "No saved searches",
+    "nothingToSave": "There is no search to save"
+  },
   "Spex": {
     "Category": {
       "createHeading": "Create spex category",

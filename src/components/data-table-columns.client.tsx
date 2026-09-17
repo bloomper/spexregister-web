@@ -124,7 +124,8 @@ export const columnHelper = {
             return (
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger render={<div className="max-w-[300px] truncate font-medium cursor-default"/>}>{value}</TooltipTrigger>
+                        <TooltipTrigger render={<div
+                            className="max-w-[300px] truncate font-medium cursor-default"/>}>{value}</TooltipTrigger>
                         <TooltipContent className="max-w-[400px] wrap-break-word">{value}</TooltipContent>
                     </Tooltip>
                 </TooltipProvider>

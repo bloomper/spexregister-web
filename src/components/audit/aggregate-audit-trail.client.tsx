@@ -16,7 +16,11 @@ const restoreActions = {
 /**
  * The history of every entity of one kind belonging to a spexare, including those since removed.
  */
-export function AggregateAuditTrail({spexareId, relatedType, onRestored}: { spexareId: string; relatedType: AuditedType; onRestored?: () => void }) {
+export function AggregateAuditTrail({spexareId, relatedType, onRestored}: {
+    spexareId: string;
+    relatedType: AuditedType;
+    onRestored?: () => void
+}) {
     return (
         <AuditTrail
             id={spexareId}

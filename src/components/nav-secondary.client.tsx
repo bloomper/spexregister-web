@@ -35,7 +35,8 @@ export function NavSecondary({
 
                         return (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton size="sm" isActive={pathname === item.url} render={<LinkComponent href={item.url}/>}>
+                                <SidebarMenuButton size="sm" isActive={pathname === item.url}
+                                                   render={<LinkComponent href={item.url}/>}>
                                     <item.icon/>
                                     <span>{item.title}</span>
                                 </SidebarMenuButton>

@@ -60,7 +60,11 @@ describe("AuditTrail", () => {
 
     it("renders no restore action for a non-admin", async () => {
         roles.current = ["EDITOR"];
-        const fetchAction = vi.fn().mockResolvedValue([revision(), revision({revision: 1, revisionType: RevisionType.Add, changes: []})]);
+        const fetchAction = vi.fn().mockResolvedValue([revision(), revision({
+            revision: 1,
+            revisionType: RevisionType.Add,
+            changes: []
+        })]);
         render(<AuditTrail id="1" fetchAction={fetchAction}
                            restoreActions={{preview: vi.fn(), restore: vi.fn()}}/>);
 
@@ -231,12 +235,26 @@ describe("AuditTrail across several entities", () => {
         revision({
             revision: 1,
             entityId: 1,
-            changes: [{field: "city", oldValue: null, newValue: "Göteborg", binary: false, type: AuditedType.Address, entityId: 1}],
+            changes: [{
+                field: "city",
+                oldValue: null,
+                newValue: "Göteborg",
+                binary: false,
+                type: AuditedType.Address,
+                entityId: 1
+            }],
         } as Partial<Revision>),
         revision({
             revision: 1,
             entityId: 2,
-            changes: [{field: "city", oldValue: null, newValue: "Stockholm", binary: false, type: AuditedType.Address, entityId: 2}],
+            changes: [{
+                field: "city",
+                oldValue: null,
+                newValue: "Stockholm",
+                binary: false,
+                type: AuditedType.Address,
+                entityId: 2
+            }],
         } as Partial<Revision>),
     ];
 

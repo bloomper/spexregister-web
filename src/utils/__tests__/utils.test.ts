@@ -132,7 +132,10 @@ describe("appendFacetParams", () => {
 
 describe("toAggregationFilters", () => {
     it("flattens a selection into sorted name/value pairs", () => {
-        expect(toAggregationFilters({tags: new Set(["Hedersmedlem", "Grundare"]), deceased: new Set(["true"])})).toEqual([
+        expect(toAggregationFilters({
+            tags: new Set(["Hedersmedlem", "Grundare"]),
+            deceased: new Set(["true"])
+        })).toEqual([
             {name: "deceased", value: "true"},
             {name: "tags", value: "Grundare"},
             {name: "tags", value: "Hedersmedlem"},

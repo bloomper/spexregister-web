@@ -282,7 +282,8 @@ export function SpexTable({
                         </div>
                     </div>
 
-                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/spex/create"/>}>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false}
+                            render={<Link href="/spex/create"/>}>
                         <Plus className="mr-2 h-4 w-4"/>
                         {t("Spex.createHeading")}
                     </Button>

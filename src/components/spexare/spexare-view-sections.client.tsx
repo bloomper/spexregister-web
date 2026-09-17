@@ -19,7 +19,11 @@ const restoreActions = {
     restore: restoreRevisionAction,
 };
 
-export function GeneralSection({spexare, showAudit, onRestored}: { spexare: Spexare; showAudit?: boolean; onRestored?: () => void }) {
+export function GeneralSection({spexare, showAudit, onRestored}: {
+    spexare: Spexare;
+    showAudit?: boolean;
+    onRestored?: () => void
+}) {
     const t = useTranslations();
     return (
         <>
@@ -67,7 +71,11 @@ export function GeneralSection({spexare, showAudit, onRestored}: { spexare: Spex
     );
 }
 
-export function PartnerSection({partner, spexareId, onRestored}: { partner: Spexare["partner"]; spexareId: string; onRestored?: () => void }) {
+export function PartnerSection({partner, spexareId, onRestored}: {
+    partner: Spexare["partner"];
+    spexareId: string;
+    onRestored?: () => void
+}) {
     const t = useTranslations();
     if (!partner) {
         return (
@@ -81,51 +89,51 @@ export function PartnerSection({partner, spexareId, onRestored}: { partner: Spex
     }
     return (
         <div className="space-y-4">
-        <div className="rounded-lg border p-4 bg-muted/30 relative overflow-hidden">
-            <div
-                className={`flex items-center gap-4 ${!partner.published ? "blur-sm select-none pointer-events-none opacity-50" : ""}`}>
-                <div className="relative h-16 w-16 overflow-hidden rounded-full border bg-background shrink-0">
-                    {partner.imageUrl ? (
-                        <Image
-                            src={getProxiedImageUrl(partner.imageUrl, partner.lastModifiedAt)}
-                            alt={`${partner.firstName} ${partner.lastName}`}
-                            fill
-                            unoptimized
-                            className="object-cover"
-                        />
-                    ) : (
-                        <div className="flex h-full items-center justify-center">
-                            <User className="h-8 w-8 text-muted-foreground/20"/>
-                        </div>
-                    )}
-                </div>
-                <div className="flex flex-col min-w-0">
+            <div className="rounded-lg border p-4 bg-muted/30 relative overflow-hidden">
+                <div
+                    className={`flex items-center gap-4 ${!partner.published ? "blur-sm select-none pointer-events-none opacity-50" : ""}`}>
+                    <div className="relative h-16 w-16 overflow-hidden rounded-full border bg-background shrink-0">
+                        {partner.imageUrl ? (
+                            <Image
+                                src={getProxiedImageUrl(partner.imageUrl, partner.lastModifiedAt)}
+                                alt={`${partner.firstName} ${partner.lastName}`}
+                                fill
+                                unoptimized
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="flex h-full items-center justify-center">
+                                <User className="h-8 w-8 text-muted-foreground/20"/>
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex flex-col min-w-0">
                     <span className="text-lg font-bold truncate">
                         {partner.firstName} {partner.lastName}
                     </span>
-                    {partner.nickName && (
-                        <span className="text-sm text-muted-foreground italic">
+                        {partner.nickName && (
+                            <span className="text-sm text-muted-foreground italic">
                             {partner.nickName}
                         </span>
-                    )}
-                    <div className="flex gap-2 mt-1">
-                        {partner.deceased && (
-                            <Badge variant="outline" className="text-[10px] uppercase">
-                                {t("Spexare.deceasedBadges.true")}
-                            </Badge>
                         )}
+                        <div className="flex gap-2 mt-1">
+                            {partner.deceased && (
+                                <Badge variant="outline" className="text-[10px] uppercase">
+                                    {t("Spexare.deceasedBadges.true")}
+                                </Badge>
+                            )}
+                        </div>
                     </div>
                 </div>
+                {!partner.published && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <Badge variant="secondary" className="shadow-sm">
+                            <ShieldCheck className="mr-1 h-3 w-3"/>
+                            {t("Spexare.publishedBadges.false")}
+                        </Badge>
+                    </div>
+                )}
             </div>
-            {!partner.published && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <Badge variant="secondary" className="shadow-sm">
-                        <ShieldCheck className="mr-1 h-3 w-3"/>
-                        {t("Spexare.publishedBadges.false")}
-                    </Badge>
-                </div>
-            )}
-        </div>
             <PartnerAuditTrail spexareId={spexareId} onRestored={onRestored}/>
         </div>
     );
@@ -151,59 +159,63 @@ export function AddressesSection({addresses, countries, spexareId, onRestored}: 
     return (
         <>
             <div className="grid grid-cols-1 gap-4">
-            {addresses.map((address) => (
-                <div key={address?.id} className="rounded-lg border p-4 space-y-3">
-                    <div className="flex items-center justify-between border-b pb-2">
-                        <Badge variant="secondary" className="text-[10px] uppercase">
-                            {address?.type.label}
-                        </Badge>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                        {(address?.streetAddress || address?.postalCode || address?.city) && (
-                            <div className="flex gap-2">
-                                <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5"/>
-                                <div className="flex flex-col">
-                                    <span className="font-medium">{address.streetAddress}</span>
-                                    <span className="text-muted-foreground">
+                {addresses.map((address) => (
+                    <div key={address?.id} className="rounded-lg border p-4 space-y-3">
+                        <div className="flex items-center justify-between border-b pb-2">
+                            <Badge variant="secondary" className="text-[10px] uppercase">
+                                {address?.type.label}
+                            </Badge>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                            {(address?.streetAddress || address?.postalCode || address?.city) && (
+                                <div className="flex gap-2">
+                                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5"/>
+                                    <div className="flex flex-col">
+                                        <span className="font-medium">{address.streetAddress}</span>
+                                        <span className="text-muted-foreground">
                                         {address.postalCode} {address.city}
                                     </span>
-                                    {address.country && (
-                                        <span className="text-muted-foreground">
+                                        {address.country && (
+                                            <span className="text-muted-foreground">
                                             {getCountryLabel(address.country)}
                                         </span>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                        <div className="space-y-2">
-                            {address?.emailAddress && (
-                                <div className="flex items-center gap-2">
-                                    <Mail className="h-4 w-4 text-muted-foreground"/>
-                                    <a href={`mailto:${address.emailAddress}`} className="hover:underline">
-                                        {address.emailAddress}
-                                    </a>
-                                </div>
-                            )}
-                            {(address?.phone || address?.phoneMobile) && (
-                                <div className="flex items-center gap-2">
-                                    <Phone className="h-4 w-4 text-muted-foreground"/>
-                                    <div className="flex flex-col">
-                                        {address.phone && <span>{address.phone}</span>}
-                                        {address.phoneMobile && <span>{address.phoneMobile} (mob)</span>}
+                                        )}
                                     </div>
                                 </div>
                             )}
+                            <div className="space-y-2">
+                                {address?.emailAddress && (
+                                    <div className="flex items-center gap-2">
+                                        <Mail className="h-4 w-4 text-muted-foreground"/>
+                                        <a href={`mailto:${address.emailAddress}`} className="hover:underline">
+                                            {address.emailAddress}
+                                        </a>
+                                    </div>
+                                )}
+                                {(address?.phone || address?.phoneMobile) && (
+                                    <div className="flex items-center gap-2">
+                                        <Phone className="h-4 w-4 text-muted-foreground"/>
+                                        <div className="flex flex-col">
+                                            {address.phone && <span>{address.phone}</span>}
+                                            {address.phoneMobile && <span>{address.phoneMobile} (mob)</span>}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
-        </div>
+                ))}
+            </div>
             <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Address}/>
         </>
     );
 }
 
-export function ConsentsSection({consents, spexareId, onRestored}: { consents: Spexare["consents"]; spexareId: string; onRestored?: () => void }) {
+export function ConsentsSection({consents, spexareId, onRestored}: {
+    consents: Spexare["consents"];
+    spexareId: string;
+    onRestored?: () => void
+}) {
     const t = useTranslations();
     if (!consents || consents.length === 0) {
         return (
@@ -218,22 +230,23 @@ export function ConsentsSection({consents, spexareId, onRestored}: { consents: S
     return (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {consents.map((consent) => (
-                <div key={consent?.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
-                    <span className="text-sm font-medium">{consent?.type.label}</span>
-                    {consent?.value ? (
-                        <Badge
-                            className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
-                            {t("Spexare.Consent.granted")}
-                        </Badge>
-                    ) : (
-                        <Badge variant="outline" className="uppercase text-[10px] text-muted-foreground">
-                            {t("Spexare.Consent.withdrawn")}
-                        </Badge>
-                    )}
-                </div>
-            ))}
-        </div>
+                {consents.map((consent) => (
+                    <div key={consent?.id}
+                         className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+                        <span className="text-sm font-medium">{consent?.type.label}</span>
+                        {consent?.value ? (
+                            <Badge
+                                className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
+                                {t("Spexare.Consent.granted")}
+                            </Badge>
+                        ) : (
+                            <Badge variant="outline" className="uppercase text-[10px] text-muted-foreground">
+                                {t("Spexare.Consent.withdrawn")}
+                            </Badge>
+                        )}
+                    </div>
+                ))}
+            </div>
             <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Consent}/>
         </>
     );
@@ -250,7 +263,8 @@ export function MembershipsSection({memberships, spexareId, onRestored}: {
                 <div className="py-6">
                     <DataEmpty icon={IdCard}/>
                 </div>
-                <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Membership}/>
+                <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId}
+                                     relatedType={AuditedType.Membership}/>
             </div>
         );
     }
@@ -270,21 +284,22 @@ export function MembershipsSection({memberships, spexareId, onRestored}: {
     return (
         <>
             <div className="grid grid-cols-1 gap-3">
-            {grouped.map(([type, years]) => (
-                <div key={type} className="flex flex-col p-3 rounded-lg border bg-muted/30 gap-2">
-                    <span className="text-sm font-bold border-b pb-1">{type}</span>
-                    <div className="flex flex-wrap gap-1.5">
-                        {years
-                            .sort((a, b) => Number(a) - Number(b))
-                            .map((year) => (
-                                <Badge key={year} variant="outline" className="text-[10px] font-medium bg-background">
-                                    {year}
-                                </Badge>
-                            ))}
+                {grouped.map(([type, years]) => (
+                    <div key={type} className="flex flex-col p-3 rounded-lg border bg-muted/30 gap-2">
+                        <span className="text-sm font-bold border-b pb-1">{type}</span>
+                        <div className="flex flex-wrap gap-1.5">
+                            {years
+                                .sort((a, b) => Number(a) - Number(b))
+                                .map((year) => (
+                                    <Badge key={year} variant="outline"
+                                           className="text-[10px] font-medium bg-background">
+                                        {year}
+                                    </Badge>
+                                ))}
+                        </div>
                     </div>
-                </div>
-            ))}
-        </div>
+                ))}
+            </div>
             <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Membership}/>
         </>
     );
@@ -310,7 +325,11 @@ export function TaggingsSection({taggings}: { taggings: Spexare["taggings"] }) {
     );
 }
 
-export function TogglesSection({toggles, spexareId, onRestored}: { toggles: Spexare["toggles"]; spexareId: string; onRestored?: () => void }) {
+export function TogglesSection({toggles, spexareId, onRestored}: {
+    toggles: Spexare["toggles"];
+    spexareId: string;
+    onRestored?: () => void
+}) {
     const t = useTranslations();
     if (!toggles || toggles.length === 0) {
         return (
@@ -325,25 +344,26 @@ export function TogglesSection({toggles, spexareId, onRestored}: { toggles: Spex
     return (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {toggles.map((toggle) => (
-                <div key={toggle?.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
-                    <div className="flex items-center gap-3">
-                        <Fingerprint className="h-4 w-4 text-muted-foreground"/>
-                        <span className="text-sm font-medium">{toggle?.type.label}</span>
+                {toggles.map((toggle) => (
+                    <div key={toggle?.id}
+                         className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+                        <div className="flex items-center gap-3">
+                            <Fingerprint className="h-4 w-4 text-muted-foreground"/>
+                            <span className="text-sm font-medium">{toggle?.type.label}</span>
+                        </div>
+                        {toggle?.value ? (
+                            <Badge
+                                className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
+                                {t("Common.yes")}
+                            </Badge>
+                        ) : (
+                            <Badge variant="outline" className="uppercase text-[10px] text-muted-foreground">
+                                {t("Common.no")}
+                            </Badge>
+                        )}
                     </div>
-                    {toggle?.value ? (
-                        <Badge
-                            className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
-                            {t("Common.yes")}
-                        </Badge>
-                    ) : (
-                        <Badge variant="outline" className="uppercase text-[10px] text-muted-foreground">
-                            {t("Common.no")}
-                        </Badge>
-                    )}
-                </div>
-            ))}
-        </div>
+                ))}
+            </div>
             <AggregateAuditTrail onRestored={onRestored} spexareId={spexareId} relatedType={AuditedType.Toggle}/>
         </>
     );

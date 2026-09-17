@@ -227,9 +227,9 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
                                 <div className="flex items-center gap-2">
                                     <Popover open={spexareSearchOpen} onOpenChange={setSpexareSearchOpen}>
                                         <PopoverTrigger render={<Button variant="outline"
-                                                role="combobox"
-                                                className="flex-1 justify-between font-normal text-left h-auto min-h-10 py-2"
-                                                disabled={isPending}/>}>
+                                                                        role="combobox"
+                                                                        className="flex-1 justify-between font-normal text-left h-auto min-h-10 py-2"
+                                                                        disabled={isPending}/>}>
                                             <div className="truncate">
                                                 {selectedSpexareId
                                                     ? (spexareResults.find(s => s.id === selectedSpexareId) ?? item?.spexare)?.firstName + " " + (spexareResults.find(s => s.id === selectedSpexareId) ?? item?.spexare)?.lastName

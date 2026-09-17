@@ -161,6 +161,9 @@ const userList = [
 
 const withAudit = (s) => ({...s, ...audit});
 
+// Mutable so a test can save a search and then see it listed.
+const savedSearchList = [];
+
 const resolvers = {
     UserMe: () => ({me: {spexare: null}}),
     Authorities: () => ({authorities: []}),
@@ -234,6 +237,33 @@ const resolvers = {
         })
     }),
     SpexareExport: () => ({spexareExport: {id: "export-job-1"}}),
+
+    SavedSearches: () => ({savedSearches: savedSearchList}),
+    SavedSearchGet: (v) => ({savedSearch: savedSearchList.find((s) => s.id === String(v?.id)) ?? null}),
+    SavedSearchCreate: (v) => {
+        const created = withAudit({
+            id: String(savedSearchList.length + 1),
+            name: v?.input?.name ?? "",
+            query: v?.input?.query ?? "",
+        });
+        savedSearchList.push(created);
+        return {savedSearchCreate: created};
+    },
+    SavedSearchUpdate: (v) => {
+        const existing = savedSearchList.find((s) => s.id === String(v?.input?.id));
+        if (existing) {
+            existing.name = v?.input?.name ?? existing.name;
+            existing.query = v?.input?.query ?? existing.query;
+        }
+        return {savedSearchUpdate: existing ?? null};
+    },
+    SavedSearchDelete: (v) => {
+        const index = savedSearchList.findIndex((s) => s.id === String(v?.id));
+        if (index >= 0) {
+            savedSearchList.splice(index, 1);
+        }
+        return {savedSearchDelete: null};
+    },
 
     TagPagedSummary: () => paged("tagPaged", tagList),
     TagPagedFull: () => paged("tagPaged", tagList.map(withAudit)),

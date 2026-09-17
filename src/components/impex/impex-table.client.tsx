@@ -149,13 +149,16 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
                 return (
                     <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
-                            <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" aria-label={t("Common.openMenu")}/>}>
+                            <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0"
+                                                                 aria-label={t("Common.openMenu")}/>}>
                                 <MoreHorizontal className="h-4 w-4"/>
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent align="end">
                                 {hasDownload && (
-                                    <DropdownMenuItem render={<a href={`/api/impex-result-download-proxy?id=${row.original.id}`} download/>}>
+                                    <DropdownMenuItem
+                                        render={<a href={`/api/impex-result-download-proxy?id=${row.original.id}`}
+                                                   download/>}>
                                         <Download className="mr-0 h-4 w-4"/>
                                         {t("Impex.download")}
                                     </DropdownMenuItem>

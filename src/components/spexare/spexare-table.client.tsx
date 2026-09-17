@@ -258,7 +258,8 @@ export function SpexareTable({
                         </div>
                     </div>
 
-                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/spexare/create"/>}>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false}
+                            render={<Link href="/spexare/create"/>}>
                         <Plus className="mr-2 h-4 w-4"/>
                         {t("Spexare.createHeading")}
                     </Button>

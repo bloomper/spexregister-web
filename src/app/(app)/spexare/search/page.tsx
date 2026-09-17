@@ -3,6 +3,8 @@ import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {getLocale} from "next-intl/server";
 import {SpexareGrid} from "@/components/spexare";
+import {SavedSearchBar} from "@/components/spexare/saved-search-bar.client";
+import {getAll as getSavedSearches} from "@/lib/saved-search";
 import {isAdminOrEditor} from "@/utils/auth";
 import {parseFacetParams, toAggregationFilters} from "@/utils/utils";
 import {getCountries, getTypes} from "@/lib/settings";
@@ -24,7 +26,7 @@ export default async function SpexareSearchPage({
         const initialSelectedFacets = parseFacetParams(params);
         const locale = await getLocale();
 
-        const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, mySpexare] = await Promise.all([
+        const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, mySpexare, savedSearches] = await Promise.all([
             search({q, first: 24, aggregationFilters: toAggregationFilters(initialSelectedFacets)}),
             getCountries(locale),
             getTypes(locale),
@@ -34,16 +36,22 @@ export default async function SpexareSearchPage({
             getAllSpex(),
             getAllSpexCategories(),
             getMine(),
+            getSavedSearches(),
         ]);
         const initialItems = page.edges.map((e) => e.node);
+        // Remounts the grid when a navigation changes the search, so the facet selection is
+        // re-seeded from the URL rather than kept from the previous render.
+        const searchKey = `${q}::${toAggregationFilters(initialSelectedFacets).map((f) => `${f.name}=${f.value}`).join("&")}`;
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
+                <SavedSearchBar savedSearches={savedSearches}/>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {/* Always rendered, even with no hits: the grid owns the query and facet
                         controls, so swapping it for a bare empty state would strand the user
                         with no way to widen a search that matched nothing. */}
                     <SpexareGrid
+                        key={searchKey}
                         countries={countries}
                         types={types}
                         tags={tags}

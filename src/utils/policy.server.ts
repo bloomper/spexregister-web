@@ -40,6 +40,20 @@ export const Policies = {
             return requireAnyRole(["EDITOR", "ADMIN"]);
         },
     },
+    savedSearch: {
+        async requireRead(): Promise<AuthzResult> {
+            return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
+        },
+        async requireCreate(): Promise<AuthzResult> {
+            return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
+        },
+        async requireUpdate(): Promise<AuthzResult> {
+            return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
+        },
+        async requireDelete(): Promise<AuthzResult> {
+            return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
+        },
+    },
     spex: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(["USER", "EDITOR", "ADMIN"]);

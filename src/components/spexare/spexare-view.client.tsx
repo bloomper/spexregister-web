@@ -99,30 +99,33 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored}: S
                     </TabsList>
 
                     <TabsContent value="general" className="space-y-6 pt-4">
-                        <GeneralSection spexare={spexare} showAudit={showAudit}onRestored={onRestored}/>
+                        <GeneralSection spexare={spexare} showAudit={showAudit} onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="activities" className="pt-2 space-y-4">
                         <ActivityTimeline
                             activities={(spexare.activities ?? []).filter((activity): activity is Activity => !!activity)}
                         />
-                        <AggregateAuditTrail spexareId={spexare.id} relatedType={AuditedType.Activity} onRestored={onRestored}/>
+                        <AggregateAuditTrail spexareId={spexare.id} relatedType={AuditedType.Activity}
+                                             onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="partner" className="pt-4 space-y-4">
-                        <PartnerSection partner={spexare.partner} spexareId={spexare.id}onRestored={onRestored}/>
+                        <PartnerSection partner={spexare.partner} spexareId={spexare.id} onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="addresses" className="pt-4 space-y-4">
-                        <AddressesSection addresses={spexare.addresses} countries={countries} spexareId={spexare.id}onRestored={onRestored}/>
+                        <AddressesSection addresses={spexare.addresses} countries={countries} spexareId={spexare.id}
+                                          onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="consents" className="pt-4 space-y-4">
-                        <ConsentsSection consents={spexare.consents} spexareId={spexare.id}onRestored={onRestored}/>
+                        <ConsentsSection consents={spexare.consents} spexareId={spexare.id} onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="memberships" className="pt-4 space-y-4">
-                        <MembershipsSection memberships={spexare.memberships} spexareId={spexare.id}onRestored={onRestored}/>
+                        <MembershipsSection memberships={spexare.memberships} spexareId={spexare.id}
+                                            onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="taggings" className="pt-4 space-y-4">
@@ -130,7 +133,7 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored}: S
                     </TabsContent>
 
                     <TabsContent value="toggles" className="pt-4 space-y-4">
-                        <TogglesSection toggles={spexare.toggles} spexareId={spexare.id}onRestored={onRestored}/>
+                        <TogglesSection toggles={spexare.toggles} spexareId={spexare.id} onRestored={onRestored}/>
                     </TabsContent>
                 </Tabs>
             </div>

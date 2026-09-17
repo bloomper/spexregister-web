@@ -26,7 +26,8 @@ export default function AppError({error, reset}: {
                 </p>
                 <div className="flex justify-center gap-2 pt-2">
                     <Button onClick={() => reset()}>{t("Common.tryAgain")}</Button>
-                    <Button variant="outline" nativeButton={false} render={<Link href="/api/auth/login"/>}>{t("Common.login")}</Button>
+                    <Button variant="outline" nativeButton={false}
+                            render={<Link href="/api/auth/login"/>}>{t("Common.login")}</Button>
                 </div>
             </div>
         </div>

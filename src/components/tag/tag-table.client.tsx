@@ -181,7 +181,8 @@ export function TagTable({
                         </div>
                     </div>
 
-                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false} render={<Link href="/tags/create"/>}>
+                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false}
+                            render={<Link href="/tags/create"/>}>
                         <Plus className="mr-2 h-4 w-4"/>
                         {t("Tag.createHeading")}
                     </Button>
