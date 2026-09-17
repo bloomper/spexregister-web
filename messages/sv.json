@@ -328,6 +328,18 @@
       "streetAddress": "Gatuadress",
       "type": "Adresstyp"
     },
+    "Career": {
+      "tab": "Översikt",
+      "heading": "Spexkarriär",
+      "statSpex": "Spex",
+      "statActiveYears": "Aktiva år",
+      "statSpan": "Period",
+      "statFunctions": "Funktioner",
+      "statRoles": "Roller",
+      "showTable": "Visa som tabell",
+      "showChart": "Visa som tidslinje",
+      "year": "År"
+    },
     "Consent": {
       "granted": "Givet",
       "type": "Medgivandetyp",

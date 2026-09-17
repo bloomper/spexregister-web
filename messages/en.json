@@ -329,6 +329,18 @@
       "streetAddress": "Street address",
       "type": "Address type"
     },
+    "Career": {
+      "tab": "Overview",
+      "heading": "Spex career",
+      "statSpex": "Spex",
+      "statActiveYears": "Active years",
+      "statSpan": "Span",
+      "statFunctions": "Functions",
+      "statRoles": "Roles",
+      "showTable": "Show as table",
+      "showChart": "Show as timeline",
+      "year": "Year"
+    },
     "Consent": {
       "granted": "Granted",
       "type": "Consent type",

@@ -7,6 +7,8 @@ import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 import {SpexareForm} from "@/components/spexare/spexare-form.client";
+import {SpexareCareer} from "@/components/spexare/spexare-career.client";
+import {Activity} from "@/gql/schema";
 import {redirect} from "next/navigation";
 import {revalidateTag} from "next/cache";
 
@@ -39,6 +41,11 @@ export default async function MyProfilePage() {
         <div className="flex flex-1 flex-col gap-4 p-4 md:p-8 max-w-6xl mx-auto w-full">
             <div className="flex flex-col gap-1 mb-4">
                 <h2 className="text-2xl font-bold tracking-tight">{t("Common.myProfile")}</h2>
+            </div>
+            <div className="mb-8">
+                <SpexareCareer
+                    activities={(item.activities ?? []).filter((activity): activity is Activity => !!activity)}
+                />
             </div>
             <SpexareForm
                 mode="page"

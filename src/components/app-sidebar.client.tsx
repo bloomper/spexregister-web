@@ -171,15 +171,6 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
             });
         }
 
-        if (isCurrentUserAdmin) {
-            mainItems.push({
-                title: t("Audit.title"),
-                url: "/change-log",
-                icon: History,
-                isActive: pathname.startsWith("/change-log"),
-            });
-        }
-
         if (isCurrentUserAdminOrEditor) {
             mainItems.push({
                 title: t("Impex.heading"),
@@ -189,6 +180,15 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                 items: [
                     {title: t("Common.manage"), url: "/impex/manage"},
                 ],
+            });
+        }
+
+        if (isCurrentUserAdmin) {
+            mainItems.push({
+                title: t("Audit.title"),
+                url: "/change-log",
+                icon: History,
+                isActive: pathname.startsWith("/change-log"),
             });
         }
 

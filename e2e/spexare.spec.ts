@@ -30,6 +30,33 @@ test.describe("spexare grid", () => {
         await expect(dialog.getByRole("heading", {name: "Ada Lovelace"}).first()).toBeVisible();
     });
 
+    test("the detail dialog opens on the career overview and can fall back to a table", async ({page}) => {
+        await page.goto("/spexare");
+        await page.getByText("Ada Lovelace").click();
+
+        const dialog = page.locator('[data-slot="dialog-content"]');
+        await expect(dialog).toBeVisible();
+
+        // 3 spex across 3 active years, 2015-2020.
+        await expect(dialog.getByText("2015–2020")).toBeVisible();
+        // Skådespelare twice plus Orkester is 2 distinct functions, carrying 2 roles.
+        const tile = (label: string) =>
+            dialog.getByText(label, {exact: true}).locator("xpath=..").locator("dd");
+        await expect(tile("Funktioner")).toHaveText("2");
+        await expect(tile("Roller")).toHaveText("2");
+        // The years Ada took part in are hoverable; the gap years are not.
+        await expect(dialog.getByRole("button", {name: "Spex 2016"})).toBeVisible();
+        await expect(dialog.getByRole("button", {name: "Spex 2018"})).toHaveCount(0);
+        await expect(dialog.getByText("Vasaspexet")).toBeVisible();
+
+        await dialog.getByRole("button", {name: "Visa som tabell"}).click();
+
+        await expect(dialog.getByRole("cell", {name: "Bacchus"})).toBeVisible();
+        await expect(dialog.getByRole("cell", {name: "Skådespelare (Greve)"})).toBeVisible();
+        // Memberships are unrelated to the spex career and stay out of the overview.
+        await expect(dialog.getByRole("cell", {name: "Fullvärdig"})).toHaveCount(0);
+    });
+
     test("infinite scroll loads the next page of results", async ({page}) => {
         await page.goto("/spexare");
 
@@ -59,5 +86,36 @@ test.describe("spexare grid", () => {
 
         await expect(page.getByText("Ändra spexare")).toBeVisible();
         await expect(page.locator("#spexare-general-form input").first()).toHaveValue("Ada");
+    });
+
+    test("a long career stays inside the dialog and splits a year with two categories", async ({page}) => {
+        await page.goto("/spexare");
+        await page.getByText("Grace Hopper").click();
+
+        const dialog = page.locator('[data-slot="dialog-content"]');
+        // 25 years from the first production to the last, mostly gaps.
+        await expect(dialog.getByText("1991–2015")).toBeVisible();
+
+        // The strip must scroll inside the dialog rather than widen it: a grid item without
+        // min-w-0 pushed the column past max-w-2xl and clipped the tiles and the toggle.
+        const box = await dialog.boundingBox();
+        expect(box!.width).toBeLessThanOrEqual(680);
+        await expect(dialog.getByRole("button", {name: "Visa som tabell"})).toBeVisible();
+        await expect(dialog.getByText("Roller")).toBeVisible();
+
+        // 2015 holds both a Veraspexet and a Bobspexet production.
+        const shared = dialog.getByRole("button", {name: "Spex 2015"});
+        await expect(shared).toHaveCSS("background-image", /linear-gradient/);
+    });
+});
+
+test.describe("my profile", () => {
+    test("leads with the career overview above the edit form", async ({page}) => {
+        await page.goto("/my-profile");
+
+        await expect(page.getByText("Spexkarriär")).toBeVisible();
+        await expect(page.getByText("2015–2020")).toBeVisible();
+        await expect(page.getByRole("button", {name: "Spex 2016"})).toBeVisible();
+        await expect(page.getByText("Förnamn")).toBeVisible();
     });
 });

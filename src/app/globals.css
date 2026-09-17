@@ -141,3 +141,17 @@
         --chart-5: oklch(0.645 0.246 16.439);
     }
 }
+
+:root {
+    --viz-series-1: #2a78d6;
+    --viz-series-2: #eb6834;
+    --viz-series-3: #1baf7a;
+    --viz-series-4: #eda100;
+}
+
+.dark {
+    --viz-series-1: #3987e5;
+    --viz-series-2: #d95926;
+    --viz-series-3: #199e70;
+    --viz-series-4: #c98500;
+}

@@ -33,9 +33,69 @@ export const spexareList = [...namedSpexare, ...extraSpexare];
 
 const audit = {createdAt: "2024-01-01T00:00:00Z", createdBy: "seed", lastModifiedAt: null, lastModifiedBy: null};
 
+// Ada alone gets a career, with a deliberate 2017-2019 gap so the overview strip has
+// both filled and empty years to render.
+const careerActivities = [
+    {year: "2015", title: "Bacchus", category: "Chalmersspexet", task: "Skådespelare", role: "Greve"},
+    {year: "2016", title: "Caesar", category: "Chalmersspexet", task: "Skådespelare", role: "Baron"},
+    {year: "2020", title: "Dante", category: "Vasaspexet", task: "Orkester", role: null},
+].map(({year, title, category, task, role}) => ({
+    id: `act-${year}`,
+    spexActivity: {
+        id: `spexact-${year}`,
+        ...audit,
+        spex: {
+            id: `spex-${year}`, year, title, revival: false, posterUrl: null, parent: null,
+            category: {id: "cat-1", name: category, firstYear: "1948", logoUrl: null, ...audit},
+            ...audit,
+        },
+    },
+    taskActivities: [{
+        id: `taskact-${year}`,
+        task: {id: `task-${year}`, name: task, category: null, ...audit},
+        actors: role ? [{id: `actor-${year}`, role, vocal: null, ...audit}] : [],
+        ...audit,
+    }],
+    ...audit,
+}));
+
+const careerMemberships = [
+    {id: "mem-2015", year: "2015", type: {id: "mtype-1", label: "Fullvärdig", type: "MEMBERSHIP"}, ...audit},
+    {id: "mem-2020", year: "2020", type: {id: "mtype-2", label: "Stödjande", type: "MEMBERSHIP"}, ...audit},
+];
+
+// Grace gets the awkward shape: a 25-year span with long gaps, and two spex in the same
+// year, so the strip has to cope with both in the width of a dialog.
+const longActivities = [
+    {year: "1991", title: "Urspexet", category: "Bobspexet"},
+    {year: "2006", title: "Bob", category: "Bobspexet"},
+    {year: "2014", title: "Vera I", category: "Veraspexet"},
+    {year: "2015", title: "Vera II", category: "Veraspexet"},
+    {year: "2015", title: "Bob igen", category: "Bobspexet"},
+].map(({year, title, category}, index) => ({
+    id: `long-act-${index}`,
+    spexActivity: {
+        id: `long-spexact-${index}`,
+        ...audit,
+        spex: {
+            id: `long-spex-${index}`, year, title, revival: false, posterUrl: null, parent: null,
+            category: {id: `long-cat-${category}`, name: category, firstYear: "1948", logoUrl: null, ...audit},
+            ...audit,
+        },
+    },
+    taskActivities: [],
+    ...audit,
+}));
+
+const longMemberships = [
+    {id: "long-mem", year: "1991", type: {id: "mtype-3", label: "FGV", type: "MEMBERSHIP"}, ...audit},
+];
+
 const spexareFull = (s) => ({
     ...s,
-    activities: [], addresses: [], consents: [], memberships: [], taggings: [], toggles: [],
+    activities: s.id === "1" ? careerActivities : s.id === "3" ? longActivities : [],
+    memberships: s.id === "1" ? careerMemberships : s.id === "3" ? longMemberships : [],
+    addresses: [], consents: [], taggings: [], toggles: [],
     ...audit,
 });
 
@@ -189,9 +249,12 @@ const resolvers = {
     SpexarePagedSummary: (v) => spexarePaged(v),
     SpexarePagedFull: (v) => spexarePaged(v),
     SpexareGet: (v) => ({spexare: spexareFull(spexareList.find((s) => s.id === String(v?.id)) ?? spexareList[0])}),
-    // The mock account is not linked to a spexare, matching UserMe above.
+    // Deliberately asymmetric, to keep both cases reachable from E2E: the summary query
+    // (the header badge and the command palette) sees no linked spexare, so the palette
+    // spec can assert the profile shortcut is omitted; the full query (/my-profile only)
+    // resolves to Ada, so the profile page can be exercised at all.
     SpexareMeSummary: () => ({spexareMe: null}),
-    SpexareMeFull: () => ({spexareMe: null}),
+    SpexareMeFull: () => ({spexareMe: spexareFull(spexareList[0])}),
     SpexareSearch: (v) => {
         const q = String(v?.q ?? "");
         const {spexarePaged: p} = spexarePaged(q ? {filter: `firstName:*${q}*`} : {});

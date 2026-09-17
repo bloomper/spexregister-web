@@ -8,6 +8,7 @@ import {getProxiedImageUrl} from "@/utils/utils";
 import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ActivityTimeline} from "@/components/spexare/activity/activity-timeline.client";
+import {SpexareCareer} from "@/components/spexare/spexare-career.client";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {
@@ -48,7 +49,7 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored}: S
                     </div>
                 )}
             </div>
-            <div className="p-6">
+            <div className="min-w-0 p-6">
                 <DialogHeader className="text-left">
                     <div className="flex items-start justify-between gap-2 text-left">
                         <div className="flex flex-col gap-1">
@@ -86,8 +87,9 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored}: S
                     </DialogDescription>
                 </DialogHeader>
 
-                <Tabs defaultValue="general" className="mt-6">
+                <Tabs defaultValue="overview" className="mt-6">
                     <TabsList className="grid w-full !h-auto min-h-9 p-1 bg-muted/50 grid-cols-2 sm:grid-cols-3">
+                        <TabsTrigger value="overview">{t("Spexare.Career.tab")}</TabsTrigger>
                         <TabsTrigger value="general">{t("Common.general")}</TabsTrigger>
                         <TabsTrigger value="activities">{t("Spexare.activities")}</TabsTrigger>
                         <TabsTrigger value="partner">{t("Spexare.partner")}</TabsTrigger>
@@ -97,6 +99,12 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored}: S
                         <TabsTrigger value="taggings">{t("Spexare.taggings")}</TabsTrigger>
                         <TabsTrigger value="toggles">{t("Spexare.toggles")}</TabsTrigger>
                     </TabsList>
+
+                    <TabsContent value="overview" className="pt-6">
+                        <SpexareCareer
+                            activities={(spexare.activities ?? []).filter((activity): activity is Activity => !!activity)}
+                        />
+                    </TabsContent>
 
                     <TabsContent value="general" className="space-y-6 pt-4">
                         <GeneralSection spexare={spexare} showAudit={showAudit} onRestored={onRestored}/>
