@@ -165,6 +165,35 @@
       "user": "Användare"
     }
   },
+  "Explore": {
+    "heading": "Utforska",
+    "description": "Sök fram en startpunkt – eller sök utan text för att utgå från dig själv – och klicka dig vidare genom registrets kopplingar. Klicka på en nod för att expandera den, dubbelklicka för att visa detaljer.",
+    "search": "Sök",
+    "searchPlaceholder": "Sök efter spexare, spex, funktion eller tagg...",
+    "searchResults": "Sökträffar",
+    "clear": "Rensa",
+    "emptyHeading": "Inget att utforska ännu",
+    "emptyDescription": "Sök fram en spexare, ett spex, en funktion eller en tagg för att börja.",
+    "loadedNodes": "{count, plural, =1 {# nod} other {# noder}}",
+    "expandLabel": "Expandera {name}",
+    "detailsLabel": "Visa detaljer för {name}",
+    "showMore": "Visa fler ({shown} av {total})",
+    "focusLabel": "Visa {name} i grafen",
+    "collapseLabel": "Fäll ihop {name}",
+    "navHint": "Vänsterklick: rotera · Mushjul: zooma · Högerklick: panorera · Dra en nod för att flytta den",
+    "filterPlaceholder": "Filtrera noder...",
+    "clearFilter": "Rensa filter",
+    "noMatches": "Inga noder matchar",
+    "revival": "Nyuppsättning",
+    "NodeType": {
+      "SPEXARE": "Spexare",
+      "SPEX": "Spex",
+      "SPEX_CATEGORY": "Spexkategori",
+      "TASK": "Funktion",
+      "TASK_CATEGORY": "Funktionskategori",
+      "TAG": "Tagg"
+    }
+  },
   "Header": {
     "toggleLanguage": "Byt språk",
     "toggleTheme": "Byt tema"

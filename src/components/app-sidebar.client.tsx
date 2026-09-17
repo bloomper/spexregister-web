@@ -87,10 +87,13 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                 url: "/spexare",
                 icon: UserRound,
                 isActive: pathname.startsWith("/spexare"),
-                items: isCurrentUserAdminOrEditor ? [
-                    {title: t("Common.manage"), url: "/spexare/manage"},
-                    {title: t("Common.create"), url: "/spexare/create"},
-                ] : undefined,
+                items: [
+                    {title: t("Explore.heading"), url: "/spexare/explore"},
+                    ...(isCurrentUserAdminOrEditor ? [
+                        {title: t("Common.manage"), url: "/spexare/manage"},
+                        {title: t("Common.create"), url: "/spexare/create"},
+                    ] : []),
+                ],
             },
             {
                 title: t("Spex.heading"),

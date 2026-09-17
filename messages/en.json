@@ -166,6 +166,35 @@
       "user": "User"
     }
   },
+  "Explore": {
+    "heading": "Explore",
+    "description": "Search for a starting point — or search with no text to start from yourself — and click your way through the register. Click a node to expand it, double-click to show details.",
+    "search": "Search",
+    "searchPlaceholder": "Search for a person, spex, function or tag...",
+    "searchResults": "Search results",
+    "clear": "Clear",
+    "emptyHeading": "Nothing to explore yet",
+    "emptyDescription": "Search for a person, spex, function or tag to begin.",
+    "loadedNodes": "{count, plural, =1 {# node} other {# nodes}}",
+    "expandLabel": "Expand {name}",
+    "detailsLabel": "Show details for {name}",
+    "showMore": "Show more ({shown} of {total})",
+    "focusLabel": "Show {name} in the graph",
+    "collapseLabel": "Collapse {name}",
+    "navHint": "Left-click: rotate · Mouse wheel: zoom · Right-click: pan · Drag a node to move it",
+    "filterPlaceholder": "Filter nodes...",
+    "clearFilter": "Clear filter",
+    "noMatches": "No nodes match",
+    "revival": "Revival",
+    "NodeType": {
+      "SPEXARE": "Person",
+      "SPEX": "Spex",
+      "SPEX_CATEGORY": "Spex category",
+      "TASK": "Function",
+      "TASK_CATEGORY": "Function category",
+      "TAG": "Tag"
+    }
+  },
   "Header": {
     "toggleLanguage": "Toggle language",
     "toggleTheme": "Toggle theme"

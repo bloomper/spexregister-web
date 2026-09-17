@@ -112,6 +112,36 @@ const statistics = {
     taskCount: 5, taskCountHistory: [{label: "2025", count: 5}],
 };
 
+const graphNode = (type, entityId, label, sublabel = null, imageUrl = null, revival = false) =>
+    ({id: `${type}:${entityId}`, type, label, sublabel, imageUrl, revival, entityId: String(entityId)});
+
+const graphNodes = [
+    graphNode("SPEXARE", "1", "Ada Lovelace", "Countess", "/api/spexare/1/image"),
+    graphNode("SPEXARE", "3", "Grace Hopper", "Amazing Grace"),
+    graphNode("SPEX", "100", "Bacchus", "2015"),
+    graphNode("SPEX", "101", "Bacchus", "1998", null, true),
+    graphNode("TASK", "200", "Skådespelare"),
+    graphNode("TAG", "300", "Hedersmedlem"),
+];
+
+const graphNodeById = Object.fromEntries(graphNodes.map((n) => [n.id, n]));
+
+const graphGroups = {
+    "SPEXARE:1": [
+        {type: "PARTICIPATION", nodes: [graphNodeById["SPEX:100"]]},
+        {type: "FUNCTION", nodes: [graphNodeById["TASK:200"]]},
+        {type: "TAG", nodes: [graphNodeById["TAG:300"]]},
+        {type: "PARTNER", nodes: [graphNodeById["SPEXARE:3"]]},
+    ],
+    "SPEX:100": [
+        {type: "PARTICIPATION", nodes: [graphNodeById["SPEXARE:1"]]},
+        {type: "REVIVAL_OF", nodes: [graphNodeById["SPEX:101"]]},
+    ],
+    "TAG:300": [
+        {type: "TAG", nodes: [graphNodeById["SPEXARE:1"], graphNodeById["SPEXARE:3"]]},
+    ],
+};
+
 const nameHaystack = (s) => [s.firstName, s.lastName, s.nickName].filter(Boolean).join(" ").toLowerCase();
 
 function spexarePaged(variables) {
@@ -382,6 +412,55 @@ const resolvers = {
             status: "COMPLETED", exitStatus: "COMPLETED",
         },
     }),
+
+    GraphSearch: (v) => {
+        const q = String(v?.q ?? "").trim().toLowerCase();
+
+        // A blank term is answered with a single random node, matching the backend's "surprise me".
+        if (!q) {
+            return {graphSearch: [graphNodes[0]]};
+        }
+
+        return {graphSearch: graphNodes.filter((n) => n.label.toLowerCase().includes(q))};
+    },
+    GraphNeighbourhood: (v) => {
+        const origin = graphNodes.find((n) => n.type === v?.type && String(n.entityId) === String(v?.id));
+
+        if (!origin) {
+            return {graphNeighbourhood: null};
+        }
+
+        const first = Number(v?.first ?? 25);
+
+        return {
+            graphNeighbourhood: {
+                origin,
+                groups: (graphGroups[origin.id] ?? []).map((group) => ({
+                    type: group.type,
+                    totalCount: group.nodes.length,
+                    nodes: group.nodes.slice(0, first),
+                    edges: group.nodes.slice(0, first).map((n) => ({
+                        id: `${origin.id}->${n.id}:${group.type}`,
+                        source: origin.id, target: n.id, type: group.type, label: null,
+                    })),
+                })),
+            },
+        };
+    },
+    GraphNeighboursPaged: (v) => {
+        const origin = graphNodes.find((n) => n.type === v?.type && String(n.entityId) === String(v?.id));
+        const group = (graphGroups[origin?.id] ?? []).find((g) => g.type === v?.edge);
+        const nodes = group?.nodes ?? [];
+        const first = Number(v?.first ?? 25);
+
+        return {
+            graphNeighboursPaged: {
+                edges: nodes.slice(0, first).map((n, i) => ({cursor: `c${i}`, node: n})),
+                pageInfo: {hasNextPage: nodes.length > first, endCursor: `c${Math.min(first, nodes.length) - 1}`},
+                totalCount: nodes.length,
+            },
+        };
+    },
 };
 
 function operationNameOf(query) {
@@ -413,7 +492,17 @@ function handleGraphql(body, res) {
     res.end(JSON.stringify({data}));
 }
 
+// A real 16x16 PNG, so the graph's image-sprite path is exercised end to end rather than always
+// falling back to the generated icon.
+const PIXEL = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAFklEQVR4nGMQ2bGMJMQwqmFUw/DVAAAiOnIQQXml9AAAAABJRU5ErkJggg==", "base64");
+
 function handleRest(req, res) {
+    if (/\/(image|poster|logo)$/.test(req.url.split("?")[0])) {
+        res.writeHead(200, {"content-type": "image/png", "content-length": PIXEL.length});
+        res.end(PIXEL);
+        return;
+    }
+
     res.writeHead(200, {"content-type": "application/json"});
     res.end(JSON.stringify({id: "job-1"}));
 }
