@@ -205,32 +205,32 @@ export default function GraphForce3D({
                 movedRef.current = true;
             }}
         >
-        <ForceGraph3D
-            ref={graphRef}
-            width={width}
-            height={height}
-            graphData={{nodes, links}}
-            backgroundColor={background}
-            linkColor={(link) => (dimmedIds.has(endpointId(link.source)) && dimmedIds.has(endpointId(link.target))
-                ? dimLinkColor
-                : linkColor)}
-            linkOpacity={0.7}
-            linkWidth={0.4}
-            nodeLabel="label"
-            nodeThreeObject={(node: object) => objectFor(
-                node as ForceNode, captionInk, dimmedIds.has(String((node as ForceNode).id)))}
-            onNodeClick={(node) => onNodeClick(String(node.id))}
-            showNavInfo={false}
-            enableNodeDrag
-            onNodeDragEnd={(node) => {
-                node.fx = node.x;
-                node.fy = node.y;
-                node.fz = node.z;
-            }}
-            d3VelocityDecay={0.3}
-            cooldownTime={5000}
-            onEngineStop={handleEngineStop}
-        />
+            <ForceGraph3D
+                ref={graphRef}
+                width={width}
+                height={height}
+                graphData={{nodes, links}}
+                backgroundColor={background}
+                linkColor={(link) => (dimmedIds.has(endpointId(link.source)) && dimmedIds.has(endpointId(link.target))
+                    ? dimLinkColor
+                    : linkColor)}
+                linkOpacity={0.7}
+                linkWidth={0.4}
+                nodeLabel="label"
+                nodeThreeObject={(node: object) => objectFor(
+                    node as ForceNode, captionInk, dimmedIds.has(String((node as ForceNode).id)))}
+                onNodeClick={(node) => onNodeClick(String(node.id))}
+                showNavInfo={false}
+                enableNodeDrag
+                onNodeDragEnd={(node) => {
+                    node.fx = node.x;
+                    node.fy = node.y;
+                    node.fz = node.z;
+                }}
+                d3VelocityDecay={0.3}
+                cooldownTime={5000}
+                onEngineStop={handleEngineStop}
+            />
         </div>
     );
 }

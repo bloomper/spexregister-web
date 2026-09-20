@@ -97,6 +97,9 @@ type Documents = {
     "\n    mutation AddressCreate($spexareId: ID!, $typeId: ID!, $input: AddressCreate!) {\n        addressCreate(spexareId: $spexareId, typeId: $typeId, input: $input) {\n            ...AddressFull\n        }\n    }\n": typeof types.AddressCreateDocument,
     "\n    mutation AddressUpdate($spexareId: ID!, $typeId: ID!, $input: AddressUpdate!) {\n        addressUpdate(spexareId: $spexareId, typeId: $typeId, input: $input) {\n            ...AddressFull\n        }\n    }\n": typeof types.AddressUpdateDocument,
     "\n    mutation AddressDelete($spexareId: ID!, $typeId: ID!, $id: ID!) {\n        addressDelete(spexareId: $spexareId, typeId: $typeId, id: $id)\n    }\n": typeof types.AddressDeleteDocument,
+    "\n    fragment BulkResultFull on BulkResult {\n        operation\n        requested\n        applied\n        unchanged\n        blocked\n        entries {\n            id\n            label\n            outcome\n            detail\n        }\n    }\n": typeof types.BulkResultFullFragmentDoc,
+    "\n    query SpexareBulkPreview($input: SpexareBulkInput!) {\n        spexareBulkPreview(input: $input) {\n            ...BulkResultFull\n        }\n    }\n": typeof types.SpexareBulkPreviewDocument,
+    "\n    mutation SpexareBulkApply($input: SpexareBulkInput!) {\n        spexareBulkApply(input: $input) {\n            ...BulkResultFull\n        }\n    }\n": typeof types.SpexareBulkApplyDocument,
     "\n    fragment ConsentSummary on Consent {\n        id\n        value\n        type {\n            id\n            label\n        }\n    }\n": typeof types.ConsentSummaryFragmentDoc,
     "\n    fragment ConsentFull on Consent {\n        ...ConsentSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.ConsentFullFragmentDoc,
     "\n    mutation ConsentCreate($spexareId: ID!, $typeId: ID!, $input: ConsentCreate!) {\n        consentCreate(spexareId: $spexareId, typeId: $typeId, input: $input) {\n            ...ConsentFull\n        }\n    }\n": typeof types.ConsentCreateDocument,
@@ -263,6 +266,9 @@ const documents: Documents = {
     "\n    mutation AddressCreate($spexareId: ID!, $typeId: ID!, $input: AddressCreate!) {\n        addressCreate(spexareId: $spexareId, typeId: $typeId, input: $input) {\n            ...AddressFull\n        }\n    }\n": types.AddressCreateDocument,
     "\n    mutation AddressUpdate($spexareId: ID!, $typeId: ID!, $input: AddressUpdate!) {\n        addressUpdate(spexareId: $spexareId, typeId: $typeId, input: $input) {\n            ...AddressFull\n        }\n    }\n": types.AddressUpdateDocument,
     "\n    mutation AddressDelete($spexareId: ID!, $typeId: ID!, $id: ID!) {\n        addressDelete(spexareId: $spexareId, typeId: $typeId, id: $id)\n    }\n": types.AddressDeleteDocument,
+    "\n    fragment BulkResultFull on BulkResult {\n        operation\n        requested\n        applied\n        unchanged\n        blocked\n        entries {\n            id\n            label\n            outcome\n            detail\n        }\n    }\n": types.BulkResultFullFragmentDoc,
+    "\n    query SpexareBulkPreview($input: SpexareBulkInput!) {\n        spexareBulkPreview(input: $input) {\n            ...BulkResultFull\n        }\n    }\n": types.SpexareBulkPreviewDocument,
+    "\n    mutation SpexareBulkApply($input: SpexareBulkInput!) {\n        spexareBulkApply(input: $input) {\n            ...BulkResultFull\n        }\n    }\n": types.SpexareBulkApplyDocument,
     "\n    fragment ConsentSummary on Consent {\n        id\n        value\n        type {\n            id\n            label\n        }\n    }\n": types.ConsentSummaryFragmentDoc,
     "\n    fragment ConsentFull on Consent {\n        ...ConsentSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.ConsentFullFragmentDoc,
     "\n    mutation ConsentCreate($spexareId: ID!, $typeId: ID!, $input: ConsentCreate!) {\n        consentCreate(spexareId: $spexareId, typeId: $typeId, input: $input) {\n            ...ConsentFull\n        }\n    }\n": types.ConsentCreateDocument,
@@ -692,6 +698,18 @@ export function graphql(source: "\n    mutation AddressUpdate($spexareId: ID!, $
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation AddressDelete($spexareId: ID!, $typeId: ID!, $id: ID!) {\n        addressDelete(spexareId: $spexareId, typeId: $typeId, id: $id)\n    }\n"): (typeof documents)["\n    mutation AddressDelete($spexareId: ID!, $typeId: ID!, $id: ID!) {\n        addressDelete(spexareId: $spexareId, typeId: $typeId, id: $id)\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    fragment BulkResultFull on BulkResult {\n        operation\n        requested\n        applied\n        unchanged\n        blocked\n        entries {\n            id\n            label\n            outcome\n            detail\n        }\n    }\n"): (typeof documents)["\n    fragment BulkResultFull on BulkResult {\n        operation\n        requested\n        applied\n        unchanged\n        blocked\n        entries {\n            id\n            label\n            outcome\n            detail\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SpexareBulkPreview($input: SpexareBulkInput!) {\n        spexareBulkPreview(input: $input) {\n            ...BulkResultFull\n        }\n    }\n"): (typeof documents)["\n    query SpexareBulkPreview($input: SpexareBulkInput!) {\n        spexareBulkPreview(input: $input) {\n            ...BulkResultFull\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation SpexareBulkApply($input: SpexareBulkInput!) {\n        spexareBulkApply(input: $input) {\n            ...BulkResultFull\n        }\n    }\n"): (typeof documents)["\n    mutation SpexareBulkApply($input: SpexareBulkInput!) {\n        spexareBulkApply(input: $input) {\n            ...BulkResultFull\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -14,7 +14,11 @@ import {
 import {Button} from "@/components/ui/button";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {getProxiedImageUrl} from "@/utils/utils";
-import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/spex/categories/actions.server";
+import {
+    getRestorePreviewAction,
+    getRevisionsAction,
+    restoreRevisionAction
+} from "@/app/(app)/spex/categories/actions.server";
 
 const restoreActions = {
     preview: getRestorePreviewAction,

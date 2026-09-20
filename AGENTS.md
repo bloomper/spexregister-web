@@ -174,6 +174,36 @@ Forms use `react-hook-form` + `zodResolver`.
 Global bulk-edit drawer (`src/components/edit-queue/`) that reuses each entity's own form. Adding
 an entity means registering it in `registry.tsx` (form, label, `getById`, optional `fetchFull`).
 
+## Bulk actions
+
+One change applied to many spexare at once (`src/components/bulk/`), separate from the edit queue,
+which walks records one at a time.
+
+- The work happens **in the backend** (`nu.fgv.register.server.spexare.bulk`), not as a loop of
+  single-record mutations from here. One `@Transactional` service method means Envers writes **one
+  revision**, so a bulk action is a single change-log row with a reason — `revisionDetail` then lists
+  every record it touched. Looping mutations client-side would produce one revision per record.
+- Both APIs sit on the same `SpexareBulkService`, one input and one result type:
+  GraphQL `spexareBulkPreview` (query) / `spexareBulkApply` (mutation), REST
+  `POST /api/spexare/bulk/preview` / `POST /api/spexare/bulk`. The operation is an enum (`TAG_ADD`, `SPEX_ADD`,
+  `CONSENT_SET`, `FIELDS_SET`, …) and decides which payload fields are read.
+  `X-Audit-Reason` works on both, since `AuditContextFilter` reads it per HTTP request.
+- **Preview and apply run the same code path**, the preview simply not writing, so the counts a
+  reader confirms are the counts they get. Per record the outcome is `APPLIED`, `UNCHANGED`
+  (already as asked — a skip, not a failure) or `NOT_PERMITTED` (no ACL write permission).
+- `BulkTarget` takes **`ids` or `filter`, never both**, mirroring `spexareExport`, so an action can
+  run on a whole filtered set without ticking every row. The size cap is checked *before* the rows
+  are loaded — a `Spexare` carries an eager image blob.
+- The payload's tag/spex/task/type ids are resolved **before the first write**, so a bad id fails the
+  batch having changed nothing. The batch is otherwise all-or-nothing: one transaction.
+- Adding an operation: the enum case plus a handler in `SpexareBulkService`, then an entry in
+  `src/components/bulk/registry.client.tsx` (icon, `isComplete`, a `Fields` component) and its
+  `Spexare.bulk.operations.<OP>` message. The toolbar menu and the preview/apply dialog are generic.
+  Both APIs pick the new operation up for free; only `spexare-bulk.adoc`'s operation list needs a word.
+- Note `BadRequestException` needs `problemDetail.type.*` / `problemDetail.title.*` entries in
+  `messages_{sv,en}.properties`; without them `GlobalExceptionResolver` falls through to
+  `INTERNAL_ERROR` instead of `BAD_REQUEST`.
+
 ## Testing
 
 - Unit: Vitest, tests in `__tests__/` beside the code.

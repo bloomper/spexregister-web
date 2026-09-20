@@ -6,6 +6,7 @@ export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' |
 import {
     AuditedType,
     AuditSource,
+    BulkOutcome,
     GraphEdgeType,
     GraphNodeType,
     ImpexType,
@@ -13,56 +14,64 @@ import {
     RestoreAction,
     RevisionType,
     SortDirection,
+    SpexareBulkOperation,
     TypeType
 } from './schema';
 import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/core';
 
 export type ActorCreate = {
-  role?: string | null | undefined;
+    role?: string | null | undefined;
 };
 
 export type ActorUpdate = {
-  id: string | number;
-  role?: string | null | undefined;
+    id: string | number;
+    role?: string | null | undefined;
 };
 
 export type AddressCreate = {
-  city?: string | null | undefined;
-  country?: any;
-  emailAddress?: any;
-  phone?: string | null | undefined;
-  phoneMobile?: string | null | undefined;
-  postalCode?: string | null | undefined;
-  streetAddress?: string | null | undefined;
+    city?: string | null | undefined;
+    country?: any;
+    emailAddress?: any;
+    phone?: string | null | undefined;
+    phoneMobile?: string | null | undefined;
+    postalCode?: string | null | undefined;
+    streetAddress?: string | null | undefined;
 };
 
 export type AddressUpdate = {
-  city?: string | null | undefined;
-  country?: any;
-  emailAddress?: any;
-  id: string | number;
-  phone?: string | null | undefined;
-  phoneMobile?: string | null | undefined;
-  postalCode?: string | null | undefined;
-  streetAddress?: string | null | undefined;
+    city?: string | null | undefined;
+    country?: any;
+    emailAddress?: any;
+    id: string | number;
+    phone?: string | null | undefined;
+    phoneMobile?: string | null | undefined;
+    postalCode?: string | null | undefined;
+    streetAddress?: string | null | undefined;
 };
 
 export type AggregationFilterInput = {
-  name: string;
-  value: string;
+    name: string;
+    value: string;
 };
 
 export {AuditSource};
 
 export {AuditedType};
 
+export {BulkOutcome};
+
+export type BulkTarget = {
+    filter?: string | null | undefined;
+    ids?: Array<string | number> | null | undefined;
+};
+
 export type ConsentCreate = {
-  value: boolean;
+    value: boolean;
 };
 
 export type ConsentUpdate = {
-  id: string | number;
-  value: boolean;
+    id: string | number;
+    value: boolean;
 };
 
 export {GraphEdgeType};
@@ -72,22 +81,22 @@ export {GraphNodeType};
 export {ImpexType};
 
 export type MembershipCreate = {
-  year: any;
+    year: any;
 };
 
 export type NewsCreate = {
-  subject: string;
-  text: string;
-  visibleFrom?: any;
-  visibleTo?: any;
+    subject: string;
+    text: string;
+    visibleFrom?: any;
+    visibleTo?: any;
 };
 
 export type NewsUpdate = {
-  id: string | number;
-  subject: string;
-  text: string;
-  visibleFrom?: any;
-  visibleTo?: any;
+    id: string | number;
+    subject: string;
+    text: string;
+    visibleFrom?: any;
+    visibleTo?: any;
 };
 
 export {ReportType};
@@ -97,113 +106,136 @@ export {RestoreAction};
 export {RevisionType};
 
 export type SavedSearchCreate = {
-  name: string;
-  query: string;
+    name: string;
+    query: string;
 };
 
 export type SavedSearchUpdate = {
-  id: string | number;
-  name: string;
-  query: string;
+    id: string | number;
+    name: string;
+    query: string;
 };
 
 export {SortDirection};
 
 export type SpexCategoryCreate = {
-  firstYear: any;
-  name: string;
+    firstYear: any;
+    name: string;
 };
 
 export type SpexCategoryUpdate = {
-  firstYear: any;
-  id: string | number;
-  name: string;
+    firstYear: any;
+    id: string | number;
+    name: string;
 };
 
 export type SpexCreate = {
-  title: string;
-  year: any;
+    title: string;
+    year: any;
 };
 
 export type SpexUpdate = {
-  id: string | number;
-  title: string;
-  year: any;
+    id: string | number;
+    title: string;
+    year: any;
 };
 
+export type SpexareBulkFields = {
+    deceased?: boolean | null | undefined;
+    published?: boolean | null | undefined;
+};
+
+export type SpexareBulkInput = {
+    fields?: SpexareBulkFields | null | undefined;
+    operation: SpexareBulkOperation;
+    spex?: Array<string | number> | null | undefined;
+    spexId?: string | number | null | undefined;
+    tags?: Array<string | number> | null | undefined;
+    target: BulkTarget;
+    tasks?: Array<string | number> | null | undefined;
+    values?: Array<TypeValue> | null | undefined;
+};
+
+export {SpexareBulkOperation};
+
 export type SpexareCreate = {
-  deceased: boolean;
-  firstName: string;
-  lastName: string;
-  nickName?: string | null | undefined;
-  published: boolean;
+    deceased: boolean;
+    firstName: string;
+    lastName: string;
+    nickName?: string | null | undefined;
+    published: boolean;
 };
 
 export type SpexareUpdate = {
-  comment?: string | null | undefined;
-  deceased: boolean;
-  firstName: string;
-  graduation?: string | null | undefined;
-  id: string | number;
-  imageUrl?: string | null | undefined;
-  lastName: string;
-  nickName?: string | null | undefined;
-  published: boolean;
-  socialSecurityNumber?: any;
+    comment?: string | null | undefined;
+    deceased: boolean;
+    firstName: string;
+    graduation?: string | null | undefined;
+    id: string | number;
+    imageUrl?: string | null | undefined;
+    lastName: string;
+    nickName?: string | null | undefined;
+    published: boolean;
+    socialSecurityNumber?: any;
 };
 
 export type TagCreate = {
-  name: string;
+    name: string;
 };
 
 export type TagUpdate = {
-  id: string | number;
-  name: string;
+    id: string | number;
+    name: string;
 };
 
 export type TaskCategoryCreate = {
-  actorPresent: boolean;
-  name: string;
+    actorPresent: boolean;
+    name: string;
 };
 
 export type TaskCategoryUpdate = {
-  actorPresent: boolean;
-  id: string | number;
-  name: string;
+    actorPresent: boolean;
+    id: string | number;
+    name: string;
 };
 
 export type TaskCreate = {
-  name: string;
+    name: string;
 };
 
 export type TaskUpdate = {
-  id: string | number;
-  name: string;
+    id: string | number;
+    name: string;
 };
 
 export type ToggleCreate = {
-  value: boolean;
+    value: boolean;
 };
 
 export type ToggleUpdate = {
-  id: string | number;
-  value: boolean;
+    id: string | number;
+    value: boolean;
 };
 
 export {TypeType};
 
+export type TypeValue = {
+    typeId: string | number;
+    value: boolean;
+};
+
 export type UserCreate = {
-  email: any;
+    email: any;
 };
 
 export type UserUpdate = {
-  email: any;
-  id: string | number;
+    email: any;
+    id: string | number;
 };
 
 export type RevisionsQueryVariables = Exact<{
-  type: AuditedType;
-  id: string | number;
+    type: AuditedType;
+    id: string | number;
 }>;
 
 
@@ -228,9 +260,9 @@ export type RevisionsQuery = {
 };
 
 export type RelatedRevisionsQueryVariables = Exact<{
-  type: AuditedType;
-  id: string | number;
-  relatedType: AuditedType;
+    type: AuditedType;
+    id: string | number;
+    relatedType: AuditedType;
 }>;
 
 
@@ -255,16 +287,16 @@ export type RelatedRevisionsQuery = {
 };
 
 export type RevisionFeedPagedQueryVariables = Exact<{
-  first?: number | null | undefined;
-  after?: string | null | undefined;
-  last?: number | null | undefined;
-  before?: string | null | undefined;
-  type?: AuditedType | null | undefined;
+    first?: number | null | undefined;
+    after?: string | null | undefined;
+    last?: number | null | undefined;
+    before?: string | null | undefined;
+    type?: AuditedType | null | undefined;
     modifiedBy?: Array<string> | string | null | undefined;
     sources?: Array<AuditSource> | AuditSource | null | undefined;
     from?: any;
     to?: any;
-  sinceInDays?: number | null | undefined;
+    sinceInDays?: number | null | undefined;
 }>;
 
 
@@ -329,10 +361,10 @@ export type RevisionAuthorsQueryVariables = Exact<{ [key: string]: never; }>;
 export type RevisionAuthorsQuery = { revisionAuthors: Array<string> };
 
 export type RestorePreviewQueryVariables = Exact<{
-  type: AuditedType;
-  id: string | number;
-  revision: any;
-  cascade?: boolean | null | undefined;
+    type: AuditedType;
+    id: string | number;
+    revision: any;
+    cascade?: boolean | null | undefined;
 }>;
 
 
@@ -349,10 +381,10 @@ export type RestorePreviewQuery = {
 };
 
 export type RestoreMutationVariables = Exact<{
-  type: AuditedType;
-  id: string | number;
-  revision: any;
-  cascade?: boolean | null | undefined;
+    type: AuditedType;
+    id: string | number;
+    revision: any;
+    cascade?: boolean | null | undefined;
 }>;
 
 
@@ -377,8 +409,8 @@ export type GraphNodeFieldsFragment = {
 };
 
 export type GraphSearchQueryVariables = Exact<{
-  q: string;
-  first: number;
+    q: string;
+    first: number;
 }>;
 
 
@@ -395,9 +427,9 @@ export type GraphSearchQuery = {
 };
 
 export type GraphNeighbourhoodQueryVariables = Exact<{
-  type: GraphNodeType;
-  id: string | number;
-  first: number;
+    type: GraphNodeType;
+    id: string | number;
+    first: number;
 }>;
 
 
@@ -430,11 +462,11 @@ export type GraphNeighbourhoodQuery = {
 };
 
 export type GraphNeighboursPagedQueryVariables = Exact<{
-  type: GraphNodeType;
-  id: string | number;
-  edge: GraphEdgeType;
-  first?: number | null | undefined;
-  after?: string | null | undefined;
+    type: GraphNodeType;
+    id: string | number;
+    edge: GraphEdgeType;
+    first?: number | null | undefined;
+    after?: string | null | undefined;
 }>;
 
 
@@ -477,7 +509,7 @@ export type JobFieldsFragment = {
 };
 
 export type JobStatusQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -486,7 +518,7 @@ export type JobStatusQuery = {
 };
 
 export type JobByIdQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -532,7 +564,7 @@ export type JobsQuery = {
 };
 
 export type JobDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -554,13 +586,13 @@ export type NewsFullFragment = {
 };
 
 export type NewsPagedSummaryQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -578,13 +610,13 @@ export type NewsPagedSummaryQuery = {
 };
 
 export type NewsPagedFullQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -616,7 +648,7 @@ export type NewsPagedFullQuery = {
 };
 
 export type NewsGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -636,7 +668,7 @@ export type NewsGetQuery = {
 };
 
 export type NewsCreateMutationVariables = Exact<{
-  input: NewsCreate;
+    input: NewsCreate;
 }>;
 
 
@@ -656,7 +688,7 @@ export type NewsCreateMutation = {
 };
 
 export type NewsUpdateMutationVariables = Exact<{
-  input: NewsUpdate;
+    input: NewsUpdate;
 }>;
 
 
@@ -676,16 +708,16 @@ export type NewsUpdateMutation = {
 };
 
 export type NewsDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type NewsDeleteMutation = { newsDelete: any };
 
 export type NewsExportQueryVariables = Exact<{
-  ids?: Array<string | number | null | undefined> | string | number | null | undefined;
-  filter?: string | null | undefined;
-  type: ImpexType;
+    ids?: Array<string | number | null | undefined> | string | number | null | undefined;
+    filter?: string | null | undefined;
+    type: ImpexType;
 }>;
 
 
@@ -717,7 +749,7 @@ export type SavedSearchesQuery = {
 };
 
 export type SavedSearchGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -734,7 +766,7 @@ export type SavedSearchGetQuery = {
 };
 
 export type SavedSearchCreateMutationVariables = Exact<{
-  input: SavedSearchCreate;
+    input: SavedSearchCreate;
 }>;
 
 
@@ -751,7 +783,7 @@ export type SavedSearchCreateMutation = {
 };
 
 export type SavedSearchUpdateMutationVariables = Exact<{
-  input: SavedSearchUpdate;
+    input: SavedSearchUpdate;
 }>;
 
 
@@ -768,7 +800,7 @@ export type SavedSearchUpdateMutation = {
 };
 
 export type SavedSearchDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -798,13 +830,13 @@ export type SpexCategoryFullFragment = {
 };
 
 export type SpexCategoryPagedSummaryQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -825,13 +857,13 @@ export type SpexCategoryPagedSummaryQuery = {
 };
 
 export type SpexCategoryPagedFullQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -861,7 +893,7 @@ export type SpexCategoryPagedFullQuery = {
 };
 
 export type SpexCategoryGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -879,7 +911,7 @@ export type SpexCategoryGetQuery = {
 };
 
 export type SpexCategoryCreateMutationVariables = Exact<{
-  input: SpexCategoryCreate;
+    input: SpexCategoryCreate;
 }>;
 
 
@@ -897,7 +929,7 @@ export type SpexCategoryCreateMutation = {
 };
 
 export type SpexCategoryUpdateMutationVariables = Exact<{
-  input: SpexCategoryUpdate;
+    input: SpexCategoryUpdate;
 }>;
 
 
@@ -915,16 +947,16 @@ export type SpexCategoryUpdateMutation = {
 };
 
 export type SpexCategoryDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type SpexCategoryDeleteMutation = { spexCategoryDelete: any };
 
 export type SpexCategoryExportQueryVariables = Exact<{
-  ids?: Array<string | number | null | undefined> | string | number | null | undefined;
-  filter?: string | null | undefined;
-  type: ImpexType;
+    ids?: Array<string | number | null | undefined> | string | number | null | undefined;
+    filter?: string | null | undefined;
+    type: ImpexType;
 }>;
 
 
@@ -955,13 +987,13 @@ export type SpexFullFragment = {
 };
 
 export type SpexPagedSummaryQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -990,13 +1022,13 @@ export type SpexPagedSummaryQuery = {
 };
 
 export type SpexPagedFullQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -1029,7 +1061,7 @@ export type SpexPagedFullQuery = {
 };
 
 export type SpexGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -1050,7 +1082,7 @@ export type SpexGetQuery = {
 };
 
 export type SpexCreateMutationVariables = Exact<{
-  input: SpexCreate;
+    input: SpexCreate;
 }>;
 
 
@@ -1071,7 +1103,7 @@ export type SpexCreateMutation = {
 };
 
 export type SpexUpdateMutationVariables = Exact<{
-  input: SpexUpdate;
+    input: SpexUpdate;
 }>;
 
 
@@ -1092,47 +1124,47 @@ export type SpexUpdateMutation = {
 };
 
 export type SpexDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type SpexDeleteMutation = { spexDelete: any };
 
 export type SpexExportQueryVariables = Exact<{
-  ids?: Array<string | number | null | undefined> | string | number | null | undefined;
-  filter?: string | null | undefined;
-  type: ImpexType;
+    ids?: Array<string | number | null | undefined> | string | number | null | undefined;
+    filter?: string | null | undefined;
+    type: ImpexType;
 }>;
 
 
 export type SpexExportQuery = { spexExport: { id: string } | null };
 
 export type SpexCategoryAddMutationVariables = Exact<{
-  id: string | number;
-  categoryId: string | number;
+    id: string | number;
+    categoryId: string | number;
 }>;
 
 
 export type SpexCategoryAddMutation = { spexCategoryAdd: any };
 
 export type SpexCategoryRemoveMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type SpexCategoryRemoveMutation = { spexCategoryRemove: any };
 
 export type SpexRevivalCreateMutationVariables = Exact<{
-  spexId: string | number;
-  year: any;
+    spexId: string | number;
+    year: any;
 }>;
 
 
 export type SpexRevivalCreateMutation = { spexRevivalCreate: { id: string, year: any } | null };
 
 export type SpexRevivalDeleteMutationVariables = Exact<{
-  id: string | number;
-  spexId: string | number;
+    id: string | number;
+    spexId: string | number;
 }>;
 
 
@@ -1187,7 +1219,7 @@ export type ActivityFullFragment = {
 };
 
 export type ActivityCreateMutationVariables = Exact<{
-  spexareId: string | number;
+    spexareId: string | number;
 }>;
 
 
@@ -1227,8 +1259,8 @@ export type ActivityCreateMutation = {
 };
 
 export type ActivityDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    id: string | number;
 }>;
 
 
@@ -1254,9 +1286,9 @@ export type SpexActivityFullFragment = {
 };
 
 export type SpexActivityCreateMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  spexId: string | number;
+    spexareId: string | number;
+    activityId: string | number;
+    spexId: string | number;
 }>;
 
 
@@ -1272,10 +1304,10 @@ export type SpexActivityCreateMutation = {
 };
 
 export type SpexActivityUpdateMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  spexId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    activityId: string | number;
+    spexId: string | number;
+    id: string | number;
 }>;
 
 
@@ -1291,9 +1323,9 @@ export type SpexActivityUpdateMutation = {
 };
 
 export type SpexActivityDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    activityId: string | number;
+    id: string | number;
 }>;
 
 
@@ -1312,11 +1344,11 @@ export type ActorFullFragment = {
 };
 
 export type ActorCreateMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  taskActivityId: string | number;
-  vocalId: string | number;
-  input: ActorCreate;
+    spexareId: string | number;
+    activityId: string | number;
+    taskActivityId: string | number;
+    vocalId: string | number;
+    input: ActorCreate;
 }>;
 
 
@@ -1333,11 +1365,11 @@ export type ActorCreateMutation = {
 };
 
 export type ActorUpdateMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  taskActivityId: string | number;
-  vocalId: string | number;
-  input: ActorUpdate;
+    spexareId: string | number;
+    activityId: string | number;
+    taskActivityId: string | number;
+    vocalId: string | number;
+    input: ActorUpdate;
 }>;
 
 
@@ -1354,11 +1386,11 @@ export type ActorUpdateMutation = {
 };
 
 export type ActorDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  taskActivityId: string | number;
-  vocalId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    activityId: string | number;
+    taskActivityId: string | number;
+    vocalId: string | number;
+    id: string | number;
 }>;
 
 
@@ -1394,9 +1426,9 @@ export type TaskActivityFullFragment = {
 };
 
 export type TaskActivityCreateMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  taskId: string | number;
+    spexareId: string | number;
+    activityId: string | number;
+    taskId: string | number;
 }>;
 
 
@@ -1421,10 +1453,10 @@ export type TaskActivityCreateMutation = {
 };
 
 export type TaskActivityUpdateMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  taskId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    activityId: string | number;
+    taskId: string | number;
+    id: string | number;
 }>;
 
 
@@ -1449,9 +1481,9 @@ export type TaskActivityUpdateMutation = {
 };
 
 export type TaskActivityDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  activityId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    activityId: string | number;
+    id: string | number;
 }>;
 
 
@@ -1486,9 +1518,9 @@ export type AddressFullFragment = {
 };
 
 export type AddressCreateMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  input: AddressCreate;
+    spexareId: string | number;
+    typeId: string | number;
+    input: AddressCreate;
 }>;
 
 
@@ -1511,9 +1543,9 @@ export type AddressCreateMutation = {
 };
 
 export type AddressUpdateMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  input: AddressUpdate;
+    spexareId: string | number;
+    typeId: string | number;
+    input: AddressUpdate;
 }>;
 
 
@@ -1536,13 +1568,54 @@ export type AddressUpdateMutation = {
 };
 
 export type AddressDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    typeId: string | number;
+    id: string | number;
 }>;
 
 
 export type AddressDeleteMutation = { addressDelete: any };
+
+export type BulkResultFullFragment = {
+    operation: SpexareBulkOperation,
+    requested: number,
+    applied: number,
+    unchanged: number,
+    blocked: number,
+    entries: Array<{ id: string, label: string, outcome: BulkOutcome, detail: string | null }>
+};
+
+export type SpexareBulkPreviewQueryVariables = Exact<{
+    input: SpexareBulkInput;
+}>;
+
+
+export type SpexareBulkPreviewQuery = {
+    spexareBulkPreview: {
+        operation: SpexareBulkOperation,
+        requested: number,
+        applied: number,
+        unchanged: number,
+        blocked: number,
+        entries: Array<{ id: string, label: string, outcome: BulkOutcome, detail: string | null }>
+    } | null
+};
+
+export type SpexareBulkApplyMutationVariables = Exact<{
+    input: SpexareBulkInput;
+}>;
+
+
+export type SpexareBulkApplyMutation = {
+    spexareBulkApply: {
+        operation: SpexareBulkOperation,
+        requested: number,
+        applied: number,
+        unchanged: number,
+        blocked: number,
+        entries: Array<{ id: string, label: string, outcome: BulkOutcome, detail: string | null }>
+    } | null
+};
 
 export type ConsentSummaryFragment = { id: string, value: boolean, type: { id: string, label: string } };
 
@@ -1557,9 +1630,9 @@ export type ConsentFullFragment = {
 };
 
 export type ConsentCreateMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  input: ConsentCreate;
+    spexareId: string | number;
+    typeId: string | number;
+    input: ConsentCreate;
 }>;
 
 
@@ -1576,9 +1649,9 @@ export type ConsentCreateMutation = {
 };
 
 export type ConsentUpdateMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  input: ConsentUpdate;
+    spexareId: string | number;
+    typeId: string | number;
+    input: ConsentUpdate;
 }>;
 
 
@@ -1595,9 +1668,9 @@ export type ConsentUpdateMutation = {
 };
 
 export type ConsentDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    typeId: string | number;
+    id: string | number;
 }>;
 
 
@@ -1616,9 +1689,9 @@ export type MembershipFullFragment = {
 };
 
 export type MembershipCreateMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  input: MembershipCreate;
+    spexareId: string | number;
+    typeId: string | number;
+    input: MembershipCreate;
 }>;
 
 
@@ -1635,9 +1708,9 @@ export type MembershipCreateMutation = {
 };
 
 export type MembershipDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    typeId: string | number;
+    id: string | number;
 }>;
 
 
@@ -1796,13 +1869,13 @@ export type SpexareFullFragment = {
 };
 
 export type SpexarePagedSummaryQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -1843,13 +1916,13 @@ export type SpexarePagedSummaryQuery = {
 };
 
 export type SpexarePagedFullQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -1981,7 +2054,7 @@ export type SpexarePagedFullQuery = {
 };
 
 export type SpexareCreateMutationVariables = Exact<{
-  input: SpexareCreate;
+    input: SpexareCreate;
 }>;
 
 
@@ -2102,7 +2175,7 @@ export type SpexareCreateMutation = {
 };
 
 export type SpexareUpdateMutationVariables = Exact<{
-  input: SpexareUpdate;
+    input: SpexareUpdate;
 }>;
 
 
@@ -2223,14 +2296,14 @@ export type SpexareUpdateMutation = {
 };
 
 export type SpexareDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type SpexareDeleteMutation = { spexareDelete: any };
 
 export type SpexareGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -2497,39 +2570,39 @@ export type SpexareMeFullQuery = {
 };
 
 export type SpexarePartnerAddMutationVariables = Exact<{
-  spexareId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    id: string | number;
 }>;
 
 
 export type SpexarePartnerAddMutation = { spexarePartnerAdd: any };
 
 export type SpexarePartnerRemoveMutationVariables = Exact<{
-  spexareId: string | number;
+    spexareId: string | number;
 }>;
 
 
 export type SpexarePartnerRemoveMutation = { spexarePartnerRemove: any };
 
 export type SpexareExportQueryVariables = Exact<{
-  ids?: Array<string | number | null | undefined> | string | number | null | undefined;
-  filter?: string | null | undefined;
-  type: ImpexType;
-  reportType?: ReportType | null | undefined;
+    ids?: Array<string | number | null | undefined> | string | number | null | undefined;
+    filter?: string | null | undefined;
+    type: ImpexType;
+    reportType?: ReportType | null | undefined;
 }>;
 
 
 export type SpexareExportQuery = { spexareExport: { id: string } | null };
 
 export type SpexareSearchQueryVariables = Exact<{
-  q: string;
-  aggregationFilters?: Array<AggregationFilterInput | null | undefined> | AggregationFilterInput | null | undefined;
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
+    q: string;
+    aggregationFilters?: Array<AggregationFilterInput | null | undefined> | AggregationFilterInput | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
 }>;
 
 
@@ -2590,16 +2663,16 @@ export type TaggingFullFragment = {
 };
 
 export type TaggingCreateMutationVariables = Exact<{
-  spexareId: string | number;
-  tagId: string | number;
+    spexareId: string | number;
+    tagId: string | number;
 }>;
 
 
 export type TaggingCreateMutation = { taggingCreate: any };
 
 export type TaggingDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  tagId: string | number;
+    spexareId: string | number;
+    tagId: string | number;
 }>;
 
 
@@ -2618,9 +2691,9 @@ export type ToggleFullFragment = {
 };
 
 export type ToggleCreateMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  input: ToggleCreate;
+    spexareId: string | number;
+    typeId: string | number;
+    input: ToggleCreate;
 }>;
 
 
@@ -2637,9 +2710,9 @@ export type ToggleCreateMutation = {
 };
 
 export type ToggleUpdateMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  input: ToggleUpdate;
+    spexareId: string | number;
+    typeId: string | number;
+    input: ToggleUpdate;
 }>;
 
 
@@ -2656,9 +2729,9 @@ export type ToggleUpdateMutation = {
 };
 
 export type ToggleDeleteMutationVariables = Exact<{
-  spexareId: string | number;
-  typeId: string | number;
-  id: string | number;
+    spexareId: string | number;
+    typeId: string | number;
+    id: string | number;
 }>;
 
 
@@ -2707,13 +2780,13 @@ export type TagFullFragment = {
 };
 
 export type TagPagedSummaryQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -2731,13 +2804,13 @@ export type TagPagedSummaryQuery = {
 };
 
 export type TagPagedFullQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -2765,7 +2838,7 @@ export type TagPagedFullQuery = {
 };
 
 export type TagGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -2781,7 +2854,7 @@ export type TagGetQuery = {
 };
 
 export type TagCreateMutationVariables = Exact<{
-  input: TagCreate;
+    input: TagCreate;
 }>;
 
 
@@ -2797,7 +2870,7 @@ export type TagCreateMutation = {
 };
 
 export type TagUpdateMutationVariables = Exact<{
-  input: TagUpdate;
+    input: TagUpdate;
 }>;
 
 
@@ -2813,16 +2886,16 @@ export type TagUpdateMutation = {
 };
 
 export type TagDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type TagDeleteMutation = { tagDelete: any };
 
 export type TagExportQueryVariables = Exact<{
-  ids?: Array<string | number | null | undefined> | string | number | null | undefined;
-  filter?: string | null | undefined;
-  type: ImpexType;
+    ids?: Array<string | number | null | undefined> | string | number | null | undefined;
+    filter?: string | null | undefined;
+    type: ImpexType;
 }>;
 
 
@@ -2841,13 +2914,13 @@ export type TaskCategoryFullFragment = {
 };
 
 export type TaskCategoryPagedSummaryQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -2865,13 +2938,13 @@ export type TaskCategoryPagedSummaryQuery = {
 };
 
 export type TaskCategoryPagedFullQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -2900,7 +2973,7 @@ export type TaskCategoryPagedFullQuery = {
 };
 
 export type TaskCategoryGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -2917,7 +2990,7 @@ export type TaskCategoryGetQuery = {
 };
 
 export type TaskCategoryCreateMutationVariables = Exact<{
-  input: TaskCategoryCreate;
+    input: TaskCategoryCreate;
 }>;
 
 
@@ -2934,7 +3007,7 @@ export type TaskCategoryCreateMutation = {
 };
 
 export type TaskCategoryUpdateMutationVariables = Exact<{
-  input: TaskCategoryUpdate;
+    input: TaskCategoryUpdate;
 }>;
 
 
@@ -2951,16 +3024,16 @@ export type TaskCategoryUpdateMutation = {
 };
 
 export type TaskCategoryDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type TaskCategoryDeleteMutation = { taskCategoryDelete: any };
 
 export type TaskCategoryExportQueryVariables = Exact<{
-  ids?: Array<string | number | null | undefined> | string | number | null | undefined;
-  filter?: string | null | undefined;
-  type: ImpexType;
+    ids?: Array<string | number | null | undefined> | string | number | null | undefined;
+    filter?: string | null | undefined;
+    type: ImpexType;
 }>;
 
 
@@ -2983,13 +3056,13 @@ export type TaskFullFragment = {
 };
 
 export type TaskPagedSummaryQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -3010,13 +3083,13 @@ export type TaskPagedSummaryQuery = {
 };
 
 export type TaskPagedFullQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -3045,7 +3118,7 @@ export type TaskPagedFullQuery = {
 };
 
 export type TaskGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -3062,7 +3135,7 @@ export type TaskGetQuery = {
 };
 
 export type TaskCreateMutationVariables = Exact<{
-  input: TaskCreate;
+    input: TaskCreate;
 }>;
 
 
@@ -3079,7 +3152,7 @@ export type TaskCreateMutation = {
 };
 
 export type TaskUpdateMutationVariables = Exact<{
-  input: TaskUpdate;
+    input: TaskUpdate;
 }>;
 
 
@@ -3096,31 +3169,31 @@ export type TaskUpdateMutation = {
 };
 
 export type TaskDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type TaskDeleteMutation = { taskDelete: any };
 
 export type TaskExportQueryVariables = Exact<{
-  ids?: Array<string | number | null | undefined> | string | number | null | undefined;
-  filter?: string | null | undefined;
-  type: ImpexType;
+    ids?: Array<string | number | null | undefined> | string | number | null | undefined;
+    filter?: string | null | undefined;
+    type: ImpexType;
 }>;
 
 
 export type TaskExportQuery = { taskExport: { id: string } | null };
 
 export type TaskCategoryAddMutationVariables = Exact<{
-  id: string | number;
-  categoryId: string | number;
+    id: string | number;
+    categoryId: string | number;
 }>;
 
 
 export type TaskCategoryAddMutation = { taskCategoryAdd: any };
 
 export type TaskCategoryRemoveMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -3150,13 +3223,13 @@ export type UserFullFragment = {
 };
 
 export type UserPagedSummaryQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -3184,13 +3257,13 @@ export type UserPagedSummaryQuery = {
 };
 
 export type UserPagedFullQueryVariables = Exact<{
-  first?: number | null | undefined;
-  last?: number | null | undefined;
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  sort?: Array<string | null | undefined> | string | null | undefined;
-  direction?: SortDirection | null | undefined;
-  filter?: string | null | undefined;
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort?: Array<string | null | undefined> | string | null | undefined;
+    direction?: SortDirection | null | undefined;
+    filter?: string | null | undefined;
 }>;
 
 
@@ -3223,7 +3296,7 @@ export type UserPagedFullQuery = {
 };
 
 export type UserGetQueryVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
@@ -3244,7 +3317,7 @@ export type UserGetQuery = {
 };
 
 export type UserCreateMutationVariables = Exact<{
-  input: UserCreate;
+    input: UserCreate;
 }>;
 
 
@@ -3265,7 +3338,7 @@ export type UserCreateMutation = {
 };
 
 export type UserUpdateMutationVariables = Exact<{
-  input: UserUpdate;
+    input: UserUpdate;
 }>;
 
 
@@ -3286,55 +3359,55 @@ export type UserUpdateMutation = {
 };
 
 export type UserDeleteMutationVariables = Exact<{
-  id: string | number;
+    id: string | number;
 }>;
 
 
 export type UserDeleteMutation = { userDelete: any };
 
 export type UserExportQueryVariables = Exact<{
-  ids?: Array<string | number | null | undefined> | string | number | null | undefined;
-  filter?: string | null | undefined;
-  type: ImpexType;
+    ids?: Array<string | number | null | undefined> | string | number | null | undefined;
+    filter?: string | null | undefined;
+    type: ImpexType;
 }>;
 
 
 export type UserExportQuery = { userExport: { id: string } | null };
 
 export type UserAuthoritiesAddMutationVariables = Exact<{
-  userId: string | number;
-  ids: Array<string | number | null | undefined> | string | number;
+    userId: string | number;
+    ids: Array<string | number | null | undefined> | string | number;
 }>;
 
 
 export type UserAuthoritiesAddMutation = { userAuthoritiesAdd: any };
 
 export type UserAuthoritiesRemoveMutationVariables = Exact<{
-  userId: string | number;
-  ids: Array<string | number | null | undefined> | string | number;
+    userId: string | number;
+    ids: Array<string | number | null | undefined> | string | number;
 }>;
 
 
 export type UserAuthoritiesRemoveMutation = { userAuthoritiesRemove: any };
 
 export type UserStateSetMutationVariables = Exact<{
-  userId: string | number;
-  id: string | number;
+    userId: string | number;
+    id: string | number;
 }>;
 
 
 export type UserStateSetMutation = { userStateSet: any };
 
 export type UserSpexareAddMutationVariables = Exact<{
-  userId: string | number;
-  id: string | number;
+    userId: string | number;
+    id: string | number;
 }>;
 
 
 export type UserSpexareAddMutation = { userSpexareAdd: any };
 
 export type UserSpexareRemoveMutationVariables = Exact<{
-  userId: string | number;
+    userId: string | number;
 }>;
 
 
@@ -4121,6 +4194,37 @@ export const ActivitySummaryFragmentDoc = {
         }
     }]
 } as unknown as DocumentNode<ActivitySummaryFragment, unknown>;
+export const BulkResultFullFragmentDoc = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "BulkResultFull"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "BulkResult"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "operation"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "requested"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "applied"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "unchanged"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "blocked"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "entries"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "label"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "outcome"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "detail"}
+                    }]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<BulkResultFullFragment, unknown>;
 export const SpexareBaseFragmentDoc = {
     "kind": "Document", "definitions": [{
         "kind": "FragmentDefinition",
@@ -10047,6 +10151,124 @@ export const AddressDeleteDocument = {
         }
     }]
 } as unknown as DocumentNode<AddressDeleteMutation, AddressDeleteMutationVariables>;
+export const SpexareBulkPreviewDocument = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "query",
+        "name": {"kind": "Name", "value": "SpexareBulkPreview"},
+        "variableDefinitions": [{
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "input"}},
+            "type": {
+                "kind": "NonNullType",
+                "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "SpexareBulkInput"}}
+            }
+        }],
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexareBulkPreview"},
+                "arguments": [{
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "input"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "input"}}
+                }],
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BulkResultFull"}}]
+                }
+            }]
+        }
+    }, {
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "BulkResultFull"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "BulkResult"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "operation"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "requested"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "applied"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "unchanged"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "blocked"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "entries"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "label"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "outcome"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "detail"}
+                    }]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<SpexareBulkPreviewQuery, SpexareBulkPreviewQueryVariables>;
+export const SpexareBulkApplyDocument = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "mutation",
+        "name": {"kind": "Name", "value": "SpexareBulkApply"},
+        "variableDefinitions": [{
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "input"}},
+            "type": {
+                "kind": "NonNullType",
+                "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "SpexareBulkInput"}}
+            }
+        }],
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexareBulkApply"},
+                "arguments": [{
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "input"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "input"}}
+                }],
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BulkResultFull"}}]
+                }
+            }]
+        }
+    }, {
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "BulkResultFull"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "BulkResult"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "operation"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "requested"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "applied"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "unchanged"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "blocked"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "entries"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "label"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "outcome"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "detail"}
+                    }]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<SpexareBulkApplyMutation, SpexareBulkApplyMutationVariables>;
 export const ConsentCreateDocument = {
     "kind": "Document", "definitions": [{
         "kind": "OperationDefinition",

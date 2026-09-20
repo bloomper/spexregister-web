@@ -12,7 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {AuditTrail} from "@/components/data-audit-trail.client";
-import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/tasks/categories/actions.server";
+import {
+    getRestorePreviewAction,
+    getRevisionsAction,
+    restoreRevisionAction
+} from "@/app/(app)/tasks/categories/actions.server";
 
 const restoreActions = {
     preview: getRestorePreviewAction,

@@ -3,6 +3,7 @@ import {CodegenConfig} from "@graphql-codegen/cli";
 const enumValues = {
     AuditedType: "./schema#AuditedType",
     AuditSource: "./schema#AuditSource",
+    BulkOutcome: "./schema#BulkOutcome",
     GraphEdgeType: "./schema#GraphEdgeType",
     GraphNodeType: "./schema#GraphNodeType",
     ImpexType: "./schema#ImpexType",
@@ -10,6 +11,7 @@ const enumValues = {
     RestoreAction: "./schema#RestoreAction",
     RevisionType: "./schema#RevisionType",
     SortDirection: "./schema#SortDirection",
+    SpexareBulkOperation: "./schema#SpexareBulkOperation",
     TypeType: "./schema#TypeType",
 };
 

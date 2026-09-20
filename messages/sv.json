@@ -433,6 +433,48 @@
     "Toggle": {
       "type": "Inställningstyp"
     },
+    "bulk": {
+      "menu": "Massåtgärder",
+      "menuWithCount": "Massåtgärder ({count})",
+      "description": "Förhandsgranska alltid innan du utför. Hela åtgärden loggas som en enda ändring i ändringsloggen.",
+      "target": "Gäller",
+      "targetSelection": "{count, plural, =1 {# markerad} other {# markerade}}",
+      "targetFilter": "Alla i nuvarande filter",
+      "targetRequired": "Välj antingen markerade poster eller ett filter",
+      "preview": "Förhandsgranska",
+      "previewHint": "Förhandsgranska för att se vilka poster som berörs.",
+      "previewFailed": "Kunde inte förhandsgranska åtgärden",
+      "incomplete": "Fyll i åtgärden för att kunna förhandsgranska.",
+      "apply": "Utför ({count})",
+      "applyFailed": "Kunde inte utföra åtgärden",
+      "applied": "{count, plural, =1 {# post ändrad} other {# poster ändrade}}",
+      "summaryPreview": "{applied} av {requested} berörs, {unchanged} är redan som du vill ha dem.",
+      "summaryApplied": "{applied} av {requested} ändrades, {unchanged} var redan som du ville ha dem.",
+      "blocked": "{count, plural, =1 {# post hoppas över: du får inte ändra den} other {# poster hoppas över: du får inte ändra dem}}",
+      "reason": "Massåtgärd: {operation} ({count} poster)",
+      "operations": {
+        "TAG_ADD": "Lägg till taggar",
+        "TAG_REMOVE": "Ta bort taggar",
+        "SPEX_ADD": "Lägg till spex",
+        "SPEX_REMOVE": "Ta bort spex",
+        "TASK_ADD": "Lägg till funktioner",
+        "TASK_REMOVE": "Ta bort funktioner",
+        "CONSENT_SET": "Sätt samtycken",
+        "TOGGLE_SET": "Sätt inställningar",
+        "FIELDS_SET": "Ändra fält"
+      },
+      "fields": {
+        "tags": "Taggar",
+        "spex": "Spex",
+        "selectSpex": "Välj spex",
+        "spexHint": "Funktionerna läggs till i aktiviteten för valt spex. Saknar spexaren en sådan aktivitet skapas den.",
+        "tasks": "Funktioner",
+        "types": "Typer",
+        "valueYes": "Sätts till ja",
+        "valueNo": "Sätts till nej",
+        "unchanged": "Oförändrat"
+      }
+    },
     "activities": "Aktiviteter",
     "addresses": "Adresser",
     "birthDate": "Födelsedatum",

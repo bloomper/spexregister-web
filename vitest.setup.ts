@@ -66,6 +66,9 @@ vi.stubGlobal("ResizeObserver", MockResizeObserver);
 // cmdk also scrolls the highlighted item into view. jsdom has no layout, so this is a no-op.
 Element.prototype.scrollIntoView = vi.fn();
 
+// Base UI's ScrollArea waits out the viewport's running animations. jsdom has no Web Animations API.
+Element.prototype.getAnimations = vi.fn(() => []);
+
 vi.stubGlobal(
     "matchMedia",
     vi.fn().mockImplementation((query: string) => ({

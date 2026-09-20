@@ -10,7 +10,9 @@ import {SpexareEditSheet} from "@/components/spexare/spexare-edit-sheet.client";
 import * as React from "react";
 import {useEffect, useRef, useState} from "react";
 import {
+    bulkApplyAction,
     bulkDeleteAction,
+    bulkPreviewAction,
     deleteAction,
     exportAction,
     getAction,
@@ -32,6 +34,7 @@ import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client.client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
+import {BulkActionsMenu} from "@/components/bulk";
 import {useLazyFull} from "@/hooks/use-lazy-full.client";
 
 
@@ -248,6 +251,15 @@ export function SpexareTable({
                             )}
 
                             <AddSelectedToQueueButton entityType="spexare" items={selectedRows}/>
+
+                            <BulkActionsMenu
+                                options={{tags, spex, tasks, types}}
+                                actions={{preview: bulkPreviewAction, apply: bulkApplyAction}}
+                                selectedIds={selectedRows.map(r => r.id)}
+                                // The live filter, not the debounced one the table has applied, so the
+                                // dialog acts on what the reader can currently see in the toolbar.
+                                filter={isFilterActive ? buildFilterString(filterQuery, selectedPublishedValues, selectedDeceasedValues) : null}
+                            />
                         </div>
 
                         <div className="flex items-center gap-2">

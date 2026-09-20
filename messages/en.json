@@ -434,6 +434,48 @@
     "Toggle": {
       "type": "Toggle type"
     },
+    "bulk": {
+      "menu": "Bulk actions",
+      "menuWithCount": "Bulk actions ({count})",
+      "description": "Always preview before applying. The whole action is recorded as a single entry in the change log.",
+      "target": "Applies to",
+      "targetSelection": "{count, plural, =1 {# selected} other {# selected}}",
+      "targetFilter": "Everything matching the current filter",
+      "targetRequired": "Pick either the selected records or a filter",
+      "preview": "Preview",
+      "previewHint": "Preview to see which records are affected.",
+      "previewFailed": "Could not preview the action",
+      "incomplete": "Fill in the action to preview it.",
+      "apply": "Apply ({count})",
+      "applyFailed": "Could not apply the action",
+      "applied": "{count, plural, =1 {# record changed} other {# records changed}}",
+      "summaryPreview": "{applied} of {requested} affected, {unchanged} already as you want them.",
+      "summaryApplied": "{applied} of {requested} changed, {unchanged} were already as you wanted them.",
+      "blocked": "{count, plural, =1 {# record skipped: you may not change it} other {# records skipped: you may not change them}}",
+      "reason": "Bulk action: {operation} ({count} records)",
+      "operations": {
+        "TAG_ADD": "Add tags",
+        "TAG_REMOVE": "Remove tags",
+        "SPEX_ADD": "Add spex",
+        "SPEX_REMOVE": "Remove spex",
+        "TASK_ADD": "Add tasks",
+        "TASK_REMOVE": "Remove tasks",
+        "CONSENT_SET": "Set consents",
+        "TOGGLE_SET": "Set toggles",
+        "FIELDS_SET": "Change fields"
+      },
+      "fields": {
+        "tags": "Tags",
+        "spex": "Spex",
+        "selectSpex": "Select spex",
+        "spexHint": "The tasks are added to the activity for the selected spex. If the spexare has no such activity, it is created.",
+        "tasks": "Tasks",
+        "types": "Types",
+        "valueYes": "Set to yes",
+        "valueNo": "Set to no",
+        "unchanged": "Unchanged"
+      }
+    },
     "activities": "Activities",
     "addresses": "Addresses",
     "birthDate": "Birth date",

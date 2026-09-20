@@ -27,9 +27,11 @@ import {
     ImpexType,
     ReportType,
     SortDirection,
+    SpexareBulkInput,
     SpexareCreate,
     SpexareUpdate
 } from "@/gql/schema";
+import {apply as bulkApply, bulkInputSchema, preview as bulkPreview} from "@/lib/spexare/bulk";
 import {
     addressFormSchema,
     create as createAddress,
@@ -157,6 +159,20 @@ export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.spexare.requireDelete, async () => {
         await Promise.all(ids.map(id => del(id)));
         revalidate();
+    });
+}
+
+export async function bulkPreviewAction(data: unknown) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        return bulkPreview(bulkInputSchema.parse(data) as SpexareBulkInput);
+    });
+}
+
+export async function bulkApplyAction(data: unknown, reason?: string) {
+    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const result = await bulkApply(bulkInputSchema.parse(data) as SpexareBulkInput, reason);
+        revalidate();
+        return result;
     });
 }
 

@@ -219,20 +219,21 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
             )}
 
             {state.nodes.length === 0 ? (
-                <DataEmpty icon={Network} title={t("Explore.emptyHeading")} description={t("Explore.emptyDescription")}/>
+                <DataEmpty icon={Network} title={t("Explore.emptyHeading")}
+                           description={t("Explore.emptyDescription")}/>
             ) : (
                 <div className="grid min-w-0 gap-4 lg:grid-cols-[2fr_1fr]">
                     <div className="flex min-w-0 flex-col gap-1">
                         <div className="h-[60vh] min-w-0">
-                        <GraphCanvas
-                            nodes={state.nodes}
-                            edges={state.edges}
-                            tooltips={tooltips}
-                            dimmedIds={dimmedIds}
-                            focusId={focusId}
-                            onSelect={toggle}
-                            onOpen={setOpenId}
-                        />
+                            <GraphCanvas
+                                nodes={state.nodes}
+                                edges={state.edges}
+                                tooltips={tooltips}
+                                dimmedIds={dimmedIds}
+                                focusId={focusId}
+                                onSelect={toggle}
+                                onOpen={setOpenId}
+                            />
                         </div>
                         <GraphLegend present={new Set(state.nodes.map((node) => node.type))}/>
                         {/* The library's own overlay is English-only, so it is switched off and
