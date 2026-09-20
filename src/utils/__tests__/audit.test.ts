@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {auditFieldLabel, auditFieldValue} from "@/utils/audit";
+import {auditEntityHref, auditFieldLabel, auditFieldValue, auditTypeLabel} from "@/utils/audit";
 import {AuditedType} from "@/gql/schema";
 import sv from "../../../messages/sv.json";
 
@@ -58,6 +58,45 @@ describe("auditFieldLabel", () => {
         Object.values(AuditedType).forEach((type) => {
             expect(auditFieldLabel(t, type, "name")).toBeTruthy();
         });
+    });
+});
+
+describe("auditTypeLabel", () => {
+    it("names every audited type without leaking the enum constant", () => {
+        Object.values(AuditedType).forEach((type) => {
+            const label = auditTypeLabel(t, type);
+
+            expect(label, type).toBeTruthy();
+            expect(label, type).not.toBe(type);
+        });
+    });
+});
+
+describe("auditEntityHref", () => {
+    it("links an aggregate root to the page that lists it", () => {
+        expect(auditEntityHref({type: AuditedType.News, id: 7})).toBe("/news/manage?open=7");
+        expect(auditEntityHref({type: AuditedType.Task, id: "14"})).toBe("/tasks/manage?open=14");
+        expect(auditEntityHref({type: AuditedType.Spexare, id: 88})).toBe("/spexare?open=88");
+    });
+
+    it("lands on the tab holding whatever changed inside a spexare", () => {
+        expect(auditEntityHref({type: AuditedType.Spexare, id: 88}, AuditedType.Address))
+            .toBe("/spexare?open=88&tab=addresses");
+        expect(auditEntityHref({type: AuditedType.Spexare, id: 88}, AuditedType.Actor))
+            .toBe("/spexare?open=88&tab=activities");
+        expect(auditEntityHref({type: AuditedType.Spexare, id: 88}, AuditedType.Spexare))
+            .toBe("/spexare?open=88&tab=general");
+    });
+
+    it("ignores a tab for types whose page has none", () => {
+        expect(auditEntityHref({type: AuditedType.Tag, id: 3}, AuditedType.Tag)).toBe("/tags/manage?open=3");
+    });
+
+    it("has no link for a type with no page of its own, or no target at all", () => {
+        expect(auditEntityHref({type: AuditedType.SpexDetails, id: 1})).toBeNull();
+        expect(auditEntityHref({type: AuditedType.State, id: 1})).toBeNull();
+        expect(auditEntityHref(null)).toBeNull();
+        expect(auditEntityHref(undefined)).toBeNull();
     });
 });
 

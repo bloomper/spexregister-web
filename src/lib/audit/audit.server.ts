@@ -1,8 +1,8 @@
 import "server-only";
 
 import {graphql} from "@/gql";
-import {AuditedType, RestorePreview, RestoreResult, Revision} from "@/gql/schema";
-import {mutateForData, runQuery} from "@/lib/graphql.server";
+import {AuditedType, AuditSource, RestorePreview, RestoreResult, Revision, RevisionDetail} from "@/gql/schema";
+import {auditReason, mutateForData, runQuery} from "@/lib/graphql.server";
 import {mapConnection} from "@/utils/utils.server";
 import {RevisionFeedPage} from "@/types/pagination";
 
@@ -51,8 +51,8 @@ const relatedRevisionsQuery = graphql(`
 `);
 
 const revisionFeedPagedQuery = graphql(`
-    query revisionFeedPaged($first: Int, $after: String, $last: Int, $before: String, $type: AuditedType, $sinceInDays: Int) {
-        revisionFeedPaged(first: $first, after: $after, last: $last, before: $before, type: $type, sinceInDays: $sinceInDays) {
+    query revisionFeedPaged($first: Int, $after: String, $last: Int, $before: String, $type: AuditedType, $modifiedBy: [String!], $sources: [AuditSource!], $from: Date, $to: Date, $sinceInDays: Int) {
+        revisionFeedPaged(first: $first, after: $after, last: $last, before: $before, type: $type, modifiedBy: $modifiedBy, sources: $sources, from: $from, to: $to, sinceInDays: $sinceInDays) {
             edges {
                 cursor
                 node {
@@ -60,6 +60,9 @@ const revisionFeedPagedQuery = graphql(`
                     modifiedAt
                     modifiedBy
                     types
+                    source
+                    operation
+                    comment
                 }
             }
             pageInfo {
@@ -70,6 +73,44 @@ const revisionFeedPagedQuery = graphql(`
             }
             totalCount
         }
+    }
+`);
+
+const revisionDetailQuery = graphql(`
+    query revisionDetail($revision: Long!) {
+        revisionDetail(revision: $revision) {
+            revision
+            modifiedAt
+            modifiedBy
+            source
+            operation
+            comment
+            entities {
+                type
+                entityId
+                entityLabel
+                revisionType
+                changes {
+                    field
+                    oldValue
+                    newValue
+                    binary
+                    type
+                    entityId
+                }
+                target {
+                    type
+                    id
+                    label
+                }
+            }
+        }
+    }
+`);
+
+const revisionAuthorsQuery = graphql(`
+    query revisionAuthors {
+        revisionAuthors
     }
 `);
 
@@ -128,24 +169,47 @@ export async function getRelatedRevisions(type: AuditedType, id: string, related
     return (data?.relatedRevisions as Revision[] | undefined) ?? [];
 }
 
-export async function getRevisionFeedPaged(args: {
+export type RevisionFeedArgs = {
     first?: number;
     last?: number;
     after?: string | null;
     before?: string | null;
     type?: AuditedType | null;
+    modifiedBy?: string[] | null;
+    sources?: AuditSource[] | null;
+    /** Whole dates (`YYYY-MM-DD`), inclusive at both ends. */
+    from?: string | null;
+    to?: string | null;
     sinceInDays?: number | null;
-}): Promise<RevisionFeedPage> {
+};
+
+export async function getRevisionFeedPaged(args: RevisionFeedArgs): Promise<RevisionFeedPage> {
     const data = await runQuery(revisionFeedPagedQuery, {
         first: args.first ?? null,
         last: args.last ?? null,
         after: args.after ?? null,
         before: args.before ?? null,
         type: args.type ?? null,
+        modifiedBy: args.modifiedBy?.length ? args.modifiedBy : null,
+        sources: args.sources?.length ? args.sources : null,
+        from: args.from ?? null,
+        to: args.to ?? null,
         sinceInDays: args.sinceInDays ?? null,
     });
 
     return mapConnection(data?.revisionFeedPaged);
+}
+
+export async function getRevisionDetail(revision: number): Promise<RevisionDetail | null> {
+    const data = await runQuery(revisionDetailQuery, {revision});
+
+    return (data?.revisionDetail as RevisionDetail | undefined) ?? null;
+}
+
+export async function getRevisionAuthors(): Promise<string[]> {
+    const data = await runQuery(revisionAuthorsQuery, {});
+
+    return data?.revisionAuthors ?? [];
 }
 
 export async function getRestorePreview(
@@ -168,11 +232,12 @@ export async function restore(
     id: string,
     revision: number,
     cascade: boolean,
+    reason?: string,
 ): Promise<RestoreResult> {
     return await mutateForData(restoreMutation, {
         type,
         id,
         revision,
         cascade
-    }, "restore", "No data restored") as RestoreResult;
+    }, "restore", "No data restored", auditReason(reason)) as RestoreResult;
 }

@@ -186,9 +186,9 @@ export async function getRestorePreviewAction(type: AuditedType, id: string, rev
     });
 }
 
-export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
+export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean, reason?: string) {
     return withPolicyAction(Policies.audit.requireRestore, async () => {
-        const result = await restore(type, id, revision, cascade);
+        const result = await restore(type, id, revision, cascade, reason);
         revalidate();
         return result;
     });

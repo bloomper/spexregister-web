@@ -12,6 +12,7 @@ import {
     bulkDeleteAction,
     deleteAction,
     exportAction,
+    getAction,
     getPageAction,
     getRestorePreviewAction,
     getRevisionsAction,
@@ -33,6 +34,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
+import {useDeepLinkItem} from "@/hooks/use-deep-link-item.client";
 import Image from "next/image";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
@@ -84,6 +86,9 @@ export function SpexCategoryTable({
             setFilterQuery("");
         }
     );
+
+    // Arriving from a change-log entry, which links to a record that may not be on this page.
+    useDeepLinkItem(getAction, setViewItem);
 
     const buildFilterString = (query: string) => {
         const parts: string[] = [];

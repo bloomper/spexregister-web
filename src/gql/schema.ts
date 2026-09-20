@@ -144,6 +144,13 @@ export type AggregationFilterInput = {
   value: Scalars['String']['input'];
 };
 
+export enum AuditSource {
+    Import = 'IMPORT',
+    Restore = 'RESTORE',
+    System = 'SYSTEM',
+    Web = 'WEB'
+}
+
 export enum AuditedType {
   Activity = 'ACTIVITY',
   Actor = 'ACTOR',
@@ -959,6 +966,8 @@ export type Query = {
   relatedRevisions?: Maybe<Array<Maybe<Revision>>>;
   restorePreview?: Maybe<RestorePreview>;
   revision?: Maybe<Revision>;
+    revisionAuthors: Array<Scalars['String']['output']>;
+    revisionDetail?: Maybe<RevisionDetail>;
   revisionFeedPaged?: Maybe<RevisionFeedConnection>;
   revisions?: Maybe<Array<Maybe<Revision>>>;
   savedSearch?: Maybe<SavedSearch>;
@@ -1096,12 +1105,21 @@ export type QueryRevisionArgs = {
 };
 
 
+export type QueryRevisionDetailArgs = {
+    revision: Scalars['Long']['input'];
+};
+
+
 export type QueryRevisionFeedPagedArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+    from?: InputMaybe<Scalars['Date']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+    modifiedBy?: InputMaybe<Array<Scalars['String']['input']>>;
   sinceInDays?: InputMaybe<Scalars['Int']['input']>;
+    sources?: InputMaybe<Array<AuditSource>>;
+    to?: InputMaybe<Scalars['Date']['input']>;
   type?: InputMaybe<AuditedType>;
 };
 
@@ -1372,6 +1390,27 @@ export type Revision = {
   type: AuditedType;
 };
 
+export type RevisionDetail = {
+    __typename?: 'RevisionDetail';
+    comment?: Maybe<Scalars['String']['output']>;
+    entities: Array<RevisionEntityChange>;
+    modifiedAt: Scalars['Instant']['output'];
+    modifiedBy: Scalars['String']['output'];
+    operation?: Maybe<Scalars['String']['output']>;
+    revision: Scalars['Long']['output'];
+    source?: Maybe<AuditSource>;
+};
+
+export type RevisionEntityChange = {
+    __typename?: 'RevisionEntityChange';
+    changes: Array<FieldChange>;
+    entityId?: Maybe<Scalars['Long']['output']>;
+    entityLabel?: Maybe<Scalars['String']['output']>;
+    revisionType: RevisionType;
+    target?: Maybe<RevisionTarget>;
+    type: AuditedType;
+};
+
 export type RevisionFeedConnection = {
   __typename?: 'RevisionFeedConnection';
   edges: Array<Maybe<RevisionFeedEdge>>;
@@ -1387,10 +1426,20 @@ export type RevisionFeedEdge = {
 
 export type RevisionFeedEntry = {
   __typename?: 'RevisionFeedEntry';
+    comment?: Maybe<Scalars['String']['output']>;
   modifiedAt: Scalars['Instant']['output'];
   modifiedBy: Scalars['String']['output'];
+    operation?: Maybe<Scalars['String']['output']>;
   revision: Scalars['Long']['output'];
+    source?: Maybe<AuditSource>;
   types: Array<AuditedType>;
+};
+
+export type RevisionTarget = {
+    __typename?: 'RevisionTarget';
+    id: Scalars['Long']['output'];
+    label?: Maybe<Scalars['String']['output']>;
+    type: AuditedType;
 };
 
 export enum RevisionType {

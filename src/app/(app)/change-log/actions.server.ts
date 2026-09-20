@@ -2,18 +2,16 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {getRevisionFeedPaged} from "@/lib/audit/audit.server";
-import {AuditedType} from "@/gql/schema";
+import {getRevisionDetail, getRevisionFeedPaged, type RevisionFeedArgs} from "@/lib/audit/audit.server";
 
-export async function getRevisionFeedPageAction(args: {
-    first?: number;
-    last?: number;
-    after?: string | null;
-    before?: string | null;
-    type?: AuditedType | null;
-    sinceInDays?: number | null;
-}) {
+export async function getRevisionFeedPageAction(args: RevisionFeedArgs) {
     return withPolicyAction(Policies.audit.requireRestore, async () => {
         return getRevisionFeedPaged(args);
+    });
+}
+
+export async function getRevisionDetailAction(revision: number) {
+    return withPolicyAction(Policies.audit.requireRestore, async () => {
+        return getRevisionDetail(revision);
     });
 }

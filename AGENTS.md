@@ -128,6 +128,32 @@ changing routing or data fetching; this area differs sharply from older Next.
   client preset in `src/gql/` for typed `graphql()` documents. Fragment masking is off, and enums
   are re-used from `./schema` so identities match.
 
+## Audit and the change log
+
+- Every revision records **why** it happened, not just what changed: `source` (`WEB | IMPORT |
+  RESTORE | SYSTEM`), `operation` and a free-text `comment` on `revinfo`. The server decides
+  `source`; the only thing a client contributes is the comment, via an **`X-Audit-Reason`** header —
+  use `auditReason()` from `src/lib/graphql.server.ts` and pass it as the mutation context, as the
+  restore dialog does so the reason is recorded in the user's language.
+- Backend note worth knowing before touching `AuditContext`: Envers creates the revision entity at
+  **before-transaction-completion, not at flush**. A try/finally around the writing code releases the
+  origin too early and the revision then records the surrounding request instead, so
+  `AuditContext.stamp` hands it back via a transaction synchronization.
+- `revisionDetail(revision)` is what an expanded change-log row shows: every entity the revision
+  touched, each with its field changes and the aggregate root to open. The grouping by that root is
+  the "why did this record change" context — a spexare edit and the address it also touched read as
+  one change.
+- Diffs render through **`AuditDiff`** (`src/components/audit/audit-diff.client.tsx`), shared by the
+  change log and the per-entity `AuditTrail`. One trap: a **binary value must be addressed at the
+  timeline's entity**, not at the field's owner — that is where the backend authorizes the read and
+  where it resolves a field living on a referenced entity (`SPEX` → `SpexDetails.poster`).
+- **Deep links**: `auditEntityHref` (`src/utils/audit.ts`) maps an audit target to
+  `/<route>?open=<id>` plus `&tab=` for the spexare view. Pages read it with `useDeepLink` /
+  `useDeepLinkItem` (`src/hooks/use-deep-link-item.client.ts`). Two things this depends on: every
+  linkable route needs a `loading.tsx` (the Suspense boundary `useSearchParams` requires), and the
+  params stay in the URL, so a page must treat the link as the *initial* selection and let a later
+  choice of its own win — see the derived `selection` state in `spexare-grid.client.tsx`.
+
 ## Tables and forms
 
 `@tanstack/react-table` v9 with React Compiler (`reactCompiler: true`). Three traps, all

@@ -19,6 +19,7 @@ import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client
 import {SpexareEditSheet} from "@/components/spexare/spexare-edit-sheet.client";
 import {useEditQueue} from "@/components/edit-queue";
 import {useDataRefresh} from "@/hooks/use-data-refresh.client";
+import {useDeepLink} from "@/hooks/use-deep-link-item.client";
 
 export function SpexareGrid({
                                 countries = [],
@@ -90,8 +91,12 @@ export function SpexareGrid({
 
     useDataRefresh(reset);
 
-    const [selectedId, setSelectedId] = useState<string | null>(null);
+    // `null` means the reader has not chosen yet, so an incoming change-log link still decides.
+    const [selection, setSelection] = useState<{ id: string | null } | null>(null);
     const [editId, setEditId] = useState<string | null>(null);
+    const deepLink = useDeepLink();
+    const selectedId = selection ? selection.id : deepLink?.id ?? null;
+    const setSelectedId = (id: string | null) => setSelection({id});
     const {full: selectedFull, isLoading: isSelectedLoading} = useLazyFull(selectedId, getAction);
     const {full: editFullItem, isLoading: isEditLoading} = useLazyFull(editId, getAction);
     const selected = selectedId ? items.find((i) => i.id === selectedId) ?? null : null;
@@ -220,6 +225,7 @@ export function SpexareGrid({
                 isLoading={isSelectedLoading}
                 countries={countries}
                 isMe={currentSpexareId === selectedFull?.id}
+                initialTab={deepLink?.id === selectedId ? deepLink?.tab : null}
             />
 
             <SpexareEditSheet

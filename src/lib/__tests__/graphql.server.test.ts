@@ -1,5 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {
+    auditReason,
     collectAllPages,
     createResourceClient,
     mutateForData,
@@ -56,12 +57,26 @@ describe("runMutation", () => {
     it("returns data on success", async () => {
         toPromise.mockResolvedValue({data: {ok: true}});
         await expect(runMutation("m", {id: "1"})).resolves.toEqual({ok: true});
-        expect(mutation).toHaveBeenCalledWith("m", {id: "1"});
+        expect(mutation).toHaveBeenCalledWith("m", {id: "1"}, undefined);
     });
 
     it("throws the GraphQL error", async () => {
         toPromise.mockResolvedValue({error: new Error("bad mutation")});
         await expect(runMutation("m")).rejects.toThrow("bad mutation");
+    });
+
+    it("forwards an audit reason as a header for the revision to record", async () => {
+        toPromise.mockResolvedValue({data: {ok: true}});
+        await runMutation("m", {id: "1"}, auditReason("Rättade stavfel"));
+
+        expect(mutation).toHaveBeenCalledWith("m", {id: "1"}, {
+            fetchOptions: {headers: {"X-Audit-Reason": "Rättade stavfel"}},
+        });
+    });
+
+    it("sends no header when there is no reason to give", async () => {
+        expect(auditReason(undefined)).toBeUndefined();
+        expect(auditReason("")).toBeUndefined();
     });
 });
 

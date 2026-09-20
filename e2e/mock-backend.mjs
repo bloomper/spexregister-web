@@ -227,6 +227,76 @@ const tagList = [
     {id: "2", name: "Grundare"},
 ];
 
+// One plain edit and one restore that spanned a spexare and one of its addresses, which between
+// them exercise every part of the change log: origin, co-changes and navigation.
+const revisionFeed = [
+    {
+        revision: 3, modifiedAt: "2026-09-18T14:02:00Z", modifiedBy: "anna@example.com",
+        types: ["SPEXARE", "ADDRESS"], source: "RESTORE", operation: "restore",
+        comment: "Återställd från version 1",
+    },
+    {
+        revision: 2, modifiedAt: "2026-09-17T09:15:00Z", modifiedBy: "admin@example.com",
+        types: ["TAG"], source: "WEB", operation: "tagUpdate", comment: null,
+    },
+];
+
+const spexareTarget = {type: "SPEXARE", id: 1, label: "Ada Lovelace"};
+
+const revisionDetails = {
+    3: {
+        ...revisionFeed[0],
+        entities: [
+            {
+                type: "SPEXARE", entityId: 1, entityLabel: "Ada Lovelace", revisionType: "MOD",
+                changes: [{
+                    field: "nickName", oldValue: "Countess", newValue: "The Countess",
+                    binary: false, type: "SPEXARE", entityId: 1,
+                }],
+                target: spexareTarget,
+            },
+            {
+                type: "ADDRESS", entityId: 12, entityLabel: "Storgatan 1", revisionType: "MOD",
+                changes: [{
+                    field: "city", oldValue: "Göteborg", newValue: "Mölndal",
+                    binary: false, type: "ADDRESS", entityId: 12,
+                }],
+                target: spexareTarget,
+            },
+        ],
+    },
+    2: {
+        ...revisionFeed[1],
+        entities: [
+            {
+                type: "TAG", entityId: 1, entityLabel: "Hedersmedlem", revisionType: "MOD",
+                changes: [{
+                    field: "name", oldValue: "Hedersledamot", newValue: "Hedersmedlem",
+                    binary: false, type: "TAG", entityId: 1,
+                }],
+                target: {type: "TAG", id: 1, label: "Hedersmedlem"},
+            },
+        ],
+    },
+};
+
+function matchesFeedFilter(entry, variables) {
+    const {type, modifiedBy, sources, from, to} = variables ?? {};
+    const day = entry.modifiedAt.slice(0, 10);
+
+    if (type && !entry.types.includes(type)) {
+        return false;
+    }
+    if (modifiedBy?.length && !modifiedBy.includes(entry.modifiedBy)) {
+        return false;
+    }
+    if (sources?.length && !sources.includes(entry.source)) {
+        return false;
+    }
+
+    return !(from && day < from) && !(to && day > to);
+}
+
 function applyTagUpdate(input) {
     const id = String(input?.id ?? "");
     const existing = tagList.find((tag) => tag.id === id);
@@ -407,7 +477,9 @@ const resolvers = {
             },
         ],
     }),
-    revisionFeedPaged: () => paged("revisionFeedPaged", []),
+    revisionFeedPaged: (v) => paged("revisionFeedPaged", revisionFeed.filter((entry) => matchesFeedFilter(entry, v))),
+    revisionDetail: (v) => ({revisionDetail: revisionDetails[String(v?.revision)] ?? null}),
+    revisionAuthors: () => ({revisionAuthors: [...new Set(revisionFeed.map((entry) => entry.modifiedBy))].sort()}),
     restorePreview: () => ({restorePreview: {entries: [], warnings: []}}),
     restore: () => ({restore: {revision: 1, updated: 1, created: 0, deleted: 0, warnings: []}}),
 

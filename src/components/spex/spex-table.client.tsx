@@ -12,6 +12,7 @@ import {
     bulkDeleteAction,
     deleteAction,
     exportAction,
+    getAction,
     getPageAction,
     getRestorePreviewAction,
     getRevisionsAction,
@@ -34,6 +35,7 @@ import {
 import {DataFilter} from "@/components/data-filter";
 import {Badge} from "@/components/ui/badge";
 import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
+import {useDeepLinkItem} from "@/hooks/use-deep-link-item.client";
 import {Translated} from "@/components/translated.client";
 import Image from "next/image";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
@@ -163,6 +165,9 @@ export function SpexTable({
             setSelectedCategories(new Set(categories.map(c => c.id)));
         }
     );
+
+    // Arriving from a change-log entry, which links to a record that may not be on this page.
+    useDeepLinkItem(getAction, setViewItem);
 
     const buildFilterString = (query: string, selectedCategories: Set<string>, categories: SpexCategory[]) => {
         const parts: string[] = ["parent:NULL"];

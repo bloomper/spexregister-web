@@ -2,6 +2,7 @@ import {CodegenConfig} from "@graphql-codegen/cli";
 
 const enumValues = {
     AuditedType: "./schema#AuditedType",
+    AuditSource: "./schema#AuditSource",
     GraphEdgeType: "./schema#GraphEdgeType",
     GraphNodeType: "./schema#GraphNodeType",
     ImpexType: "./schema#ImpexType",

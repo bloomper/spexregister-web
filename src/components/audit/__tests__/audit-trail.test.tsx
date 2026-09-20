@@ -53,7 +53,7 @@ describe("AuditTrail", () => {
         await userEvent.click(await screen.findByRole("button", {name: /Common.history/}));
         await userEvent.click(await screen.findByRole("button", {name: "1"}));
 
-        expect(screen.getByText("Name:")).toBeInTheDocument();
+        expect(screen.getByText("Name")).toBeInTheDocument();
         expect(screen.getByText("tag1")).toBeInTheDocument();
         expect(screen.getByText("tag2")).toBeInTheDocument();
     });

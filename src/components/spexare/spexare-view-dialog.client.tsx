@@ -16,6 +16,7 @@ type SpexareViewDialogProps = {
     countries: Country[];
     isMe: boolean;
     showAudit?: boolean;
+    initialTab?: string | null;
 };
 
 export function SpexareViewDialog({
@@ -27,6 +28,7 @@ export function SpexareViewDialog({
                                       countries,
                                       isMe,
                                       showAudit = false,
+                                      initialTab,
                                   }: SpexareViewDialogProps) {
     const t = useTranslations();
 
@@ -62,6 +64,7 @@ export function SpexareViewDialog({
                         countries={countries}
                         isMe={isMe}
                         showAudit={showAudit}
+                        initialTab={initialTab}
                         onRestored={onClose}
                     />
                 ) : (

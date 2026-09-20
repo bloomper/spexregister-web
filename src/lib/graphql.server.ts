@@ -33,19 +33,30 @@ export async function runQuery<TData>(
     return result.data;
 }
 
+/**
+ * Travels to the backend as `X-Audit-Reason` and ends up on the revision the mutation produces, so
+ * the change log can say why the record changed. Phrased by the caller, hence already localized.
+ */
+export function auditReason(reason: string | null | undefined): Partial<OperationContext> | undefined {
+    return reason ? {fetchOptions: {headers: {"X-Audit-Reason": reason}}} : undefined;
+}
+
 export async function runMutation<TData, TVariables extends AnyVariables>(
     mutation: TypedDocumentNode<TData, TVariables>,
     variables: TVariables,
+    context?: Partial<OperationContext>,
 ): Promise<TData | undefined>;
 export async function runMutation<TData>(
     mutation: string,
     variables?: AnyVariables,
+    context?: Partial<OperationContext>,
 ): Promise<TData | undefined>;
 export async function runMutation<TData>(
     mutation: string | TypedDocumentNode<TData, AnyVariables>,
     variables: AnyVariables = {},
+    context?: Partial<OperationContext>,
 ): Promise<TData | undefined> {
-    const result = await getClient().mutation<TData>(mutation, variables).toPromise();
+    const result = await getClient().mutation<TData>(mutation, variables, context).toPromise();
 
     if (result.error) {
         throw result.error;
@@ -78,20 +89,23 @@ export async function mutateForData<TData, TVariables extends AnyVariables, TFie
     variables: TVariables,
     field: TField,
     errorMessage: string,
+    context?: Partial<OperationContext>,
 ): Promise<NonNullable<TData[TField]>>;
 export async function mutateForData<TValue>(
     mutation: string,
     variables: AnyVariables,
     field: string,
     errorMessage: string,
+    context?: Partial<OperationContext>,
 ): Promise<TValue>;
 export async function mutateForData(
     mutation: string | TypedDocumentNode<unknown, AnyVariables>,
     variables: AnyVariables,
     field: string,
     errorMessage: string,
+    context?: Partial<OperationContext>,
 ): Promise<unknown> {
-    const data = await runMutation<Record<string, unknown>>(mutation as string, variables);
+    const data = await runMutation<Record<string, unknown>>(mutation as string, variables, context);
     const value = data?.[field];
 
     if (!value) {

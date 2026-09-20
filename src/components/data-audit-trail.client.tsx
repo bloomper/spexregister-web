@@ -7,8 +7,7 @@ import {ChevronDown, ChevronRight, ChevronUp, History, Pencil, PlusCircle, Trash
 import {FieldChange, Revision, RevisionType} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {formatDateTime} from "@/utils/utils";
-import {auditFieldLabel, auditFieldValue} from "@/utils/audit";
-import {AuditBinaryThumbnail} from "@/components/audit/audit-binary-thumbnail.client";
+import {AuditDiff} from "@/components/audit/audit-diff.client";
 import {RestoreActions, RestoreDialog} from "@/components/audit/restore-dialog.client";
 import {useRoles} from "@/components/roles-provider.client";
 import {isAdmin} from "@/utils/auth";
@@ -213,49 +212,14 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
                                         </div>
 
                                         {isExpanded && (
-                                            <dl className="mt-1 space-y-0.5 rounded border border-border/60 bg-background/40 p-1.5">
-                                                {revision.changes.map((change, changeIndex) => (
-                                                    <div key={`${change.field}-${changeIndex}`}
-                                                         className="flex flex-wrap items-baseline gap-1">
-                                                        <dt className="font-medium text-foreground/70">{auditFieldLabel(t, ownerOf(revision, change).type, change.field)}:</dt>
-                                                        <dd className="flex items-baseline gap-1">
-                                                            {change.binary ? (
-                                                                <span className="flex items-baseline gap-1">
-                                                                            {change.oldValue && previousRevisionOf(revisions, revision, change)
-                                                                                ? <AuditBinaryThumbnail
-                                                                                    type={revision.type}
-                                                                                    entityId={String(revision.entityId ?? id)}
-                                                                                    revision={previousRevisionOf(revisions, revision, change)!}
-                                                                                    field={change.field}/>
-                                                                                : <span>{t("Audit.empty")}</span>}
-                                                                    <span aria-hidden="true">→</span>
-                                                                    {change.newValue
-                                                                        ? <AuditBinaryThumbnail
-                                                                            type={revision.type}
-                                                                            entityId={String(revision.entityId ?? id)}
-                                                                            revision={revision.revision}
-                                                                            field={change.field}/>
-                                                                        : <span>{t("Audit.empty")}</span>}
-                                                                        </span>
-                                                            ) : (
-                                                                <>
-                                                                            <span className="line-through opacity-70">
-                                                                                {change.oldValue === null || change.oldValue === undefined
-                                                                                    ? t("Audit.empty")
-                                                                                    : auditFieldValue(t, ownerOf(revision, change).type, change.field, change.oldValue)}
-                                                                            </span>
-                                                                    <span aria-hidden="true">→</span>
-                                                                    <span className="text-foreground/80">
-                                                                                {change.newValue === null || change.newValue === undefined
-                                                                                    ? t("Audit.empty")
-                                                                                    : auditFieldValue(t, ownerOf(revision, change).type, change.field, change.newValue)}
-                                                                            </span>
-                                                                </>
-                                                            )}
-                                                        </dd>
-                                                    </div>
-                                                ))}
-                                            </dl>
+                                            <AuditDiff
+                                                className="mt-1"
+                                                changes={revision.changes}
+                                                type={revision.type}
+                                                entityId={String(revision.entityId ?? id)}
+                                                revision={revision.revision}
+                                                previousRevisionOf={(change) => previousRevisionOf(revisions, revision, change)}
+                                            />
                                         )}
                                     </div>
                                 </div>

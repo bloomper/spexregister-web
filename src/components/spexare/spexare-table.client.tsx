@@ -23,6 +23,7 @@ import {DataTableSkeleton} from "@/components/data-table-skeleton";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
+import {useDeepLinkItem} from "@/hooks/use-deep-link-item.client";
 import {DataFilter} from "@/components/data-filter";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 import {columnHelper} from "@/components/data-table-columns.client";
@@ -96,6 +97,9 @@ export function SpexareTable({
             setSelectedDeceasedValues(new Set(["true", "false"]));
         }
     );
+
+    // Arriving from a change-log entry, which links to a record that may not be on this page.
+    useDeepLinkItem(getAction, setViewItem);
 
     const {full: viewFullItem, isLoading: isViewLoading} = useLazyFull(viewItem?.id ?? null, getAction);
     const {full: editFullItem, isLoading: isEditLoading} = useLazyFull(editItem?.id ?? null, getAction);

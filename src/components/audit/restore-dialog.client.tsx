@@ -25,7 +25,7 @@ const CASCADING_TYPES: AuditedType[] = [AuditedType.Spexare, AuditedType.Activit
 
 export type RestoreActions = {
     preview: (type: AuditedType, id: string, revision: number, cascade: boolean) => Promise<RestorePreview>;
-    restore: (type: AuditedType, id: string, revision: number, cascade: boolean) => Promise<RestoreResult>;
+    restore: (type: AuditedType, id: string, revision: number, cascade: boolean, reason?: string) => Promise<RestoreResult>;
 };
 
 interface RestoreDialogProps {
@@ -73,7 +73,13 @@ export function RestoreDialog({id, type, revision, actions, onRestored}: Restore
     const handleConfirm = () => {
         startTransition(async () => {
             try {
-                await actions.restore(type, id, revision, cascade);
+                // Phrased here rather than on the server so the change log records it in the
+                // language of whoever asked for the restore.
+                const reason = cascade
+                    ? t("Audit.restoreReasonCascade", {revision})
+                    : t("Audit.restoreReason", {revision});
+
+                await actions.restore(type, id, revision, cascade, reason);
                 toast.success(t("Audit.restored"));
                 setOpen(false);
                 onRestored?.();

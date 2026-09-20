@@ -27,9 +27,11 @@ interface SpexareViewProps {
     showAudit?: boolean;
     isMe?: boolean;
     onRestored?: () => void;
+    /** Which tab to land on, when arriving from a link that knows what changed. */
+    initialTab?: string | null;
 }
 
-export function SpexareView({spexare, countries, showAudit, isMe, onRestored}: SpexareViewProps) {
+export function SpexareView({spexare, countries, showAudit, isMe, onRestored, initialTab}: SpexareViewProps) {
     const t = useTranslations();
 
     return (
@@ -87,7 +89,7 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored}: S
                     </DialogDescription>
                 </DialogHeader>
 
-                <Tabs defaultValue="overview" className="mt-6">
+                <Tabs defaultValue={initialTab || "overview"} className="mt-6">
                     <TabsList className="grid w-full !h-auto min-h-9 p-1 bg-muted/50 grid-cols-2 sm:grid-cols-3">
                         <TabsTrigger value="overview">{t("Spexare.Career.tab")}</TabsTrigger>
                         <TabsTrigger value="general">{t("Common.general")}</TabsTrigger>
