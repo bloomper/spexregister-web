@@ -24,6 +24,12 @@ export type GraphState = {
 
 const EMPTY: GraphState = {nodes: [], edges: [], pending: []};
 
+export function matchesTerm(node: GraphNode, term: string): boolean {
+    return !term
+        || node.label.toLowerCase().includes(term)
+        || (node.sublabel ?? "").toLowerCase().includes(term);
+}
+
 export function mergeNeighbourhood(state: GraphState, neighbourhood: GraphNeighbourhood): GraphState {
     const nodes = new Map(state.nodes.map((node) => [node.id, node]));
     const edges = new Map(state.edges.map((edge) => [edge.id, edge]));

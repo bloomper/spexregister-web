@@ -3,36 +3,17 @@
 import * as React from "react";
 import {useState} from "react";
 import {useInfiniteList} from "@/hooks/use-infinite-list.client";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from "@/components/ui/dialog";
-import {useTranslations} from "next-intl";
 import {TaskCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {
-    getPageAction,
-    getRestorePreviewAction,
-    getRevisionsAction,
-    restoreRevisionAction
-} from "@/app/(app)/tasks/categories/actions.server";
+import {getPageAction} from "@/app/(app)/tasks/categories/actions.server";
 import {useRouter} from "next/navigation";
 import {Pencil} from "lucide-react";
 import {Sheet} from "@/components/ui/sheet";
 import {TaskCategoryForm} from "@/components/task/category/task-category-form.client";
-import {AuditTrail} from "@/components/data-audit-trail.client";
-
-const restoreActions = {
-    preview: getRestorePreviewAction,
-    restore: restoreRevisionAction,
-};
+import {TaskCategoryViewDialog} from "@/components/task/category/task-category-view-dialog.client";
 
 export function TaskCategoryGrid({
                                      initialItems = [],
@@ -45,7 +26,6 @@ export function TaskCategoryGrid({
     maxItems?: number;
     canUpdate?: boolean;
 }) {
-    const t = useTranslations();
     const router = useRouter();
     const [selected, setSelected] = useState<TaskCategory | null>(null);
     const [editItem, setEditItem] = useState<TaskCategory | null>(null);
@@ -103,36 +83,7 @@ export function TaskCategoryGrid({
                 </Card>
             ))}
 
-            <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>{selected?.name}</DialogTitle>
-                        <DialogDescription className="sr-only">
-                            {t("Common.details")}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex flex-col gap-4">
-                        <div className="space-y-1">
-                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Task.Category.actorPresent")}</p>
-                            <p className="text-sm">
-                                {selected?.actorPresent ? t("Common.yes") : t("Common.no")}
-                            </p>
-                        </div>
-                        {selected && (
-                            <div className="space-y-4">
-                                <AuditTrail id={selected.id}
-                                            fetchAction={getRevisionsAction} restoreActions={restoreActions}
-                                            onRestored={() => setSelected(null)}/>
-                            </div>
-                        )}
-                    </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setSelected(null)}>
-                            {t("Common.close")}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <TaskCategoryViewDialog selected={selected} onClose={() => setSelected(null)}/>
 
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (

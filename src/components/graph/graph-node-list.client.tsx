@@ -1,19 +1,20 @@
 "use client";
 
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useRef} from "react";
 import {useTranslations} from "next-intl";
 import {Info, Minus, Plus, Search, X} from "lucide-react";
-import {GraphNodeType} from "@/gql/schema";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {NODE_COLOR} from "@/components/graph/graph-canvas.client";
-import {LoadedNode, PendingGroup} from "@/components/graph/use-graph-state.client";
+import {LoadedNode, matchesTerm, PendingGroup} from "@/components/graph/use-graph-state.client";
 
 type NodeListProps = {
     nodes: LoadedNode[];
     pending: PendingGroup[];
     busyId: string | null;
     focusId: string | null;
+    filter: string;
+    onFilterChange: (value: string) => void;
     onExpand: (id: string) => void;
     onCollapse: (id: string) => void;
     onFocus: (id: string) => void;
@@ -21,25 +22,20 @@ type NodeListProps = {
     onShowMore: (group: PendingGroup) => void;
 };
 
-const HAS_DIALOG: GraphNodeType[] = [GraphNodeType.Spexare, GraphNodeType.Spex, GraphNodeType.Task];
-
 export function GraphNodeList({
-                                  nodes, pending, busyId, focusId,
+                                  nodes, pending, busyId, focusId, filter, onFilterChange,
                                   onExpand, onCollapse, onFocus, onOpen, onShowMore,
                               }: NodeListProps) {
     const t = useTranslations();
-    const [filter, setFilter] = useState("");
     const listRef = useRef<HTMLUListElement>(null);
 
     const ordered = useMemo(() => {
         const term = filter.trim().toLowerCase();
 
         return [...nodes]
-            .filter((node) => !term
-                || node.label.toLowerCase().includes(term)
-                || (node.sublabel ?? "").toLowerCase().includes(term))
+            .filter((node) => node.id === focusId || matchesTerm(node, term))
             .sort((a, b) => a.type.localeCompare(b.type) || a.label.localeCompare(b.label));
-    }, [nodes, filter]);
+    }, [nodes, filter, focusId]);
 
     useEffect(() => {
         if (!focusId) {
@@ -65,11 +61,11 @@ export function GraphNodeList({
                     value={filter}
                     placeholder={t("Explore.filterPlaceholder")}
                     aria-label={t("Explore.filterPlaceholder")}
-                    onChange={(e) => setFilter(e.target.value)}
+                    onChange={(e) => onFilterChange(e.target.value)}
                     onKeyDown={(e) => {
                         if (e.key === "Escape") {
                             e.preventDefault();
-                            setFilter("");
+                            onFilterChange("");
                         }
                     }}
                 />
@@ -78,7 +74,7 @@ export function GraphNodeList({
                         type="button"
                         className="absolute top-1/2 right-1.5 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground hover:text-foreground"
                         aria-label={t("Explore.clearFilter")}
-                        onClick={() => setFilter("")}
+                        onClick={() => onFilterChange("")}
                     >
                         <X className="h-3.5 w-3.5"/>
                     </button>
@@ -140,17 +136,15 @@ export function GraphNodeList({
                                         <Plus className="h-3 w-3"/>
                                     </Button>
                                 )}
-                                {HAS_DIALOG.includes(node.type) && (
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-7 w-7 shrink-0"
-                                        aria-label={t("Explore.detailsLabel", {name: node.label})}
-                                        onClick={() => onOpen(node.id)}
-                                    >
-                                        <Info className="h-3 w-3"/>
-                                    </Button>
-                                )}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 shrink-0"
+                                    aria-label={t("Explore.detailsLabel", {name: node.label})}
+                                    onClick={() => onOpen(node.id)}
+                                >
+                                    <Info className="h-3 w-3"/>
+                                </Button>
                             </div>
                             {more.map((group) => (
                                 <Button

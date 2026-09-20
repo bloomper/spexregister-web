@@ -3,36 +3,17 @@
 import * as React from "react";
 import {useState} from "react";
 import {useInfiniteList} from "@/hooks/use-infinite-list.client";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from "@/components/ui/dialog";
-import {useTranslations} from "next-intl";
 import {Tag} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {
-    getPageAction,
-    getRestorePreviewAction,
-    getRevisionsAction,
-    restoreRevisionAction
-} from "@/app/(app)/tags/actions.server";
+import {getPageAction} from "@/app/(app)/tags/actions.server";
 import {useRouter} from "next/navigation";
 import {Pencil} from "lucide-react";
 import {Sheet} from "@/components/ui/sheet";
 import {TagForm} from "@/components/tag/tag-form.client";
-import {AuditTrail} from "@/components/data-audit-trail.client";
-
-const restoreActions = {
-    preview: getRestorePreviewAction,
-    restore: restoreRevisionAction,
-};
+import {TagViewDialog} from "@/components/tag/tag-view-dialog.client";
 
 export function TagGrid({
                             initialItems = [],
@@ -45,7 +26,6 @@ export function TagGrid({
     maxItems?: number;
     canUpdate?: boolean;
 }) {
-    const t = useTranslations();
     const router = useRouter();
     const [selected, setSelected] = useState<Tag | null>(null);
     const [editItem, setEditItem] = useState<Tag | null>(null);
@@ -106,27 +86,7 @@ export function TagGrid({
                 </Card>
             ))}
 
-            <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-                <DialogContent className="sm:max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle>{selected?.name}</DialogTitle>
-                        <DialogDescription className="sr-only">
-                            {t("Common.details")}
-                        </DialogDescription>
-                    </DialogHeader>
-                    {selected && (
-                        <div className="space-y-4">
-                            <AuditTrail id={selected.id} fetchAction={getRevisionsAction}
-                                        restoreActions={restoreActions} onRestored={() => setSelected(null)}/>
-                        </div>
-                    )}
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setSelected(null)}>
-                            {t("Common.close")}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <TagViewDialog selected={selected} onClose={() => setSelected(null)}/>
 
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (

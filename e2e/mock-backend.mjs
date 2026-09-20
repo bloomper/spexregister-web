@@ -112,32 +112,34 @@ const statistics = {
     taskCount: 5, taskCountHistory: [{label: "2025", count: 5}],
 };
 
+// entityId has to resolve in the matching entity list below: the explorer's detail dialogs fetch
+// the real entity by that id, and a dangling one leaves the dialog silently empty.
 const graphNode = (type, entityId, label, sublabel = null, imageUrl = null, revival = false) =>
     ({id: `${type}:${entityId}`, type, label, sublabel, imageUrl, revival, entityId: String(entityId)});
 
 const graphNodes = [
     graphNode("SPEXARE", "1", "Ada Lovelace", "Countess", "/api/spexare/1/image"),
     graphNode("SPEXARE", "3", "Grace Hopper", "Amazing Grace"),
-    graphNode("SPEX", "100", "Bacchus", "2015"),
-    graphNode("SPEX", "101", "Bacchus", "1998", null, true),
-    graphNode("TASK", "200", "Skådespelare"),
-    graphNode("TAG", "300", "Hedersmedlem"),
+    graphNode("SPEX", "1", "Bacchus", "2015"),
+    graphNode("SPEX", "2", "Bacchus", "1998", null, true),
+    graphNode("TASK", "1", "Skådespelare"),
+    graphNode("TAG", "1", "Hedersmedlem"),
 ];
 
 const graphNodeById = Object.fromEntries(graphNodes.map((n) => [n.id, n]));
 
 const graphGroups = {
     "SPEXARE:1": [
-        {type: "PARTICIPATION", nodes: [graphNodeById["SPEX:100"]]},
-        {type: "FUNCTION", nodes: [graphNodeById["TASK:200"]]},
-        {type: "TAG", nodes: [graphNodeById["TAG:300"]]},
+        {type: "PARTICIPATION", nodes: [graphNodeById["SPEX:1"]]},
+        {type: "FUNCTION", nodes: [graphNodeById["TASK:1"]]},
+        {type: "TAG", nodes: [graphNodeById["TAG:1"]]},
         {type: "PARTNER", nodes: [graphNodeById["SPEXARE:3"]]},
     ],
-    "SPEX:100": [
+    "SPEX:1": [
         {type: "PARTICIPATION", nodes: [graphNodeById["SPEXARE:1"]]},
-        {type: "REVIVAL_OF", nodes: [graphNodeById["SPEX:101"]]},
+        {type: "REVIVAL_OF", nodes: [graphNodeById["SPEX:2"]]},
     ],
-    "TAG:300": [
+    "TAG:1": [
         {type: "TAG", nodes: [graphNodeById["SPEXARE:1"], graphNodeById["SPEXARE:3"]]},
     ],
 };
@@ -181,6 +183,12 @@ function spexarePaged(variables) {
 const paged = (field, items) => ({
     [field]: {edges: edges(items), pageInfo: pageInfo(false, null), totalCount: items.length},
 });
+
+const single = (field, items, id) => {
+    const found = items.find((item) => item.id === String(id));
+
+    return {[field]: found ? withAudit(found) : null};
+};
 
 const spexCategoryList = [
     {id: "1", name: "Chalmersspexet", logoUrl: null, firstYear: 1948},
@@ -369,15 +377,19 @@ const resolvers = {
 
     TaskPagedSummary: () => paged("taskPaged", taskList),
     TaskPagedFull: () => paged("taskPaged", taskList.map(withAudit)),
+    TaskGet: (v) => single("task", taskList, v?.id),
 
     TaskCategoryPagedSummary: () => paged("taskCategoryPaged", taskCategoryList),
     TaskCategoryPagedFull: () => paged("taskCategoryPaged", taskCategoryList.map(withAudit)),
+    TaskCategoryGet: (v) => single("taskCategory", taskCategoryList, v?.id),
 
     SpexPagedSummary: () => paged("spexPaged", spexList),
     SpexPagedFull: () => paged("spexPaged", spexList.map(withAudit)),
+    SpexGet: (v) => single("spex", spexList, v?.id),
 
     SpexCategoryPagedSummary: () => paged("spexCategoryPaged", spexCategoryList),
     SpexCategoryPagedFull: () => paged("spexCategoryPaged", spexCategoryList.map(withAudit)),
+    SpexCategoryGet: (v) => single("spexCategory", spexCategoryList, v?.id),
 
     UserPagedSummary: () => paged("userPaged", userList),
     UserPagedFull: () => paged("userPaged", userList.map(withAudit)),

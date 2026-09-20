@@ -104,6 +104,25 @@ test.describe("graph explorer", () => {
         await expect(page.getByRole("button", {name: "Rensa filter"})).toHaveCount(0);
     });
 
+    test("offers details for every node type, not just the ones with their own page", async ({page}) => {
+        await page.goto("/spexare/explore");
+        await page.getByLabel("Sök efter spexare, spex, funktion eller tagg...").fill("Ada");
+        await page.getByRole("button", {name: "Sök", exact: true}).click();
+        await page.getByRole("button", {name: /Ada Lovelace/}).click();
+        await expect(page.getByText("5 noder")).toBeVisible();
+
+        const dialog = page.locator('[data-slot="dialog-content"]');
+
+        // A tag and a function carry no page of their own, so before this the node list simply
+        // offered no way in.
+        await page.getByRole("button", {name: "Visa detaljer för Hedersmedlem"}).click();
+        await expect(dialog.getByText("Hedersmedlem")).toBeVisible();
+        await page.getByRole("button", {name: "Stäng"}).click();
+
+        await page.getByRole("button", {name: "Visa detaljer för Skådespelare"}).click();
+        await expect(dialog.getByText("Ensemble")).toBeVisible();
+    });
+
     test("shows a legend for the node colours", async ({page}) => {
         await page.goto("/spexare/explore");
         await page.getByLabel("Sök efter spexare, spex, funktion eller tagg...").fill("Ada");

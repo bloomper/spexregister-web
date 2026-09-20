@@ -32,10 +32,14 @@ type ForceProps = {
     links: ForceLink[];
     background: string;
     linkColor: string;
+    dimLinkColor: string;
     captionInk: string;
+    dimmedIds: Set<string>;
     focusId: string | null;
     onNodeClick: (id: string) => void;
 };
+
+const DIM_OPACITY = 0.12;
 
 const textures = new Map<string, THREE.CanvasTexture>();
 
@@ -55,12 +59,14 @@ function textureFor(key: string, draw: () => HTMLCanvasElement) {
 
 const CAPTION_SCREEN_HEIGHT = 0.03;
 
-function discFor(node: ForceNode) {
+function discFor(node: ForceNode, dimmed: boolean) {
     const key = `${node.type}:${node.color}:${node.revival}`;
     const material = new THREE.SpriteMaterial({
         map: textureFor(key, () => drawFallback(node.type, node.color, node.revival)),
         transparent: true,
-        alphaTest: 0.5,
+        alphaTest: dimmed ? DIM_OPACITY / 2 : 0.5,
+        opacity: dimmed ? DIM_OPACITY : 1,
+        depthWrite: !dimmed,
     });
     const sprite = new THREE.Sprite(material);
 
@@ -114,11 +120,10 @@ function captionFor(node: ForceNode, ink: string) {
         map: texture,
         transparent: true,
         depthWrite: false,
-        depthTest: false,
         sizeAttenuation: false,
     }));
 
-    sprite.renderOrder = 10;
+    sprite.renderOrder = 1;
 
     sprite.scale.set(CAPTION_SCREEN_HEIGHT * aspect, CAPTION_SCREEN_HEIGHT, 1);
     sprite.position.set(0, -(node.size / 2 + 2), 0);
@@ -126,18 +131,25 @@ function captionFor(node: ForceNode, ink: string) {
     return sprite;
 }
 
-function objectFor(node: ForceNode, ink: string) {
+function objectFor(node: ForceNode, ink: string, dimmed: boolean) {
     const group = new THREE.Group();
 
-    group.add(discFor(node));
-    group.add(captionFor(node, ink));
+    group.add(discFor(node, dimmed));
+
+    if (!dimmed) {
+        group.add(captionFor(node, ink));
+    }
 
     return group;
 }
 
+function endpointId(end: unknown) {
+    return typeof end === "object" && end !== null ? String((end as { id?: unknown }).id) : String(end);
+}
+
 export default function GraphForce3D({
-                                         width, height, nodes, links, background, linkColor, captionInk,
-                                         focusId, onNodeClick,
+                                         width, height, nodes, links, background, linkColor, dimLinkColor,
+                                         captionInk, dimmedIds, focusId, onNodeClick,
                                      }: ForceProps) {
     const graphRef = useRef<ForceGraphMethods | undefined>(undefined);
     const movedRef = useRef(false);
@@ -199,11 +211,14 @@ export default function GraphForce3D({
             height={height}
             graphData={{nodes, links}}
             backgroundColor={background}
-            linkColor={() => linkColor}
-            linkOpacity={0.55}
+            linkColor={(link) => (dimmedIds.has(endpointId(link.source)) && dimmedIds.has(endpointId(link.target))
+                ? dimLinkColor
+                : linkColor)}
+            linkOpacity={0.7}
             linkWidth={0.4}
             nodeLabel="label"
-            nodeThreeObject={(node: object) => objectFor(node as ForceNode, captionInk)}
+            nodeThreeObject={(node: object) => objectFor(
+                node as ForceNode, captionInk, dimmedIds.has(String((node as ForceNode).id)))}
             onNodeClick={(node) => onNodeClick(String(node.id))}
             showNavInfo={false}
             enableNodeDrag

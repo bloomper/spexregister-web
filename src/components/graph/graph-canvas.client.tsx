@@ -35,17 +35,19 @@ type CanvasProps = {
     nodes: LoadedNode[];
     edges: GraphEdge[];
     tooltips: Record<string, string>;
+    dimmedIds: Set<string>;
     focusId: string | null;
     onSelect: (id: string) => void;
     onOpen: (id: string) => void;
 };
 
-const DOUBLE_CLICK_MS = 350;
+const DOUBLE_CLICK_MS = 260;
 
 const nodeObjects = new Map<string, ForceNode>();
 
 const SURFACE = {light: "#ffffff", dark: "#0c0a09"};
-const LINK = {light: "#d9d7d2", dark: "#44403c"};
+const LINK = {light: "#b5b1aa", dark: "#b4afa9"};
+const LINK_DIM = {light: "#f4f3f1", dark: "#332f2c"};
 const INK = {light: "#0b0b0b", dark: "#ffffff"};
 
 function useResolvedColors() {
@@ -65,6 +67,7 @@ function useResolvedColors() {
 
             next.__surface = isDark ? SURFACE.dark : SURFACE.light;
             next.__link = isDark ? LINK.dark : LINK.light;
+            next.__linkDim = isDark ? LINK_DIM.dark : LINK_DIM.light;
             next.__ink = isDark ? INK.dark : INK.light;
             setColors(next);
         };
@@ -81,26 +84,46 @@ function useResolvedColors() {
     return colors;
 }
 
-export function GraphCanvas({nodes, edges, tooltips, focusId, onSelect, onOpen}: CanvasProps) {
+export function GraphCanvas({nodes, edges, tooltips, dimmedIds, focusId, onSelect, onOpen}: CanvasProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const lastClickRef = useRef<{ id: string; at: number } | null>(null);
+    const pendingClickRef = useRef<{ id: string; timer: ReturnType<typeof setTimeout> } | null>(null);
+    const handlersRef = useRef({onSelect, onOpen});
     const [size, setSize] = useState({width: 0, height: 0});
     const colors = useResolvedColors();
 
-    useEffect(() => () => nodeObjects.clear(), []);
+    useEffect(() => {
+        handlersRef.current = {onSelect, onOpen};
+    });
+
+    useEffect(() => () => {
+        nodeObjects.clear();
+
+        if (pendingClickRef.current) {
+            clearTimeout(pendingClickRef.current.timer);
+        }
+    }, []);
 
     const handleClick = (id: string) => {
-        const last = lastClickRef.current;
-        const now = Date.now();
+        const pending = pendingClickRef.current;
 
-        if (last && last.id === id && now - last.at < DOUBLE_CLICK_MS) {
-            lastClickRef.current = null;
-            onOpen(id);
-            return;
+        if (pending) {
+            clearTimeout(pending.timer);
+            pendingClickRef.current = null;
+
+            if (pending.id === id) {
+                handlersRef.current.onOpen(id);
+
+                return;
+            }
         }
 
-        lastClickRef.current = {id, at: now};
-        onSelect(id);
+        pendingClickRef.current = {
+            id,
+            timer: setTimeout(() => {
+                pendingClickRef.current = null;
+                handlersRef.current.onSelect(id);
+            }, DOUBLE_CLICK_MS),
+        };
     };
 
     useEffect(() => {
@@ -165,8 +188,10 @@ export function GraphCanvas({nodes, edges, tooltips, focusId, onSelect, onOpen}:
                     nodes={data.nodes}
                     links={data.links}
                     background={colors.__surface || "#ffffff"}
-                    linkColor={colors.__link || "#cccccc"}
+                    linkColor={colors.__link || "#b5b1aa"}
+                    dimLinkColor={colors.__linkDim || "#f4f3f1"}
                     captionInk={colors.__ink || "#0b0b0b"}
+                    dimmedIds={dimmedIds}
                     focusId={focusId}
                     onNodeClick={handleClick}
                 />

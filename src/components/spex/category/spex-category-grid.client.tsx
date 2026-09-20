@@ -3,38 +3,20 @@
 import * as React from "react";
 import {useState} from "react";
 import {useInfiniteList} from "@/hooks/use-infinite-list.client";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from "@/components/ui/dialog";
 import {useTranslations} from "next-intl";
 import {SpexCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {
-    getPageAction,
-    getRestorePreviewAction,
-    getRevisionsAction,
-    restoreRevisionAction
-} from "@/app/(app)/spex/categories/actions.server";
+import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
 import {getProxiedImageUrl} from "@/utils/utils";
 import Image from "next/image";
 import {useRouter} from "next/navigation";
 import {Pencil} from "lucide-react";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexCategoryForm} from "@/components/spex/category/spex-category-form.client";
-import {AuditTrail} from "@/components/data-audit-trail.client";
-
-const restoreActions = {
-    preview: getRestorePreviewAction,
-    restore: restoreRevisionAction,
-};
+import {SpexCategoryViewDialog} from "@/components/spex/category/spex-category-view-dialog.client";
 
 export function SpexCategoryGrid({
                                      initialItems = [],
@@ -120,46 +102,7 @@ export function SpexCategoryGrid({
                 </Card>
             ))}
 
-            <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>{selected?.name}</DialogTitle>
-                        <DialogDescription className="sr-only">
-                            {t("Common.details")}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex flex-col gap-4">
-                        <div className="text-sm font-medium">
-                            {t("Spex.Category.firstYear")}: <span
-                            className="text-muted-foreground font-normal">{selected?.firstYear}</span>
-                        </div>
-                        {selected?.logoUrl && (
-                            <div className="relative aspect-square w-full overflow-hidden rounded-md bg-muted">
-                                <Image
-                                    src={getProxiedImageUrl(selected.logoUrl, selected.lastModifiedAt)}
-                                    alt={selected.name}
-                                    fill
-                                    unoptimized
-                                    className="object-contain p-6"
-                                />
-                            </div>
-                        )}
-
-                        {selected && (
-                            <div className="space-y-4">
-                                <AuditTrail id={selected.id}
-                                            fetchAction={getRevisionsAction} restoreActions={restoreActions}
-                                            onRestored={() => setSelected(null)}/>
-                            </div>
-                        )}
-                    </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setSelected(null)}>
-                            {t("Common.close")}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <SpexCategoryViewDialog selected={selected} onClose={() => setSelected(null)}/>
 
             <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
                 {editItem && (
