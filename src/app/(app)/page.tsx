@@ -6,8 +6,8 @@ import Link from "next/link";
 import {buttonVariants} from "@/components/ui/button";
 import {DataEmpty} from "@/components/data-empty";
 import {Newspaper} from "lucide-react";
-import * as Statistics from "@/lib/statistics";
-import {StatisticsCharts} from "@/components/statistics/statistics-charts.client";
+import * as Analytics from "@/lib/analytics";
+import {AnalyticsHighlights, AnalyticsTotals} from "@/components/analytics";
 import {requireUser} from "@/utils/auth.server";
 
 export default async function HomePage() {
@@ -16,9 +16,9 @@ export default async function HomePage() {
         return null;
     }
 
-    const [page, statistics, t] = await Promise.all([
+    const [page, analytics, t] = await Promise.all([
         getPaged({first: 6}),
-        Statistics.get(),
+        Analytics.getSummary(),
         getTranslations()
     ]);
     const initialItems = page.edges.map(e => e.node);
@@ -26,7 +26,13 @@ export default async function HomePage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-4">
-            {statistics && <StatisticsCharts data={statistics}/>}
+            {analytics?.totals && <AnalyticsTotals data={analytics.totals}/>}
+            {analytics && (
+                <>
+                    <Separator className="my-4"/>
+                    <AnalyticsHighlights data={analytics}/>
+                </>
+            )}
             <div className="space-y-1 mt-4">
                 <Separator className="my-4"/>
                 <h2 className="text-2xl text-center font-semibold tracking-tight">

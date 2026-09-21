@@ -204,6 +204,49 @@ which walks records one at a time.
   `messages_{sv,en}.properties`; without them `GlobalExceptionResolver` falls through to
   `INTERNAL_ERROR` instead of `BAD_REQUEST`.
 
+## Dashboard and analytics
+
+**One query, `analytics`, covers the whole dashboard** — the former `statistics` query, package,
+REST endpoint and `Statistics` message namespace are gone, folded in as the `totals` section.
+Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytics/`,
+`src/lib/analytics/`).
+
+- `totals` is the old statistics payload verbatim (counts + 3-year `createdAt` trends, the four
+  sparkline cards on `/`), computed with criteria queries rather than from the search index.
+- **Only the selected sections are computed.** `AnalyticsGraphqlApi` turns the GraphQL selection set
+  into `AnalyticsSection`s and the service builds just those; REST has no field selection so
+  `/api/analytics` always pays for all six. This is why the home page uses `getSummary()` — a
+  narrower document — rather than `get()`: asking for the full fragment would drag the revision
+  queries behind `operations` onto every landing. Add a section to the schema *and* to
+  `AnalyticsSection`, or it will silently never be built.
+
+- **A chart bucket carries its own drill-down.** `Bucket` has `facet` + `key`, which
+  `bucketHref` (`src/utils/analytics.ts`) turns into `/spexare/search?f.<facet>=<key>` — the same
+  vocabulary `parseFacetParams` already reads. There is no second mapping to fall out of step.
+  A `null` facet means a summary with no list behind it; render it without a link.
+- **The counts come from the search index, not from SQL.** `AnalyticsService` reads
+  `SpexareService.facets()` — one `matchAll` search returning every aggregation the search page
+  filters on — so a bar's number and the rows it opens are the same query, and both obey the
+  non-admin `published` restriction. Adding a breakdown usually means adding an aggregation in
+  `SpexareSearchEnabledJpaRepository`, not writing a query.
+- Two filter values exist only for drilling down, both in that repository:
+  `quality` is a **filter-only** facet (no aggregation) whose values are `DataQualityIssue` keys and
+  which resolves to a `mustNot(exists(...))` predicate — `countByDataQualityIssue` uses the *same*
+  predicate, so tile and list agree. The year facets (`spexYears`, `debutYears`,
+  `lastActiveYears`) also accept `2010..2015`, either bound omitted, which is what makes the
+  dormancy bands clickable. Note multiple values of one facet still **AND** together.
+- **Changing an indexed field needs a reindex.** `debutYear`, `lastActiveYear`, `spexCount` and
+  `hasImage` are derived `@GenericField`s on `Spexare`, `Address.country` is now `Aggregable.YES`,
+  and `Address` carries an `AddressTypeBinder`. Until the index is rebuilt (the `full-index` cron,
+  or `AdminApi`) those aggregations come back empty and the charts are silently blank.
+- Sections are **role-nullable**: `dataQuality` is null below EDITOR and `operations` below ADMIN.
+  The backend decides; the dashboard just omits the tab. Null means "not for you" — distinct from
+  an empty list.
+- `dataQuality.complete` is a **bound, not a count** — the total minus the single largest gap. The
+  gaps overlap, and counting records free of all of them would be a separate query per combination.
+- `dataQuality.total` (the readable population, the denominator for the gap shares) is deliberately **not**
+  `totals.spexareCount`, which counts published records only.
+
 ## Testing
 
 - Unit: Vitest, tests in `__tests__/` beside the code.

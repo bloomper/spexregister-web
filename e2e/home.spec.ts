@@ -7,7 +7,7 @@ test("authenticated dashboard renders news from the backend", async ({page}) => 
     await expect(page.getByText("Nya lokaler")).toBeVisible();
 });
 
-test("authenticated dashboard renders the statistics charts", async ({page}) => {
+test("authenticated dashboard renders the headline totals", async ({page}) => {
     await page.goto("/");
 
     // "Nyuppsättningar" (spex revivals) and the per-card footer are unique to the stats block.

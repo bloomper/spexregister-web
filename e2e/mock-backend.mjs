@@ -104,12 +104,65 @@ const newsList = [
     {id: "2", subject: "Nya lokaler", text: "Vi har flyttat.", visibleFrom: "2026-02-01"},
 ];
 
-const statistics = {
+const totals = {
     spexareCount: 3, spexareCountHistory: [{label: "2024", count: 2}, {label: "2025", count: 3}],
     userCount: 1, userCountHistory: [{label: "2025", count: 1}],
     spexCount: 4, spexCountHistory: [{label: "2025", count: 4}],
     spexRevivalCount: 1, spexRevivalCountHistory: [{label: "2025", count: 1}],
     taskCount: 5, taskCountHistory: [{label: "2025", count: 5}],
+};
+
+const bucket = (key, label, count, facet = null) => ({key, label, count, facet});
+
+const analytics = {
+    totals,
+    participation: {
+        bySpexYear: [bucket("2015", "2015", 2, "spexYears"), bucket("2024", "2024", 3, "spexYears")],
+        bySpexCategory: [bucket("chalmersspexet", "Chalmersspexet", 3, "spexCategoryNames")],
+        topSpex: [bucket("bacchus", "Bacchus", 2, "spexTitles")],
+        byTaskCategory: [bucket("scen", "Scen", 2, "taskCategoryNames")],
+        topTask: [bucket("skadespelare", "Skådespelare", 2, "taskNames")],
+        byVocal: [bucket("sopran", "Sopran", 1, "actorVocals")],
+    },
+    demographics: {
+        byCountry: [bucket("se", "Sverige", 3, "countries")],
+        byAddressType: [bucket("home", "Hem", 3, "addressTypes")],
+        byMembership: [bucket("ordinary:2024", "Ordinarie: 2024", 2, "memberships")],
+        byTag: [bucket("grundare", "Grundare", 1, "tags")],
+        byToggle: [bucket("newsletter:true", "Nyhetsbrev: Ja", 2, "toggles")],
+        byStatus: [bucket("false", "Levande", 3, "deceased")],
+        consentCompletion: [{key: "gdpr", label: "GDPR", granted: 2, denied: 0, missing: 1}],
+    },
+    lifecycle: {
+        newcomersByYear: [bucket("2015", "2015", 2, "debutYears"), bucket("2024", "2024", 1, "debutYears")],
+        lastActiveByYear: [bucket("2024", "2024", 3, "lastActiveYears")],
+        byEngagement: [bucket("1", "1", 2, "spexCounts"), bucket("2", "2", 1, "spexCounts")],
+        byDormancy: [bucket("2024..", "Aktiv", 3, "lastActiveYears"), bucket("noActivity", "Aldrig aktiv", 0, "quality")],
+        oneTimers: 2, returning: 1, veterans: 0, neverActive: 0,
+    },
+    dataQuality: {
+        total: 497,
+        issues: [
+            bucket("noImage", "Saknar bild", 254, "quality"),
+            bucket("noSocialSecurityNumber", "Saknar personnummer", 250, "quality"),
+            bucket("noMembership", "Saknar medlemskap", 219, "quality"),
+            bucket("noEmailAddress", "Saknar e-postadress", 210, "quality"),
+            bucket("noPhone", "Saknar telefonnummer", 118, "quality"),
+            bucket("noActivity", "Saknar aktivitet", 93, "quality"),
+            bucket("noAddress", "Saknar adress", 65, "quality"),
+            bucket("noTag", "Saknar tagg", 9, "quality"),
+            bucket("noConsent", "Saknar samtycke", 0, "quality"),
+        ],
+        complete: 243,
+    },
+    operations: {
+        usersByState: [bucket("ACTIVE", "Aktiv", 1)],
+        usersWithoutSpexare: 1,
+        spexareWithoutUser: 2,
+        revisionsByMonth: [bucket("2026-01", "2026-01", 4)],
+        revisionsBySource: [bucket("WEB", "Webb", 4)],
+        topEditors: [bucket("ada", "ada", 4)],
+    },
 };
 
 // entityId has to resolve in the matching entity list below: the explorer's detail dialogs fetch
@@ -336,7 +389,8 @@ const resolvers = {
     UserMe: () => ({me: {spexare: null}}),
     Authorities: () => ({authorities: []}),
     States: () => ({states: []}),
-    Statistics: () => ({statistics}),
+    Analytics: () => ({analytics}),
+    AnalyticsSummary: () => ({analytics}),
     Countries: () => ({countries: [{isoCode: "SE", label: "Sverige"}, {isoCode: "NO", label: "Norge"}]}),
     Types: () => ({types: []}),
 

@@ -5,16 +5,16 @@ import {useCallback} from "react"
 import {CartesianGrid, Line, LineChart, XAxis, YAxis} from "recharts"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
-import {History, Statistics} from "@/gql/schema"
+import {History, Totals} from "@/gql/schema"
 import {useTranslations} from "next-intl"
 import {TrendingUp} from "lucide-react"
 
-interface StatisticsChartsProps {
-    data: Statistics
+interface AnalyticsTotalsProps {
+    data: Totals
 }
 
-export function StatisticsCharts({data}: StatisticsChartsProps) {
-    const t = useTranslations("Statistics")
+export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
+    const t = useTranslations("Analytics")
 
     const processHistory = useCallback((
         history: Array<History | null> | null | undefined,

@@ -144,6 +144,16 @@ export type AggregationFilterInput = {
     value: Scalars['String']['input'];
 };
 
+export type Analytics = {
+    __typename?: 'Analytics';
+    dataQuality?: Maybe<DataQuality>;
+    demographics: Demographics;
+    lifecycle: Lifecycle;
+    operations?: Maybe<Operations>;
+    participation: Participation;
+    totals: Totals;
+};
+
 export enum AuditSource {
     Import = 'IMPORT',
     Restore = 'RESTORE',
@@ -181,6 +191,14 @@ export type Authority = {
     label: Scalars['String']['output'];
     lastModifiedAt?: Maybe<Scalars['Instant']['output']>;
     lastModifiedBy?: Maybe<Scalars['String']['output']>;
+};
+
+export type Bucket = {
+    __typename?: 'Bucket';
+    count: Scalars['Long']['output'];
+    facet?: Maybe<Scalars['String']['output']>;
+    key: Scalars['String']['output'];
+    label: Scalars['String']['output'];
 };
 
 export type BulkEntry = {
@@ -223,6 +241,15 @@ export type Consent = {
     value: Scalars['Boolean']['output'];
 };
 
+export type ConsentCompletion = {
+    __typename?: 'ConsentCompletion';
+    denied: Scalars['Long']['output'];
+    granted: Scalars['Long']['output'];
+    key: Scalars['String']['output'];
+    label: Scalars['String']['output'];
+    missing: Scalars['Long']['output'];
+};
+
 export type ConsentConnection = {
     __typename?: 'ConsentConnection';
     edges: Array<Maybe<ConsentEdge>>;
@@ -249,6 +276,24 @@ export type Country = {
     __typename?: 'Country';
     isoCode: Scalars['CountryCode']['output'];
     label?: Maybe<Scalars['String']['output']>;
+};
+
+export type DataQuality = {
+    __typename?: 'DataQuality';
+    complete: Scalars['Long']['output'];
+    issues: Array<Bucket>;
+    total: Scalars['Long']['output'];
+};
+
+export type Demographics = {
+    __typename?: 'Demographics';
+    byAddressType: Array<Bucket>;
+    byCountry: Array<Bucket>;
+    byMembership: Array<Bucket>;
+    byStatus: Array<Bucket>;
+    byTag: Array<Bucket>;
+    byToggle: Array<Bucket>;
+    consentCompletion: Array<ConsentCompletion>;
 };
 
 export type Facet = {
@@ -397,6 +442,18 @@ export type Language = {
     __typename?: 'Language';
     isoCode: Scalars['Locale']['output'];
     label?: Maybe<Scalars['String']['output']>;
+};
+
+export type Lifecycle = {
+    __typename?: 'Lifecycle';
+    byDormancy: Array<Bucket>;
+    byEngagement: Array<Bucket>;
+    lastActiveByYear: Array<Bucket>;
+    neverActive: Scalars['Long']['output'];
+    newcomersByYear: Array<Bucket>;
+    oneTimers: Scalars['Long']['output'];
+    returning: Scalars['Long']['output'];
+    veterans: Scalars['Long']['output'];
 };
 
 export type Membership = {
@@ -971,6 +1028,16 @@ export type NewsUpdate = {
     visibleTo?: InputMaybe<Scalars['Date']['input']>;
 };
 
+export type Operations = {
+    __typename?: 'Operations';
+    revisionsByMonth: Array<Bucket>;
+    revisionsBySource: Array<Bucket>;
+    spexareWithoutUser: Scalars['Long']['output'];
+    topEditors: Array<Bucket>;
+    usersByState: Array<Bucket>;
+    usersWithoutSpexare: Scalars['Long']['output'];
+};
+
 export type PageInfo = {
     __typename?: 'PageInfo';
     endCursor?: Maybe<Scalars['String']['output']>;
@@ -979,8 +1046,19 @@ export type PageInfo = {
     startCursor?: Maybe<Scalars['String']['output']>;
 };
 
+export type Participation = {
+    __typename?: 'Participation';
+    bySpexCategory: Array<Bucket>;
+    bySpexYear: Array<Bucket>;
+    byTaskCategory: Array<Bucket>;
+    byVocal: Array<Bucket>;
+    topSpex: Array<Bucket>;
+    topTask: Array<Bucket>;
+};
+
 export type Query = {
     __typename?: 'Query';
+    analytics?: Maybe<Analytics>;
     authorities?: Maybe<Array<Maybe<Authority>>>;
     authority?: Maybe<Authority>;
     countries?: Maybe<Array<Maybe<Country>>>;
@@ -1022,7 +1100,6 @@ export type Query = {
     spexareSearchPaged?: Maybe<SpexareWithFacetsConnection>;
     state?: Maybe<State>;
     states?: Maybe<Array<Maybe<State>>>;
-    statistics?: Maybe<Statistics>;
     tag?: Maybe<Tag>;
     tagExport?: Maybe<JobReference>;
     tagPaged?: Maybe<TagConnection>;
@@ -1837,20 +1914,6 @@ export type State = {
     lastModifiedBy?: Maybe<Scalars['String']['output']>;
 };
 
-export type Statistics = {
-    __typename?: 'Statistics';
-    spexCount?: Maybe<Scalars['Long']['output']>;
-    spexCountHistory?: Maybe<Array<Maybe<History>>>;
-    spexRevivalCount?: Maybe<Scalars['Long']['output']>;
-    spexRevivalCountHistory?: Maybe<Array<Maybe<History>>>;
-    spexareCount?: Maybe<Scalars['Long']['output']>;
-    spexareCountHistory?: Maybe<Array<Maybe<History>>>;
-    taskCount?: Maybe<Scalars['Long']['output']>;
-    taskCountHistory?: Maybe<Array<Maybe<History>>>;
-    userCount?: Maybe<Scalars['Long']['output']>;
-    userCountHistory?: Maybe<Array<Maybe<History>>>;
-};
-
 export type Subscription = {
     __typename?: 'Subscription';
     jobProgress?: Maybe<JobStatus>;
@@ -2029,6 +2092,20 @@ export type ToggleEdge = {
 export type ToggleUpdate = {
     id: Scalars['ID']['input'];
     value: Scalars['Boolean']['input'];
+};
+
+export type Totals = {
+    __typename?: 'Totals';
+    spexCount: Scalars['Long']['output'];
+    spexCountHistory: Array<History>;
+    spexRevivalCount: Scalars['Long']['output'];
+    spexRevivalCountHistory: Array<History>;
+    spexareCount: Scalars['Long']['output'];
+    spexareCountHistory: Array<History>;
+    taskCount: Scalars['Long']['output'];
+    taskCountHistory: Array<History>;
+    userCount: Scalars['Long']['output'];
+    userCountHistory: Array<History>;
 };
 
 export type Type = {

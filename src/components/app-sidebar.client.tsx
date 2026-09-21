@@ -3,6 +3,7 @@
 import * as React from "react";
 import {useMemo} from "react";
 import {
+    ChartNoAxesCombined,
     Clapperboard,
     ClipboardList,
     Drama,
@@ -71,6 +72,12 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                 url: "/",
                 icon: House,
                 isActive: pathname === "/",
+            },
+            {
+                title: t("Analytics.heading"),
+                url: "/analytics",
+                icon: ChartNoAxesCombined,
+                isActive: pathname.startsWith("/analytics"),
             },
             {
                 title: t("News.heading"),
