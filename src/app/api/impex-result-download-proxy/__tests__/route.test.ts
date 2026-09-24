@@ -16,6 +16,12 @@ beforeEach(() => {
 });
 
 describe("impex-result-download-proxy GET", () => {
+    it.each(["../spexare/1/image", "1/../../x", "abc"])("returns 400 for a non-numeric id %s", async (id) => {
+        const res = await GET(makeRequest(`?id=${encodeURIComponent(id)}`));
+        expect(res.status).toBe(400);
+        expect(axiosGet).not.toHaveBeenCalled();
+    });
+
     it("returns 400 when id is missing", async () => {
         const res = await GET(makeRequest(""));
         expect(res.status).toBe(400);

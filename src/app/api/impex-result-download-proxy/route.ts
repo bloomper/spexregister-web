@@ -9,6 +9,10 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({error: "Job ID is required"}, {status: 400});
     }
 
+    if (!/^\d+$/.test(jobId)) {
+        return NextResponse.json({error: "Job ID is invalid"}, {status: 400});
+    }
+
     try {
         const url = `${process.env.API_REST_BASE_URL}/api/jobs/${jobId}/results`;
 

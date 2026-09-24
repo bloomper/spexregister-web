@@ -1,5 +1,5 @@
 import {afterEach, describe, expect, it, vi} from "vitest";
-import {mapConnection} from "@/utils/utils.server";
+import {mapConnection, resolveBackendUrl} from "@/utils/utils.server";
 import type {PageInfo} from "@/gql/schema";
 
 type Edge = { cursor: string; node: { id: string } };
@@ -116,5 +116,33 @@ describe("normalizeLocale (env-driven)", () => {
         expect(normalizeLocale("no")).toBe("no");
         expect(normalizeLocale("en")).toBe("en");
         expect(normalizeLocale("fr")).toBe("no");
+    });
+});
+
+describe("resolveBackendUrl", () => {
+    it("resolves a relative api path against the base, keeping a base path prefix", () => {
+        expect(resolveBackendUrl("/api/spexare/1/image", "https://api.test")?.toString())
+            .toBe("https://api.test/api/spexare/1/image");
+        expect(resolveBackendUrl("/api/spexare/1/image", "https://host.test/backend/")?.toString())
+            .toBe("https://host.test/backend/api/spexare/1/image");
+    });
+
+    it("accepts an absolute url on the base origin", () => {
+        expect(resolveBackendUrl("https://api.test/api/revisions/SPEX/1/2/binary/poster", "https://api.test")?.pathname)
+            .toBe("/api/revisions/SPEX/1/2/binary/poster");
+    });
+
+    it.each([
+        "https://evil.example/api/x",
+        "//evil.example/api/x",
+        "https://api.test/actuator/health",
+        "/api/../actuator/health",
+        "not a url",
+    ])("rejects %s", (url) => {
+        expect(resolveBackendUrl(url, "https://api.test")).toBeNull();
+    });
+
+    it("rejects everything when no base is configured", () => {
+        expect(resolveBackendUrl("/api/spexare/1/image", undefined)).toBeNull();
     });
 });

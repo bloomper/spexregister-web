@@ -38,3 +38,25 @@ const DEFAULT_LOCALE = process.env.DEFAULT_LOCALE && SUPPORTED_LOCALES.has(proce
 export function normalizeLocale(input: string | undefined): string {
     return input && SUPPORTED_LOCALES.has(input) ? input : DEFAULT_LOCALE;
 }
+
+export function resolveBackendUrl(url: string, baseUrl: string | undefined): URL | null {
+    if (!baseUrl) {
+        return null;
+    }
+
+    try {
+        const base = new URL(baseUrl);
+        const basePath = base.pathname.replace(/\/$/, "");
+        const target = url.startsWith("/") && !url.startsWith("//")
+            ? new URL(`${basePath}${url}`, base.origin)
+            : new URL(url);
+
+        if (target.origin !== base.origin || !target.pathname.startsWith(`${basePath}/api/`)) {
+            return null;
+        }
+
+        return target;
+    } catch {
+        return null;
+    }
+}
