@@ -103,6 +103,12 @@ changing routing or data fetching; this area differs sharply from older Next.
   `withPolicyPage(Policies.<entity>.require<Op>, async (authz) => …)` — take roles from `authz`
   rather than calling the session again. Don't hand-roll role checks —
   `requireUser` / `requireAnyRole` are in `src/utils/auth.server.ts`. Roles: `USER | EDITOR | ADMIN`.
+- **The personnummer's last four digits are sensitive.** Unless the caller is EDITOR/ADMIN or it
+  is their own record (`SpexareSensitiveData`), the backend returns `socialSecurityNumber` cut to
+  its birth date (`yyyyMMdd`, the same shape as a number stored without the optional suffix), does
+  the same in the per-record change log, and refuses filters/search on the full number.
+  Birth-date search works for everyone. The field lives in `SpexareFull` only, so list pages never
+  ship it.
 - Client side: `src/lib/auth-client.ts` (`useSession`, `signOut`); no session provider is needed.
   Logout uses `signOut({disableRedirect: true})` and appends `ui_locales`/`theme` to the returned
   Keycloak `end_session` URL via `appendLogoutParams` (`src/utils/auth.ts`).
@@ -227,7 +233,7 @@ Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytic
 - **The counts come from the search index, not from SQL.** `AnalyticsService` reads
   `SpexareService.facets()` — one `matchAll` search returning every aggregation the search page
   filters on — so a bar's number and the rows it opens are the same query, and both obey the
-  non-admin `published` restriction. Adding a breakdown usually means adding an aggregation in
+  `published` restriction for plain users (EDITOR and ADMIN see unpublished records too). Adding a breakdown usually means adding an aggregation in
   `SpexareSearchEnabledJpaRepository`, not writing a query.
 - Two filter values exist only for drilling down, both in that repository:
   `quality` is a **filter-only** facet (no aggregation) whose values are `DataQualityIssue` keys and

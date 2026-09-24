@@ -25,7 +25,6 @@ export const SpexareBase = graphql(`
         firstName
         lastName
         nickName
-        socialSecurityNumber
         deceased
         published
         graduation
@@ -52,6 +51,7 @@ export const SpexareSummary = graphql(`
 export const SpexareFull = graphql(`
     fragment SpexareFull on Spexare {
         ...SpexareBase
+        socialSecurityNumber
         activities {
             ...ActivityFull
         }
