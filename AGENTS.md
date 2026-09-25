@@ -153,6 +153,9 @@ changing routing or data fetching; this area differs sharply from older Next.
   change log and the per-entity `AuditTrail`. One trap: a **binary value must be addressed at the
   timeline's entity**, not at the field's owner — that is where the backend authorizes the read and
   where it resolves a field living on a referenced entity (`SPEX` → `SpexDetails.poster`).
+  Images themselves live in their own `image` table: an owner's `image` / `poster` / `logo` is a lazy
+  `@AuditedBinary` association, and replacing an image creates a new row, so the change is still a
+  binary change on the owner's own revision and a list page never loads the bytes.
 - **Deep links**: `auditEntityHref` (`src/utils/audit.ts`) maps an audit target to
   `/<route>?open=<id>` plus `&tab=` for the spexare view. Pages read it with `useDeepLink` /
   `useDeepLinkItem` (`src/hooks/use-deep-link-item.client.ts`). Two things this depends on: every
@@ -193,7 +196,8 @@ which walks records one at a time.
   GraphQL `spexareBulkPreview` (query) / `spexareBulkApply` (mutation), REST
   `POST /api/spexare/bulk/preview` / `POST /api/spexare/bulk`. The operation is an enum (`TAG_ADD`, `SPEX_ADD`,
   `CONSENT_SET`, `FIELDS_SET`, …) and decides which payload fields are read.
-  `X-Audit-Reason` works on both, since `AuditContextFilter` reads it per HTTP request.
+  `X-Audit-Reason` works on both, since `AuditContextFilter` reads it per HTTP request. It is
+  percent-encoded (a header only carries Latin-1); the filter decodes it and keeps a raw value as is.
 - **Preview and apply run the same code path**, the preview simply not writing, so the counts a
   reader confirms are the counts they get. Per record the outcome is `APPLIED`, `UNCHANGED`
   (already as asked — a skip, not a failure) or `NOT_PERMITTED` (no ACL write permission).

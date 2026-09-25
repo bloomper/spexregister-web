@@ -1,7 +1,7 @@
 "use client";
 
 import {useTranslations} from "next-intl";
-import React, {useCallback, useState, useTransition} from "react";
+import React, {useCallback, useEffect, useState, useTransition} from "react";
 import {Button} from "@/components/ui/button";
 import {ImagePlus, Loader2, X} from "lucide-react";
 import {toast} from "sonner";
@@ -23,6 +23,13 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
     const [preview, setPreview] = useState<string | null>(() => {
         return getProxiedImageUrl(initialImageUrl, Date.now().toString());
     });
+
+    useEffect(() => {
+        if (!preview?.startsWith("blob:")) {
+            return;
+        }
+        return () => URL.revokeObjectURL(preview);
+    }, [preview]);
 
     const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
         if (fileRejections.length > 0) {

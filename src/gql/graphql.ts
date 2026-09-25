@@ -156,11 +156,14 @@ export type SpexareBulkInput = {
 export { SpexareBulkOperation };
 
 export type SpexareCreate = {
+  comment?: string | null | undefined;
   deceased: boolean;
   firstName: string;
+  graduation?: string | null | undefined;
   lastName: string;
   nickName?: string | null | undefined;
   published: boolean;
+  socialSecurityNumber?: any;
 };
 
 export type SpexareUpdate = {

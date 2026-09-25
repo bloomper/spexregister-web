@@ -52,15 +52,47 @@ export async function proxy(request: NextRequest) {
             headers: request.headers,
             returnHeaders: true,
         });
+        const setCookies = headers.getSetCookie();
 
-        for (const cookie of headers.getSetCookie()) {
-            response.headers.append("set-cookie", cookie);
+        if (setCookies.length === 0) {
+            return response;
         }
+
+        for (const setCookie of setCookies) {
+            applySetCookie(request, setCookie);
+        }
+
+        const refreshed = NextResponse.next({request: {headers: request.headers}});
+
+        for (const setCookie of setCookies) {
+            refreshed.headers.append("set-cookie", setCookie);
+        }
+
+        return refreshed;
     } catch {
         // Refresh failed — `getSessionContext()` renders this as logged out on the page itself.
     }
 
     return response;
+}
+
+function applySetCookie(request: NextRequest, setCookie: string) {
+    const [pair, ...attributes] = setCookie.split(";").map(part => part.trim());
+    const separator = pair.indexOf("=");
+    const name = pair.slice(0, separator);
+    const value = pair.slice(separator + 1);
+    const expired = value === "" || attributes.some(attribute => {
+        const [key, attributeValue = ""] = attribute.split("=");
+
+        return (key.toLowerCase() === "max-age" && Number(attributeValue) <= 0)
+            || (key.toLowerCase() === "expires" && Date.parse(attributeValue) <= Date.now());
+    });
+
+    if (expired) {
+        request.cookies.delete(name);
+    } else {
+        request.cookies.set(name, value);
+    }
 }
 
 export const config = {

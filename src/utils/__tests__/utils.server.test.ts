@@ -1,5 +1,5 @@
 import {afterEach, describe, expect, it, vi} from "vitest";
-import {mapConnection, resolveBackendUrl} from "@/utils/utils.server";
+import {deleteEach, mapConnection, resolveBackendUrl} from "@/utils/utils.server";
 import type {PageInfo} from "@/gql/schema";
 
 type Edge = { cursor: string; node: { id: string } };
@@ -144,5 +144,33 @@ describe("resolveBackendUrl", () => {
 
     it("rejects everything when no base is configured", () => {
         expect(resolveBackendUrl("/api/spexare/1/image", undefined)).toBeNull();
+    });
+});
+
+describe("deleteEach", () => {
+    it("deletes one id at a time and attempts all of them when one fails", async () => {
+        vi.spyOn(console, "error").mockImplementation(() => {
+        });
+        let inFlight = 0;
+        let maxInFlight = 0;
+        const attempted: string[] = [];
+        const del = vi.fn(async (id: string) => {
+            inFlight++;
+            maxInFlight = Math.max(maxInFlight, inFlight);
+            await new Promise(resolve => setTimeout(resolve, 1));
+            inFlight--;
+            attempted.push(id);
+            if (id === "2") {
+                throw new Error("boom");
+            }
+        });
+
+        await expect(deleteEach(["1", "2", "3"], del)).rejects.toThrow("Could not delete 1 of 3: 2");
+        expect(attempted).toEqual(["1", "2", "3"]);
+        expect(maxInFlight).toBe(1);
+    });
+
+    it("resolves when every delete succeeds", async () => {
+        await expect(deleteEach(["1"], async () => undefined)).resolves.toBeUndefined();
     });
 });

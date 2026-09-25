@@ -85,14 +85,18 @@ describe("spexare getPageAction", () => {
     });
 });
 
-describe("spexare create/update field asymmetry (intended)", () => {
-    it("create strips birthDate/birthNumber/socialSecurityNumber/graduation/comment and defaults deceased/published", async () => {
+describe("spexare create/update payloads", () => {
+    it("create strips only birthDate/birthNumber, so the record is complete in one revision", async () => {
         await actions.createAction({
             firstName: "A",
             birthDate: "d", birthNumber: "n", socialSecurityNumber: "ssn", graduation: "g", comment: "c",
         });
 
-        expect(create).toHaveBeenCalledWith({firstName: "A", deceased: false, published: false});
+        expect(create).toHaveBeenCalledWith({
+            firstName: "A",
+            socialSecurityNumber: "ssn", graduation: "g", comment: "c",
+            deceased: false, published: false,
+        });
         expect(revalidateTag).toHaveBeenCalledWith("spexare", "max");
     });
 

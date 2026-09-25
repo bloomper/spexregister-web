@@ -106,10 +106,6 @@ export function SpexareForm({
                     id = newItem?.id;
                 }
 
-                if (id && !item) {
-                    await updateAction(id, payload);
-                }
-
                 if (id) {
                     if (selectedFile) {
                         const formData = new FormData();

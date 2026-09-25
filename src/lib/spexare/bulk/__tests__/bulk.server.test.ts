@@ -57,7 +57,7 @@ describe("bulk apply", () => {
         await expect(apply(input, "Massåtgärd: Lägg till taggar")).resolves.toEqual(result);
 
         const context = mutation.mock.calls[0][2] as { fetchOptions?: { headers?: Record<string, string> } };
-        expect(context.fetchOptions?.headers?.["X-Audit-Reason"]).toBe("Massåtgärd: Lägg till taggar");
+        expect(decodeURIComponent(context.fetchOptions?.headers?.["X-Audit-Reason"] ?? "")).toBe("Massåtgärd: Lägg till taggar");
     });
 
     it("sends no audit header when there is no reason", async () => {

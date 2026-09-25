@@ -2,6 +2,7 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
+import {deleteEach} from "@/utils/utils.server";
 import {create, del, exp, get, getAll, getPaged, imp, revisions, tagFormSchema, update} from "@/lib/tag";
 import {getRestorePreview, restore} from "@/lib/audit/audit.server";
 import {revalidateTag} from "next/cache";
@@ -59,8 +60,11 @@ export async function deleteAction(id: string) {
 
 export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.tag.requireDelete, async () => {
-        await Promise.all(ids.map(id => del(id)));
-        revalidate();
+        try {
+            await deleteEach(ids, del);
+        } finally {
+            revalidate();
+        }
     });
 }
 

@@ -33,12 +33,8 @@ export async function runQuery<TData>(
     return result.data;
 }
 
-/**
- * Travels to the backend as `X-Audit-Reason` and ends up on the revision the mutation produces, so
- * the change log can say why the record changed. Phrased by the caller, hence already localized.
- */
 export function auditReason(reason: string | null | undefined): Partial<OperationContext> | undefined {
-    return reason ? {fetchOptions: {headers: {"X-Audit-Reason": reason}}} : undefined;
+    return reason ? {fetchOptions: {headers: {"X-Audit-Reason": encodeURIComponent(reason)}}} : undefined;
 }
 
 export async function runMutation<TData, TVariables extends AnyVariables>(

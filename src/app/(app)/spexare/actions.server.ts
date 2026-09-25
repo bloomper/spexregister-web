@@ -2,6 +2,7 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
+import {deleteEach} from "@/utils/utils.server";
 import {
     addPartner,
     create,
@@ -107,12 +108,9 @@ export async function getMineAction() {
 export async function createAction(data: unknown) {
     return withPolicyAction(Policies.spexare.requireCreate, async () => {
         const validated = spexareFormSchema.parse(data);
-        const {birthDate, birthNumber, socialSecurityNumber, graduation, comment, ...createInput} = validated;
+        const {birthDate, birthNumber, ...createInput} = validated;
         void birthDate;
         void birthNumber;
-        void socialSecurityNumber;
-        void graduation;
-        void comment;
         const payload: SpexareCreate = {
             ...createInput,
             deceased: createInput.deceased ?? false,
@@ -157,8 +155,11 @@ export async function deleteAction(id: string) {
 
 export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.spexare.requireDelete, async () => {
-        await Promise.all(ids.map(id => del(id)));
-        revalidate();
+        try {
+            await deleteEach(ids, del);
+        } finally {
+            revalidate();
+        }
     });
 }
 

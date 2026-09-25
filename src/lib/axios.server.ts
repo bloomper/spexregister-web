@@ -21,7 +21,7 @@ instance.interceptors.request.use(
                 config.headers.Authorization = `Bearer ${accessToken}`;
             }
 
-            config.headers.AcceptLanguage = await getLocale();
+            config.headers["Accept-Language"] = await getLocale();
         } catch (error) {
             console.warn("Axios server: Could not retrieve session for auth header", error);
         }

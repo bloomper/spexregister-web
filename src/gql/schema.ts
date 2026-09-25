@@ -503,7 +503,6 @@ export type Mutation = {
     newsCreate?: Maybe<News>;
     newsDelete?: Maybe<Scalars['Void']['output']>;
     newsUpdate?: Maybe<News>;
-    noOp?: Maybe<Scalars['Void']['output']>;
     restore?: Maybe<RestoreResult>;
     savedSearchCreate?: Maybe<SavedSearch>;
     savedSearchDelete?: Maybe<Scalars['Void']['output']>;
@@ -1075,7 +1074,6 @@ export type Query = {
     news?: Maybe<News>;
     newsExport?: Maybe<JobReference>;
     newsPaged?: Maybe<NewsConnection>;
-    noOp?: Maybe<Scalars['Void']['output']>;
     relatedRevisions?: Maybe<Array<Maybe<Revision>>>;
     restorePreview?: Maybe<RestorePreview>;
     revision?: Maybe<Revision>;
@@ -1852,11 +1850,14 @@ export type SpexareConnection = {
 };
 
 export type SpexareCreate = {
+    comment?: InputMaybe<Scalars['String']['input']>;
     deceased: Scalars['Boolean']['input'];
     firstName: Scalars['String']['input'];
+    graduation?: InputMaybe<Scalars['String']['input']>;
     lastName: Scalars['String']['input'];
     nickName?: InputMaybe<Scalars['String']['input']>;
     published: Scalars['Boolean']['input'];
+    socialSecurityNumber?: InputMaybe<Scalars['SocialSecurityNumber']['input']>;
 };
 
 export type SpexareEdge = {
@@ -1917,7 +1918,6 @@ export type State = {
 export type Subscription = {
     __typename?: 'Subscription';
     jobProgress?: Maybe<JobStatus>;
-    noOp?: Maybe<Scalars['Void']['output']>;
 };
 
 

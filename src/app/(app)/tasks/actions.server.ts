@@ -2,6 +2,7 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
+import {deleteEach} from "@/utils/utils.server";
 import {
     addCategory,
     create,
@@ -83,8 +84,11 @@ export async function deleteAction(id: string) {
 
 export async function bulkDeleteAction(ids: string[]) {
     await withPolicyAction(Policies.task.requireDelete, async () => {
-        await Promise.all(ids.map(id => del(id)));
-        revalidate();
+        try {
+            await deleteEach(ids, del);
+        } finally {
+            revalidate();
+        }
     });
 }
 

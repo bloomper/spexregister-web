@@ -60,3 +60,20 @@ export function resolveBackendUrl(url: string, baseUrl: string | undefined): URL
         return null;
     }
 }
+
+export async function deleteEach(ids: string[], del: (id: string) => Promise<unknown>): Promise<void> {
+    const failed: string[] = [];
+
+    for (const id of ids) {
+        try {
+            await del(id);
+        } catch (error) {
+            console.error(`Could not delete ${id}`, error);
+            failed.push(id);
+        }
+    }
+
+    if (failed.length > 0) {
+        throw new Error(`Could not delete ${failed.length} of ${ids.length}: ${failed.join(", ")}`);
+    }
+}

@@ -70,8 +70,15 @@ describe("runMutation", () => {
         await runMutation("m", {id: "1"}, auditReason("Rättade stavfel"));
 
         expect(mutation).toHaveBeenCalledWith("m", {id: "1"}, {
-            fetchOptions: {headers: {"X-Audit-Reason": "Rättade stavfel"}},
+            fetchOptions: {headers: {"X-Audit-Reason": "R%C3%A4ttade%20stavfel"}},
         });
+    });
+
+    it("percent-encodes a reason that a header could not carry", () => {
+        const header = auditReason("Massåtgärd – taggar → 3")?.fetchOptions as { headers: Record<string, string> };
+
+        expect(header.headers["X-Audit-Reason"]).toMatch(/^[\x20-\x7e]+$/);
+        expect(decodeURIComponent(header.headers["X-Audit-Reason"])).toBe("Massåtgärd – taggar → 3");
     });
 
     it("sends no header when there is no reason to give", async () => {

@@ -35,6 +35,22 @@ describe("proxy", () => {
         expect(response.headers.getSetCookie()).toContain(`${ACCOUNT_COOKIE}=refreshed; Path=/`);
     });
 
+    it("hands the rotated cookies to this request's own render", async () => {
+        getAccessTokenMock.mockResolvedValue({
+            headers: new Headers([
+                ["set-cookie", `${ACCOUNT_COOKIE}.0=rotated; Path=/`],
+                ["set-cookie", `${ACCOUNT_COOKIE}.1=; Max-Age=0; Path=/`],
+            ]),
+        });
+
+        const response = await proxy(request("/news", {cookie: `${ACCOUNT_COOKIE}.0=old; ${ACCOUNT_COOKIE}.1=stale; other=kept`}));
+        const forwarded = response.headers.get("x-middleware-request-cookie") ?? "";
+
+        expect(forwarded).toContain(`${ACCOUNT_COOKIE}.0=rotated`);
+        expect(forwarded).not.toContain(`${ACCOUNT_COOKIE}.1=`);
+        expect(forwarded).toContain("other=kept");
+    });
+
     // Better Auth rewrites the session and account cookies on these routes itself. A second,
     // independently-computed Set-Cookie set on the same response cannot be reconciled with it:
     // sign-out gets partly undone, and the OAuth callback can pair a new session with the
