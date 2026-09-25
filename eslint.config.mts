@@ -22,7 +22,7 @@ export default defineConfig([
         },
     },
     {
-        files: ["src/app/global-error.tsx"],
+        files: ["src/app/global-error.tsx", "src/app/(app)/error.tsx", "src/app/(app)/layout.tsx"],
         rules: {
             "@next/next/no-html-link-for-pages": "off",
         },

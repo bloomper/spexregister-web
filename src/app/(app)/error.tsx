@@ -2,7 +2,6 @@
 
 import {useEffect} from "react";
 import {useTranslations} from "next-intl";
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 
 export default function AppError({error, reset}: {
@@ -27,7 +26,7 @@ export default function AppError({error, reset}: {
                 <div className="flex justify-center gap-2 pt-2">
                     <Button onClick={() => reset()}>{t("Common.tryAgain")}</Button>
                     <Button variant="outline" nativeButton={false}
-                            render={<Link href="/api/auth/login"/>}>{t("Common.login")}</Button>
+                            render={<a href="/api/auth/login"/>}>{t("Common.login")}</Button>
                 </div>
             </div>
         </div>
