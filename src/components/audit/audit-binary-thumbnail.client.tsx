@@ -5,10 +5,6 @@ import {useTranslations} from "next-intl";
 import {AuditedType} from "@/gql/schema";
 import {auditBinaryUrl} from "@/utils/audit";
 
-/**
- * The audited binary as it was at one revision. Falls back to a plain "changed" when the bytes
- * cannot be rendered, which is the case for anything that is not an image.
- */
 export function AuditBinaryThumbnail({type, entityId, revision, field}: {
     type: AuditedType;
     entityId: string;

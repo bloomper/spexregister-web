@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useEffectEvent, useState} from "react";
 
 export function useLazyFull<T>(
     id: string | null | undefined,
@@ -9,8 +9,7 @@ export function useLazyFull<T>(
     const [full, setFull] = useState<T | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const loadRef = useRef(loadAction);
-    loadRef.current = loadAction;
+    const loadFull = useEffectEvent(loadAction);
 
     useEffect(() => {
         let cancelled = false;
@@ -26,7 +25,7 @@ export function useLazyFull<T>(
             setFull(null);
 
             try {
-                const data = await loadRef.current(id);
+                const data = await loadFull(id);
                 if (!cancelled) {
                     setFull(data ?? null);
                 }

@@ -177,7 +177,6 @@ export type RevisionFeedArgs = {
     type?: AuditedType | null;
     modifiedBy?: string[] | null;
     sources?: AuditSource[] | null;
-    /** Whole dates (`YYYY-MM-DD`), inclusive at both ends. */
     from?: string | null;
     to?: string | null;
     sinceInDays?: number | null;

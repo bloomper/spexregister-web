@@ -35,9 +35,7 @@ type RegistryEntry = {
     formId: string;
     labelOf: (item: QueueItem) => string;
     Form: (props: RenderArgs) => ReactNode;
-    // Fetch the full record before first render (used when the enqueued snapshot is summary-only).
     fetchFull?: (id: string) => Promise<{ id: string } | null | undefined>;
-    // Refetch the authoritative record by id (used to refresh the snapshot after a save).
     getById: (id: string) => Promise<{ id: string } | null | undefined>;
 };
 

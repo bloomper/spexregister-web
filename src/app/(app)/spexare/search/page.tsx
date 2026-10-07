@@ -39,17 +39,12 @@ export default async function SpexareSearchPage({
             getSavedSearches(),
         ]);
         const initialItems = page.edges.map((e) => e.node);
-        // Remounts the grid when a navigation changes the search, so the facet selection is
-        // re-seeded from the URL rather than kept from the previous render.
         const searchKey = `${q}::${toAggregationFilters(initialSelectedFacets).map((f) => `${f.name}=${f.value}`).join("&")}`;
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <SavedSearchBar savedSearches={savedSearches}/>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    {/* Always rendered, even with no hits: the grid owns the query and facet
-                        controls, so swapping it for a bare empty state would strand the user
-                        with no way to widen a search that matched nothing. */}
                     <SpexareGrid
                         key={searchKey}
                         countries={countries}

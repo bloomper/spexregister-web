@@ -9,6 +9,8 @@ services:
       args:
         - NEXT_PUBLIC_AUTH_URL=https://register.fgv.local.nu
         - NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=https://keycloak.fgv.local.nu:8443/auth/realms/fgv
+        - NEXT_PUBLIC_SUPPORT_EMAIL=${NEXT_PUBLIC_SUPPORT_EMAIL:-}
+        - NEXT_PUBLIC_FEEDBACK_EMAIL=${NEXT_PUBLIC_FEEDBACK_EMAIL:-}
     environment:
       - NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/caddy-root.crt
       - BETTER_AUTH_URL=https://register.fgv.local.nu

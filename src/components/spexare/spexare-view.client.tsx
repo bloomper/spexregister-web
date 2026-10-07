@@ -27,7 +27,6 @@ interface SpexareViewProps {
     showAudit?: boolean;
     isMe?: boolean;
     onRestored?: () => void;
-    /** Which tab to land on, when arriving from a link that knows what changed. */
     initialTab?: string | null;
 }
 

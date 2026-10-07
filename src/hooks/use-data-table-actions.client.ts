@@ -8,7 +8,7 @@ import {useTranslations} from "next-intl";
 export function useDataTableActions<T extends { id: string }>(
     deleteAction: (id: string) => Promise<unknown>,
     bulkDeleteAction?: (ids: string[]) => Promise<unknown>,
-    onSuccess?: () => void,
+    onSuccess?: (deleted?: T) => void,
 ) {
     const t = useTranslations();
     const router = useRouter();
@@ -29,7 +29,7 @@ export function useDataTableActions<T extends { id: string }>(
                 await deleteAction(deleteItem.id);
                 setDeleteItem(null);
                 toast.success(t("Common.deleteSuccess"));
-                onSuccess?.();
+                onSuccess?.(deleteItem);
                 router.refresh();
             } catch (error) {
                 void error;

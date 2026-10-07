@@ -1,6 +1,6 @@
 "use client";
 
-import {Controller, useForm} from "react-hook-form";
+import {Controller, useForm, useWatch} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {UserFormInput, UserFormOutput, userFormSchema} from "@/lib/user/schema";
 import {Authority, Spexare, State, User} from "@/gql/schema";
@@ -53,7 +53,6 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
         handleSubmit,
         control,
         setValue,
-        watch,
         formState: {errors, isDirty},
     } = useForm<UserFormInput, unknown, UserFormOutput>({
         resolver: zodResolver(userFormSchema),
@@ -65,7 +64,7 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
         },
     });
 
-    const selectedSpexareId = watch("spexareId");
+    const selectedSpexareId = useWatch({control, name: "spexareId"});
 
     const handleSpexareSearch = async (query: string) => {
         if (query.length < 2) {

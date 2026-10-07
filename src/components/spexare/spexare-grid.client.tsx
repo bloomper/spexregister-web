@@ -91,7 +91,6 @@ export function SpexareGrid({
 
     useDataRefresh(reset);
 
-    // `null` means the reader has not chosen yet, so an incoming change-log link still decides.
     const [selection, setSelection] = useState<{ id: string | null } | null>(null);
     const [editId, setEditId] = useState<string | null>(null);
     const deepLink = useDeepLink();

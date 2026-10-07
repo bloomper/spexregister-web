@@ -6,7 +6,7 @@ import {Label} from "@/components/ui/label";
 import {SidebarInput} from "@/components/ui/sidebar";
 import {useTranslations} from "next-intl";
 import {useRouter, useSearchParams} from "next/navigation";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 export function SpexareSearchForm({...props}: React.ComponentProps<"form">) {
     const t = useTranslations();
@@ -14,10 +14,12 @@ export function SpexareSearchForm({...props}: React.ComponentProps<"form">) {
     const searchParams = useSearchParams();
     const q = searchParams.get("q") || "";
     const [query, setQuery] = useState(q);
+    const [lastQ, setLastQ] = useState(q);
 
-    useEffect(() => {
+    if (lastQ !== q) {
+        setLastQ(q);
         setQuery(q);
-    }, [q]);
+    }
 
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();

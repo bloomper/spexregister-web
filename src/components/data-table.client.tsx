@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useEffectEvent, useRef, useState} from "react";
 import {RowSelectionState, SortingState, useTable} from "@tanstack/react-table";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
@@ -63,14 +63,14 @@ export function DataTable<TData extends { id: string }>({
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [filter, setFilter] = useState<string | undefined>(initialFilter);
     const [loading, setLoading] = useState(false);
-    const lastInitialData = useRef(initialData);
+    const [lastInitialData, setLastInitialData] = useState(initialData);
 
-    if (lastInitialData.current !== initialData) {
+    if (lastInitialData !== initialData) {
         setData(initialData.items);
         setPageInfo(initialData.pageInfo);
         setTotalCount(initialData.totalCount);
         setPageIndex(0);
-        lastInitialData.current = initialData;
+        setLastInitialData(initialData);
     }
 
     const getSortKey = useCallback(
@@ -134,12 +134,13 @@ export function DataTable<TData extends { id: string }>({
         void handleFetch({first: pageSize, filter: newFilter});
     }, [handleFetch, pageSize]);
 
-    const extraMetaRef = useRef(extraMeta);
-    extraMetaRef.current = extraMeta;
+    const publishHandlers = useEffectEvent((onRefresh: () => void, onFilter: (filter: string) => void) => {
+        extraMeta?.setRefresh?.(onRefresh);
+        extraMeta?.setFilter?.(onFilter);
+    });
 
     useEffect(() => {
-        extraMetaRef.current?.setRefresh?.(refresh);
-        extraMetaRef.current?.setFilter?.(handleFilterChange);
+        publishHandlers(refresh, handleFilterChange);
     }, [handleFilterChange, refresh]);
 
     const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
@@ -153,7 +154,6 @@ export function DataTable<TData extends { id: string }>({
             setPageIndex(0);
             void handleFetch({first: pageSize});
         } else if (direction === "last") {
-            // No cursor: the server resolves "the last page" from the total element count.
             setPageIndex(pageCount - 1);
             void handleFetch({last: pageSize});
         } else if (direction === "next" && pageInfo.endCursor) {
@@ -194,8 +194,6 @@ export function DataTable<TData extends { id: string }>({
         meta: extraMeta
     });
 
-    // Derived from the selection state rather than from the table instance: `useTable` hands back a
-    // new table object on every state change, so depending on it here would re-run every render.
     useEffect(() => {
         onSelectionChange?.(data.filter((item) => rowSelection[item.id]));
     }, [data, onSelectionChange, rowSelection]);

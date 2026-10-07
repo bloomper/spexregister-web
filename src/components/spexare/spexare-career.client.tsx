@@ -117,9 +117,7 @@ export function SpexareCareer({activities = []}: CareerProps) {
         return {
             spex: years.reduce((total, y) => total + y.spex.length, 0),
             activeYears: years.filter((y) => y.spex.length > 0).length,
-            // A single-year career is a year, not a period: no "2013-2013".
             span: from === to ? `${from}` : `${from}–${to}`,
-            // Distinct functions held, not how many times each was held.
             functions: new Set(tasks.map((task) => task.name)).size,
             roles: tasks.flatMap((task) => task.roles).length,
         };

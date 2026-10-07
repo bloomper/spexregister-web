@@ -8,19 +8,9 @@ import {cn} from "@/utils/utils";
 
 interface AuditDiffProps {
     changes: FieldChange[];
-    /** Owner of any change that does not name one itself. */
     type: AuditedType;
-    /**
-     * The entity whose timeline this is. Binary values are addressed here rather than at the field's
-     * owner, because that is where the backend authorizes the read and where it resolves a field
-     * living on a referenced entity.
-     */
     entityId: string;
     revision: number;
-    /**
-     * The revision holding a binary field's previous bytes. Only a full timeline can work that out,
-     * so without it an old image is named rather than shown.
-     */
     previousRevisionOf?: (change: FieldChange) => number | null;
     className?: string;
 }
@@ -32,11 +22,6 @@ function ownerOf(change: FieldChange, fallback: AuditedType): AuditedType {
     return change.type ?? fallback;
 }
 
-/**
- * One row per changed field, with before and after in their own columns so a long list can be
- * skimmed down a single edge instead of being read sentence by sentence. The columns stack on a
- * narrow screen, where the − and + markers carry the distinction on their own.
- */
 export function AuditDiff({changes, type, entityId, revision, previousRevisionOf, className}: AuditDiffProps) {
     const t = useTranslations();
 
@@ -54,8 +39,6 @@ export function AuditDiff({changes, type, entityId, revision, previousRevisionOf
         if (change.binary) {
             const binaryRevision = side === "new" ? revision : previousRevisionOf?.(change) ?? null;
 
-            // The value of a binary change is its content type, which is all there is to show when
-            // the bytes themselves are not addressable.
             return binaryRevision === null
                 ? <span className="font-mono text-[10px] text-muted-foreground">{value}</span>
                 : <AuditBinaryThumbnail type={type} entityId={entityId}

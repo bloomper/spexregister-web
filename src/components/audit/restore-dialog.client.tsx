@@ -73,8 +73,6 @@ export function RestoreDialog({id, type, revision, actions, onRestored}: Restore
     const handleConfirm = () => {
         startTransition(async () => {
             try {
-                // Phrased here rather than on the server so the change log records it in the
-                // language of whoever asked for the restore.
                 const reason = cascade
                     ? t("Audit.restoreReasonCascade", {revision})
                     : t("Audit.restoreReason", {revision});

@@ -101,7 +101,6 @@ export function SpexareTable({
         }
     );
 
-    // Arriving from a change-log entry, which links to a record that may not be on this page.
     useDeepLinkItem(getAction, setViewItem);
 
     const {full: viewFullItem, isLoading: isViewLoading} = useLazyFull(viewItem?.id ?? null, getAction);
@@ -256,8 +255,6 @@ export function SpexareTable({
                                 options={{tags, spex, tasks, types}}
                                 actions={{preview: bulkPreviewAction, apply: bulkApplyAction}}
                                 selectedIds={selectedRows.map(r => r.id)}
-                                // The live filter, not the debounced one the table has applied, so the
-                                // dialog acts on what the reader can currently see in the toolbar.
                                 filter={isFilterActive ? buildFilterString(filterQuery, selectedPublishedValues, selectedDeceasedValues) : null}
                             />
                         </div>

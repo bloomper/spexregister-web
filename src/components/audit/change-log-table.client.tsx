@@ -118,8 +118,6 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
                                     onClick={() => toggle(entry.revision)}
                                 >
                                     <TableCell>
-                                        {/* The row is clickable for convenience; this is what makes
-                                            it reachable by keyboard. */}
                                         <Button
                                             variant="ghost"
                                             size="icon"

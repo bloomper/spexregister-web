@@ -1,6 +1,6 @@
 "use client";
 
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useEffectEvent, useRef, useState} from "react";
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
 
 const EMPTY_ITEMS: never[] = [];
@@ -69,12 +69,16 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         String(initialPageInfo?.hasNextPage ?? ""),
     ].join("|");
     const seededSignatureRef = useRef<string | null>(null);
-    const initialItemsRef = useRef(initialItems);
-    const initialPageInfoRef = useRef(initialPageInfo);
-    const initialAfterRef = useRef(initialAfter);
-    initialItemsRef.current = initialItems;
-    initialPageInfoRef.current = initialPageInfo;
-    initialAfterRef.current = initialAfter;
+    const seed = useEffectEvent(() => {
+        setItems(initialItems);
+        if (initialPageInfo) {
+            setAfter(initialPageInfo.endCursor ?? null);
+            setHasNextPage(Boolean(initialPageInfo.hasNextPage));
+        } else {
+            setAfter(initialAfter ?? null);
+            setHasNextPage(true);
+        }
+    });
 
     useEffect(() => {
         if (seededSignatureRef.current === initialSignature) {
@@ -82,15 +86,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         }
         seededSignatureRef.current = initialSignature;
         generationRef.current += 1;
-
-        setItems(initialItemsRef.current);
-        if (initialPageInfoRef.current) {
-            setAfter(initialPageInfoRef.current.endCursor ?? null);
-            setHasNextPage(Boolean(initialPageInfoRef.current.hasNextPage));
-        } else {
-            setAfter(initialAfterRef.current ?? null);
-            setHasNextPage(true);
-        }
+        seed();
     }, [initialSignature]);
 
     const {ref: sentinelRef, inView} = useInView<HTMLDivElement>({rootMargin});
@@ -145,6 +141,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
 
     useEffect(() => {
         if (items.length === 0 && !loading && error === null && hasNextPage) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             void loadMore();
         }
     }, [items.length, loading, error, hasNextPage, loadMore]);
@@ -153,6 +150,7 @@ export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem
         if (!inView) {
             return;
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         void loadMore();
     }, [inView, loadMore]);
 

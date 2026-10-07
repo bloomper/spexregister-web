@@ -23,7 +23,6 @@ const SOURCE_VARIANTS: Record<AuditSource, "secondary" | "outline" | "destructiv
 
 const UNGROUPED = "__ungrouped__";
 
-/** Everything changed in one transaction belongs together; the aggregate it belongs to is the why. */
 function groupByTarget(entities: RevisionEntityChange[]) {
     const groups = new Map<string, { target: RevisionEntityChange["target"]; entities: RevisionEntityChange[] }>();
 

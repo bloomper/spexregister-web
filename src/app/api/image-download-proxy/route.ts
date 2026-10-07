@@ -37,8 +37,6 @@ export async function GET(request: NextRequest) {
             .trim()
             .toLowerCase();
 
-        // The backend echoes whatever type was stored with the file; anything but a raster image
-        // (text/html, image/svg+xml) would execute on this origin.
         if (!IMAGE_CONTENT_TYPES.has(contentType)) {
             return NextResponse.json({error: "Unsupported image type"}, {status: 415});
         }
