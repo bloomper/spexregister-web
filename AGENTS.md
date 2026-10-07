@@ -272,3 +272,8 @@ Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytic
 - `graphql` is on 17.x. `@0no-co/graphql.web` must stay **≥ 1.3.4**: earlier versions cap their
   optional peer range at `^16`, which makes npm install a second nested `graphql@16` under
   `@urql/core` and breaks `npm run typecheck` with `Kind.DOCUMENT` vs `"Document"` mismatches.
+- TypeScript runs **side by side**: `typescript` is aliased to `@typescript/typescript6` (the TS 6 JS
+  API, which typescript-eslint needs — its peer range stops at `<6.1`), and `@typescript/native` is
+  TS 7, which owns the `tsc` bin, so `npm run typecheck` is TS 7. `next build` resolves `typescript`
+  and checks with `tsc6`. Collapse to a plain `typescript@^7` once typescript-eslint supports the
+  TS 7.1 API (typescript-eslint#10940).
