@@ -14,6 +14,10 @@ vi.mock("next-intl", () => ({
     useLocale: () => "sv",
 }));
 
+vi.mock("@/auth", () => ({
+    auth: {api: {getSession: vi.fn(), getAccessToken: vi.fn()}},
+}));
+
 class MockIntersectionObserver implements IntersectionObserver {
     static instances: MockIntersectionObserver[] = [];
 
