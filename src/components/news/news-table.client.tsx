@@ -91,7 +91,6 @@ export function NewsTable({
         }
     );
 
-    // Arriving from a change-log entry, which links to a record that may not be on this page.
     useDeepLinkItem(getAction, setViewItem);
 
     const buildFilterString = (query: string, published: Set<string>) => {

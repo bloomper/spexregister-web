@@ -106,7 +106,6 @@ function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
     const hasInnerItems = !!item.items?.length;
     const isSubActive = Boolean(pathname === item.url || item.items?.some(inner => pathname === inner.url));
 
-    // Same controlled-open reasoning as NavMainItem above.
     const [subOpen, setSubOpen] = useState(isSubActive);
     const [wasSubActive, setWasSubActive] = useState(isSubActive);
 

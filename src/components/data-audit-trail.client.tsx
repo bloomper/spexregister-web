@@ -19,15 +19,10 @@ function ownerOf(revision: Revision, change: FieldChange) {
     };
 }
 
-/** Several entities can share a revision, so an entry is only identified by both together. */
 function keyOf(revision: Revision): string {
     return `${revision.type}-${revision.entityId}-${revision.revision}`;
 }
 
-/**
- * A timeline can cover several entities, so "latest" has to be resolved per entity rather than by
- * position in the list.
- */
 function latestFor(revisions: Revision[], revision: Revision): Revision | null {
     return revisions
         .filter((candidate) => candidate.type === revision.type && candidate.entityId === revision.entityId)
@@ -35,7 +30,6 @@ function latestFor(revisions: Revision[], revision: Revision): Revision | null {
             !newest || candidate.revision > newest.revision ? candidate : newest, null);
 }
 
-/** The revision at which this field last changed on the same entity, which holds its previous value. */
 function previousRevisionOf(revisions: Revision[], revision: Revision, change: FieldChange): number | null {
     const owner = ownerOf(revision, change);
     const older = revisions
@@ -62,12 +56,7 @@ interface AuditTrailProps {
     id: string;
     fetchAction: (id: string) => Promise<Revision[]>;
     restoreActions?: RestoreActions;
-    /** Narrows the timeline to changes of these properties, for a tab that shows only one of them. */
     fields?: string[];
-    /**
-     * Invoked once a restore has been applied. The surrounding dialog renders from a snapshot taken
-     * when it opened, so it has to be told that what it is showing is now out of date.
-     */
     onRestored?: () => void;
 }
 
@@ -79,6 +68,8 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
     const [hasLoaded, setHasLoaded] = useState(false);
     const [expanded, setExpanded] = useState<string | null>(null);
     const spansSeveralEntities = new Set(revisions.map((entry) => `${entry.type}-${entry.entityId}`)).size > 1;
+
+    const fieldsKey = fields?.join(",");
 
     const load = useCallback(() => {
         let cancelled = false;
@@ -111,11 +102,10 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
             cancelled = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, fields?.join(",")]);
+    }, [id, fieldsKey]);
 
     useEffect(() => load(), [load]);
 
-    // Nothing to show, and nothing to restore, so the section stays out of the way entirely.
     if (!hasLoaded || revisions.length === 0) {
         return null;
     }

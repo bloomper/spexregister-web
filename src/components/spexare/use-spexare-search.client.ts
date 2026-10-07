@@ -42,17 +42,12 @@ export function useSpexareSearch({
         if (previousInitialSearchQueryRef.current !== initialSearchQuery) {
             previousInitialSearchQueryRef.current = initialSearchQuery;
             skipNextResetRef.current = true;
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSearchValue(initialSearchQuery);
             setFilterQuery(initialSearchQuery);
-            // A fresh query arriving as a prop comes from a navigation whose URL carries no
-            // facet params, so the selection has to fall away with it or state and URL diverge.
             setSelectedFacets({});
         }
     }, [initialSearchQuery]);
 
-    // Mirror the whole search — query *and* facet selection — into the URL, so it survives a
-    // reload and can be shared or bookmarked.
     useEffect(() => {
         if (mode !== "search") {
             return;

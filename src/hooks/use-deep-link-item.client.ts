@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useEffectEvent, useState} from "react";
 import {useSearchParams} from "next/navigation";
 import {AUDIT_OPEN_PARAM, AUDIT_TAB_PARAM} from "@/utils/audit";
 
@@ -19,11 +19,8 @@ export function useDeepLinkItem<TItem extends { id: string }>(
 ) {
     const link = useDeepLink();
     const [isLoading, setIsLoading] = useState(false);
-    const onFoundRef = useRef(onFound);
-    const fetchRef = useRef(fetchById);
-
-    onFoundRef.current = onFound;
-    fetchRef.current = fetchById;
+    const fetchItem = useEffectEvent(fetchById);
+    const onItemFound = useEffectEvent(onFound);
 
     const id = link?.id ?? null;
     const tab = link?.tab ?? null;
@@ -39,10 +36,10 @@ export function useDeepLinkItem<TItem extends { id: string }>(
             setIsLoading(true);
 
             try {
-                const item = await fetchRef.current(linkedId);
+                const item = await fetchItem(linkedId);
 
                 if (!cancelled && item) {
-                    onFoundRef.current(item, tab);
+                    onItemFound(item, tab);
                 }
             } catch (e) {
                 console.error("Failed to open the linked record", e);

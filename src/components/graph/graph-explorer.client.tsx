@@ -43,6 +43,7 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
 
     useEffect(() => {
         reset();
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setResults([]);
         setQuery("");
         setOpenId(null);
@@ -236,8 +237,6 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
                             />
                         </div>
                         <GraphLegend present={new Set(state.nodes.map((node) => node.type))}/>
-                        {/* The library's own overlay is English-only, so it is switched off and
-                            replaced with this. */}
                         <p className="text-[11px] text-muted-foreground">{t("Explore.navHint")}</p>
                     </div>
                     <GraphNodeList

@@ -96,11 +96,6 @@ export function mergeNodes(state: GraphState, origin: LoadedNode, edge: GraphEdg
     };
 }
 
-/**
- * Undoes an expansion: drops the neighbours that hang off this node and nothing else, together with
- * the edges reaching them. A neighbour that is also attached elsewhere stays — it is part of the
- * rest of the graph now, and pulling it out would silently break paths the user built.
- */
 export function collapse(state: GraphState, id: string): GraphState {
     const degree = new Map<string, number>();
 

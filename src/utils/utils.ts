@@ -85,7 +85,6 @@ export function parseFacetParams(source: FacetParamSource): Record<string, Set<s
     return selected;
 }
 
-/** Writes a facet selection back onto `params`. Sorted, so the same selection is the same URL. */
 export function appendFacetParams(params: URLSearchParams, selectedFacets: Record<string, Set<string>>) {
     for (const id of Object.keys(selectedFacets).sort()) {
         for (const value of [...selectedFacets[id]].sort()) {
@@ -95,7 +94,6 @@ export function appendFacetParams(params: URLSearchParams, selectedFacets: Recor
     return params;
 }
 
-/** Flattens a facet selection into the backend's `[{name, value}]` aggregation filters. */
 export function toAggregationFilters(selectedFacets: Record<string, Set<string>>): { name: string; value: string }[] {
     return Object.keys(selectedFacets)
         .sort()

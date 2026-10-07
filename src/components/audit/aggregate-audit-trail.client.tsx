@@ -13,9 +13,6 @@ const restoreActions = {
     restore: restoreRevisionAction,
 };
 
-/**
- * The history of every entity of one kind belonging to a spexare, including those since removed.
- */
 export function AggregateAuditTrail({spexareId, relatedType, onRestored}: {
     spexareId: string;
     relatedType: AuditedType;

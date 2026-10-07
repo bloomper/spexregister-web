@@ -22,17 +22,12 @@ const NAMESPACES: Record<AuditedType, string> = {
     [AuditedType.Type]: "Audit.fields",
 };
 
-// The audited column holds the bytes while the form labels the rendered URL.
 const ALIASES: Record<string, string> = {
     logo: "logoUrl",
     poster: "posterUrl",
     image: "imageUrl",
 };
 
-/**
- * Where each audited type is looked at. Only aggregate roots appear: children reach the screen
- * through their root, and `SPEX_DETAILS` / `STATE` / `TYPE` have no screen of their own.
- */
 const ROUTES: Partial<Record<AuditedType, string>> = {
     [AuditedType.Spexare]: "/spexare",
     [AuditedType.News]: "/news/manage",
@@ -44,7 +39,6 @@ const ROUTES: Partial<Record<AuditedType, string>> = {
     [AuditedType.User]: "/users/manage",
 };
 
-/** Which tab of the spexare view holds the type that actually changed. */
 const SPEXARE_TABS: Partial<Record<AuditedType, string>> = {
     [AuditedType.Spexare]: "general",
     [AuditedType.Address]: "addresses",
@@ -60,10 +54,6 @@ const SPEXARE_TABS: Partial<Record<AuditedType, string>> = {
 export const AUDIT_OPEN_PARAM = "open";
 export const AUDIT_TAB_PARAM = "tab";
 
-/**
- * A link straight to the record an audit event concerns. `target` is the aggregate root to open;
- * `changedType` is what actually changed within it, which picks the tab to land on.
- */
 export function auditEntityHref(
     target: { type: AuditedType; id: string | number } | null | undefined,
     changedType?: AuditedType,
@@ -126,7 +116,6 @@ export function auditFieldLabel(t: Translator, type: AuditedType, field: string)
         }
     }
 
-    // A field nobody has translated yet should still not surface as a raw identifier.
     return humanize(field);
 }
 

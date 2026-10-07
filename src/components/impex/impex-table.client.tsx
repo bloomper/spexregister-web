@@ -37,10 +37,10 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
     const {deleteItem, setDeleteItem, isPending, handleDelete} = useDataTableActions<Job>(
         deleteAction,
         undefined,
-        () => {
+        (deleted) => {
             refreshRef.current?.();
 
-            if (viewItem && deleteItem && viewItem.id === deleteItem.id) {
+            if (viewItem && deleted && viewItem.id === deleted.id) {
                 setViewItem(null);
             }
         }

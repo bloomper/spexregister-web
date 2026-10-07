@@ -15,7 +15,6 @@ export type ChangeLogFilter = {
     type: string;
     authors: Set<string>;
     sources: Set<string>;
-    /** Whole dates (`YYYY-MM-DD`), inclusive at both ends; empty means unbounded. */
     from: string;
     to: string;
 };
