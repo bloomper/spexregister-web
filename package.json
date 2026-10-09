@@ -17,7 +17,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "gql-codegen": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --require dotenv/config --config codegen.ts dotenv_config_path=.env.local"
+    "gql-codegen": "NODE_TLS_REJECT_UNAUTHORIZED=0 DOTENV_PATH=.env.local graphql-codegen --require dotenv/config --config codegen.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -156,6 +156,7 @@ export type Analytics = {
 
 export enum AuditSource {
     Import = 'IMPORT',
+    Mcp = 'MCP',
     Restore = 'RESTORE',
     System = 'SYSTEM',
     Web = 'WEB'

@@ -139,7 +139,8 @@
       "WEB": "Redigering",
       "IMPORT": "Import",
       "RESTORE": "Återställning",
-      "SYSTEM": "Systemet"
+      "SYSTEM": "Systemet",
+      "MCP": "MCP"
     },
     "types": {
       "NEWS": "Nyhet",

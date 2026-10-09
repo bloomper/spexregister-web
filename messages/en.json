@@ -139,7 +139,8 @@
       "WEB": "Edit",
       "IMPORT": "Import",
       "RESTORE": "Restore",
-      "SYSTEM": "System"
+      "SYSTEM": "System",
+      "MCP": "MCP"
     },
     "types": {
       "NEWS": "News",
