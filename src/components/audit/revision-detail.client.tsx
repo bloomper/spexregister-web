@@ -19,6 +19,7 @@ const SOURCE_VARIANTS: Record<AuditSource, "secondary" | "outline" | "destructiv
     [AuditSource.Import]: "outline",
     [AuditSource.Restore]: "destructive",
     [AuditSource.System]: "outline",
+    [AuditSource.Mcp]: "outline",
 };
 
 const UNGROUPED = "__ungrouped__";
