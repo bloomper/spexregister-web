@@ -238,10 +238,10 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                                 />
                             }
                         >
-                            <div className="flex aspect-square size-10 items-center justify-center rounded-lg">
+                            <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded-lg group-data-[collapsible=icon]:size-8">
                                 <Logo/>
                             </div>
-                            <div className="min-w-0 flex-1 overflow-hidden">
+                            <div className="min-w-0 flex-1 overflow-hidden pl-4">
                                 <LogoText className="h-10 w-auto text-foreground"/>
                             </div>
                         </SidebarMenuButton>
