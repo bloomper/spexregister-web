@@ -114,10 +114,13 @@ changing routing or data fetching; this area differs sharply from older Next.
   Keycloak `end_session` URL via `appendLogoutParams` (`src/utils/auth.ts`).
 - Env: Better Auth reads only `AUTH_SECRET` (legacy alias), `BETTER_AUTH_SECRET`,
   `BETTER_AUTH_SECRETS`, `BETTER_AUTH_TRUSTED_ORIGINS` and `BETTER_AUTH_URL` — Auth.js's
-  `AUTH_URL` / `AUTH_TRUST_HOST` do nothing. `NEXT_PUBLIC_AUTH_URL` is inlined at build time (the browser needs it), so
-  **`BETTER_AUTH_URL` is the runtime override** that lets a built image
-  be retargeted without a rebuild; `src/auth.ts` prefers it. `NEXT_PUBLIC_AUTH_KEYCLOAK_ID` is
-  gone — only the server needs the client id now, because Better Auth builds the logout URL.
+  `AUTH_URL` / `AUTH_TRUST_HOST` do nothing. `NEXT_PUBLIC_AUTH_KEYCLOAK_ID` is gone — only the
+  server needs the client id now, because Better Auth builds the logout URL.
+- **No `NEXT_PUBLIC_*` variables.** They are inlined at build time, and one published image must
+  serve every environment. Read config on the server at request time (after `await connection()`
+  or another request-time API, so it isn't prerendered) and pass it to client components as
+  props — see the account URL in `src/app/(app)/layout.tsx` and the emails in the
+  `about`/`support` pages.
 
 ## Data layer
 

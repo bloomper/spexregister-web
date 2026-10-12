@@ -24,19 +24,6 @@ COPY next.config.ts .
 COPY tsconfig.json .
 COPY postcss.config.mjs .
 
-# Environment variables must be present at build time
-# https://github.com/vercel/next.js/discussions/14030
-ARG NEXT_PUBLIC_AUTH_URL
-ENV NEXT_PUBLIC_AUTH_URL=${NEXT_PUBLIC_AUTH_URL}
-ARG NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER
-ENV NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=${NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}
-ARG NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
-ARG NEXT_PUBLIC_SUPPORT_EMAIL
-ENV NEXT_PUBLIC_SUPPORT_EMAIL=${NEXT_PUBLIC_SUPPORT_EMAIL}
-ARG NEXT_PUBLIC_FEEDBACK_EMAIL
-ENV NEXT_PUBLIC_FEEDBACK_EMAIL=${NEXT_PUBLIC_FEEDBACK_EMAIL}
-
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at build time
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -66,12 +53,6 @@ USER nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-
-# Environment variables must be redefined at run time
-ARG NEXT_PUBLIC_AUTH_URL
-ENV NEXT_PUBLIC_AUTH_URL=${NEXT_PUBLIC_AUTH_URL}
-ARG NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER
-ENV NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=${NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}
 
 # Uncomment the following line to disable telemetry at run time
 ENV NEXT_TELEMETRY_DISABLED=1

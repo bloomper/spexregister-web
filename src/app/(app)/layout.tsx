@@ -77,14 +77,16 @@ export default async function AppLayout({children}: { children: React.ReactNode 
         );
     }
 
+    const accountUrl = `${(process.env.AUTH_KEYCLOAK_ISSUER ?? "").replace(/\/$/, "")}/account`;
+
     return (
         <div className="[--header-height:calc(--spacing(14))]">
             <RolesProvider roles={roles}>
                 <SidebarProvider className="flex flex-col">
                     <SiteHeader/>
                     <div className="flex flex-1">
-                        <Suspense fallback={<AppSidebar roles={roles} spexare={undefined}/>}>
-                            <SidebarWithUser roles={roles}/>
+                        <Suspense fallback={<AppSidebar roles={roles} spexare={undefined} accountUrl={accountUrl}/>}>
+                            <SidebarWithUser roles={roles} accountUrl={accountUrl}/>
                         </Suspense>
                         <SidebarInset>
                             {children}
@@ -96,13 +98,14 @@ export default async function AppLayout({children}: { children: React.ReactNode 
     );
 }
 
-async function SidebarWithUser({roles}: { roles: Role[] }) {
+async function SidebarWithUser({roles, accountUrl}: { roles: Role[]; accountUrl: string }) {
     const mySpexare = await getMine();
 
     return (
         <AppSidebar
             roles={roles}
             spexare={mySpexare}
+            accountUrl={accountUrl}
         />
     );
 }

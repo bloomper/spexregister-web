@@ -36,7 +36,7 @@ function getInitials(name?: string | null | undefined, email?: string | null | u
     return (first + last).toUpperCase();
 }
 
-export function NavUser({spexare}: { spexare?: Spexare | null }) {
+export function NavUser({spexare, accountUrl}: { spexare?: Spexare | null; accountUrl: string }) {
     const {isMobile} = useSidebar();
     const t = useTranslations();
     const locale = useLocale();
@@ -47,8 +47,6 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
     const initials = useMemo(() => getInitials(user?.name, user?.email), [user?.name, user?.email]);
     const [avatarFailed, setAvatarFailed] = useState(false);
     const avatarSrc = !avatarFailed && user?.image ? user.image : undefined;
-
-    const accountUrl = `${process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}/account`;
 
     if (spexare === undefined) {
         return (
@@ -145,7 +143,7 @@ export function NavUser({spexare}: { spexare?: Spexare | null }) {
                                 window.location.assign(
                                     data?.url
                                         ? appendLogoutParams(data.url, locale, themeParam)
-                                        : process.env.NEXT_PUBLIC_AUTH_URL ?? "/"
+                                        : "/"
                                 );
                             }}
                         >

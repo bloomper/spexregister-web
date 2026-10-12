@@ -5,7 +5,7 @@ import {genericOAuth, type GenericOAuthUserInfo, keycloak} from "better-auth/plu
 import {nextCookies} from "better-auth/next-js";
 import {gravatarImageUrl} from "@/lib/gravatar.server";
 
-const appUrl = process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_AUTH_URL;
+const appUrl = process.env.BETTER_AUTH_URL;
 
 const issuer = (process.env.AUTH_KEYCLOAK_ISSUER ?? "").replace(/\/$/, "");
 const endpoint = (name: string) => `${issuer}/protocol/openid-connect/${name}`;
