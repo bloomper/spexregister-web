@@ -55,9 +55,10 @@ interface NavSecondaryItem extends Omit<NavItem, "icon"> {
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     roles: Role[];
     spexare?: Spexare | null;
+    accountUrl: string;
 }
 
-export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
+export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarProps) {
     const pathname = usePathname();
     const t = useTranslations();
     const isClient = useIsClient();
@@ -267,7 +268,7 @@ export function AppSidebar({roles, spexare, ...props}: AppSidebarProps) {
                 )}
             </SidebarContent>
             <SidebarFooter>
-                {isClient && <NavUser spexare={spexare}/>}
+                {isClient && <NavUser spexare={spexare} accountUrl={accountUrl}/>}
             </SidebarFooter>
         </Sidebar>
     );

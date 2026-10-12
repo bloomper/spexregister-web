@@ -8,9 +8,7 @@ const appEnv: Record<string, string> = {
     AUTH_KEYCLOAK_ISSUER: `http://localhost:${MOCK_PORT}/realms/e2e`,
     API_GRAPHQL_ENDPOINT: `http://localhost:${MOCK_PORT}/api/graphql`,
     API_REST_BASE_URL: `http://localhost:${MOCK_PORT}`,
-    NEXT_PUBLIC_AUTH_URL: BASE_URL,
-    NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER: `http://localhost:${MOCK_PORT}/realms/e2e`,
-    NEXT_PUBLIC_API_BASE_URL: `http://localhost:${MOCK_PORT}/api`,
+    BETTER_AUTH_URL: BASE_URL,
 };
 
 export default defineConfig({

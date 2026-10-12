@@ -61,6 +61,23 @@ docker-compose up --build
 The application will be accessible via the configured hostnames (e.g., `https://register.fgv.local.nu` if your hosts
 file is configured).
 
+### Published images
+
+CI publishes `bloomper/spexregister-web` for `linux/amd64`:
+
+| Trigger              | Tags                              |
+|----------------------|-----------------------------------|
+| push to `develop`    | `develop`, `sha-<commit>`         |
+| push of tag `vX.Y.Z` | `X.Y.Z`, `latest`, `sha-<commit>` |
+
+To release, set `version` in `package.json` to `X.Y.Z`, merge to `main`, then
+`git tag vX.Y.Z && git push origin vX.Y.Z`. The publish fails if the tag doesn't match the version or if `X.Y.Z` is
+already on Docker Hub.
+
+The image contains no environment-specific values. All configuration is read at runtime: `BETTER_AUTH_URL`,
+`AUTH_SECRET`, `AUTH_KEYCLOAK_ID`, `AUTH_KEYCLOAK_SECRET`, `AUTH_KEYCLOAK_ISSUER`, `API_GRAPHQL_ENDPOINT`,
+`API_REST_BASE_URL`, `SUPPORT_EMAIL`, `FEEDBACK_EMAIL`, `SUPPORTED_LOCALES` and `DEFAULT_LOCALE`.
+
 ## Building and Deployment
 
 ### Production Build
