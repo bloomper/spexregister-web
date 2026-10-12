@@ -12,7 +12,7 @@ test("authenticated dashboard renders the headline totals", async ({page}) => {
 
     // "Nyuppsättningar" (spex revivals) and the per-card footer are unique to the stats block.
     await expect(page.getByText("Nyuppsättningar")).toBeVisible();
-    await expect(page.getByText("Visar data för de senaste tre åren").first()).toBeVisible();
+    await expect(page.getByText("Nya spexare per debutår, 2024–2025")).toBeVisible();
 
     // The spexare stat card shows its count (3, from the mock's statistics fixture).
     const spexareCard = page.locator('[data-slot="card"]').filter({hasText: "Nyuppsättningar"});

@@ -3,19 +3,22 @@
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-import { AuditedType } from './schema';
-import { AuditSource } from './schema';
-import { BulkOutcome } from './schema';
-import { GraphEdgeType } from './schema';
-import { GraphNodeType } from './schema';
-import { ImpexType } from './schema';
-import { ReportType } from './schema';
-import { RestoreAction } from './schema';
-import { RevisionType } from './schema';
-import { SortDirection } from './schema';
-import { SpexareBulkOperation } from './schema';
-import { TypeType } from './schema';
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import {
+  AuditedType,
+  AuditSource,
+  BulkOutcome,
+  GraphEdgeType,
+  GraphNodeType,
+  ImpexType,
+  ReportType,
+  RestoreAction,
+  RevisionType,
+  SortDirection,
+  SpexareBulkOperation,
+  TypeType
+} from './schema';
+import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/core';
+
 export type ActorCreate = {
   role?: string | null | undefined;
 };
@@ -235,19 +238,155 @@ export type UserUpdate = {
 
 export type BucketFieldsFragment = { key: string, label: string, count: any, facet: string | null };
 
-export type TotalsFieldsFragment = { spexareCount: any, userCount: any, spexCount: any, spexRevivalCount: any, taskCount: any, spexareCountHistory: Array<{ label: string, count: any }>, userCountHistory: Array<{ label: string, count: any }>, spexCountHistory: Array<{ label: string, count: any }>, spexRevivalCountHistory: Array<{ label: string, count: any }>, taskCountHistory: Array<{ label: string, count: any }> };
+export type TotalsFieldsFragment = {
+  spexareCount: any,
+  userCount: any,
+  spexCount: any,
+  spexRevivalCount: any,
+  taskCount: any,
+  spexareCountHistory: Array<{ label: string, count: any }>,
+  userCountHistory: Array<{ label: string, count: any }>,
+  spexCountHistory: Array<{ label: string, count: any }>,
+  spexRevivalCountHistory: Array<{ label: string, count: any }>,
+  taskCountByCategory: Array<{ key: string, label: string, count: any, facet: string | null }>
+};
 
-export type AnalyticsFieldsFragment = { totals: { spexareCount: any, userCount: any, spexCount: any, spexRevivalCount: any, taskCount: any, spexareCountHistory: Array<{ label: string, count: any }>, userCountHistory: Array<{ label: string, count: any }>, spexCountHistory: Array<{ label: string, count: any }>, spexRevivalCountHistory: Array<{ label: string, count: any }>, taskCountHistory: Array<{ label: string, count: any }> }, participation: { bySpexYear: Array<{ key: string, label: string, count: any, facet: string | null }>, bySpexCategory: Array<{ key: string, label: string, count: any, facet: string | null }>, topSpex: Array<{ key: string, label: string, count: any, facet: string | null }>, byTaskCategory: Array<{ key: string, label: string, count: any, facet: string | null }>, topTask: Array<{ key: string, label: string, count: any, facet: string | null }>, byVocal: Array<{ key: string, label: string, count: any, facet: string | null }> }, demographics: { byCountry: Array<{ key: string, label: string, count: any, facet: string | null }>, byAddressType: Array<{ key: string, label: string, count: any, facet: string | null }>, byMembership: Array<{ key: string, label: string, count: any, facet: string | null }>, byTag: Array<{ key: string, label: string, count: any, facet: string | null }>, byToggle: Array<{ key: string, label: string, count: any, facet: string | null }>, byStatus: Array<{ key: string, label: string, count: any, facet: string | null }>, consentCompletion: Array<{ key: string, label: string, granted: any, denied: any, missing: any }> }, lifecycle: { oneTimers: any, returning: any, veterans: any, neverActive: any, newcomersByYear: Array<{ key: string, label: string, count: any, facet: string | null }>, lastActiveByYear: Array<{ key: string, label: string, count: any, facet: string | null }>, byEngagement: Array<{ key: string, label: string, count: any, facet: string | null }>, byDormancy: Array<{ key: string, label: string, count: any, facet: string | null }> }, dataQuality: { total: any, complete: any, issues: Array<{ key: string, label: string, count: any, facet: string | null }> } | null, operations: { usersWithoutSpexare: any, spexareWithoutUser: any, usersByState: Array<{ key: string, label: string, count: any, facet: string | null }>, revisionsByMonth: Array<{ key: string, label: string, count: any, facet: string | null }>, revisionsBySource: Array<{ key: string, label: string, count: any, facet: string | null }>, topEditors: Array<{ key: string, label: string, count: any, facet: string | null }> } | null };
+export type AnalyticsFieldsFragment = {
+  totals: {
+    spexareCount: any,
+    userCount: any,
+    spexCount: any,
+    spexRevivalCount: any,
+    taskCount: any,
+    spexareCountHistory: Array<{ label: string, count: any }>,
+    userCountHistory: Array<{ label: string, count: any }>,
+    spexCountHistory: Array<{ label: string, count: any }>,
+    spexRevivalCountHistory: Array<{ label: string, count: any }>,
+    taskCountByCategory: Array<{ key: string, label: string, count: any, facet: string | null }>
+  },
+  participation: {
+    bySpexYear: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    bySpexCategory: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    topSpex: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byTaskCategory: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    topTask: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byVocal: Array<{ key: string, label: string, count: any, facet: string | null }>
+  },
+  demographics: {
+    byCountry: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byAddressType: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byMembership: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byTag: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byToggle: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byStatus: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    consentCompletion: Array<{ key: string, label: string, granted: any, denied: any, missing: any }>
+  },
+  lifecycle: {
+    oneTimers: any,
+    returning: any,
+    veterans: any,
+    neverActive: any,
+    newcomersByYear: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    lastActiveByYear: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byEngagement: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    byDormancy: Array<{ key: string, label: string, count: any, facet: string | null }>
+  },
+  dataQuality: {
+    total: any,
+    complete: any,
+    issues: Array<{ key: string, label: string, count: any, facet: string | null }>
+  } | null,
+  operations: {
+    usersWithoutSpexare: any,
+    spexareWithoutUser: any,
+    usersByState: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    revisionsByMonth: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    revisionsBySource: Array<{ key: string, label: string, count: any, facet: string | null }>,
+    topEditors: Array<{ key: string, label: string, count: any, facet: string | null }>
+  } | null
+};
 
 export type AnalyticsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AnalyticsQuery = { analytics: { totals: { spexareCount: any, userCount: any, spexCount: any, spexRevivalCount: any, taskCount: any, spexareCountHistory: Array<{ label: string, count: any }>, userCountHistory: Array<{ label: string, count: any }>, spexCountHistory: Array<{ label: string, count: any }>, spexRevivalCountHistory: Array<{ label: string, count: any }>, taskCountHistory: Array<{ label: string, count: any }> }, participation: { bySpexYear: Array<{ key: string, label: string, count: any, facet: string | null }>, bySpexCategory: Array<{ key: string, label: string, count: any, facet: string | null }>, topSpex: Array<{ key: string, label: string, count: any, facet: string | null }>, byTaskCategory: Array<{ key: string, label: string, count: any, facet: string | null }>, topTask: Array<{ key: string, label: string, count: any, facet: string | null }>, byVocal: Array<{ key: string, label: string, count: any, facet: string | null }> }, demographics: { byCountry: Array<{ key: string, label: string, count: any, facet: string | null }>, byAddressType: Array<{ key: string, label: string, count: any, facet: string | null }>, byMembership: Array<{ key: string, label: string, count: any, facet: string | null }>, byTag: Array<{ key: string, label: string, count: any, facet: string | null }>, byToggle: Array<{ key: string, label: string, count: any, facet: string | null }>, byStatus: Array<{ key: string, label: string, count: any, facet: string | null }>, consentCompletion: Array<{ key: string, label: string, granted: any, denied: any, missing: any }> }, lifecycle: { oneTimers: any, returning: any, veterans: any, neverActive: any, newcomersByYear: Array<{ key: string, label: string, count: any, facet: string | null }>, lastActiveByYear: Array<{ key: string, label: string, count: any, facet: string | null }>, byEngagement: Array<{ key: string, label: string, count: any, facet: string | null }>, byDormancy: Array<{ key: string, label: string, count: any, facet: string | null }> }, dataQuality: { total: any, complete: any, issues: Array<{ key: string, label: string, count: any, facet: string | null }> } | null, operations: { usersWithoutSpexare: any, spexareWithoutUser: any, usersByState: Array<{ key: string, label: string, count: any, facet: string | null }>, revisionsByMonth: Array<{ key: string, label: string, count: any, facet: string | null }>, revisionsBySource: Array<{ key: string, label: string, count: any, facet: string | null }>, topEditors: Array<{ key: string, label: string, count: any, facet: string | null }> } | null } | null };
+export type AnalyticsQuery = {
+  analytics: {
+    totals: {
+      spexareCount: any,
+      userCount: any,
+      spexCount: any,
+      spexRevivalCount: any,
+      taskCount: any,
+      spexareCountHistory: Array<{ label: string, count: any }>,
+      userCountHistory: Array<{ label: string, count: any }>,
+      spexCountHistory: Array<{ label: string, count: any }>,
+      spexRevivalCountHistory: Array<{ label: string, count: any }>,
+      taskCountByCategory: Array<{ key: string, label: string, count: any, facet: string | null }>
+    },
+    participation: {
+      bySpexYear: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      bySpexCategory: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      topSpex: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byTaskCategory: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      topTask: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byVocal: Array<{ key: string, label: string, count: any, facet: string | null }>
+    },
+    demographics: {
+      byCountry: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byAddressType: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byMembership: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byTag: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byToggle: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byStatus: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      consentCompletion: Array<{ key: string, label: string, granted: any, denied: any, missing: any }>
+    },
+    lifecycle: {
+      oneTimers: any,
+      returning: any,
+      veterans: any,
+      neverActive: any,
+      newcomersByYear: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      lastActiveByYear: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byEngagement: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      byDormancy: Array<{ key: string, label: string, count: any, facet: string | null }>
+    },
+    dataQuality: {
+      total: any,
+      complete: any,
+      issues: Array<{ key: string, label: string, count: any, facet: string | null }>
+    } | null,
+    operations: {
+      usersWithoutSpexare: any,
+      spexareWithoutUser: any,
+      usersByState: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      revisionsByMonth: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      revisionsBySource: Array<{ key: string, label: string, count: any, facet: string | null }>,
+      topEditors: Array<{ key: string, label: string, count: any, facet: string | null }>
+    } | null
+  } | null
+};
 
 export type AnalyticsSummaryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AnalyticsSummaryQuery = { analytics: { totals: { spexareCount: any, userCount: any, spexCount: any, spexRevivalCount: any, taskCount: any, spexareCountHistory: Array<{ label: string, count: any }>, userCountHistory: Array<{ label: string, count: any }>, spexCountHistory: Array<{ label: string, count: any }>, spexRevivalCountHistory: Array<{ label: string, count: any }>, taskCountHistory: Array<{ label: string, count: any }> }, participation: { bySpexYear: Array<{ key: string, label: string, count: any, facet: string | null }> }, dataQuality: { issues: Array<{ key: string, label: string, count: any, facet: string | null }> } | null } | null };
+export type AnalyticsSummaryQuery = {
+  analytics: {
+    totals: {
+      spexareCount: any,
+      userCount: any,
+      spexCount: any,
+      spexRevivalCount: any,
+      taskCount: any,
+      spexareCountHistory: Array<{ label: string, count: any }>,
+      userCountHistory: Array<{ label: string, count: any }>,
+      spexCountHistory: Array<{ label: string, count: any }>,
+      spexRevivalCountHistory: Array<{ label: string, count: any }>,
+      taskCountByCategory: Array<{ key: string, label: string, count: any, facet: string | null }>
+    },
+    participation: { bySpexYear: Array<{ key: string, label: string, count: any, facet: string | null }> },
+    dataQuality: { issues: Array<{ key: string, label: string, count: any, facet: string | null }> } | null
+  } | null
+};
 
 export type RevisionsQueryVariables = Exact<{
   type: AuditedType;
@@ -1374,9 +1513,364 @@ export type StatesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type StatesQuery = { states: Array<{ id: string, label: string } | null> | null };
 
-export const TotalsFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TotalsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Totals"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spexareCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexareCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userCount"}},{"kind":"Field","name":{"kind":"Name","value":"userCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexRevivalCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexRevivalCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]} as unknown as DocumentNode<TotalsFieldsFragment, unknown>;
 export const BucketFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BucketFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Bucket"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}}]} as unknown as DocumentNode<BucketFieldsFragment, unknown>;
-export const AnalyticsFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AnalyticsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Analytics"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totals"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TotalsFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"participation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bySpexYear"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bySpexCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"topSpex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byTaskCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"topTask"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byVocal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"demographics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"byCountry"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byAddressType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byMembership"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byTag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byToggle"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byStatus"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"consentCompletion"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"granted"}},{"kind":"Field","name":{"kind":"Name","value":"denied"}},{"kind":"Field","name":{"kind":"Name","value":"missing"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"lifecycle"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newcomersByYear"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastActiveByYear"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byEngagement"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byDormancy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"oneTimers"}},{"kind":"Field","name":{"kind":"Name","value":"returning"}},{"kind":"Field","name":{"kind":"Name","value":"veterans"}},{"kind":"Field","name":{"kind":"Name","value":"neverActive"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dataQuality"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"issues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"complete"}}]}},{"kind":"Field","name":{"kind":"Name","value":"operations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usersByState"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"usersWithoutSpexare"}},{"kind":"Field","name":{"kind":"Name","value":"spexareWithoutUser"}},{"kind":"Field","name":{"kind":"Name","value":"revisionsByMonth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"revisionsBySource"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"topEditors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TotalsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Totals"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spexareCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexareCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userCount"}},{"kind":"Field","name":{"kind":"Name","value":"userCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexRevivalCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexRevivalCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BucketFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Bucket"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}}]} as unknown as DocumentNode<AnalyticsFieldsFragment, unknown>;
+export const TotalsFieldsFragmentDoc = {
+  "kind": "Document", "definitions": [{
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "TotalsFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Totals"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "spexareCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexareCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "userCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "userCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "spexCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "spexRevivalCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexRevivalCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "taskCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "taskCountByCategory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+        }
+      }]
+    }
+  }, {
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "BucketFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Bucket"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "key"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "label"}
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "count"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "facet"}
+      }]
+    }
+  }]
+} as unknown as DocumentNode<TotalsFieldsFragment, unknown>;
+export const AnalyticsFieldsFragmentDoc = {
+  "kind": "Document", "definitions": [{
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "AnalyticsFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Analytics"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "totals"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "TotalsFields"}}]
+        }
+      }, {
+        "kind": "Field", "name": {"kind": "Name", "value": "participation"}, "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "bySpexYear"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "bySpexCategory"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "topSpex"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byTaskCategory"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "topTask"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byVocal"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }]
+        }
+      }, {
+        "kind": "Field", "name": {"kind": "Name", "value": "demographics"}, "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byCountry"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byAddressType"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byMembership"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byTag"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byToggle"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byStatus"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "consentCompletion"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "key"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "label"}
+              }, {"kind": "Field", "name": {"kind": "Name", "value": "granted"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "denied"}
+              }, {"kind": "Field", "name": {"kind": "Name", "value": "missing"}}]
+            }
+          }]
+        }
+      }, {
+        "kind": "Field", "name": {"kind": "Name", "value": "lifecycle"}, "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "newcomersByYear"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "lastActiveByYear"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byEngagement"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byDormancy"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "oneTimers"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "returning"}
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "veterans"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "neverActive"}
+          }]
+        }
+      }, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "dataQuality"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "total"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "issues"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "complete"}}]
+        }
+      }, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "operations"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "usersByState"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "usersWithoutSpexare"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "spexareWithoutUser"}
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "revisionsByMonth"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "revisionsBySource"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "topEditors"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }]
+        }
+      }]
+    }
+  }, {
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "BucketFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Bucket"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "key"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "label"}
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "count"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "facet"}
+      }]
+    }
+  }, {
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "TotalsFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Totals"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "spexareCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexareCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "userCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "userCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "spexCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "spexRevivalCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexRevivalCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "taskCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "taskCountByCategory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+        }
+      }]
+    }
+  }]
+} as unknown as DocumentNode<AnalyticsFieldsFragment, unknown>;
 export const GraphNodeFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GraphNodeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GraphNode"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"sublabel"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"revival"}},{"kind":"Field","name":{"kind":"Name","value":"entityId"}}]}}]} as unknown as DocumentNode<GraphNodeFieldsFragment, unknown>;
 export const JobStatusFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"JobStatusFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"JobStatus"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"exitStatus"}}]}}]} as unknown as DocumentNode<JobStatusFieldsFragment, unknown>;
 export const JobFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"JobFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Job"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"exitStatus"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"startedAt"}},{"kind":"Field","name":{"kind":"Name","value":"finishedAt"}},{"kind":"Field","name":{"kind":"Name","value":"hasDownload"}},{"kind":"Field","name":{"kind":"Name","value":"importResult"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"errors"}},{"kind":"Field","name":{"kind":"Name","value":"messages"}},{"kind":"Field","name":{"kind":"Name","value":"data"}}]}}]}}]} as unknown as DocumentNode<JobFieldsFragment, unknown>;
@@ -1420,8 +1914,429 @@ export const TaskSummaryFragmentDoc = {"kind":"Document","definitions":[{"kind":
 export const TaskFullFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskFull"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Task"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TaskSummary"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"lastModifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastModifiedBy"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskSummary"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Task"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"actorPresent"}}]}}]}}]} as unknown as DocumentNode<TaskFullFragment, unknown>;
 export const UserSummaryFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserSummary"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"externalId"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"authorities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"state"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexare"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"nickName"}}]}}]}}]} as unknown as DocumentNode<UserSummaryFragment, unknown>;
 export const UserFullFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserFull"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserSummary"}},{"kind":"Field","name":{"kind":"Name","value":"temporaryPassword"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"lastModifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastModifiedBy"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserSummary"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"externalId"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"authorities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"state"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexare"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"nickName"}}]}}]}}]} as unknown as DocumentNode<UserFullFragment, unknown>;
-export const AnalyticsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Analytics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"analytics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AnalyticsFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TotalsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Totals"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spexareCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexareCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userCount"}},{"kind":"Field","name":{"kind":"Name","value":"userCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexRevivalCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexRevivalCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BucketFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Bucket"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AnalyticsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Analytics"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totals"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TotalsFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"participation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bySpexYear"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bySpexCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"topSpex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byTaskCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"topTask"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byVocal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"demographics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"byCountry"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byAddressType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byMembership"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byTag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byToggle"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byStatus"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"consentCompletion"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"granted"}},{"kind":"Field","name":{"kind":"Name","value":"denied"}},{"kind":"Field","name":{"kind":"Name","value":"missing"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"lifecycle"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newcomersByYear"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastActiveByYear"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byEngagement"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"byDormancy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"oneTimers"}},{"kind":"Field","name":{"kind":"Name","value":"returning"}},{"kind":"Field","name":{"kind":"Name","value":"veterans"}},{"kind":"Field","name":{"kind":"Name","value":"neverActive"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dataQuality"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"issues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"complete"}}]}},{"kind":"Field","name":{"kind":"Name","value":"operations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usersByState"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"usersWithoutSpexare"}},{"kind":"Field","name":{"kind":"Name","value":"spexareWithoutUser"}},{"kind":"Field","name":{"kind":"Name","value":"revisionsByMonth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"revisionsBySource"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"topEditors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}}]}}]}}]} as unknown as DocumentNode<AnalyticsQuery, AnalyticsQueryVariables>;
-export const AnalyticsSummaryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AnalyticsSummary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"analytics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totals"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TotalsFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"participation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bySpexYear"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"dataQuality"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"issues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BucketFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TotalsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Totals"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spexareCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexareCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userCount"}},{"kind":"Field","name":{"kind":"Name","value":"userCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"spexRevivalCount"}},{"kind":"Field","name":{"kind":"Name","value":"spexRevivalCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskCountHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BucketFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Bucket"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}}]} as unknown as DocumentNode<AnalyticsSummaryQuery, AnalyticsSummaryQueryVariables>;
+export const AnalyticsDocument = {
+  "kind": "Document",
+  "definitions": [{
+    "kind": "OperationDefinition",
+    "operation": "query",
+    "name": {"kind": "Name", "value": "Analytics"},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "analytics"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "AnalyticsFields"}}]
+        }
+      }]
+    }
+  }, {
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "BucketFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Bucket"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "key"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "label"}
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "count"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "facet"}
+      }]
+    }
+  }, {
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "TotalsFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Totals"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "spexareCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexareCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "userCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "userCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "spexCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "spexRevivalCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexRevivalCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "taskCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "taskCountByCategory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+        }
+      }]
+    }
+  }, {
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "AnalyticsFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Analytics"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "totals"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "TotalsFields"}}]
+        }
+      }, {
+        "kind": "Field", "name": {"kind": "Name", "value": "participation"}, "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "bySpexYear"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "bySpexCategory"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "topSpex"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byTaskCategory"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "topTask"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byVocal"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }]
+        }
+      }, {
+        "kind": "Field", "name": {"kind": "Name", "value": "demographics"}, "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byCountry"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byAddressType"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byMembership"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byTag"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byToggle"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byStatus"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "consentCompletion"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "key"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "label"}
+              }, {"kind": "Field", "name": {"kind": "Name", "value": "granted"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "denied"}
+              }, {"kind": "Field", "name": {"kind": "Name", "value": "missing"}}]
+            }
+          }]
+        }
+      }, {
+        "kind": "Field", "name": {"kind": "Name", "value": "lifecycle"}, "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "newcomersByYear"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "lastActiveByYear"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byEngagement"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "byDormancy"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "oneTimers"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "returning"}
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "veterans"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "neverActive"}
+          }]
+        }
+      }, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "dataQuality"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "total"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "issues"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "complete"}}]
+        }
+      }, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "operations"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "usersByState"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "usersWithoutSpexare"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "spexareWithoutUser"}
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "revisionsByMonth"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "revisionsBySource"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "topEditors"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+            }
+          }]
+        }
+      }]
+    }
+  }]
+} as unknown as DocumentNode<AnalyticsQuery, AnalyticsQueryVariables>;
+export const AnalyticsSummaryDocument = {
+  "kind": "Document", "definitions": [{
+    "kind": "OperationDefinition",
+    "operation": "query",
+    "name": {"kind": "Name", "value": "AnalyticsSummary"},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "analytics"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "totals"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "TotalsFields"}}]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "participation"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "bySpexYear"},
+                "selectionSet": {
+                  "kind": "SelectionSet",
+                  "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+                }
+              }]
+            }
+          }, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "dataQuality"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "issues"},
+                "selectionSet": {
+                  "kind": "SelectionSet",
+                  "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+                }
+              }]
+            }
+          }]
+        }
+      }]
+    }
+  }, {
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "BucketFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Bucket"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "key"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "label"}
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "count"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "facet"}
+      }]
+    }
+  }, {
+    "kind": "FragmentDefinition",
+    "name": {"kind": "Name", "value": "TotalsFields"},
+    "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Totals"}},
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "spexareCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexareCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "userCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "userCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "spexCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "spexRevivalCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "spexRevivalCountHistory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "label"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "count"}
+          }]
+        }
+      }, {"kind": "Field", "name": {"kind": "Name", "value": "taskCount"}}, {
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "taskCountByCategory"},
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "BucketFields"}}]
+        }
+      }]
+    }
+  }]
+} as unknown as DocumentNode<AnalyticsSummaryQuery, AnalyticsSummaryQueryVariables>;
 export const RevisionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"revisions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AuditedType"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revisions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revision"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"entityId"}},{"kind":"Field","name":{"kind":"Name","value":"entityLabel"}},{"kind":"Field","name":{"kind":"Name","value":"revisionType"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedBy"}},{"kind":"Field","name":{"kind":"Name","value":"changes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"oldValue"}},{"kind":"Field","name":{"kind":"Name","value":"newValue"}},{"kind":"Field","name":{"kind":"Name","value":"binary"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"entityId"}}]}}]}}]}}]} as unknown as DocumentNode<RevisionsQuery, RevisionsQueryVariables>;
 export const RelatedRevisionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"relatedRevisions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AuditedType"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"relatedType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AuditedType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"relatedRevisions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"relatedType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"relatedType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revision"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"entityId"}},{"kind":"Field","name":{"kind":"Name","value":"entityLabel"}},{"kind":"Field","name":{"kind":"Name","value":"revisionType"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedBy"}},{"kind":"Field","name":{"kind":"Name","value":"changes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"oldValue"}},{"kind":"Field","name":{"kind":"Name","value":"newValue"}},{"kind":"Field","name":{"kind":"Name","value":"binary"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"entityId"}}]}}]}}]}}]} as unknown as DocumentNode<RelatedRevisionsQuery, RelatedRevisionsQueryVariables>;
 export const RevisionFeedPagedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"revisionFeedPaged"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"last"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"before"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AuditedType"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modifiedBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AuditSource"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"from"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"to"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sinceInDays"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revisionFeedPaged"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"last"},"value":{"kind":"Variable","name":{"kind":"Name","value":"last"}}},{"kind":"Argument","name":{"kind":"Name","value":"before"},"value":{"kind":"Variable","name":{"kind":"Name","value":"before"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"modifiedBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modifiedBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}},{"kind":"Argument","name":{"kind":"Name","value":"from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"from"}}},{"kind":"Argument","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"to"}}},{"kind":"Argument","name":{"kind":"Name","value":"sinceInDays"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sinceInDays"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revision"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedBy"}},{"kind":"Field","name":{"kind":"Name","value":"types"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"comment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<RevisionFeedPagedQuery, RevisionFeedPagedQueryVariables>;

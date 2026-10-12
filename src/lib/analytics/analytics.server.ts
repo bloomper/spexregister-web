@@ -24,7 +24,7 @@ export const TotalsFields = graphql(`
         spexRevivalCount
         spexRevivalCountHistory { label count }
         taskCount
-        taskCountHistory { label count }
+        taskCountByCategory { ...BucketFields }
     }
 `);
 

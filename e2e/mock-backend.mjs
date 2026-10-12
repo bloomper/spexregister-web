@@ -109,7 +109,7 @@ const totals = {
     userCount: 1, userCountHistory: [{label: "2025", count: 1}],
     spexCount: 4, spexCountHistory: [{label: "2025", count: 4}],
     spexRevivalCount: 1, spexRevivalCountHistory: [{label: "2025", count: 1}],
-    taskCount: 5, taskCountHistory: [{label: "2025", count: 5}],
+    taskCount: 5, taskCountByCategory: [{key: "1", label: "Scen", count: 5, facet: null}],
 };
 
 const bucket = (key, label, count, facet = null) => ({key, label, count, facet});

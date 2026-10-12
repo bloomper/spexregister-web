@@ -2104,7 +2104,7 @@ export type Totals = {
     spexareCount: Scalars['Long']['output'];
     spexareCountHistory: Array<History>;
     taskCount: Scalars['Long']['output'];
-    taskCountHistory: Array<History>;
+    taskCountByCategory: Array<Bucket>;
     userCount: Scalars['Long']['output'];
     userCountHistory: Array<History>;
 };
