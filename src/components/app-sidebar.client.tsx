@@ -96,6 +96,7 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                 icon: UserRound,
                 isActive: pathname.startsWith("/spexare"),
                 items: [
+                    {title: t("Common.search"), url: "/spexare/search"},
                     {title: t("Explore.heading"), url: "/spexare/explore"},
                     ...(isCurrentUserAdminOrEditor ? [
                         {title: t("Common.manage"), url: "/spexare/manage"},
