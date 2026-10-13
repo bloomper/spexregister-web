@@ -202,7 +202,7 @@
     "fileTooLarge": "File too large. Maximum file size is 15MB.",
     "general": "General",
     "history": "History",
-    "imageUploadHint": "PNG, JPEG or GIF (max. 15MB)",
+    "imageUploadHint": "PNG, JPEG, GIF or SVG (max. 15MB)",
     "insufficientPermissions": "Insufficient permissions",
     "loadMore": "Load more",
     "lastModifiedAt": "Last modified at",

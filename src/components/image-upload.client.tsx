@@ -92,7 +92,8 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
         accept: {
             "image/png": [".png"],
             "image/jpeg": [".jpg", ".jpeg"],
-            "image/gif": [".gif"]
+            "image/gif": [".gif"],
+            "image/svg+xml": [".svg"]
         },
         maxSize: 15 * 1024 * 1024,
         multiple: false,

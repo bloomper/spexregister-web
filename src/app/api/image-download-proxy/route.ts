@@ -3,7 +3,8 @@ import axios from "@/lib/axios.server";
 import {isAxiosError} from "axios";
 import {resolveBackendUrl} from "@/utils/utils.server";
 
-const IMAGE_CONTENT_TYPES = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"]);
+const SVG_CONTENT_TYPE = "image/svg+xml";
+const IMAGE_CONTENT_TYPES = new Set(["image/png", "image/jpeg", "image/gif", "image/webp", SVG_CONTENT_TYPE]);
 
 export async function GET(request: NextRequest) {
     const imageUrl = request.nextUrl.searchParams.get("url");
@@ -45,7 +46,9 @@ export async function GET(request: NextRequest) {
 
         const responseHeaders: Record<string, string> = {
             "Content-Type": contentType,
-            "Content-Security-Policy": "default-src 'none'; sandbox",
+            "Content-Security-Policy": contentType === SVG_CONTENT_TYPE
+                ? "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+                : "default-src 'none'; sandbox",
             "X-Content-Type-Options": "nosniff",
             "Cache-Control": versioned ? "private, max-age=31536000, immutable" : "private, no-cache",
         };

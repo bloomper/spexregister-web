@@ -202,7 +202,7 @@
     "fileTooLarge": "Filen är för stor. Max filstorlek är 15MB.",
     "general": "Allmänt",
     "history": "Historik",
-    "imageUploadHint": "PNG, JPEG eller GIF (max 15MB)",
+    "imageUploadHint": "PNG, JPEG, GIF eller SVG (max 15MB)",
     "insufficientPermissions": "Otillräckliga rättigheter",
     "loadMore": "Ladda fler",
     "lastModifiedAt": "Senast uppdaterad",

@@ -65,7 +65,18 @@ describe("image-download-proxy GET", () => {
         expect(axiosGet).not.toHaveBeenCalled();
     });
 
-    it.each(["text/html", "image/svg+xml", "application/octet-stream", undefined])(
+    it("serves svg sandboxed, with scripts blocked and inline styles allowed", async () => {
+        axiosGet.mockResolvedValue({status: 200, data: new Uint8Array([1]), headers: {"content-type": "image/svg+xml;charset=UTF-8"}});
+
+        const res = await GET(makeRequest("?url=/api/spex/2/poster&t=1"));
+
+        expect(res.status).toBe(200);
+        expect(res.headers.get("Content-Type")).toBe("image/svg+xml");
+        expect(res.headers.get("Content-Security-Policy")).toBe("default-src 'none'; style-src 'unsafe-inline'; sandbox");
+        expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
+    });
+
+    it.each(["text/html", "application/octet-stream", undefined])(
         "refuses to serve content of type %s",
         async (contentType) => {
             axiosGet.mockResolvedValue({
