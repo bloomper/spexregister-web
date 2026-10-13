@@ -210,6 +210,7 @@
     "loading": "Loading…",
     "loggedOut": "You have been logged out.",
     "login": "Log in",
+    "loginFailed": "Could not log in. Please try again.",
     "logout": "Log out",
     "manage": "Manage",
     "me": "You",

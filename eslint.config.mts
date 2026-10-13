@@ -18,7 +18,12 @@ export default defineConfig([
         },
     },
     {
-        files: ["src/app/global-error.tsx", "src/app/(app)/error.tsx", "src/app/(app)/layout.tsx"],
+        files: [
+            "src/app/global-error.tsx",
+            "src/app/(app)/error.tsx",
+            "src/app/(app)/layout.tsx",
+            "src/app/login-error/page.tsx",
+        ],
         rules: {
             "@next/next/no-html-link-for-pages": "off",
         },

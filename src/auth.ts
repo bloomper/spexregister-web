@@ -13,6 +13,9 @@ const endpoint = (name: string) => `${issuer}/protocol/openid-connect/${name}`;
 export const auth = betterAuth({
     baseURL: appUrl,
     secret: process.env.AUTH_SECRET,
+    onAPIError: {
+        errorURL: "/api/auth/login-error",
+    },
     plugins: [
         genericOAuth({
             config: [

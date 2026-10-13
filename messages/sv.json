@@ -210,6 +210,7 @@
     "loading": "Laddar…",
     "loggedOut": "Du har loggats ut.",
     "login": "Logga in",
+    "loginFailed": "Inloggningen misslyckades. Försök igen.",
     "logout": "Logga ut",
     "manage": "Hantera",
     "me": "Du",
