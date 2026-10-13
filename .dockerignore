@@ -1,0 +1,15 @@
+.git
+.github
+.idea
+.claude
+.migration
+.next
+.env*
+*.iml
+*.tsbuildinfo
+node_modules
+coverage
+test-results
+playwright-report
+e2e
+.DS_Store
