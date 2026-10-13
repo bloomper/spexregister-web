@@ -5,6 +5,8 @@ import {NextResponse} from "next/server";
 import type {AuthzFail, AuthzOk, AuthzResult} from "@/types/auth";
 import {redirect} from "next/navigation";
 
+const LOGIN_PATH = "/api/auth/login";
+
 type RouteContext = unknown;
 
 type RouteHandler = (request: NextRequest, context: RouteContext) => Promise<Response> | Response;
@@ -39,7 +41,7 @@ export async function withPolicyAction<T>(
     const authz = await policy();
     if (!authz.ok) {
         if (authz.status === 401) {
-            redirect("/");
+            redirect(LOGIN_PATH);
         }
         throw new Error(authz.message);
     }

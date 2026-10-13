@@ -41,10 +41,10 @@ describe("withPolicyAction", () => {
         expect(handler).toHaveBeenCalledWith(ok);
     });
 
-    it("redirects to / on 401 and never calls the handler", async () => {
+    it("redirects to the login route on 401 and never calls the handler", async () => {
         const handler = vi.fn();
-        await expect(withPolicyAction(async () => unauth, handler)).rejects.toThrow("NEXT_REDIRECT:/");
-        expect(redirectMock).toHaveBeenCalledWith("/");
+        await expect(withPolicyAction(async () => unauth, handler)).rejects.toThrow("NEXT_REDIRECT:/api/auth/login");
+        expect(redirectMock).toHaveBeenCalledWith("/api/auth/login");
         expect(handler).not.toHaveBeenCalled();
     });
 
@@ -63,7 +63,7 @@ describe("withPolicyPage", () => {
     });
 
     it("redirects on 401", async () => {
-        await expect(withPolicyPage(async () => unauth, vi.fn())).rejects.toThrow("NEXT_REDIRECT:/");
+        await expect(withPolicyPage(async () => unauth, vi.fn())).rejects.toThrow("NEXT_REDIRECT:/api/auth/login");
     });
 
     it("throws on 403", async () => {
@@ -86,6 +86,7 @@ describe("withPolicyRoute", () => {
     it("redirects on 401", async () => {
         const route = withPolicyRoute(async () => unauth, vi.fn());
         await expect(route(request, context)).rejects.toThrow("NEXT_REDIRECT:/");
+        expect(redirectMock).toHaveBeenCalledWith("/");
     });
 
     it("returns a 403 json response without calling the handler", async () => {

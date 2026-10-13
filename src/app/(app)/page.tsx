@@ -9,11 +9,12 @@ import {Newspaper} from "lucide-react";
 import * as Analytics from "@/lib/analytics";
 import {AnalyticsHighlights, AnalyticsTotals} from "@/components/analytics";
 import {requireUser} from "@/utils/auth.server";
+import {redirect} from "next/navigation";
 
 export default async function HomePage() {
     const {session} = await requireUser();
     if (!session) {
-        return null;
+        redirect("/api/auth/login");
     }
 
     const [page, analytics, t] = await Promise.all([
