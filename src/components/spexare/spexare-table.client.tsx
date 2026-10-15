@@ -81,6 +81,7 @@ export function SpexareTable({
     const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
     const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
+    const [purge, setPurge] = useState(false);
 
     const {
         viewItem, setViewItem,
@@ -92,8 +93,8 @@ export function SpexareTable({
         handleDelete,
         handleBulkDelete
     } = useDataTableActions<Spexare>(
-        deleteAction,
-        bulkDeleteAction,
+        (id) => deleteAction(id, purge),
+        (ids) => bulkDeleteAction(ids, purge),
         () => {
             setFilterQuery("");
             setSelectedPublishedValues(new Set(["true", "false"]));
@@ -184,7 +185,10 @@ export function SpexareTable({
                 }
                 meta={{
                     setEditItem,
-                    setDeleteItem,
+                    setDeleteItem: (item: Spexare | null) => {
+                        setPurge(false);
+                        setDeleteItem(item);
+                    },
                     addToQueue: (item) => enqueue("spexare", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
@@ -243,7 +247,10 @@ export function SpexareTable({
                                     variant="destructive"
                                     size="sm"
                                     className="h-8"
-                                    onClick={() => setIsBulkDeleting(true)}
+                                    onClick={() => {
+                                        setPurge(false);
+                                        setIsBulkDeleting(true);
+                                    }}
                                 >
                                     {t("Common.delete")} ({selectedRows.length})
                                 </Button>
@@ -319,6 +326,7 @@ export function SpexareTable({
                 isPending={isPending}
                 handleDelete={handleDelete}
                 handleBulkDelete={handleBulkDelete}
+                purge={{checked: purge, onCheckedChange: setPurge}}
             />
         </>
     );

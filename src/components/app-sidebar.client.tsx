@@ -7,11 +7,11 @@ import {
     Clapperboard,
     ClipboardList,
     Drama,
-    History,
     House,
     ListTodo,
     type LucideIcon,
     Newspaper,
+    Settings,
     Shapes,
     Tag,
     UserRound,
@@ -197,10 +197,14 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
 
         if (isCurrentUserAdmin) {
             mainItems.push({
-                title: t("Audit.title"),
-                url: "/change-log",
-                icon: History,
-                isActive: pathname.startsWith("/change-log"),
+                title: t("Admin.heading"),
+                url: "/admin",
+                icon: Settings,
+                isActive: pathname.startsWith("/admin") || pathname.startsWith("/change-log"),
+                items: [
+                    {title: t("Admin.maintenance"), url: "/admin"},
+                    {title: t("Audit.title"), url: "/change-log"},
+                ],
             });
         }
 
@@ -240,7 +244,8 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                                 />
                             }
                         >
-                            <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded-lg group-data-[collapsible=icon]:size-8">
+                            <div
+                                className="flex aspect-square size-10 shrink-0 items-center justify-center rounded-lg group-data-[collapsible=icon]:size-8">
                                 <Logo/>
                             </div>
                             <div className="min-w-0 flex-1 overflow-hidden pl-4">

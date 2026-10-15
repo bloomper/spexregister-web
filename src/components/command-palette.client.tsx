@@ -14,6 +14,7 @@ import {
     type LucideIcon,
     Newspaper,
     Plus,
+    Settings,
     Shapes,
     Tag,
     UserRound,
@@ -95,6 +96,7 @@ export function CommandPalette() {
             navigationEntries.push(
                 {id: "users", label: t("User.heading"), href: "/users/manage", icon: Users},
                 {id: "change-log", label: t("Audit.title"), href: "/change-log", icon: History},
+                {id: "admin", label: t("Admin.heading"), href: "/admin", icon: Settings},
             );
         }
 

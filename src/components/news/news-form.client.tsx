@@ -5,7 +5,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {NewsFormInput, NewsFormOutput, newsFormSchema} from "@/lib/news/schema";
 import {News} from "@/gql/schema";
 import {useTranslations} from "next-intl";
-import {useTransition} from "react";
+import {use, useTransition} from "react";
+import {io} from "next/cache";
 import {toast} from "sonner";
 import {createAction, updateAction} from "@/app/(app)/news/actions.server";
 import {Button} from "@/components/ui/button";
@@ -27,6 +28,7 @@ interface NewsFormProps {
 }
 
 export function NewsForm({item, onSuccess, onError, embedded, formId}: NewsFormProps) {
+    use(io());
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
 

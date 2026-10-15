@@ -9,7 +9,8 @@ import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field
 import {translateError} from "@/utils/utils";
 import {Type, TypeType} from "@/gql/schema";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {useMemo} from "react";
+import {use, useMemo} from "react";
+import {io} from "next/cache";
 
 interface MembershipFormProps {
     defaultValues?: Partial<MembershipFormInput>;
@@ -28,6 +29,7 @@ export function MembershipForm({
                                    onCancel,
                                    isPending
                                }: MembershipFormProps) {
+    use(io());
     const t = useTranslations();
     const membershipTypes = types.filter(t => t.type === TypeType.Membership);
 

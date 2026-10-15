@@ -39,6 +39,7 @@ const nextConfig: NextConfig = {
     output: "standalone",
     reactCompiler: true,
     cacheComponents: true,
+    partialPrefetching: true,
     experimental: {
         instantInsights: {
             validationLevel: "manual-warning",

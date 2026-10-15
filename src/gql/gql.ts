@@ -14,6 +14,7 @@ import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/co
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n    mutation IndexSpexare {\n        indexSpexare\n    }\n": typeof types.IndexSpexareDocument,
     "\n    fragment BucketFields on Bucket {\n        key\n        label\n        count\n        facet\n    }\n": typeof types.BucketFieldsFragmentDoc,
     "\n    fragment TotalsFields on Totals {\n        spexareCount\n        spexareCountHistory { label count }\n        userCount\n        userCountHistory { label count }\n        spexCount\n        spexCountHistory { label count }\n        spexRevivalCount\n        spexRevivalCountHistory { label count }\n        taskCount\n        taskCountByCategory { ...BucketFields }\n    }\n": typeof types.TotalsFieldsFragmentDoc,
     "\n    fragment AnalyticsFields on Analytics {\n        totals { ...TotalsFields }\n        participation {\n            bySpexYear { ...BucketFields }\n            bySpexCategory { ...BucketFields }\n            topSpex { ...BucketFields }\n            byTaskCategory { ...BucketFields }\n            topTask { ...BucketFields }\n            byVocal { ...BucketFields }\n        }\n        demographics {\n            byCountry { ...BucketFields }\n            byAddressType { ...BucketFields }\n            byMembership { ...BucketFields }\n            byTag { ...BucketFields }\n            byToggle { ...BucketFields }\n            byStatus { ...BucketFields }\n            consentCompletion {\n                key\n                label\n                granted\n                denied\n                missing\n            }\n        }\n        lifecycle {\n            newcomersByYear { ...BucketFields }\n            lastActiveByYear { ...BucketFields }\n            byEngagement { ...BucketFields }\n            byDormancy { ...BucketFields }\n            oneTimers\n            returning\n            veterans\n            neverActive\n        }\n        dataQuality {\n            total\n            issues { ...BucketFields }\n            complete\n        }\n        operations {\n            usersByState { ...BucketFields }\n            usersWithoutSpexare\n            spexareWithoutUser\n            revisionsByMonth { ...BucketFields }\n            revisionsBySource { ...BucketFields }\n            topEditors { ...BucketFields }\n        }\n    }\n": typeof types.AnalyticsFieldsFragmentDoc,
@@ -122,12 +123,15 @@ type Documents = {
     "\n    mutation SpexareCreate($input: SpexareCreate!) {\n        spexareCreate(input: $input) { ...SpexareFull }\n    }\n": typeof types.SpexareCreateDocument,
     "\n    mutation SpexareUpdate($input: SpexareUpdate!) {\n        spexareUpdate(input: $input) { ...SpexareFull }\n    }\n": typeof types.SpexareUpdateDocument,
     "\n    mutation SpexareDelete($id: ID!) {\n        spexareDelete(id: $id)\n    }\n": typeof types.SpexareDeleteDocument,
+    "\n    mutation SpexareDeleteAndPurge($id: ID!) {\n        spexareDelete(id: $id, purge: true)\n    }\n": typeof types.SpexareDeleteAndPurgeDocument,
     "\n    query SpexareGet($id: ID!) {\n        spexare(id: $id) { ...SpexareFull }\n    }\n": typeof types.SpexareGetDocument,
     "\n    query SpexareMeSummary {\n        spexareMe { ...SpexareSummary }\n    }\n": typeof types.SpexareMeSummaryDocument,
     "\n    query SpexareMeFull {\n        spexareMe { ...SpexareFull }\n    }\n": typeof types.SpexareMeFullDocument,
     "\n    mutation SpexarePartnerAdd($spexareId: ID!, $id: ID!) {\n        spexarePartnerAdd(spexareId: $spexareId, id: $id)\n    }\n": typeof types.SpexarePartnerAddDocument,
     "\n    mutation SpexarePartnerRemove($spexareId: ID!) {\n        spexarePartnerRemove(spexareId: $spexareId)\n    }\n": typeof types.SpexarePartnerRemoveDocument,
     "\n    query SpexareExport($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {\n        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) { id }\n    }\n": typeof types.SpexareExportDocument,
+    "\n    query SpexareMeExport($type: ImpexType!) {\n        spexareMeExport(type: $type) { id }\n    }\n": typeof types.SpexareMeExportDocument,
+    "\n    mutation SpexareMeRemovalRequest($reason: String) {\n        spexareMeRemovalRequest(reason: $reason)\n    }\n": typeof types.SpexareMeRemovalRequestDocument,
     "\n    query SpexareSearch($q: String!, $aggregationFilters: [AggregationFilterInput], $first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection) {\n        spexareSearchPaged(q: $q, aggregationFilters: $aggregationFilters, first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction) {\n            edges { cursor node { ...SpexareSummary } }\n            facets {\n                id\n                label\n                groups {\n                    id\n                    label\n                    values {\n                        id\n                        label\n                        count\n                    }\n                }\n            }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.SpexareSearchDocument,
     "\n    fragment TaggingSummary on Tag {\n        id\n        name\n    }\n": typeof types.TaggingSummaryFragmentDoc,
     "\n    fragment TaggingFull on Tag {\n        ...TaggingSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.TaggingFullFragmentDoc,
@@ -186,6 +190,7 @@ type Documents = {
     "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n": typeof types.StatesDocument,
 };
 const documents: Documents = {
+    "\n    mutation IndexSpexare {\n        indexSpexare\n    }\n": types.IndexSpexareDocument,
     "\n    fragment BucketFields on Bucket {\n        key\n        label\n        count\n        facet\n    }\n": types.BucketFieldsFragmentDoc,
     "\n    fragment TotalsFields on Totals {\n        spexareCount\n        spexareCountHistory { label count }\n        userCount\n        userCountHistory { label count }\n        spexCount\n        spexCountHistory { label count }\n        spexRevivalCount\n        spexRevivalCountHistory { label count }\n        taskCount\n        taskCountByCategory { ...BucketFields }\n    }\n": types.TotalsFieldsFragmentDoc,
     "\n    fragment AnalyticsFields on Analytics {\n        totals { ...TotalsFields }\n        participation {\n            bySpexYear { ...BucketFields }\n            bySpexCategory { ...BucketFields }\n            topSpex { ...BucketFields }\n            byTaskCategory { ...BucketFields }\n            topTask { ...BucketFields }\n            byVocal { ...BucketFields }\n        }\n        demographics {\n            byCountry { ...BucketFields }\n            byAddressType { ...BucketFields }\n            byMembership { ...BucketFields }\n            byTag { ...BucketFields }\n            byToggle { ...BucketFields }\n            byStatus { ...BucketFields }\n            consentCompletion {\n                key\n                label\n                granted\n                denied\n                missing\n            }\n        }\n        lifecycle {\n            newcomersByYear { ...BucketFields }\n            lastActiveByYear { ...BucketFields }\n            byEngagement { ...BucketFields }\n            byDormancy { ...BucketFields }\n            oneTimers\n            returning\n            veterans\n            neverActive\n        }\n        dataQuality {\n            total\n            issues { ...BucketFields }\n            complete\n        }\n        operations {\n            usersByState { ...BucketFields }\n            usersWithoutSpexare\n            spexareWithoutUser\n            revisionsByMonth { ...BucketFields }\n            revisionsBySource { ...BucketFields }\n            topEditors { ...BucketFields }\n        }\n    }\n": types.AnalyticsFieldsFragmentDoc,
@@ -294,12 +299,15 @@ const documents: Documents = {
     "\n    mutation SpexareCreate($input: SpexareCreate!) {\n        spexareCreate(input: $input) { ...SpexareFull }\n    }\n": types.SpexareCreateDocument,
     "\n    mutation SpexareUpdate($input: SpexareUpdate!) {\n        spexareUpdate(input: $input) { ...SpexareFull }\n    }\n": types.SpexareUpdateDocument,
     "\n    mutation SpexareDelete($id: ID!) {\n        spexareDelete(id: $id)\n    }\n": types.SpexareDeleteDocument,
+    "\n    mutation SpexareDeleteAndPurge($id: ID!) {\n        spexareDelete(id: $id, purge: true)\n    }\n": types.SpexareDeleteAndPurgeDocument,
     "\n    query SpexareGet($id: ID!) {\n        spexare(id: $id) { ...SpexareFull }\n    }\n": types.SpexareGetDocument,
     "\n    query SpexareMeSummary {\n        spexareMe { ...SpexareSummary }\n    }\n": types.SpexareMeSummaryDocument,
     "\n    query SpexareMeFull {\n        spexareMe { ...SpexareFull }\n    }\n": types.SpexareMeFullDocument,
     "\n    mutation SpexarePartnerAdd($spexareId: ID!, $id: ID!) {\n        spexarePartnerAdd(spexareId: $spexareId, id: $id)\n    }\n": types.SpexarePartnerAddDocument,
     "\n    mutation SpexarePartnerRemove($spexareId: ID!) {\n        spexarePartnerRemove(spexareId: $spexareId)\n    }\n": types.SpexarePartnerRemoveDocument,
     "\n    query SpexareExport($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {\n        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) { id }\n    }\n": types.SpexareExportDocument,
+    "\n    query SpexareMeExport($type: ImpexType!) {\n        spexareMeExport(type: $type) { id }\n    }\n": types.SpexareMeExportDocument,
+    "\n    mutation SpexareMeRemovalRequest($reason: String) {\n        spexareMeRemovalRequest(reason: $reason)\n    }\n": types.SpexareMeRemovalRequestDocument,
     "\n    query SpexareSearch($q: String!, $aggregationFilters: [AggregationFilterInput], $first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection) {\n        spexareSearchPaged(q: $q, aggregationFilters: $aggregationFilters, first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction) {\n            edges { cursor node { ...SpexareSummary } }\n            facets {\n                id\n                label\n                groups {\n                    id\n                    label\n                    values {\n                        id\n                        label\n                        count\n                    }\n                }\n            }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.SpexareSearchDocument,
     "\n    fragment TaggingSummary on Tag {\n        id\n        name\n    }\n": types.TaggingSummaryFragmentDoc,
     "\n    fragment TaggingFull on Tag {\n        ...TaggingSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.TaggingFullFragmentDoc,
@@ -372,6 +380,10 @@ const documents: Documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation IndexSpexare {\n        indexSpexare\n    }\n"): (typeof documents)["\n    mutation IndexSpexare {\n        indexSpexare\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -807,6 +819,10 @@ export function graphql(source: "\n    mutation SpexareDelete($id: ID!) {\n     
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    mutation SpexareDeleteAndPurge($id: ID!) {\n        spexareDelete(id: $id, purge: true)\n    }\n"): (typeof documents)["\n    mutation SpexareDeleteAndPurge($id: ID!) {\n        spexareDelete(id: $id, purge: true)\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    query SpexareGet($id: ID!) {\n        spexare(id: $id) { ...SpexareFull }\n    }\n"): (typeof documents)["\n    query SpexareGet($id: ID!) {\n        spexare(id: $id) { ...SpexareFull }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -828,6 +844,14 @@ export function graphql(source: "\n    mutation SpexarePartnerRemove($spexareId:
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query SpexareExport($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {\n        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) { id }\n    }\n"): (typeof documents)["\n    query SpexareExport($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {\n        spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) { id }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SpexareMeExport($type: ImpexType!) {\n        spexareMeExport(type: $type) { id }\n    }\n"): (typeof documents)["\n    query SpexareMeExport($type: ImpexType!) {\n        spexareMeExport(type: $type) { id }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation SpexareMeRemovalRequest($reason: String) {\n        spexareMeRemovalRequest(reason: $reason)\n    }\n"): (typeof documents)["\n    mutation SpexareMeRemovalRequest($reason: String) {\n        spexareMeRemovalRequest(reason: $reason)\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -1054,7 +1078,7 @@ export function graphql(source: "\n    query Authorities {\n        authorities 
 export function graphql(source: "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n"): (typeof documents)["\n    query States {\n        states {\n            id\n            label\n        }\n    }\n"];
 
 export function graphql(source: string) {
-  return (documents as any)[source] ?? {};
+    return (documents as any)[source] ?? {};
 }
 
-export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;
+export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<infer TType, any> ? TType : never;

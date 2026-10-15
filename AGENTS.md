@@ -240,7 +240,8 @@ Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytic
 - **The counts come from the search index, not from SQL.** `AnalyticsService` reads
   `SpexareService.facets()` — one `matchAll` search returning every aggregation the search page
   filters on — so a bar's number and the rows it opens are the same query, and both obey the
-  `published` restriction for plain users (EDITOR and ADMIN see unpublished records too). Adding a breakdown usually means adding an aggregation in
+  `published` restriction for plain users (EDITOR and ADMIN see unpublished records too). Adding a breakdown usually
+  means adding an aggregation in
   `SpexareSearchEnabledJpaRepository`, not writing a query.
 - Two filter values exist only for drilling down, both in that repository:
   `quality` is a **filter-only** facet (no aggregation) whose values are `DataQualityIssue` keys and

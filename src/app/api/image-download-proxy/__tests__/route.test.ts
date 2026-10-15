@@ -66,7 +66,11 @@ describe("image-download-proxy GET", () => {
     });
 
     it("serves svg sandboxed, with scripts blocked and inline styles allowed", async () => {
-        axiosGet.mockResolvedValue({status: 200, data: new Uint8Array([1]), headers: {"content-type": "image/svg+xml;charset=UTF-8"}});
+        axiosGet.mockResolvedValue({
+            status: 200,
+            data: new Uint8Array([1]),
+            headers: {"content-type": "image/svg+xml;charset=UTF-8"}
+        });
 
         const res = await GET(makeRequest("?url=/api/spex/2/poster&t=1"));
 

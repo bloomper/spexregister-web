@@ -38,7 +38,7 @@ export function GeneralSection({spexare, showAudit, onRestored}: {
                         <div className="text-sm font-medium text-foreground">
                             {spexare.socialSecurityNumber.includes("-")
                                 ? spexare.socialSecurityNumber
-                                : format(parse(spexare.socialSecurityNumber, "yyyyMMdd", new Date()), "yyyy-MM-dd")}
+                                : format(parse(spexare.socialSecurityNumber, "yyyyMMdd", new Date(0)), "yyyy-MM-dd")}
                         </div>
                     </div>
                 )}

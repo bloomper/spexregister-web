@@ -5,7 +5,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {SpexCategoryFormInput, SpexCategoryFormOutput, spexCategoryFormSchema} from "@/lib/spex/category/schema";
 import {SpexCategory} from "@/gql/schema";
 import {useTranslations} from "next-intl";
-import {useState, useTransition} from "react";
+import {use, useState, useTransition} from "react";
+import {io} from "next/cache";
 import {toast} from "sonner";
 import {
     createAction,
@@ -33,6 +34,7 @@ interface SpexCategoryFormProps {
 }
 
 export function SpexCategoryForm({item, onSuccess, onError, embedded, formId}: SpexCategoryFormProps) {
+    use(io());
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);

@@ -498,6 +498,7 @@ export type Mutation = {
     consentCreate?: Maybe<Consent>;
     consentDelete?: Maybe<Scalars['Void']['output']>;
     consentUpdate?: Maybe<Consent>;
+    indexSpexare?: Maybe<Scalars['Void']['output']>;
     jobDelete?: Maybe<Scalars['Void']['output']>;
     membershipCreate?: Maybe<Membership>;
     membershipDelete?: Maybe<Scalars['Void']['output']>;
@@ -527,6 +528,7 @@ export type Mutation = {
     spexareCreate?: Maybe<Spexare>;
     spexareDelete?: Maybe<Scalars['Void']['output']>;
     spexareImageDelete?: Maybe<Scalars['Void']['output']>;
+    spexareMeRemovalRequest?: Maybe<Scalars['Void']['output']>;
     spexarePartnerAdd?: Maybe<Scalars['Void']['output']>;
     spexarePartnerRemove?: Maybe<Scalars['Void']['output']>;
     spexareUpdate?: Maybe<Spexare>;
@@ -796,11 +798,17 @@ export type MutationSpexareCreateArgs = {
 
 export type MutationSpexareDeleteArgs = {
     id: Scalars['ID']['input'];
+    purge?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type MutationSpexareImageDeleteArgs = {
     id: Scalars['ID']['input'];
+};
+
+
+export type MutationSpexareMeRemovalRequestArgs = {
+    reason?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1095,6 +1103,7 @@ export type Query = {
     spexareBulkPreview?: Maybe<BulkResult>;
     spexareExport?: Maybe<JobReference>;
     spexareMe?: Maybe<Spexare>;
+    spexareMeExport?: Maybe<JobReference>;
     spexarePaged?: Maybe<SpexareConnection>;
     spexareSearchPaged?: Maybe<SpexareWithFacetsConnection>;
     state?: Maybe<State>;
@@ -1313,6 +1322,11 @@ export type QuerySpexareExportArgs = {
     filter?: InputMaybe<Scalars['String']['input']>;
     ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
     reportType?: InputMaybe<ReportType>;
+    type: ImpexType;
+};
+
+
+export type QuerySpexareMeExportArgs = {
     type: ImpexType;
 };
 

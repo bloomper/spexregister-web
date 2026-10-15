@@ -4,6 +4,11 @@ import {requireAnyRole} from "@/utils/auth.server";
 import {AuthzResult} from "@/types/auth";
 
 export const Policies = {
+    admin: {
+        async requireAdmin(): Promise<AuthzResult> {
+            return requireAnyRole(["ADMIN"]);
+        },
+    },
     analytics: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
@@ -117,6 +122,9 @@ export const Policies = {
         },
         async requireImport(): Promise<AuthzResult> {
             return requireAnyRole(["EDITOR", "ADMIN"]);
+        },
+        async requireSelfService(): Promise<AuthzResult> {
+            return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
         },
     },
     tag: {

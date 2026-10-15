@@ -1,7 +1,8 @@
 "use client";
 
 import {useTranslations} from "next-intl";
-import React, {useCallback, useEffect, useState, useTransition} from "react";
+import React, {use, useCallback, useEffect, useState, useTransition} from "react";
+import {io} from "next/cache";
 import {Button} from "@/components/ui/button";
 import {ImagePlus, Loader2, X} from "lucide-react";
 import {toast} from "sonner";
@@ -18,6 +19,7 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, onFileDelete}: ImageUploadProps) {
+    use(io());
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();
     const [preview, setPreview] = useState<string | null>(() => {
