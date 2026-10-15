@@ -26,7 +26,7 @@ const contributorData = [
     {
         name: "Anders Jacobsson",
         nickName: "Colgate",
-        image: "https://avatars.githubusercontent.com/u/150366?v=4",
+        image: "https://gravatar.com/avatar/5e07c325b41e9551493953c3b6eb37b71d93141c3bad22556487cd9a3989510b?s=200",
     },
     {
         name: "Fredrik Bonde",
@@ -37,6 +37,25 @@ const contributorData = [
         name: "Emil Kultje",
         nickName: "Kakel",
         image: robohashFromSeed("Emil Kultje|Kakel"),
+    },
+    {
+        name: "Andreas Johansson",
+        nickName: "Klabbe",
+        image: "https://lh3.googleusercontent.com/a-/ALV-UjWNsyzotq9BIQ0GfN3x_f8px3o7flu4VSrfBEiBCC1J-hilJLg=s480-p-k-rw-no",
+    },
+    {
+        name: "Fritiof Hedman",
+        nickName: "Listan",
+        image: "https://lh3.googleusercontent.com/a-/ALV-UjUeRHeAx1WTgYYqn1yOg-lCuzMoKStiwTOSRBlzA0vjZOM9JjAq=s480-p-k-rw-no",
+    },
+    {
+        name: "Alexander Nilsson",
+        nickName: "Minnet",
+        image: "https://lh3.googleusercontent.com/a-/ALV-UjValcmsFsvTq4pj9PtCJ2xgSmmo0Cg58_47JeygCwq84CzEiGg=s480-p-k-rw-no",
+    },
+    {
+        name: "Emil Reinfeldt",
+        image: "https://gravatar.com/avatar/ea11d8104bc579a900cdd80be8457a8c47c3fd4e87de9eb02bf0a35666c6ddf3?s=200",
     }
 ];
 
@@ -85,10 +104,12 @@ export function AboutPage({feedbackEmail}: { feedbackEmail: string }) {
                                     </Avatar>
                                     <div className="space-y-1">
                                         <div className="flex flex-col">
-                                            <span
-                                                className="text-xs font-black uppercase text-primary tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
-                                                {person.nickName}
-                                            </span>
+                                            {person.nickName && (
+                                                <span
+                                                    className="text-xs font-black uppercase text-primary tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
+                                                    {person.nickName}
+                                                </span>
+                                            )}
                                             <span className="text-lg font-semibold leading-tight">
                                                 {person.name}
                                             </span>
