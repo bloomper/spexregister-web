@@ -96,11 +96,11 @@ export function TaskActivityManager({
 
                                         {actors.map((actor) => (
                                             <div key={actor.id}
-                                                 className="text-[11px] text-muted-foreground font-medium italic bg-muted/50 pl-2 pr-1 py-0.5 rounded-sm inline-flex items-center gap-1.5 border border-border/40">
+                                                 className="text-xs sm:text-[11px] text-muted-foreground font-medium italic bg-muted/50 pl-2 pr-1 py-0.5 rounded-sm inline-flex items-center gap-1.5 border border-border/40">
                                                 {actor.role && (
                                                     <span>
                                                         <span
-                                                            className="not-italic font-bold uppercase text-[9px] opacity-60 mr-1">
+                                                            className="not-italic font-bold uppercase text-[11px] sm:text-[9px] opacity-60 mr-1">
                                                             {t("Spexare.Activity.TaskActivity.Actor.role")}:
                                                         </span>
                                                         {actor.role}
@@ -109,7 +109,7 @@ export function TaskActivityManager({
                                                 {actor.vocal?.label && (
                                                     <span>
                                                         <span
-                                                            className="not-italic font-bold uppercase text-[9px] opacity-60 mr-1">
+                                                            className="not-italic font-bold uppercase text-[11px] sm:text-[9px] opacity-60 mr-1">
                                                             {t("Spexare.Activity.TaskActivity.Actor.vocal")}:
                                                         </span>
                                                         {actor.vocal.label}

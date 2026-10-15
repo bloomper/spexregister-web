@@ -66,14 +66,14 @@ export function SpexCard({spex, index, canUpdate, onSelect, onEdit}: SpexCardPro
                 onClick={onSelect}
             >
                 <div className="flex items-center justify-between gap-2">
-                    <CardDescription className="text-[10px]">{spex.year}</CardDescription>
+                    <CardDescription className="text-xs sm:text-[10px]">{spex.year}</CardDescription>
                     {spex.revivals && spex.revivals.length > 0 && (
                         <div className="flex items-center gap-1 text-primary">
-                            <span className="text-[9px] font-bold uppercase tracking-tighter">
+                            <span className="text-[11px] sm:text-[9px] font-bold uppercase tracking-tighter">
                                 {t("Spex.revivals")}
                             </span>
                             <Badge variant="default"
-                                   className="text-[9px] px-1 py-0 h-3.5 font-bold min-w-3.5 justify-center">
+                                   className="text-[11px] sm:text-[9px] px-1 py-0 h-3.5 font-bold min-w-3.5 justify-center">
                                 {spex.revivals.length}
                             </Badge>
                         </div>

@@ -237,7 +237,7 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
                             />
                         </div>
                         <GraphLegend present={new Set(state.nodes.map((node) => node.type))}/>
-                        <p className="text-[11px] text-muted-foreground">{t("Explore.navHint")}</p>
+                        <p className="text-xs sm:text-[11px] text-muted-foreground">{t("Explore.navHint")}</p>
                     </div>
                     <GraphNodeList
                         nodes={state.nodes}

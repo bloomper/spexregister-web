@@ -239,7 +239,7 @@ export function SpexareCareer({activities = []}: CareerProps) {
 
                                     return (
                                         <span key={entry.year}
-                                              className={`${CELL} text-center text-[10px] leading-4 text-muted-foreground tabular-nums`}>
+                                              className={`${CELL} text-center text-xs sm:text-[10px] leading-4 text-muted-foreground tabular-nums`}>
                                             {tick ? `'${String(entry.year).slice(2)}` : ""}
                                         </span>
                                     );

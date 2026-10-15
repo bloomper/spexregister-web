@@ -9,7 +9,7 @@ import {AnalyticsIssueList} from "./analytics-issue-list.client";
 import {AnalyticsStat} from "./analytics-stat.client";
 import {bucketHref} from "@/utils/analytics";
 
-const GRID = "grid gap-4 md:grid-cols-2";
+const GRID = "grid grid-cols-1 gap-4 md:grid-cols-2";
 
 export function AnalyticsDashboard({data}: { data: Analytics }) {
     const t = useTranslations("Analytics");
@@ -18,9 +18,9 @@ export function AnalyticsDashboard({data}: { data: Analytics }) {
     const total = Number(dataQuality?.total ?? 0);
 
     return (
-        <Tabs defaultValue="participation">
+        <Tabs defaultValue="participation" className="min-w-0">
             <div className="flex flex-wrap items-center justify-between gap-2">
-                <TabsList>
+                <TabsList className="max-w-full justify-start overflow-x-auto [scrollbar-width:none]">
                     <TabsTrigger value="participation">{t("participation")}</TabsTrigger>
                     <TabsTrigger value="demographics">{t("demographics")}</TabsTrigger>
                     <TabsTrigger value="lifecycle">{t("lifecycle")}</TabsTrigger>

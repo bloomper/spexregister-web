@@ -110,27 +110,27 @@ export function SpexareCard({spexare, index, isMe, canEdit, onSelect, onEdit, on
                         <div className="flex items-center gap-1 shrink-0">
                             {isMe && (
                                 <Badge
-                                    className="bg-linear-to-r from-pink-500 to-violet-500 text-white border-none text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-bold">
+                                    className="bg-linear-to-r from-pink-500 to-violet-500 text-white border-none text-[11px] sm:text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-bold">
                                     <Sparkles className="mr-0.5 h-2 w-2"/>
                                     {t("Common.me")}
                                 </Badge>
                             )}
                             {!spexare.published && (
                                 <Badge variant="outline"
-                                       className="text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-normal">
+                                       className="text-[11px] sm:text-[9px] uppercase px-1 py-0 h-3.5 leading-none font-normal">
                                     {t("Spexare.publishedBadges.false")}
                                 </Badge>
                             )}
                             {spexare.deceased && (
                                 <Badge variant="outline"
-                                       className="text-[9px] uppercase px-1 py-0 h-3.5 leading-none shrink-0 font-normal">
+                                       className="text-[11px] sm:text-[9px] uppercase px-1 py-0 h-3.5 leading-none shrink-0 font-normal">
                                     {t("Spexare.deceasedBadges.true")}
                                 </Badge>
                             )}
                         </div>
                     </div>
                     {spexare.nickName && (
-                        <p className="text-[11px] text-muted-foreground italic truncate leading-tight">
+                        <p className="text-xs sm:text-[11px] text-muted-foreground italic truncate leading-tight">
                             {spexare.nickName}
                         </p>
                     )}

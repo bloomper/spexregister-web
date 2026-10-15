@@ -243,7 +243,7 @@ export function SpexareForm({
     }
 
     return (
-        <SheetContent className="sm:max-w-[600px] flex flex-col gap-0 p-0 h-full">
+        <SheetContent className="w-full sm:max-w-[600px] flex flex-col gap-0 p-0 h-full">
             <SheetHeader className="p-6 pb-2 shrink-0">
                 <SheetTitle>{item ? t("Spexare.editHeading") : t("Spexare.createHeading")}</SheetTitle>
             </SheetHeader>

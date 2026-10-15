@@ -49,13 +49,13 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
         <div className="flex flex-col gap-3 rounded-lg border bg-muted/20 p-3">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs">
                 {detail.source && (
-                    <Badge variant={SOURCE_VARIANTS[detail.source]} className="text-[10px] uppercase tracking-wide">
+                    <Badge variant={SOURCE_VARIANTS[detail.source]} className="text-xs sm:text-[10px] uppercase tracking-wide">
                         {t(`Audit.sources.${detail.source}`)}
                     </Badge>
                 )}
                 {detail.comment && <span className="text-foreground/80">{detail.comment}</span>}
                 {detail.operation && (
-                    <span className="font-mono text-[10px] text-muted-foreground">{detail.operation}</span>
+                    <span className="font-mono text-xs sm:text-[10px] text-muted-foreground">{detail.operation}</span>
                 )}
                 {!detail.source && !detail.comment && !detail.operation && (
                     <span className="text-muted-foreground">{t("Audit.originUnknown")}</span>
@@ -85,7 +85,7 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
                         return (
                             <div key={`${entity.type}-${entity.entityId}-${entityIndex}`}
                                  className="flex flex-col gap-1">
-                                <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                                <div className="flex flex-wrap items-center gap-2 text-xs sm:text-[11px]">
                                     <Icon className="h-3 w-3 shrink-0 text-muted-foreground"/>
                                     <span className="font-semibold text-foreground/80">
                                         {auditTypeLabel(t, entity.type)}
@@ -93,7 +93,7 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
                                     {entity.entityLabel && (
                                         <span className="truncate text-muted-foreground">{entity.entityLabel}</span>
                                     )}
-                                    <Badge variant="outline" className="text-[10px]">
+                                    <Badge variant="outline" className="text-xs sm:text-[10px]">
                                         {t(`Common.revisionTypes.${entity.revisionType}`)}
                                     </Badge>
                                     {href && (
@@ -114,7 +114,7 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
                                         revision={detail.revision}
                                     />
                                 ) : (
-                                    <p className="text-[11px] text-muted-foreground">
+                                    <p className="text-xs sm:text-[11px] text-muted-foreground">
                                         {entity.revisionType === RevisionType.Del
                                             ? t("Audit.recordRemoved")
                                             : t("Audit.noFieldChanges")}

@@ -220,7 +220,7 @@ export function EditQueueDrawer() {
     return (
         <>
             <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-                <SheetContent className="sm:max-w-150 flex flex-col gap-0 p-0 h-full">
+                <SheetContent className="w-full sm:max-w-150 flex flex-col gap-0 p-0 h-full">
                     <SheetHeader className="p-6 pb-4 shrink-0 border-b">
                         <div className="flex min-w-0 flex-col gap-1 pr-8">
                             <SheetTitle className="truncate">{label}</SheetTitle>
@@ -273,7 +273,7 @@ export function EditQueueDrawer() {
                         )}
                     </div>
 
-                    <div className="p-6 pt-4 border-t bg-muted/30 shrink-0 flex items-center justify-between gap-2">
+                    <div className="p-4 border-t bg-muted/30 shrink-0 flex flex-wrap items-center justify-between gap-2 sm:p-6 sm:pt-4">
                         <div className="flex items-center gap-2">
                             <Button
                                 type="button"

@@ -59,7 +59,7 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                             </span>
                                     {activity.spexActivity?.spex?.revival && (
                                         <Badge variant="outline"
-                                               className="text-[10px] h-4 py-0 uppercase border-primary/30 text-primary/70">
+                                               className="text-xs sm:text-[10px] h-4 py-0 uppercase border-primary/30 text-primary/70">
                                             {t("Spexare.Activity.SpexActivity.revival")}
                                         </Badge>
                                     )}
@@ -81,7 +81,7 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                                                             render={
                                                                 <Badge
                                                                     variant="secondary"
-                                                                    className="text-[9px] font-bold uppercase px-2 h-5 tracking-tight shadow-none border-transparent shrink-0 cursor-help"
+                                                                    className="text-[11px] sm:text-[9px] font-bold uppercase px-2 h-5 tracking-tight shadow-none border-transparent shrink-0 cursor-help"
                                                                 />
                                                             }
                                                         >
@@ -99,11 +99,11 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                                                     <div className="flex flex-col gap-1 pl-1">
                                                         {actors.map((actor) => (
                                                             <div key={actor.id}
-                                                                 className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] py-0.5 border-l-2 border-primary/20 pl-2">
+                                                                 className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs sm:text-[11px] py-0.5 border-l-2 border-primary/20 pl-2">
                                                                 {actor.role && (
                                                                     <div className="flex items-center gap-1.5">
                                                                     <span
-                                                                        className="text-[9px] uppercase font-bold text-muted-foreground/70">
+                                                                        className="text-[11px] sm:text-[9px] uppercase font-bold text-muted-foreground/70">
                                                                         {t("Spexare.Activity.TaskActivity.Actor.role")}:
                                                                     </span>
                                                                         <span
@@ -115,7 +115,7 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                                                                 {actor.vocal?.label && (
                                                                     <div className="flex items-center gap-1.5">
                                                                     <span
-                                                                        className="text-[9px] uppercase font-bold text-muted-foreground/70">
+                                                                        className="text-[11px] sm:text-[9px] uppercase font-bold text-muted-foreground/70">
                                                                         {t("Spexare.Activity.TaskActivity.Actor.vocal")}:
                                                                     </span>
                                                                         <span

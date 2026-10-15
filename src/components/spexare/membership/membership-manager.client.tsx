@@ -94,7 +94,7 @@ export function MembershipManager({
                                     <div className="flex flex-col">
                                         <span
                                             className="text-sm font-medium leading-none mb-1">{membership.type.label}</span>
-                                        <Badge variant="outline" className="w-fit text-[10px] py-0 h-4">
+                                        <Badge variant="outline" className="w-fit text-xs sm:text-[10px] py-0 h-4">
                                             {membership.year}
                                         </Badge>
                                     </div>

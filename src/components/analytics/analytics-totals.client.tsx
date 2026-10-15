@@ -108,7 +108,7 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
     ]
 
     return (
-        <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid auto-rows-min grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {charts.map((chart, index) => {
                 const chartConfig = {
                     count: {label: t("count"), color: chart.color},
@@ -116,9 +116,9 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                 }
 
                 return (
-                    <Card key={index} className="flex flex-col">
-                        <CardHeader className="pb-2">
-                            <div className="flex justify-between items-start w-full">
+                    <Card key={index} className="flex flex-col gap-3 py-4 sm:gap-6 sm:py-6">
+                        <CardHeader className="px-4 sm:px-6 sm:pb-2">
+                            <div className="flex flex-wrap justify-between items-start gap-x-4 gap-y-2 w-full">
                                 <div className="flex flex-col">
                                     <CardDescription className="flex items-center gap-1.5">
                                         {chart.secondaryTitle && (
@@ -126,25 +126,25 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                         )}
                                         {chart.title}
                                     </CardDescription>
-                                    <CardTitle className="text-4xl font-bold tabular-nums">
+                                    <CardTitle className="text-2xl font-bold tabular-nums sm:text-4xl">
                                         {chart.count?.toLocaleString()}
                                     </CardTitle>
                                 </div>
                                 {chart.secondaryTitle && chart.secondaryCount !== undefined && (
-                                    <div className="flex flex-col items-end text-right">
+                                    <div className="flex flex-col items-start sm:items-end sm:text-right">
                                         <CardDescription className="flex items-center gap-1.5">
                                             <span className="size-2 rounded-[2px]"
                                                   style={{background: chart.secondaryColor}}/>
                                             {chart.secondaryTitle}
                                         </CardDescription>
-                                        <CardTitle className="text-4xl font-bold tabular-nums">
+                                        <CardTitle className="text-2xl font-bold tabular-nums sm:text-4xl">
                                             {chart.secondaryCount?.toLocaleString()}
                                         </CardTitle>
                                     </div>
                                 )}
                             </div>
                         </CardHeader>
-                        <CardContent className="p-0 flex-1">
+                        <CardContent className="hidden p-0 flex-1 sm:block">
                             {chart.history && (
                                 <ChartContainer config={chartConfig} className="h-[100px] w-full">
                                     <BarChart accessibilityLayer data={chart.history} barCategoryGap={1}
@@ -181,7 +181,7 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                 </ChartContainer>
                             )}
                             {chart.categories && (
-                                <ul className="flex h-[100px] flex-col justify-end gap-1 px-6 text-[11px] leading-none">
+                                <ul className="flex h-[100px] flex-col justify-end gap-1 px-6 text-xs sm:text-[11px] leading-none">
                                     {chart.categories.map(category => (
                                         <li key={category.key} className="flex items-center gap-2"
                                             title={`${category.label}: ${category.count.toLocaleString()}`}>
@@ -203,10 +203,10 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                 </ul>
                             )}
                         </CardContent>
-                        <CardFooter className="pt-2 pb-4 mt-auto">
+                        <CardFooter className="hidden pt-2 pb-4 mt-auto sm:flex">
                             {chart.caption && (
                                 <div
-                                    className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-tight font-medium leading-tight">
+                                    className="flex items-center gap-2 text-xs sm:text-[10px] text-muted-foreground uppercase tracking-tight font-medium leading-tight">
                                     <TrendingUp className="h-3.5 w-3.5 shrink-0 opacity-70"/>
                                     <span className="line-clamp-2" title={chart.caption}>
                                         {chart.caption}

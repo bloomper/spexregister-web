@@ -125,7 +125,7 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
                                 </span>
                                 <div className="flex gap-2">
                                     {!partner.published && (
-                                        <Badge variant="outline" className="text-[10px] uppercase">
+                                        <Badge variant="outline" className="text-xs sm:text-[10px] uppercase">
                                             {t("Spexare.publishedBadges.false")}
                                         </Badge>
                                     )}
@@ -177,13 +177,13 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
                                             <span className="text-sm font-medium">{s.firstName} {s.lastName}</span>
                                             <div className="flex gap-2">
                                                 {!s.published && (
-                                                    <span className="text-[10px] text-muted-foreground uppercase">
+                                                    <span className="text-xs sm:text-[10px] text-muted-foreground uppercase">
                                                         {t("Spexare.publishedBadges.false")}
                                                     </span>
                                                 )}
                                                 {s.partner && (
                                                     <span
-                                                        className="text-[10px] text-destructive uppercase font-semibold">
+                                                        className="text-xs sm:text-[10px] text-destructive uppercase font-semibold">
                                                         {t("Spexare.partner")} ({s.partner.firstName} {s.partner.lastName})
                                                     </span>
                                                 )}

@@ -101,7 +101,7 @@ export function DataFilter({
                                 <Separator className="my-1"/>
                             )}
                             {group.label && (
-                                <div className="px-2 py-1 text-[11px] font-semibold text-muted-foreground">
+                                <div className="px-2 py-1 text-xs sm:text-[11px] font-semibold text-muted-foreground">
                                     {group.label}
                                 </div>
                             )}

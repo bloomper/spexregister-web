@@ -16,7 +16,7 @@ interface AuditDiffProps {
 }
 
 const CELL = "min-w-0 bg-background px-2 py-1 wrap-break-word";
-const HEADING = "bg-muted/60 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground";
+const HEADING = "bg-muted/60 px-2 py-1 text-xs sm:text-[10px] font-semibold uppercase tracking-wider text-muted-foreground";
 
 function ownerOf(change: FieldChange, fallback: AuditedType): AuditedType {
     return change.type ?? fallback;
@@ -40,7 +40,7 @@ export function AuditDiff({changes, type, entityId, revision, previousRevisionOf
             const binaryRevision = side === "new" ? revision : previousRevisionOf?.(change) ?? null;
 
             return binaryRevision === null
-                ? <span className="font-mono text-[10px] text-muted-foreground">{value}</span>
+                ? <span className="font-mono text-xs sm:text-[10px] text-muted-foreground">{value}</span>
                 : <AuditBinaryThumbnail type={type} entityId={entityId}
                                         revision={binaryRevision} field={change.field}/>;
         }
@@ -50,7 +50,7 @@ export function AuditDiff({changes, type, entityId, revision, previousRevisionOf
 
     return (
         <dl className={cn(
-            "grid gap-px overflow-hidden rounded-md border bg-border/60 text-[11px]",
+            "grid gap-px overflow-hidden rounded-md border bg-border/60 text-xs sm:text-[11px]",
             "sm:grid-cols-[minmax(0,9rem)_minmax(0,1fr)_minmax(0,1fr)]",
             className,
         )}>

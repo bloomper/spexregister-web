@@ -14,7 +14,7 @@ export function AuditInfo({item}: { item: AuditInfo }) {
     const t = useTranslations();
 
     return (
-        <div className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/30 p-3 text-[11px] text-muted-foreground">
+        <div className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/30 p-3 text-xs sm:text-[11px] text-muted-foreground">
             <div className="space-y-1">
                 <p className="font-semibold text-foreground/70 uppercase tracking-wider">
                     {t("Common.createdAt")}

@@ -159,7 +159,7 @@ export function NewsTable({
                             className="h-8 w-full sm:w-37.5 lg:w-62.5"
                         />
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                             <DataFilter
                                 title={t("News.published")}
                                 selectedValues={selectedPublishedValues}

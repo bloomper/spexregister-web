@@ -42,7 +42,7 @@ export default async function HomePage() {
             </div>
             {hasNews && (
                 <>
-                    <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                    <div className="grid auto-rows-min gap-4 md:grid-cols-3 max-md:[&>*:nth-child(n+4)]:hidden">
                         <NewsGrid
                             initialItems={initialItems}
                             maxItems={6}

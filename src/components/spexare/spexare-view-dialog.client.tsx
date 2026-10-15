@@ -41,7 +41,7 @@ export function SpexareViewDialog({
                 }
             }}
         >
-            <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
+            <DialogContent className="sm:max-w-2xl p-0">
                 <DialogHeader className="sr-only">
                     <DialogTitle>
                         {full

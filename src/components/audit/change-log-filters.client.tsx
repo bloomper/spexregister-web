@@ -50,7 +50,7 @@ export function ChangeLogFilters({filter, authors, onChange}: {
     return (
         <div className="flex flex-wrap items-end gap-2">
             <div className="flex flex-col gap-1">
-                <Label className="text-[11px] text-muted-foreground">{t("Audit.entityType")}</Label>
+                <Label className="text-xs sm:text-[11px] text-muted-foreground">{t("Audit.entityType")}</Label>
                 <Select
                     value={filter.type}
                     onValueChange={(next) => next !== null && onChange({...filter, type: next})}
@@ -68,7 +68,7 @@ export function ChangeLogFilters({filter, authors, onChange}: {
             </div>
 
             <div className="flex flex-col gap-1">
-                <Label className="text-[11px] text-muted-foreground">{t("Common.lastModifiedBy")}</Label>
+                <Label className="text-xs sm:text-[11px] text-muted-foreground">{t("Common.lastModifiedBy")}</Label>
                 <DataFilter
                     title={t("Audit.anyAuthor")}
                     options={authors.map((author) => ({value: author, label: author}))}
@@ -79,7 +79,7 @@ export function ChangeLogFilters({filter, authors, onChange}: {
             </div>
 
             <div className="flex flex-col gap-1">
-                <Label className="text-[11px] text-muted-foreground">{t("Audit.origin")}</Label>
+                <Label className="text-xs sm:text-[11px] text-muted-foreground">{t("Audit.origin")}</Label>
                 <DataFilter
                     title={t("Audit.anyOrigin")}
                     options={Object.values(AuditSource).map((value) => ({
@@ -93,14 +93,14 @@ export function ChangeLogFilters({filter, authors, onChange}: {
             </div>
 
             <div className="flex flex-col gap-1">
-                <Label htmlFor="audit-from" className="text-[11px] text-muted-foreground">{t("Audit.from")}</Label>
+                <Label htmlFor="audit-from" className="text-xs sm:text-[11px] text-muted-foreground">{t("Audit.from")}</Label>
                 <Input id="audit-from" type="date" className="h-8 w-full sm:w-37.5" value={filter.from}
                        max={filter.to || undefined}
                        onChange={(e) => onChange({...filter, from: e.target.value})}/>
             </div>
 
             <div className="flex flex-col gap-1">
-                <Label htmlFor="audit-to" className="text-[11px] text-muted-foreground">{t("Audit.to")}</Label>
+                <Label htmlFor="audit-to" className="text-xs sm:text-[11px] text-muted-foreground">{t("Audit.to")}</Label>
                 <Input id="audit-to" type="date" className="h-8 w-full sm:w-37.5" value={filter.to}
                        min={filter.from || undefined}
                        onChange={(e) => onChange({...filter, to: e.target.value})}/>

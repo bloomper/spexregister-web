@@ -86,7 +86,7 @@ export const columns: DataTableColumnDef<Spex>[] = [
                     {year}
                     {revivals.length > 0 && (
                         <span
-                            className="inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary ring-1 ring-inset ring-primary/20">
+                            className="inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-xs sm:text-[10px] font-bold text-primary ring-1 ring-inset ring-primary/20">
                             +{revivals.length}
                         </span>
                     )}

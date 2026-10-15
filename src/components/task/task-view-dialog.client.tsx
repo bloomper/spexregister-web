@@ -24,7 +24,7 @@ export function TaskViewDialog({selected, onClose}: { selected: Task | null; onC
 
     return (
         <Dialog open={!!selected} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-xl p-0 overflow-hidden">
+            <DialogContent className="sm:max-w-xl p-0">
                 <div className="p-6">
                     <DialogHeader>
                         <DialogTitle className="text-2xl">{selected?.name}</DialogTitle>
@@ -35,7 +35,7 @@ export function TaskViewDialog({selected, onClose}: { selected: Task | null; onC
                     <div className="mt-6 flex flex-col gap-4 text-sm">
                         <div>
                             <div
-                                className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider mb-1">
+                                className="font-semibold text-muted-foreground uppercase text-xs sm:text-[10px] tracking-wider mb-1">
                                 {t("Task.category")}
                             </div>
                             <div className="text-base">{selected?.category?.name ?? t("Common.none")}</div>

@@ -80,7 +80,7 @@ export const columns: DataTableColumnDef<User>[] = [
         cell: ({row}) => (
             <div className="flex flex-wrap gap-1">
                 {row.original.authorities?.map((auth) => (
-                    <Badge key={auth?.id} variant="secondary" className="text-[10px]">
+                    <Badge key={auth?.id} variant="secondary" className="text-xs sm:text-[10px]">
                         {auth?.label}
                     </Badge>
                 ))}
@@ -262,7 +262,7 @@ export function UserTable({
                                 {viewItem?.email}
                             </DialogTitle>
                             {viewItem && (
-                                <Badge variant="outline" className="text-[10px] uppercase tracking-wider h-5 shrink-0">
+                                <Badge variant="outline" className="text-xs sm:text-[10px] uppercase tracking-wider h-5 shrink-0">
                                     {viewItem.state?.label}
                                 </Badge>
                             )}

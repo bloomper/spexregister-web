@@ -9,7 +9,8 @@ import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Button} from "@/components/ui/button";
 import {getAction} from "@/app/(app)/spexare/actions.server";
 import {DataEmpty} from "@/components/data-empty";
-import {CheckCircle2, Circle, UserRound, X} from "lucide-react";
+import {CheckCircle2, ChevronDown, Circle, SlidersHorizontal, UserRound, X} from "lucide-react";
+import {cn} from "@/utils/utils";
 import {DataFilter} from "@/components/data-filter";
 import {Input} from "@/components/ui/input";
 import {useLazyFull} from "@/hooks/use-lazy-full.client";
@@ -99,6 +100,8 @@ export function SpexareGrid({
     const {full: selectedFull, isLoading: isSelectedLoading} = useLazyFull(selectedId, getAction);
     const {full: editFullItem, isLoading: isEditLoading} = useLazyFull(editId, getAction);
     const selected = selectedId ? items.find((i) => i.id === selectedId) ?? null : null;
+    const [filtersOpen, setFiltersOpen] = useState(false);
+    const activeFacetCount = Object.values(selectedFacets).filter(values => values.size > 0).length;
 
     return (
         <>
@@ -142,37 +145,56 @@ export function SpexareGrid({
                             />
                         )}
 
-                        {mode === "search" && currentFacets.map((facet) => {
-                            const selectedValues = selectedFacets[facet.id] || new Set();
-                            return (
-                                <DataFilter
-                                    key={facet.id}
-                                    title={facet.label}
-                                    selectedValues={selectedValues}
-                                    onSelect={(values) => setSelectedFacets(prev => ({
-                                        ...prev,
-                                        [facet.id]: values
-                                    }))}
-                                    onClear={selectedValues.size > 0 ? () => setSelectedFacets(prev => ({
-                                        ...prev,
-                                        [facet.id]: new Set()
-                                    })) : undefined}
-                                    options={facet.groups.flatMap(group =>
-                                        group?.values.map(v => {
-                                            const countSuffix = typeof v?.count === "number" ? ` (${v.count})` : "";
-                                            const valueLabel = v?.label ?? "";
+                        {mode === "search" && currentFacets.length > 0 && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 sm:hidden"
+                                aria-expanded={filtersOpen}
+                                onClick={() => setFiltersOpen(open => !open)}
+                            >
+                                <SlidersHorizontal className="mr-2 h-4 w-4"/>
+                                {t("Common.filters")}
+                                {activeFacetCount > 0 && ` (${activeFacetCount})`}
+                                <ChevronDown className={cn("ml-1 h-4 w-4 transition-transform", filtersOpen && "rotate-180")}/>
+                            </Button>
+                        )}
 
-                                            return {
-                                                label: `${valueLabel}${countSuffix}`,
-                                                value: v?.id ?? "",
-                                                groupLabel: group?.label ?? undefined,
-                                                sortKey: valueLabel,
-                                            };
-                                        }) ?? []
-                                    )}
-                                />
-                            );
-                        })}
+                        {mode === "search" && (
+                            <div className={cn("flex-wrap items-center gap-2 sm:contents", filtersOpen ? "flex w-full" : "hidden")}>
+                                {currentFacets.map((facet) => {
+                                    const selectedValues = selectedFacets[facet.id] || new Set();
+                                    return (
+                                        <DataFilter
+                                            key={facet.id}
+                                            title={facet.label}
+                                            selectedValues={selectedValues}
+                                            onSelect={(values) => setSelectedFacets(prev => ({
+                                                ...prev,
+                                                [facet.id]: values
+                                            }))}
+                                            onClear={selectedValues.size > 0 ? () => setSelectedFacets(prev => ({
+                                                ...prev,
+                                                [facet.id]: new Set()
+                                            })) : undefined}
+                                            options={facet.groups.flatMap(group =>
+                                                group?.values.map(v => {
+                                                    const countSuffix = typeof v?.count === "number" ? ` (${v.count})` : "";
+                                                    const valueLabel = v?.label ?? "";
+
+                                                    return {
+                                                        label: `${valueLabel}${countSuffix}`,
+                                                        value: v?.id ?? "",
+                                                        groupLabel: group?.label ?? undefined,
+                                                        sortKey: valueLabel,
+                                                    };
+                                                }) ?? []
+                                            )}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {isFiltered && (
                             <Button

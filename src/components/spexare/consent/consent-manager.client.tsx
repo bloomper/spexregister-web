@@ -115,12 +115,12 @@ export function ConsentManager({
                                             className="text-sm font-medium leading-none mb-1">{consent.type.label}</span>
                                         {consent.value ? (
                                             <Badge
-                                                className="w-fit bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[9px] py-0 h-4">
+                                                className="w-fit bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[11px] sm:text-[9px] py-0 h-4">
                                                 {t("Spexare.Consent.granted")}
                                             </Badge>
                                         ) : (
                                             <Badge variant="outline"
-                                                   className="w-fit uppercase text-[9px] text-muted-foreground py-0 h-4">
+                                                   className="w-fit uppercase text-[11px] sm:text-[9px] text-muted-foreground py-0 h-4">
                                                 {t("Spexare.Consent.withdrawn")}
                                             </Badge>
                                         )}

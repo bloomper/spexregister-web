@@ -159,7 +159,7 @@ export function SpexActivityForm({
                                                                         </span>
                                                             {s.revival && (
                                                                 <span
-                                                                    className="text-[9px] uppercase tracking-tighter opacity-60">
+                                                                    className="text-[11px] sm:text-[9px] uppercase tracking-tighter opacity-60">
                                                                                 {t("Spexare.Activity.SpexActivity.revival")}
                                                                 </span>
                                                             )}

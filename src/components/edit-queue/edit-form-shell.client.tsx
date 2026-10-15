@@ -19,7 +19,7 @@ export function EditFormShell({
     }
 
     return (
-        <SheetContent className={className ?? "sm:max-w-[600px] flex flex-col gap-0 p-0 h-full"}>
+        <SheetContent className={className ?? "w-full sm:max-w-[600px] flex flex-col gap-0 p-0 h-full"}>
             <SheetHeader className="p-6 pb-4 shrink-0">
                 <SheetTitle>{title}</SheetTitle>
             </SheetHeader>

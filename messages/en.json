@@ -239,6 +239,7 @@
     "pageNotFoundDescription": "The page you are looking for does not exist or has been moved.",
     "pageOf": "Page {page} of {pages}",
     "reset": "Reset",
+    "filters": "Filters",
     "resetFilters": "Reset filters",
     "rowsPerPage": "Rows per page",
     "save": "Save",

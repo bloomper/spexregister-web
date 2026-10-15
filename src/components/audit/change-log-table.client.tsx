@@ -141,7 +141,7 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
                                             <span>{entry.modifiedBy}</span>
                                             {entry.source && (
                                                 <span
-                                                    className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                                                    className="text-xs sm:text-[10px] uppercase tracking-wide text-muted-foreground">
                                                     {t(`Audit.sources.${entry.source}`)}
                                                 </span>
                                             )}
@@ -157,7 +157,7 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
                                                 ))}
                                             </div>
                                             {entry.comment && (
-                                                <span className="text-[11px] text-muted-foreground">
+                                                <span className="text-xs sm:text-[11px] text-muted-foreground">
                                                     {entry.comment}
                                                 </span>
                                             )}

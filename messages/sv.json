@@ -239,6 +239,7 @@
     "pageNotFoundDescription": "Sidan du letar efter finns inte eller har flyttats.",
     "pageOf": "Sida {page} av {pages}",
     "reset": "Återställ",
+    "filters": "Filter",
     "resetFilters": "Återställ filter",
     "rowsPerPage": "Rader per sida",
     "save": "Spara",

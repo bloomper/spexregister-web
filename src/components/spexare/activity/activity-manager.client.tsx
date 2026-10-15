@@ -119,7 +119,7 @@ export function ActivityManager({
                                         </h4>
                                         {activity.spexActivity?.spex?.year && (
                                             <div
-                                                className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest truncate">
+                                                className="text-xs sm:text-[10px] text-muted-foreground font-bold uppercase tracking-widest truncate">
                                                 {activity.spexActivity.spex.year}
                                             </div>
                                         )}

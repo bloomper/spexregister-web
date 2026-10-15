@@ -120,7 +120,7 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
                 }
             >
                 <div
-                    className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-foreground/70">
+                    className="flex items-center gap-2 text-xs sm:text-[11px] font-semibold uppercase tracking-wider text-foreground/70">
                     <History className="h-3.5 w-3.5 text-muted-foreground"/>
                     <span>{t("Common.history")}</span>
                 </div>
@@ -144,7 +144,7 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
 
                             return (
                                 <div key={key}
-                                     className="relative flex items-start gap-3 text-[11px] text-muted-foreground">
+                                     className="relative flex items-start gap-3 text-xs sm:text-[11px] text-muted-foreground">
                                     <div
                                         className="relative z-10 flex h-3 w-3 items-center justify-center bg-muted/30 ring-[3px] ring-muted/30">
                                         {REVISION_ICONS[revision.revisionType] ||
@@ -159,12 +159,12 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
                                                         </span>
                                                         {spansSeveralEntities && revision.entityLabel && (
                                                             <span
-                                                                className="truncate rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                                                className="truncate rounded bg-muted px-1.5 py-0.5 text-xs sm:text-[10px] font-medium text-muted-foreground">
                                                                 {revision.entityLabel}
                                                             </span>
                                                         )}
                                                     </span>
-                                            <span className="text-[10px] opacity-80">
+                                            <span className="text-xs sm:text-[10px] opacity-80">
                                                         {formatDateTime(revision.modifiedAt)}
                                                     </span>
                                         </div>
@@ -177,7 +177,7 @@ export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="h-5 px-1 text-[10px]"
+                                                        className="h-5 px-1 text-xs sm:text-[10px]"
                                                         onClick={() => setExpanded(isExpanded ? null : key)}
                                                     >
                                                         {isExpanded

@@ -28,7 +28,7 @@ export function ImportResultViewer({result}: ImportResultViewerProps) {
         <div className="space-y-4">
             {hasMessages && (
                 <div className="space-y-2">
-                    <Label className="text-[10px] font-bold uppercase text-foreground/70 tracking-widest">
+                    <Label className="text-xs sm:text-[10px] font-bold uppercase text-foreground/70 tracking-widest">
                         {t("Impex.messages")}
                     </Label>
                     <ScrollArea className="h-[150px] w-full rounded-md border border-foreground/10 bg-muted/30 p-2">
@@ -46,7 +46,7 @@ export function ImportResultViewer({result}: ImportResultViewerProps) {
 
             {hasErrors && (
                 <div className="space-y-2">
-                    <Label className="text-[10px] font-bold uppercase text-destructive tracking-widest">
+                    <Label className="text-xs sm:text-[10px] font-bold uppercase text-destructive tracking-widest">
                         {t("Impex.errors")}
                     </Label>
                     <ScrollArea
@@ -66,7 +66,7 @@ export function ImportResultViewer({result}: ImportResultViewerProps) {
             {result.data && (
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                        <Label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
+                        <Label className="flex items-center gap-2 text-xs sm:text-[10px] font-bold uppercase tracking-widest">
                             {t("Impex.data")}
                         </Label>
                         <Button
@@ -79,7 +79,7 @@ export function ImportResultViewer({result}: ImportResultViewerProps) {
                         </Button>
                     </div>
                     <ScrollArea className="h-[200px] w-full rounded-md border bg-muted/50 p-4">
-                        <pre className="text-[10px] leading-relaxed">
+                        <pre className="text-xs sm:text-[10px] leading-relaxed">
                             {JSON.stringify(result.data, null, 2)}
                         </pre>
                     </ScrollArea>

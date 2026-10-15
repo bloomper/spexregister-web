@@ -21,7 +21,7 @@ export function SiteHeader() {
         <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
             <div
                 className="flex min-h-(--header-height) w-full flex-wrap items-center gap-2 px-4 py-2 sm:flex-nowrap sm:py-0">
-                <div className="flex flex-1 items-center gap-2 sm:flex-none">
+                <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-none">
                     <Button
                         className="h-8 w-8"
                         variant="ghost"
@@ -31,12 +31,12 @@ export function SiteHeader() {
                         <SidebarIcon/>
                     </Button>
                     <Separator orientation="vertical" className="mr-2 h-4"/>
-                    <h1 className="text-lg font-semibold whitespace-nowrap">
+                    <h1 className="truncate text-base font-semibold whitespace-nowrap sm:text-lg">
                         {t("Meta.title")}
                     </h1>
                 </div>
 
-                <div className="flex items-center gap-2 sm:order-3">
+                <div className="flex shrink-0 items-center gap-1 sm:order-3 sm:gap-2">
                     <Separator orientation="vertical" className="hidden h-4 sm:block"/>
                     {isClient ? (
                         <>
@@ -50,7 +50,7 @@ export function SiteHeader() {
                     )}
                 </div>
 
-                <div className="mt-1 w-full sm:mt-0 sm:ml-auto sm:w-auto sm:order-2">
+                <div className="w-full sm:mt-0 sm:ml-auto sm:w-auto sm:order-2">
                     <SpexareSearchForm className="w-full sm:w-64"/>
                 </div>
             </div>

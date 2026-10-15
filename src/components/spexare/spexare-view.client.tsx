@@ -35,7 +35,7 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored, in
 
     return (
         <>
-            <div className="relative aspect-video w-full bg-muted border-b">
+            <div className="relative aspect-video max-h-48 w-full bg-muted border-b sm:max-h-none">
                 {spexare.imageUrl ? (
                     <Image
                         src={getProxiedImageUrl(spexare.imageUrl, spexare.lastModifiedAt)}
@@ -58,7 +58,7 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored, in
                                 {spexare.firstName} {spexare.lastName}
                                 {isMe && (
                                     <Badge
-                                        className="ml-2 bg-linear-to-r from-pink-500 to-violet-500 text-white border-none text-[10px] uppercase px-2 py-0.5 h-5 font-bold">
+                                        className="ml-2 bg-linear-to-r from-pink-500 to-violet-500 text-white border-none text-xs sm:text-[10px] uppercase px-2 py-0.5 h-5 font-bold">
                                         <Sparkles className="mr-1 h-3 w-3"/>
                                         {t("Common.me")}
                                     </Badge>
@@ -72,12 +72,12 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored, in
                         </div>
                         <div className="flex flex-wrap justify-end gap-2 mt-1 shrink-0">
                             {spexare.deceased && (
-                                <Badge variant="outline" className="text-[10px] uppercase tracking-wider shrink-0 mt-1">
+                                <Badge variant="outline" className="text-xs sm:text-[10px] uppercase tracking-wider shrink-0 mt-1">
                                     {t("Spexare.deceasedBadges.true")}
                                 </Badge>
                             )}
                             {!spexare.published && (
-                                <Badge variant="outline" className="text-[10px] uppercase tracking-wider shrink-0 mt-1">
+                                <Badge variant="outline" className="text-xs sm:text-[10px] uppercase tracking-wider shrink-0 mt-1">
                                     {t("Spexare.publishedBadges.false")}
                                 </Badge>
                             )}

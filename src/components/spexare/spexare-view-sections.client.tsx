@@ -118,7 +118,7 @@ export function PartnerSection({partner, spexareId, onRestored}: {
                         )}
                         <div className="flex gap-2 mt-1">
                             {partner.deceased && (
-                                <Badge variant="outline" className="text-[10px] uppercase">
+                                <Badge variant="outline" className="text-xs sm:text-[10px] uppercase">
                                     {t("Spexare.deceasedBadges.true")}
                                 </Badge>
                             )}
@@ -162,7 +162,7 @@ export function AddressesSection({addresses, countries, spexareId, onRestored}: 
                 {addresses.map((address) => (
                     <div key={address?.id} className="rounded-lg border p-4 space-y-3">
                         <div className="flex items-center justify-between border-b pb-2">
-                            <Badge variant="secondary" className="text-[10px] uppercase">
+                            <Badge variant="secondary" className="text-xs sm:text-[10px] uppercase">
                                 {address?.type.label}
                             </Badge>
                         </div>
@@ -236,11 +236,11 @@ export function ConsentsSection({consents, spexareId, onRestored}: {
                         <span className="text-sm font-medium">{consent?.type.label}</span>
                         {consent?.value ? (
                             <Badge
-                                className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
+                                className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-xs sm:text-[10px]">
                                 {t("Spexare.Consent.granted")}
                             </Badge>
                         ) : (
-                            <Badge variant="outline" className="uppercase text-[10px] text-muted-foreground">
+                            <Badge variant="outline" className="uppercase text-xs sm:text-[10px] text-muted-foreground">
                                 {t("Spexare.Consent.withdrawn")}
                             </Badge>
                         )}
@@ -292,7 +292,7 @@ export function MembershipsSection({memberships, spexareId, onRestored}: {
                                 .sort((a, b) => Number(a) - Number(b))
                                 .map((year) => (
                                     <Badge key={year} variant="outline"
-                                           className="text-[10px] font-medium bg-background">
+                                           className="text-xs sm:text-[10px] font-medium bg-background">
                                         {year}
                                     </Badge>
                                 ))}
@@ -353,11 +353,11 @@ export function TogglesSection({toggles, spexareId, onRestored}: {
                         </div>
                         {toggle?.value ? (
                             <Badge
-                                className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-[10px]">
+                                className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200 uppercase text-xs sm:text-[10px]">
                                 {t("Common.yes")}
                             </Badge>
                         ) : (
-                            <Badge variant="outline" className="uppercase text-[10px] text-muted-foreground">
+                            <Badge variant="outline" className="uppercase text-xs sm:text-[10px] text-muted-foreground">
                                 {t("Common.no")}
                             </Badge>
                         )}

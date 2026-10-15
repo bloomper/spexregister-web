@@ -41,7 +41,7 @@ export function TaskCard({task, canUpdate, onSelect, onEdit}: TaskCardProps) {
             >
                 <CardHeader className="space-y-0.5 p-3">
                     <div className="flex items-center justify-between gap-2">
-                        <CardDescription className="text-[10px]">
+                        <CardDescription className="text-xs sm:text-[10px]">
                             {task.category?.name ?? t("Common.none")}
                         </CardDescription>
                     </div>

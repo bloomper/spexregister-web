@@ -27,8 +27,8 @@ export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onC
 
     return (
         <Dialog open={!!selected} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-xl p-0 overflow-hidden">
-                <div className="relative aspect-video w-full bg-muted border-b">
+            <DialogContent className="sm:max-w-xl p-0">
+                <div className="relative aspect-video max-h-48 w-full bg-muted border-b sm:max-h-none">
                     {selected?.posterUrl ? (
                         <Image
                             src={getProxiedImageUrl(selected.posterUrl, selected.lastModifiedAt)}
@@ -59,7 +59,7 @@ export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onC
                         {selected?.category && (
                             <div>
                                 <div
-                                    className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider mb-1">
+                                    className="font-semibold text-muted-foreground uppercase text-xs sm:text-[10px] tracking-wider mb-1">
                                     {t("Spex.category")}
                                 </div>
                                 <div className="text-base">{selected.category.name}</div>
@@ -68,7 +68,7 @@ export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onC
                         {selected?.revivals && selected.revivals.length > 0 && (
                             <div>
                                 <div
-                                    className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider mb-1">
+                                    className="font-semibold text-muted-foreground uppercase text-xs sm:text-[10px] tracking-wider mb-1">
                                     {t("Spex.revivals")}
                                 </div>
                                 <div className="flex flex-wrap gap-1.5">

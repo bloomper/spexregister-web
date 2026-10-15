@@ -127,7 +127,7 @@ export function AddressManager({
                                             <div className="flex flex-wrap items-center gap-2 mb-0.5">
                                                 <span className="font-medium truncate">{address.streetAddress}</span>
                                                 <span
-                                                    className="text-[10px] uppercase bg-muted px-1.5 py-0.5 rounded text-muted-foreground shrink-0">
+                                                    className="text-xs sm:text-[10px] uppercase bg-muted px-1.5 py-0.5 rounded text-muted-foreground shrink-0">
                                                         {address.type.label}
                                                     </span>
                                             </div>

@@ -16,14 +16,14 @@ interface AnalyticsStatProps {
 
 export function AnalyticsStat({label, value, hint, icon: Icon, href, className}: AnalyticsStatProps) {
     const body = (
-        <Card className={cn("h-full transition-colors", href && "hover:bg-accent/50", className)}>
+        <Card className={cn("h-full py-0 transition-colors sm:py-6", href && "hover:bg-accent/50", className)}>
             <CardContent className="flex items-start justify-between gap-3 p-4">
                 <div className="flex flex-col gap-0.5 min-w-0">
                     <span className="text-xs text-muted-foreground truncate" title={label}>{label}</span>
                     <span className="text-3xl font-bold tabular-nums leading-tight">
                         {typeof value === "number" ? value.toLocaleString() : value}
                     </span>
-                    {hint && <span className="text-[11px] text-muted-foreground truncate" title={hint}>{hint}</span>}
+                    {hint && <span className="text-xs sm:text-[11px] text-muted-foreground truncate" title={hint}>{hint}</span>}
                 </div>
                 {Icon && <Icon className="size-4 shrink-0 opacity-60"/>}
             </CardContent>
