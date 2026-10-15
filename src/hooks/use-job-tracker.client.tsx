@@ -5,7 +5,13 @@ import {toast} from "sonner";
 import {getJobStatusAction} from "@/app/(app)/impex/actions.server";
 import {useTranslations} from "next-intl";
 
-export function useJobTracker(jobId: string | null, onComplete?: () => void) {
+type JobStatusAction = typeof getJobStatusAction;
+
+export function useJobTracker(
+    jobId: string | null,
+    onComplete?: (succeeded: boolean) => void,
+    statusAction: JobStatusAction = getJobStatusAction
+) {
     const t = useTranslations();
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -16,7 +22,7 @@ export function useJobTracker(jobId: string | null, onComplete?: () => void) {
 
         const checkStatus = async () => {
             try {
-                const status = await getJobStatusAction(jobId);
+                const status = await statusAction(jobId);
 
                 if (status?.status === "COMPLETED") {
                     const isExport = status.name?.toLowerCase().includes("export");
@@ -25,7 +31,7 @@ export function useJobTracker(jobId: string | null, onComplete?: () => void) {
                     if (timerRef.current) {
                         clearInterval(timerRef.current);
                     }
-                    onComplete?.();
+                    onComplete?.(true);
                 } else if (status?.status === "FAILED") {
                     const isExport = status.name?.toLowerCase().includes("export");
                     const errorMsg = status.exitStatus || t("Common.errorOccurred");
@@ -39,14 +45,14 @@ export function useJobTracker(jobId: string | null, onComplete?: () => void) {
                     if (timerRef.current) {
                         clearInterval(timerRef.current);
                     }
-                    onComplete?.();
+                    onComplete?.(false);
                 }
             } catch (error) {
                 void error;
                 if (timerRef.current) {
                     clearInterval(timerRef.current);
                 }
-                onComplete?.();
+                onComplete?.(false);
             }
         };
 
@@ -59,5 +65,5 @@ export function useJobTracker(jobId: string | null, onComplete?: () => void) {
                 clearInterval(timerRef.current);
             }
         };
-    }, [jobId, onComplete, t]);
+    }, [jobId, onComplete, statusAction, t]);
 }

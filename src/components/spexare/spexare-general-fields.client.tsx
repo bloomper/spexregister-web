@@ -180,7 +180,7 @@ export function SpexareGeneralFields({
                                     >
                                         <CalendarIcon className="mr-2 h-4 w-4"/>
                                         {field.value ? (
-                                            format(parse(field.value, "yyyyMMdd", new Date()), "yyyy-MM-dd")
+                                            format(parse(field.value, "yyyyMMdd", new Date(0)), "yyyy-MM-dd")
                                         ) : (
                                             <span>{t("Common.selectDate")}</span>
                                         )}
@@ -192,12 +192,12 @@ export function SpexareGeneralFields({
                                             captionLayout="dropdown"
                                             startMonth={new Date(1900, 0)}
                                             endMonth={new Date()}
-                                            defaultMonth={field.value ? parse(field.value, "yyyyMMdd", new Date()) : undefined}
+                                            defaultMonth={field.value ? parse(field.value, "yyyyMMdd", new Date(0)) : undefined}
                                             formatters={{
                                                 formatMonthDropdown: (date) =>
                                                     format(date, "MMM", {locale}),
                                             }}
-                                            selected={field.value ? parse(field.value, "yyyyMMdd", new Date()) : undefined}
+                                            selected={field.value ? parse(field.value, "yyyyMMdd", new Date(0)) : undefined}
                                             onSelect={(date) => field.onChange(date ? format(date, "yyyyMMdd") : "")}
                                             disabled={(date) => date > new Date()}
                                         />

@@ -7,6 +7,7 @@ import {
     addPartner,
     create,
     del,
+    delAndPurge,
     deleteImage,
     exp,
     get,
@@ -145,18 +146,18 @@ export async function updateAction(id: string, data: unknown) {
     });
 }
 
-export async function deleteAction(id: string) {
+export async function deleteAction(id: string, purge = false) {
     return withPolicyAction(Policies.spexare.requireDelete, async () => {
-        const result = await del(id);
+        const result = await (purge ? delAndPurge(id) : del(id));
         revalidate();
         return result;
     });
 }
 
-export async function bulkDeleteAction(ids: string[]) {
+export async function bulkDeleteAction(ids: string[], purge = false) {
     await withPolicyAction(Policies.spexare.requireDelete, async () => {
         try {
-            await deleteEach(ids, del);
+            await deleteEach(ids, purge ? delAndPurge : del);
         } finally {
             revalidate();
         }

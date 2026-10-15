@@ -1,11 +1,14 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {
     addPartner,
+    delAndPurge,
     deleteImage,
     exp,
+    expMine,
     get,
     getPaged,
     removePartner,
+    requestRemoval,
     search,
     uploadImage
 } from "@/lib/spexare/spexare.server";
@@ -96,6 +99,32 @@ describe("spexare get/export", () => {
             type: ImpexType.Pdf,
             reportType: ReportType.PdfPlatoonList
         });
+    });
+});
+
+describe("spexare self-service and purge", () => {
+    it("delAndPurge deletes with purge", async () => {
+        toPromise.mockResolvedValue({data: {spexareDelete: null}});
+        await delAndPurge("s1");
+        expect(mutation.mock.calls[0][1]).toEqual({id: "s1"});
+        expect(JSON.stringify(mutation.mock.calls[0][0])).toContain("purge");
+    });
+
+    it("expMine forwards type and returns the job", async () => {
+        toPromise.mockResolvedValue({data: {spexareMeExport: {id: "job1"}}});
+        await expect(expMine(ImpexType.Excel)).resolves.toEqual({id: "job1"});
+        expect(query.mock.calls[0][1]).toEqual({type: ImpexType.Excel});
+    });
+
+    it("requestRemoval forwards the reason", async () => {
+        toPromise.mockResolvedValue({data: {spexareMeRemovalRequest: null}});
+        await requestRemoval("Moving on");
+        expect(mutation.mock.calls[0][1]).toEqual({reason: "Moving on"});
+    });
+
+    it("requestRemoval propagates errors", async () => {
+        toPromise.mockResolvedValue({error: new Error("boom")});
+        await expect(requestRemoval(null)).rejects.toThrow("boom");
     });
 });
 

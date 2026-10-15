@@ -8,6 +8,7 @@ import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 import {SpexareForm} from "@/components/spexare/spexare-form.client";
 import {SpexareCareer} from "@/components/spexare/spexare-career.client";
+import {MyData} from "@/components/spexare/my-data.client";
 import {Activity} from "@/gql/schema";
 import {redirect} from "next/navigation";
 import {revalidateTag} from "next/cache";
@@ -59,6 +60,9 @@ export default async function MyProfilePage() {
                 spexCategories={spexCategories}
                 onSuccess={handleSuccess}
             />
+            <div className="mt-8">
+                <MyData/>
+            </div>
         </div>
     );
 }

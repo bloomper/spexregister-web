@@ -1,7 +1,5 @@
 import {z} from "zod";
 
-const currentYear = new Date().getFullYear();
-
 export const spexCategoryFormSchema = z.object({
     name: z
         .string()
@@ -13,7 +11,7 @@ export const spexCategoryFormSchema = z.object({
         .max(4, "Common.fieldTooLong")
         .refine((val) => {
             const year = parseInt(val, 10);
-            return year >= 1948 && year <= currentYear + 2;
+            return year >= 1948 && year <= new Date().getFullYear() + 2;
         }, {
             message: "Common.fieldInvalidRange"
         }),

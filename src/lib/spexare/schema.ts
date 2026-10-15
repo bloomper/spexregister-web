@@ -87,3 +87,12 @@ export const spexareFormSchema = z.object({
 
 export type SpexareFormInput = z.input<typeof spexareFormSchema>;
 export type SpexareFormOutput = z.output<typeof spexareFormSchema>;
+
+export const removalRequestSchema = z.object({
+    reason: z
+        .string()
+        .max(2000, "Common.fieldTooLong")
+        .optional(),
+});
+
+export type RemovalRequestFormValues = z.infer<typeof removalRequestSchema>;

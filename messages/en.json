@@ -8,6 +8,15 @@
     "heading": "About the register",
     "title": "About"
   },
+  "Admin": {
+    "description": "Maintenance tasks for administrators.",
+    "heading": "Administration",
+    "indexSpexare": "Rebuild spexare index",
+    "indexSpexareStarted": "Rebuilding the search index has started. It runs in the background.",
+    "maintenance": "Maintenance",
+    "searchIndexDescription": "Rebuilds the search index for spexare from the database. Use it if search results look wrong or incomplete.",
+    "searchIndexHeading": "Search index"
+  },
   "Analytics": {
     "heading": "Analytics",
     "showAll": "Show all analytics",
@@ -247,7 +256,9 @@
     "tryAgain": "Try again",
     "updateSuccess": "Update successful",
     "uploadSuccess": "Upload successful",
-    "yes": "Yes"
+    "yes": "Yes",
+    "deletePurge": "Also delete all history",
+    "deletePurgeDescription": "Removes every earlier version from the change log so that nothing about the person remains. This cannot be undone."
   },
   "CommandPalette": {
     "title": "Command palette",
@@ -382,6 +393,19 @@
   "Meta": {
     "description": "Address registry for Chalmersspexet's members",
     "title": "Chalmersspexet's Address Register"
+  },
+  "MyData": {
+    "description": "Download everything the register holds about you, or ask to be removed from it.",
+    "export": "Export my data",
+    "heading": "Your data",
+    "reason": "Reason (optional)",
+    "removalRequestDescription": "The administrators receive your request by email and handle it manually. You will be contacted on the email address of your account.",
+    "removalRequestFailed": "Your request could not be sent. Please try again later or contact support.",
+    "removalRequestSent": "Your request has been sent to the administrators",
+    "requestRemoval": "Request removal",
+    "send": "Send request",
+    "sending": "Sending...",
+    "unpublishHint": "If you want to stay in the register without being visible, untick \"Published?\" above instead. Then only administrators can see you."
   },
   "News": {
     "createHeading": "Create news",

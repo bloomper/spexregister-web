@@ -6,7 +6,13 @@ import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {ConsentCompletion} from "@/gql/schema";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
+import {
+    ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
+    ChartTooltip,
+    ChartTooltipContent
+} from "@/components/ui/chart";
 import {DataEmpty} from "@/components/data-empty";
 import {bucketHref} from "@/utils/analytics";
 

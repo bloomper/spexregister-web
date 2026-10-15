@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import * as actions from "@/app/(app)/spexare/actions.server";
-import {create, del, getPaged, update} from "@/lib/spexare";
+import {create, del, delAndPurge, getPaged, update} from "@/lib/spexare";
 import {create as createAddress} from "@/lib/spexare/address";
 import {create as createConsent} from "@/lib/spexare/consent";
 import {create as createMembership} from "@/lib/spexare/membership";
@@ -24,6 +24,7 @@ vi.mock("@/lib/spexare", () => ({
     get: vi.fn(),
     update: vi.fn(),
     del: vi.fn(),
+    delAndPurge: vi.fn(),
     exp: vi.fn(),
     imp: vi.fn(),
     addPartner: vi.fn(),
@@ -156,6 +157,30 @@ describe("spexare bulkDeleteAction", () => {
         await actions.bulkDeleteAction(["a", "b", "c"]);
 
         expect(del).toHaveBeenCalledTimes(3);
+        expect(delAndPurge).not.toHaveBeenCalled();
         expect(revalidateTag).toHaveBeenCalledTimes(1);
+    });
+
+    it("purges every id when asked to", async () => {
+        await actions.bulkDeleteAction(["a", "b"], true);
+
+        expect(delAndPurge).toHaveBeenCalledTimes(2);
+        expect(del).not.toHaveBeenCalled();
+    });
+});
+
+describe("spexare deleteAction", () => {
+    it("deletes without purge by default", async () => {
+        await actions.deleteAction("a");
+
+        expect(del).toHaveBeenCalledWith("a");
+        expect(delAndPurge).not.toHaveBeenCalled();
+    });
+
+    it("purges when asked to", async () => {
+        await actions.deleteAction("a", true);
+
+        expect(delAndPurge).toHaveBeenCalledWith("a");
+        expect(del).not.toHaveBeenCalled();
     });
 });

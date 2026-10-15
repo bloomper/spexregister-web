@@ -115,6 +115,12 @@ const SpexareDeleteMutation = graphql(`
     }
 `);
 
+const DeleteAndPurgeMutation = graphql(`
+    mutation SpexareDeleteAndPurge($id: ID!) {
+        spexareDelete(id: $id, purge: true)
+    }
+`);
+
 const client = createResourceClient<Spexare, SpexareEdge, SpexareCreate, SpexareUpdate>({
     singular: "spexare",
     pagedSummaryQuery: SpexarePagedSummary,
@@ -165,6 +171,18 @@ const RemovePartnerMutation = graphql(`
 const ExportQuery = graphql(`
     query SpexareExport($ids: [ID], $filter: String, $type: ImpexType!, $reportType: ReportType) {
         spexareExport(ids: $ids, filter: $filter, type: $type, reportType: $reportType) { id }
+    }
+`);
+
+const ExportMineQuery = graphql(`
+    query SpexareMeExport($type: ImpexType!) {
+        spexareMeExport(type: $type) { id }
+    }
+`);
+
+const RemovalRequestMutation = graphql(`
+    mutation SpexareMeRemovalRequest($reason: String) {
+        spexareMeRemovalRequest(reason: $reason)
     }
 `);
 
@@ -261,6 +279,19 @@ export async function getMine(args?: { full?: boolean }): Promise<Spexare | null
 export async function exp(ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType): Promise<JobReference> {
     const data = await runQuery(ExportQuery, {ids, filter, type, reportType});
     return data!.spexareExport as JobReference;
+}
+
+export async function delAndPurge(id: string) {
+    return runMutationField(DeleteAndPurgeMutation, {id}, "spexareDelete");
+}
+
+export async function expMine(type: ImpexType): Promise<JobReference> {
+    const data = await runQuery(ExportMineQuery, {type});
+    return data!.spexareMeExport as JobReference;
+}
+
+export async function requestRemoval(reason: string | null) {
+    return runMutationField(RemovalRequestMutation, {reason}, "spexareMeRemovalRequest");
 }
 
 export async function addPartner(spexareId: string, id: string) {

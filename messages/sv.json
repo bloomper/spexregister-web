@@ -8,6 +8,15 @@
     "heading": "Om registret",
     "title": "Om"
   },
+  "Admin": {
+    "description": "Underhållsuppgifter för administratörer.",
+    "heading": "Administration",
+    "indexSpexare": "Bygg om spexarindex",
+    "indexSpexareStarted": "Ombyggnaden av sökindexet har startat. Den körs i bakgrunden.",
+    "maintenance": "Underhåll",
+    "searchIndexDescription": "Bygger om sökindexet för spexare från databasen. Använd det om sökresultaten ser felaktiga eller ofullständiga ut.",
+    "searchIndexHeading": "Sökindex"
+  },
   "Analytics": {
     "heading": "Analys",
     "showAll": "Visa all analys",
@@ -246,7 +255,9 @@
     "tryAgain": "Försök igen",
     "updateSuccess": "Uppdateringen lyckades",
     "uploadSuccess": "Uppladdning lyckades",
-    "yes": "Ja"
+    "yes": "Ja",
+    "deletePurge": "Radera även all historik",
+    "deletePurgeDescription": "Tar bort alla tidigare versioner från ändringsloggen så att inget om personen finns kvar. Detta kan inte ångras."
   },
   "CommandPalette": {
     "title": "Kommandopalett",
@@ -381,6 +392,19 @@
   "Meta": {
     "description": "Adressregister för medlemmar i Chalmersspexet",
     "title": "Chalmersspexets Adressregister"
+  },
+  "MyData": {
+    "description": "Ladda ner allt registret har om dig, eller begär att bli borttagen.",
+    "export": "Exportera mina uppgifter",
+    "heading": "Dina uppgifter",
+    "reason": "Anledning (valfritt)",
+    "removalRequestDescription": "Administratörerna får din begäran via e-post och hanterar den manuellt. Du kontaktas på e-postadressen för ditt konto.",
+    "removalRequestFailed": "Din begäran kunde inte skickas. Försök igen senare eller kontakta support.",
+    "removalRequestSent": "Din begäran har skickats till administratörerna",
+    "requestRemoval": "Begär borttagning",
+    "send": "Skicka begäran",
+    "sending": "Skickar...",
+    "unpublishHint": "Vill du finnas kvar i registret utan att synas kan du i stället bocka ur \"Publicerad?\" ovan. Då är du bara synlig för administratörer."
   },
   "News": {
     "createHeading": "Skapa nyhet",
