@@ -59,7 +59,7 @@ test("the change log filters by user, origin and date", async ({page}) => {
 
     await expect(page.getByRole("row")).toHaveCount(3); // header plus both revisions
 
-    await page.getByRole("button", {name: /Alla ursprung/}).click();
+    await page.getByRole("button", {name: /^Ursprung/}).click();
     await page.getByRole("button", {name: "Återställning"}).click();
     await page.keyboard.press("Escape");
 
@@ -67,9 +67,10 @@ test("the change log filters by user, origin and date", async ({page}) => {
     await expect(page.getByText("anna@example.com")).toBeVisible();
 
     // Scoped to the page: the origin popover keeps a reset button of its own in the DOM.
-    await page.getByRole("main").getByRole("button", {name: "Återställ filter"}).click();
+    await page.getByRole("main").getByRole("button", {name: "Återställ", exact: true}).click();
     await expect(page.getByRole("row")).toHaveCount(3);
 
+    await page.getByRole("button", {name: /^Period/}).click();
     await page.locator("#audit-from").fill("2026-09-18");
 
     await expect(page.getByRole("row")).toHaveCount(2);
