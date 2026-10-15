@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useTranslations} from "next-intl";
 import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {Tag} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
@@ -10,7 +11,9 @@ import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/tags/actions.server";
 import {useRouter} from "next/navigation";
-import {Pencil} from "lucide-react";
+import {Pencil, Tag as TagIcon} from "lucide-react";
+import {GridFilterHeader} from "@/components/grid-filter-header.client";
+import {DataEmpty} from "@/components/data-empty";
 import {Sheet} from "@/components/ui/sheet";
 import {TagForm} from "@/components/tag/tag-form.client";
 import {TagViewDialog} from "@/components/tag/tag-view-dialog.client";
@@ -26,9 +29,12 @@ export function TagGrid({
     maxItems?: number;
     canUpdate?: boolean;
 }) {
+    const t = useTranslations();
     const router = useRouter();
     const [selected, setSelected] = useState<Tag | null>(null);
     const [editItem, setEditItem] = useState<Tag | null>(null);
+    const [searchValue, setSearchValue] = useState("");
+    const [filterQuery, setFilterQuery] = useState("");
 
     const {
         items,
@@ -37,11 +43,13 @@ export function TagGrid({
         hasNextPage,
         sentinelRef,
         loadMore,
+        reset,
         isInfiniteMode,
     } = useInfiniteList<Tag>({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
-            first: args.pageSize
+            first: args.pageSize,
+            filter: filterQuery.trim() ? `name:*${filterQuery.trim()}*` : undefined,
         }),
         pageSize: 24,
         rootMargin: "600px",
@@ -51,8 +59,43 @@ export function TagGrid({
         maxItems,
     });
 
+    useEffect(() => {
+        if (searchValue === filterQuery) {
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setFilterQuery(searchValue);
+            reset();
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchValue, filterQuery, reset]);
+
+    const isFiltered = filterQuery.trim() !== "";
+    const noResults = isInfiniteMode && !loading && items.length === 0;
+
     return (
         <>
+            {isInfiniteMode && (
+                <GridFilterHeader
+                    title={t("Tag.heading")}
+                    placeholder={t("Tag.filterPlaceholder")}
+                    value={searchValue}
+                    onChange={setSearchValue}
+                />
+            )}
+
+            {noResults && (
+                <div className="col-span-full py-12">
+                    <DataEmpty
+                        title={isFiltered ? t("Common.noFilterMatchHeading") : t("Common.noDataHeading")}
+                        description={isFiltered ? t("Common.noFilterMatchDescription") : t("Common.noDataDescription")}
+                        icon={TagIcon}
+                    />
+                </div>
+            )}
+
             {items.map((n) => (
                 <Card
                     key={n.id}

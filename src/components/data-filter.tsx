@@ -90,7 +90,7 @@ export function DataFilter({
                                 placeholder={t("Common.search")}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="h-8 text-xs"
+                                className="h-8"
                                 autoFocus
                             />
                         </div>

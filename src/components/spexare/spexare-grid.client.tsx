@@ -118,7 +118,7 @@ export function SpexareGrid({
                                 placeholder={mode === "search" ? t("Spexare.searchPlaceholder") : t("Spexare.filterPlaceholder")}
                                 value={searchValue}
                                 onChange={(e) => setSearchValue(e.target.value)}
-                                className="h-8 text-xs pr-8"
+                                className="h-8 pr-8"
                             />
                             {searchValue && (
                                 <Button

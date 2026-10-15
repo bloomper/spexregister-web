@@ -66,7 +66,7 @@ export function SpexGrid({
                                 placeholder={t("Spex.filterPlaceholder")}
                                 value={searchValue}
                                 onChange={(e) => setSearchValue(e.target.value)}
-                                className="h-8 text-xs pr-8"
+                                className="h-8 pr-8"
                             />
                             {searchValue && (
                                 <Button

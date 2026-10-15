@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {
     Dialog,
@@ -27,7 +27,9 @@ import {
 import {useRouter} from "next/navigation";
 import {Sheet} from "@/components/ui/sheet";
 import {NewsForm} from "@/components/news/news-form.client";
-import {Pencil} from "lucide-react";
+import {Newspaper, Pencil} from "lucide-react";
+import {GridFilterHeader} from "@/components/grid-filter-header.client";
+import {DataEmpty} from "@/components/data-empty";
 import {AuditTrail} from "../data-audit-trail.client";
 
 const restoreActions = {
@@ -48,6 +50,8 @@ export function NewsGrid({
 }) {
     const t = useTranslations();
     const router = useRouter();
+    const [searchValue, setSearchValue] = useState("");
+    const [filterQuery, setFilterQuery] = useState("");
 
     const {
         items,
@@ -56,11 +60,13 @@ export function NewsGrid({
         hasNextPage,
         sentinelRef,
         loadMore,
+        reset,
         isInfiniteMode,
     } = useInfiniteList<News>({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
-            first: args.pageSize
+            first: args.pageSize,
+            filter: filterQuery.trim() ? `subject:*${filterQuery.trim()}*` : undefined,
         }),
         pageSize: 24,
         rootMargin: "600px",
@@ -73,8 +79,43 @@ export function NewsGrid({
     const [selected, setSelected] = useState<News | null>(null);
     const [editItem, setEditItem] = useState<News | null>(null);
 
+    useEffect(() => {
+        if (searchValue === filterQuery) {
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setFilterQuery(searchValue);
+            reset();
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchValue, filterQuery, reset]);
+
+    const isFiltered = filterQuery.trim() !== "";
+    const noResults = isInfiniteMode && !loading && items.length === 0;
+
     return (
         <>
+            {isInfiniteMode && (
+                <GridFilterHeader
+                    title={t("News.heading")}
+                    placeholder={t("News.filterPlaceholder")}
+                    value={searchValue}
+                    onChange={setSearchValue}
+                />
+            )}
+
+            {noResults && (
+                <div className="col-span-full py-12">
+                    <DataEmpty
+                        title={isFiltered ? t("Common.noFilterMatchHeading") : t("Common.noDataHeading")}
+                        description={isFiltered ? t("Common.noFilterMatchDescription") : t("Common.noDataDescription")}
+                        icon={Newspaper}
+                    />
+                </div>
+            )}
+
             {items.map((n) => (
                 <Card
                     key={n.id}

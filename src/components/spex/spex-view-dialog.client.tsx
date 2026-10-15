@@ -12,6 +12,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {ImageIcon} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {AuditTrail} from "@/components/data-audit-trail.client";
@@ -39,9 +40,7 @@ export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onC
                         />
                     ) : (
                         <div className="flex h-full items-center justify-center">
-                            <span className="text-muted-foreground text-xs uppercase tracking-widest">
-                                {t("Common.noDataHeading")}
-                            </span>
+                            <ImageIcon className="h-24 w-24 text-muted-foreground/20 stroke-1"/>
                         </div>
                     )}
                 </div>

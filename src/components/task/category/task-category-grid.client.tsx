@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useTranslations} from "next-intl";
 import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {TaskCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
@@ -10,7 +11,9 @@ import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/tasks/categories/actions.server";
 import {useRouter} from "next/navigation";
-import {Pencil} from "lucide-react";
+import {Shapes, Pencil} from "lucide-react";
+import {GridFilterHeader} from "@/components/grid-filter-header.client";
+import {DataEmpty} from "@/components/data-empty";
 import {Sheet} from "@/components/ui/sheet";
 import {TaskCategoryForm} from "@/components/task/category/task-category-form.client";
 import {TaskCategoryViewDialog} from "@/components/task/category/task-category-view-dialog.client";
@@ -26,7 +29,10 @@ export function TaskCategoryGrid({
     maxItems?: number;
     canUpdate?: boolean;
 }) {
+    const t = useTranslations();
     const router = useRouter();
+    const [searchValue, setSearchValue] = useState("");
+    const [filterQuery, setFilterQuery] = useState("");
     const [selected, setSelected] = useState<TaskCategory | null>(null);
     const [editItem, setEditItem] = useState<TaskCategory | null>(null);
 
@@ -37,11 +43,13 @@ export function TaskCategoryGrid({
         hasNextPage,
         sentinelRef,
         loadMore,
+        reset,
         isInfiniteMode,
     } = useInfiniteList<TaskCategory>({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
-            first: args.pageSize
+            first: args.pageSize,
+            filter: filterQuery.trim() ? `name:*${filterQuery.trim()}*` : undefined,
         }),
         pageSize: 24,
         rootMargin: "600px",
@@ -51,8 +59,43 @@ export function TaskCategoryGrid({
         maxItems,
     });
 
+    useEffect(() => {
+        if (searchValue === filterQuery) {
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setFilterQuery(searchValue);
+            reset();
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchValue, filterQuery, reset]);
+
+    const isFiltered = filterQuery.trim() !== "";
+    const noResults = isInfiniteMode && !loading && items.length === 0;
+
     return (
         <>
+            {isInfiniteMode && (
+                <GridFilterHeader
+                    title={t("Task.Category.heading")}
+                    placeholder={t("Task.Category.filterPlaceholder")}
+                    value={searchValue}
+                    onChange={setSearchValue}
+                />
+            )}
+
+            {noResults && (
+                <div className="col-span-full py-12">
+                    <DataEmpty
+                        title={isFiltered ? t("Common.noFilterMatchHeading") : t("Common.noDataHeading")}
+                        description={isFiltered ? t("Common.noFilterMatchDescription") : t("Common.noDataDescription")}
+                        icon={Shapes}
+                    />
+                </div>
+            )}
+
             {items.map((n) => (
                 <Card
                     key={n.id}

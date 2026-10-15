@@ -3,7 +3,7 @@ import "server-only";
 import {betterAuth} from "better-auth";
 import {genericOAuth, type GenericOAuthUserInfo, keycloak} from "better-auth/plugins/generic-oauth";
 import {nextCookies} from "better-auth/next-js";
-import {gravatarImageUrl} from "@/lib/gravatar.server";
+import {resolveGravatarImage} from "@/lib/gravatar.server";
 
 const appUrl = process.env.BETTER_AUTH_URL;
 
@@ -30,8 +30,8 @@ export const auth = betterAuth({
                     tokenUrl: endpoint("token"),
                     userInfoUrl: endpoint("userinfo"),
                     endSessionEndpoint: endpoint("logout"),
-                    mapProfileToUser: (profile: GenericOAuthUserInfo) => ({
-                        image: profile.image ?? gravatarImageUrl(profile.email),
+                    mapProfileToUser: async (profile: GenericOAuthUserInfo) => ({
+                        image: profile.image ?? await resolveGravatarImage(profile.email),
                     }),
                 },
             ],

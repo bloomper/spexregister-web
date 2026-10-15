@@ -36,6 +36,8 @@ function getInitials(name?: string | null | undefined, email?: string | null | u
     return (first + last).toUpperCase();
 }
 
+const failedAvatars = new Set<string>();
+
 export function NavUser({spexare, accountUrl}: { spexare?: Spexare | null; accountUrl: string }) {
     const {isMobile} = useSidebar();
     const t = useTranslations();
@@ -46,7 +48,14 @@ export function NavUser({spexare, accountUrl}: { spexare?: Spexare | null; accou
 
     const initials = useMemo(() => getInitials(user?.name, user?.email), [user?.name, user?.email]);
     const [avatarFailed, setAvatarFailed] = useState(false);
-    const avatarSrc = !avatarFailed && user?.image ? user.image : undefined;
+    const avatarSrc = !avatarFailed && user?.image && !failedAvatars.has(user.image) ? user.image : undefined;
+
+    const handleAvatarStatus = (status: string) => {
+        if (status === "error" && avatarSrc) {
+            failedAvatars.add(avatarSrc);
+            setAvatarFailed(true);
+        }
+    };
 
     if (spexare === undefined) {
         return (
@@ -78,7 +87,7 @@ export function NavUser({spexare, accountUrl}: { spexare?: Spexare | null; accou
                     >
                         <Avatar className="h-8 w-8 rounded-lg">
                             <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
-                                         onError={() => setAvatarFailed(true)}/>
+                                         onLoadingStatusChange={handleAvatarStatus}/>
                             <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight">
@@ -98,7 +107,7 @@ export function NavUser({spexare, accountUrl}: { spexare?: Spexare | null; accou
                                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                     <Avatar className="h-8 w-8 rounded-lg">
                                         <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
-                                                     onError={() => setAvatarFailed(true)}/>
+                                                     onLoadingStatusChange={handleAvatarStatus}/>
                                         <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                                     </Avatar>
                                     <div className="grid flex-1 text-left text-sm leading-tight">

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {useTranslations} from "next-intl";
 import {SpexCategory} from "@/gql/schema";
@@ -13,7 +13,9 @@ import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
 import {getProxiedImageUrl} from "@/utils/utils";
 import Image from "next/image";
 import {useRouter} from "next/navigation";
-import {Pencil} from "lucide-react";
+import {Clapperboard, ImageIcon, Pencil} from "lucide-react";
+import {GridFilterHeader} from "@/components/grid-filter-header.client";
+import {DataEmpty} from "@/components/data-empty";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexCategoryForm} from "@/components/spex/category/spex-category-form.client";
 import {SpexCategoryViewDialog} from "@/components/spex/category/spex-category-view-dialog.client";
@@ -31,6 +33,8 @@ export function SpexCategoryGrid({
 }) {
     const t = useTranslations();
     const router = useRouter();
+    const [searchValue, setSearchValue] = useState("");
+    const [filterQuery, setFilterQuery] = useState("");
     const [selected, setSelected] = useState<SpexCategory | null>(null);
     const [editItem, setEditItem] = useState<SpexCategory | null>(null);
 
@@ -41,11 +45,13 @@ export function SpexCategoryGrid({
         hasNextPage,
         sentinelRef,
         loadMore,
+        reset,
         isInfiniteMode,
     } = useInfiniteList<SpexCategory>({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
-            first: args.pageSize
+            first: args.pageSize,
+            filter: filterQuery.trim() ? `(name:*${filterQuery.trim()}* OR firstYear:*${filterQuery.trim()}*)` : undefined,
         }),
         pageSize: 24,
         rootMargin: "600px",
@@ -55,8 +61,43 @@ export function SpexCategoryGrid({
         maxItems,
     });
 
+    useEffect(() => {
+        if (searchValue === filterQuery) {
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setFilterQuery(searchValue);
+            reset();
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchValue, filterQuery, reset]);
+
+    const isFiltered = filterQuery.trim() !== "";
+    const noResults = isInfiniteMode && !loading && items.length === 0;
+
     return (
         <>
+            {isInfiniteMode && (
+                <GridFilterHeader
+                    title={t("Spex.Category.heading")}
+                    placeholder={t("Spex.Category.filterPlaceholder")}
+                    value={searchValue}
+                    onChange={setSearchValue}
+                />
+            )}
+
+            {noResults && (
+                <div className="col-span-full py-12">
+                    <DataEmpty
+                        title={isFiltered ? t("Common.noFilterMatchHeading") : t("Common.noDataHeading")}
+                        description={isFiltered ? t("Common.noFilterMatchDescription") : t("Common.noDataDescription")}
+                        icon={Clapperboard}
+                    />
+                </div>
+            )}
+
             {items.map((n, index) => (
                 <Card key={n.id}
                       className="group relative overflow-hidden flex flex-col p-0 transition-colors hover:bg-muted/50 cursor-pointer">
@@ -89,8 +130,7 @@ export function SpexCategoryGrid({
                             </div>
                         ) : (
                             <div className="aspect-video w-full bg-muted flex items-center justify-center border-b">
-                            <span
-                                className="text-muted-foreground text-xs uppercase tracking-widest">{t("Common.noDataHeading")}</span>
+                                <ImageIcon className="h-12 w-12 text-muted-foreground/20 stroke-[1.5]"/>
                             </div>
                         )}
                         <CardHeader className="p-4">

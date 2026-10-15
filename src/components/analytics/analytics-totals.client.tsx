@@ -7,6 +7,7 @@ import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui
 import {Bucket, History, Totals} from "@/gql/schema"
 import {useTranslations} from "next-intl"
 import {TrendingUp} from "lucide-react"
+import {useMediaQuery} from "@/hooks/use-media-query.client"
 
 interface AnalyticsTotalsProps {
     data: Totals
@@ -64,6 +65,7 @@ function topCategories(buckets: Bucket[], otherLabel: string) {
 
 export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
     const t = useTranslations("Analytics")
+    const showCharts = useMediaQuery("(min-width: 40rem)")
 
     const range = (points: YearPoint[]) => ({from: points[0]?.label ?? "", to: points[points.length - 1]?.label ?? ""})
 
@@ -131,7 +133,7 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                     </CardTitle>
                                 </div>
                                 {chart.secondaryTitle && chart.secondaryCount !== undefined && (
-                                    <div className="flex flex-col items-start sm:items-end sm:text-right">
+                                    <div className="flex flex-col items-start">
                                         <CardDescription className="flex items-center gap-1.5">
                                             <span className="size-2 rounded-[2px]"
                                                   style={{background: chart.secondaryColor}}/>
@@ -144,8 +146,8 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                 )}
                             </div>
                         </CardHeader>
-                        <CardContent className="hidden p-0 flex-1 sm:block">
-                            {chart.history && (
+                        <CardContent className="hidden p-0 flex-1 sm:block sm:min-h-[100px]">
+                            {showCharts && chart.history && (
                                 <ChartContainer config={chartConfig} className="h-[100px] w-full">
                                     <BarChart accessibilityLayer data={chart.history} barCategoryGap={1}
                                               margin={{top: 10, right: 10, left: 10, bottom: 0}}>

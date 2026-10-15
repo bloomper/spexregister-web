@@ -10,7 +10,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
 import {useLazyFull} from "@/hooks/use-lazy-full.client";
-import {useCoarsePointer} from "@/hooks/use-coarse-pointer.client";
+import {useMediaQuery} from "@/hooks/use-media-query.client";
 import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client";
 import {SpexViewDialog} from "@/components/spex/spex-view-dialog.client";
 import {SpexCategoryViewDialog} from "@/components/spex/category/spex-category-view-dialog.client";
@@ -33,7 +33,7 @@ const EXPAND_LIMIT = 25;
 
 export function GraphExplorer({countries}: { countries: Country[] }) {
     const t = useTranslations();
-    const isTouch = useCoarsePointer();
+    const isTouch = useMediaQuery("(pointer: coarse)");
     const {state, byId, absorb, absorbNodes, collapseNode, reset} = useGraphState();
     const [, startTransition] = useTransition();
     const [query, setQuery] = useState("");
