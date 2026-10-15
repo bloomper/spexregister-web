@@ -29,7 +29,8 @@ import {
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem
+    SidebarMenuItem,
+    useSidebar
 } from "@/components/ui/sidebar";
 import {Logo} from "@/components/logo";
 import {LogoText} from "@/components/logo-text";
@@ -62,6 +63,13 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
     const pathname = usePathname();
     const t = useTranslations();
     const isClient = useIsClient();
+    const {isMobile, setOpenMobile} = useSidebar();
+
+    const closeOnNavigate = (event: React.MouseEvent) => {
+        if (isMobile && (event.target as Element).closest("a")) {
+            setOpenMobile(false);
+        }
+    };
 
     const navigation = useMemo((): { main: NavItem[]; secondary: NavSecondaryItem[] } => {
         const isCurrentUserAdmin = isAdmin(roles);
@@ -198,12 +206,12 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
         if (isCurrentUserAdmin) {
             mainItems.push({
                 title: t("Admin.heading"),
-                url: "/admin",
+                url: "/admin/maintenance",
                 icon: Settings,
-                isActive: pathname.startsWith("/admin") || pathname.startsWith("/change-log"),
+                isActive: pathname.startsWith("/admin"),
                 items: [
-                    {title: t("Admin.maintenance"), url: "/admin"},
-                    {title: t("Audit.title"), url: "/change-log"},
+                    {title: t("Admin.maintenance"), url: "/admin/maintenance"},
+                    {title: t("Audit.title"), url: "/admin/change-log"},
                 ],
             });
         }
@@ -255,7 +263,7 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent onClickCapture={closeOnNavigate}>
                 {isClient ? (
                     <>
                         <NavMain items={navigation.main}/>
@@ -273,7 +281,7 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                     </div>
                 )}
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter onClickCapture={closeOnNavigate}>
                 {isClient && <NavUser spexare={spexare} accountUrl={accountUrl}/>}
             </SidebarFooter>
         </Sidebar>

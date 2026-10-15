@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {indexSpexareAction} from "@/app/(app)/admin/actions.server";
+import {indexSpexareAction} from "@/app/(app)/admin/maintenance/actions.server";
 import {indexSpexare} from "@/lib/admin";
 
 vi.mock("@/utils/route.server", () => ({

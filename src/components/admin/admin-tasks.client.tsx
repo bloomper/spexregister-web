@@ -6,7 +6,7 @@ import {toast} from "sonner";
 import {Loader2, RefreshCw} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {indexSpexareAction} from "@/app/(app)/admin/actions.server";
+import {indexSpexareAction} from "@/app/(app)/admin/maintenance/actions.server";
 
 export function AdminTasks() {
     const t = useTranslations();

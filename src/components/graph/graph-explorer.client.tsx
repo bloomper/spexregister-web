@@ -2,7 +2,7 @@
 
 import {useEffect, useMemo, useState, useTransition} from "react";
 import {useTranslations} from "next-intl";
-import {Network, Search} from "lucide-react";
+import {Network, RotateCcw, Search, X} from "lucide-react";
 import {toast} from "sonner";
 
 import {Country, GraphNode, GraphNodeType, Spex, SpexCategory, Tag, Task, TaskCategory} from "@/gql/schema";
@@ -10,6 +10,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {DataEmpty} from "@/components/data-empty";
 import {useLazyFull} from "@/hooks/use-lazy-full.client";
+import {useCoarsePointer} from "@/hooks/use-coarse-pointer.client";
 import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client";
 import {SpexViewDialog} from "@/components/spex/spex-view-dialog.client";
 import {SpexCategoryViewDialog} from "@/components/spex/category/spex-category-view-dialog.client";
@@ -32,6 +33,7 @@ const EXPAND_LIMIT = 25;
 
 export function GraphExplorer({countries}: { countries: Country[] }) {
     const t = useTranslations();
+    const isTouch = useCoarsePointer();
     const {state, byId, absorb, absorbNodes, collapseNode, reset} = useGraphState();
     const [, startTransition] = useTransition();
     const [query, setQuery] = useState("");
@@ -40,6 +42,7 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
     const [openId, setOpenId] = useState<string | null>(null);
     const [focusId, setFocusId] = useState<string | null>(null);
     const [filter, setFilter] = useState("");
+    const [origin, setOrigin] = useState<GraphNode | null>(null);
 
     useEffect(() => {
         reset();
@@ -144,6 +147,11 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
                 const neighbourhood = await getNeighbourhoodAction(node.type, String(node.entityId), EXPAND_LIMIT);
 
                 if (neighbourhood) {
+                    reset();
+                    setOrigin(node);
+                    setFocusId(null);
+                    setOpenId(null);
+                    setFilter("");
                     absorb(neighbourhood);
                 }
             } catch {
@@ -195,8 +203,23 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
                 <Button variant="outline" size="sm" className="h-9" onClick={runSearch}>
                     {t("Explore.search")}
                 </Button>
+                {state.nodes.length > 0 && origin && (
+                    <Button variant="ghost" size="sm" className="h-9" onClick={() => seed(origin)}>
+                        <RotateCcw className="mr-2 h-4 w-4"/>
+                        {t("Explore.restart")}
+                    </Button>
+                )}
                 {state.nodes.length > 0 && (
-                    <Button variant="ghost" size="sm" className="h-9" onClick={reset}>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-9"
+                        onClick={() => {
+                            reset();
+                            setOrigin(null);
+                        }}
+                    >
+                        <X className="mr-2 h-4 w-4"/>
                         {t("Explore.clear")}
                     </Button>
                 )}
@@ -237,7 +260,9 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
                             />
                         </div>
                         <GraphLegend present={new Set(state.nodes.map((node) => node.type))}/>
-                        <p className="text-xs sm:text-[11px] text-muted-foreground">{t("Explore.navHint")}</p>
+                        <p className="text-xs sm:text-[11px] text-muted-foreground">
+                            {t(isTouch ? "Explore.navHintTouch" : "Explore.navHint")}
+                        </p>
                     </div>
                     <GraphNodeList
                         nodes={state.nodes}

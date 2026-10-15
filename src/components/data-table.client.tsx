@@ -272,7 +272,7 @@ export function DataTable<TData extends { id: string }>({
             </div>
 
             {showPagination && (
-                <div className="flex flex-col gap-4 sm:flex-row items-center justify-between py-4">
+                <div className="flex flex-col items-end gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center space-x-2">
                         <p className="text-sm font-medium">{t("Common.rowsPerPage")}</p>
                         <Select value={`${pageSize}`}

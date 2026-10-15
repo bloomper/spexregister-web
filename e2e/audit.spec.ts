@@ -38,7 +38,7 @@ test("an admin can restore a revision from the history", async ({page}) => {
 });
 
 test("the change log says what a revision changed and why", async ({page}) => {
-    await page.goto("/change-log");
+    await page.goto("/admin/change-log");
 
     const restored = page.getByRole("row").filter({hasText: "Återställning"});
     await expect(restored).toBeVisible();
@@ -55,7 +55,7 @@ test("the change log says what a revision changed and why", async ({page}) => {
 });
 
 test("the change log filters by user, origin and date", async ({page}) => {
-    await page.goto("/change-log");
+    await page.goto("/admin/change-log");
 
     await expect(page.getByRole("row")).toHaveCount(3); // header plus both revisions
 
@@ -77,7 +77,7 @@ test("the change log filters by user, origin and date", async ({page}) => {
 });
 
 test("an audit event links straight to the record it changed", async ({page}) => {
-    await page.goto("/change-log");
+    await page.goto("/admin/change-log");
 
     await page.getByRole("row").filter({hasText: "Återställning"}).click();
 

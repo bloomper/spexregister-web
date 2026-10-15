@@ -74,7 +74,13 @@ export function ExportButton({
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Download className="mr-2 h-4 w-4"/>}
                 {label}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-64">
+                <p className="px-2 py-1.5 text-xs text-muted-foreground">
+                    {selectedIds.length > 0
+                        ? t("Impex.exportScopeSelected", {count: selectedIds.length})
+                        : t("Impex.exportScopeAll")}
+                </p>
+                <DropdownMenuSeparator/>
                 <DropdownMenuGroup>
                     <DropdownMenuLabel>{t("Impex.selectFormat")}</DropdownMenuLabel>
                     <DropdownMenuSeparator/>

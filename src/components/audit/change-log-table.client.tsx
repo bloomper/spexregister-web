@@ -11,8 +11,9 @@ import {AuditedType, AuditSource, RevisionDetail} from "@/gql/schema";
 import {RevisionFeedPage} from "@/types/pagination";
 import {formatDateTime} from "@/utils/utils";
 import {auditTypeLabel} from "@/utils/audit";
-import {getRevisionDetailAction, getRevisionFeedPageAction} from "@/app/(app)/change-log/actions.server";
+import {getRevisionDetailAction, getRevisionFeedPageAction} from "@/app/(app)/admin/change-log/actions.server";
 import {RevisionDetailPanel} from "@/components/audit/revision-detail.client";
+import {DataEmpty} from "@/components/data-empty";
 import {
     ALL_TYPES,
     ChangeLogFilter,
@@ -85,108 +86,112 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
         <div className="flex flex-col gap-4">
             <ChangeLogFilters filter={filter} authors={authors} onChange={handleFilterChange}/>
 
-            <p className="text-xs text-muted-foreground">
-                {t("Audit.matchCount", {count: page.totalCount})}
-            </p>
-
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-8"/>
-                        <TableHead className="w-20">#</TableHead>
-                        <TableHead className="w-45">{t("Common.lastModifiedAt")}</TableHead>
-                        <TableHead>{t("Common.lastModifiedBy")}</TableHead>
-                        <TableHead className="hidden md:table-cell">{t("Audit.whatChanged")}</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {page.items.length === 0 && (
+            <div className={`rounded-md border transition-opacity ${isPending ? "opacity-50" : "opacity-100"}`}>
+                <Table>
+                    <TableHeader>
                         <TableRow>
-                            <TableCell colSpan={COLUMN_COUNT} className="text-center text-muted-foreground">
-                                {t("Common.noDataFound")}
-                            </TableCell>
+                            <TableHead className="w-8"/>
+                            <TableHead className="hidden w-20 sm:table-cell">#</TableHead>
+                            <TableHead className="sm:w-45">{t("Common.lastModifiedAt")}</TableHead>
+                            <TableHead>{t("Common.lastModifiedBy")}</TableHead>
+                            <TableHead className="hidden md:table-cell">{t("Audit.whatChanged")}</TableHead>
                         </TableRow>
-                    )}
-                    {page.items.map((entry) => {
-                        const isExpanded = expanded === entry.revision;
-                        const detail = details[entry.revision];
+                    </TableHeader>
+                    <TableBody>
+                        {page.items.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={COLUMN_COUNT} className="h-24 text-center">
+                                    <DataEmpty/>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                        {page.items.map((entry) => {
+                            const isExpanded = expanded === entry.revision;
+                            const detail = details[entry.revision];
 
-                        return (
-                            <Fragment key={entry.revision}>
-                                <TableRow
-                                    className="cursor-pointer"
-                                    onClick={() => toggle(entry.revision)}
-                                >
-                                    <TableCell>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="size-6 text-muted-foreground"
-                                            aria-expanded={isExpanded}
-                                            aria-label={t("Common.details")}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                toggle(entry.revision);
-                                            }}
-                                        >
-                                            {isExpanded
-                                                ? <ChevronDown className="h-4 w-4"/>
-                                                : <ChevronRight className="h-4 w-4"/>}
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell className="font-mono text-xs">{entry.revision}</TableCell>
-                                    <TableCell>{formatDateTime(entry.modifiedAt)}</TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-col gap-0.5">
-                                            <span>{entry.modifiedBy}</span>
-                                            {entry.source && (
-                                                <span
-                                                    className="text-xs sm:text-[10px] uppercase tracking-wide text-muted-foreground">
-                                                    {t(`Audit.sources.${entry.source}`)}
+                            return (
+                                <Fragment key={entry.revision}>
+                                    <TableRow
+                                        className="cursor-pointer"
+                                        onClick={() => toggle(entry.revision)}
+                                    >
+                                        <TableCell>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="size-6 text-muted-foreground"
+                                                aria-expanded={isExpanded}
+                                                aria-label={t("Common.details")}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggle(entry.revision);
+                                                }}
+                                            >
+                                                {isExpanded
+                                                    ? <ChevronDown className="h-4 w-4"/>
+                                                    : <ChevronRight className="h-4 w-4"/>}
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell className="hidden font-mono text-xs sm:table-cell">{entry.revision}</TableCell>
+                                        <TableCell>{formatDateTime(entry.modifiedAt)}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="max-w-[140px] truncate sm:max-w-[300px]"
+                                                      title={entry.modifiedBy ?? undefined}>
+                                                    {entry.modifiedBy}
                                                 </span>
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="hidden md:table-cell">
-                                        <div className="flex flex-col gap-1">
-                                            <div className="flex flex-wrap gap-1">
-                                                {entry.types.map((value) => (
-                                                    <Badge key={value} variant="secondary">
-                                                        {auditTypeLabel(t, value)}
-                                                    </Badge>
-                                                ))}
-                                            </div>
-                                            {entry.comment && (
-                                                <span className="text-xs sm:text-[11px] text-muted-foreground">
-                                                    {entry.comment}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                                {isExpanded && (
-                                    <TableRow className="hover:bg-transparent">
-                                        <TableCell colSpan={COLUMN_COUNT} className="p-3">
-                                            {detail
-                                                ? <RevisionDetailPanel detail={detail}/>
-                                                : (
-                                                    <div
-                                                        className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                        {isLoadingDetail && <Spinner className="size-4"/>}
-                                                        {isLoadingDetail ? t("Common.loading") : t("Common.noDataFound")}
-                                                    </div>
+                                                {entry.source && (
+                                                    <span
+                                                        className="text-xs sm:text-[10px] uppercase tracking-wide text-muted-foreground">
+                                                        {t(`Audit.sources.${entry.source}`)}
+                                                    </span>
                                                 )}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell">
+                                            <div className="flex flex-col gap-1">
+                                                <div className="flex flex-wrap gap-1">
+                                                    {entry.types.map((value) => (
+                                                        <Badge key={value} variant="secondary">
+                                                            {auditTypeLabel(t, value)}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                                {entry.comment && (
+                                                    <span className="text-xs sm:text-[11px] text-muted-foreground">
+                                                        {entry.comment}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
-                                )}
-                            </Fragment>
-                        );
-                    })}
-                </TableBody>
-            </Table>
+                                    {isExpanded && (
+                                        <TableRow className="hover:bg-transparent">
+                                            <TableCell colSpan={COLUMN_COUNT} className="p-3">
+                                                {detail
+                                                    ? <RevisionDetailPanel detail={detail}/>
+                                                    : (
+                                                        <div
+                                                            className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                            {isLoadingDetail && <Spinner className="size-4"/>}
+                                                            {isLoadingDetail ? t("Common.loading") : t("Common.noDataFound")}
+                                                        </div>
+                                                    )}
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </Fragment>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
 
-            {page.pageInfo.hasNextPage && (
-                <div className="flex justify-center">
+            <div className="flex flex-col items-end gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm font-medium">
+                    {t("Audit.matchCount", {count: page.totalCount})}
+                </p>
+                {page.pageInfo.hasNextPage && (
                     <Button
                         variant="outline"
                         size="sm"
@@ -195,8 +200,8 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
                     >
                         {t("Common.loadMore")}
                     </Button>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }

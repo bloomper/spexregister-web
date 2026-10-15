@@ -95,8 +95,8 @@ export function CommandPalette() {
         if (isCurrentUserAdmin) {
             navigationEntries.push(
                 {id: "users", label: t("User.heading"), href: "/users/manage", icon: Users},
-                {id: "change-log", label: t("Audit.title"), href: "/change-log", icon: History},
-                {id: "admin", label: t("Admin.heading"), href: "/admin", icon: Settings},
+                {id: "change-log", label: t("Audit.title"), href: "/admin/change-log", icon: History},
+                {id: "maintenance", label: t("Admin.maintenance"), href: "/admin/maintenance", icon: Settings},
             );
         }
 

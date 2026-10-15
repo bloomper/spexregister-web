@@ -2,10 +2,10 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {AdminTasks} from "@/components/admin";
-import {indexSpexareAction} from "@/app/(app)/admin/actions.server";
+import {indexSpexareAction} from "@/app/(app)/admin/maintenance/actions.server";
 import {toast} from "sonner";
 
-vi.mock("@/app/(app)/admin/actions.server", () => ({
+vi.mock("@/app/(app)/admin/maintenance/actions.server", () => ({
     indexSpexareAction: vi.fn(),
 }));
 vi.mock("sonner", () => ({

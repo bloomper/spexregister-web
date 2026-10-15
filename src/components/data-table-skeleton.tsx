@@ -17,7 +17,7 @@ export function DataTableSkeleton({
     return (
         <div className="space-y-4">
             <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                     <Skeleton className="h-8 w-full sm:w-[150px] lg:w-[250px]"/>
                 </div>
                 <Skeleton className="h-8 w-full lg:w-[120px]"/>
@@ -71,7 +71,7 @@ export function DataTableSkeleton({
                 </Table>
             </div>
 
-            <div className="flex flex-col gap-4 sm:flex-row items-center justify-between py-4">
+            <div className="flex flex-col items-end gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <Skeleton className="h-8 w-[150px]"/>
                 <div className="flex space-x-2">
                     <Skeleton className="h-8 w-8 rounded-md"/>

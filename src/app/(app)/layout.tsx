@@ -88,7 +88,7 @@ export default async function AppLayout({children}: { children: React.ReactNode 
                         <Suspense fallback={<AppSidebar roles={roles} spexare={undefined} accountUrl={accountUrl}/>}>
                             <SidebarWithUser roles={roles} accountUrl={accountUrl}/>
                         </Suspense>
-                        <SidebarInset>
+                        <SidebarInset className="min-w-0">
                             {children}
                         </SidebarInset>
                     </div>

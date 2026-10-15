@@ -125,7 +125,7 @@ export const columnHelper = {
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger render={<div
-                            className="max-w-[300px] truncate font-medium cursor-default"/>}>{value}</TooltipTrigger>
+                            className="max-w-[200px] truncate font-medium cursor-default sm:max-w-[300px]"/>}>{value}</TooltipTrigger>
                         <TooltipContent className="max-w-[400px] wrap-break-word">{value}</TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
@@ -192,7 +192,8 @@ export const columnHelper = {
         id: string,
         translationId: string,
         accessorKey: string,
-        fallbackIcon: LucideIcon
+        fallbackIcon: LucideIcon,
+        className?: string
     ): DataTableColumnDef<T> => ({
         id,
         accessorKey,
@@ -204,6 +205,7 @@ export const columnHelper = {
                 fallbackIcon={fallbackIcon}
             />
         ),
+        meta: className ? {className} : undefined,
     }),
     boolean: <T extends RowData, >(id: string, translationId: string, className?: string): DataTableColumnDef<T> => ({
         id,

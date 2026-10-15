@@ -53,13 +53,13 @@ const restoreActions = {
 
 export const columns: DataTableColumnDef<User>[] = [
     columnHelper.select(),
-    columnHelper.text("externalId", "User.externalId", "externalId", "max-w-[150px]"),
+    columnHelper.text("externalId", "User.externalId", "externalId", "hidden max-w-[150px] sm:table-cell"),
     {
         id: "email",
         accessorKey: "email",
         header: () => <Translated id="User.email"/>,
         cell: ({row}) => (
-            <div className="max-w-75 truncate font-medium cursor-default">
+            <div className="max-w-50 truncate font-medium cursor-default sm:max-w-75">
                 {row.original.email}
             </div>
         ),
@@ -198,7 +198,7 @@ export function UserTable({
                 }}
             >
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                         <Input
                             placeholder={t("User.filterPlaceholder")}
                             value={filterQuery}
@@ -215,8 +215,8 @@ export function UserTable({
                                     }}
                                     className="h-8 px-2 lg:px-3"
                                 >
+                                    <X className="mr-2 h-4 w-4"/>
                                     {t("Common.reset")}
-                                    <X className="ml-2 h-4 w-4"/>
                                 </Button>
                             )}
 

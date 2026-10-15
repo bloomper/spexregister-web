@@ -54,7 +54,7 @@ const restoreActions = {
 export const columns: DataTableColumnDef<News>[] = [
     columnHelper.select(),
     columnHelper.text("subject", "News.subject"),
-    columnHelper.boolean("published", "News.published"),
+    columnHelper.boolean("published", "News.published", "hidden sm:table-cell"),
     columnHelper.date("visibleFrom", "News.visibleFrom", "visibleFrom", "hidden lg:table-cell"),
     columnHelper.date("visibleTo", "News.visibleTo", "visibleTo", "hidden xl:table-cell"),
     ...columnHelper.audit<News>(),
@@ -151,7 +151,7 @@ export function NewsTable({
                 }}
             >
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                         <Input
                             placeholder={t("News.filterPlaceholder")}
                             value={filterQuery}
@@ -180,8 +180,8 @@ export function NewsTable({
                                     }}
                                     className="h-8 px-2 lg:px-3"
                                 >
+                                    <X className="mr-2 h-4 w-4"/>
                                     {t("Common.reset")}
-                                    <X className="ml-2 h-4 w-4"/>
                                 </Button>
                             )}
 

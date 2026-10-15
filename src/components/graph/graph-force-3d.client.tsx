@@ -154,6 +154,10 @@ export default function GraphForce3D({
     const graphRef = useRef<ForceGraphMethods | undefined>(undefined);
     const movedRef = useRef(false);
 
+    useEffect(() => {
+        graphRef.current?.refresh();
+    }, []);
+
     useEffect(() => () => {
         for (const texture of textures.values()) {
             texture.dispose();

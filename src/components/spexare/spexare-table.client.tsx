@@ -43,7 +43,7 @@ export const columns: DataTableColumnDef<Spexare>[] = [
     columnHelper.text("firstName", "Spexare.firstName"),
     columnHelper.text("lastName", "Spexare.lastName"),
     columnHelper.text("nickName", "Spexare.nickName", "nickName", "hidden md:table-cell"),
-    columnHelper.image("image", "Spexare.imageUrl", "imageUrl", User),
+    columnHelper.image("image", "Spexare.imageUrl", "imageUrl", User, "hidden sm:table-cell"),
     columnHelper.boolean("published", "Spexare.published", "hidden md:table-cell"),
     columnHelper.boolean("deceased", "Spexare.deceased", "hidden md:table-cell"),
     ...columnHelper.audit<Spexare>(),
@@ -196,7 +196,7 @@ export function SpexareTable({
                 }}
             >
                 <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                         <Input
                             placeholder={t("Spexare.filterPlaceholder")}
                             value={filterQuery}
@@ -237,8 +237,8 @@ export function SpexareTable({
                                     }}
                                     className="h-8 px-2 lg:px-3"
                                 >
+                                    <X className="mr-2 h-4 w-4"/>
                                     {t("Common.reset")}
-                                    <X className="ml-2 h-4 w-4"/>
                                 </Button>
                             )}
 
