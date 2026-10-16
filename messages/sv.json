@@ -144,6 +144,8 @@
     "originUnknown": "Ursprunget är inte känt för den här versionen.",
     "recordRemoved": "Posten togs bort.",
     "noFieldChanges": "Inga fält ändrades.",
+    "bulkSummary": "Den här versionen berörde {count, plural, =1 {# post} other {# poster}}. Högst {limit} av varje typ visas.",
+    "typeCount": "{shown} av {count}",
     "restoreReason": "Återställd från version {revision}",
     "restoreReasonCascade": "Återställd från version {revision}, inklusive relaterade poster",
     "sources": {

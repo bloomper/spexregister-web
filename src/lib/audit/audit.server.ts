@@ -77,14 +77,19 @@ const revisionFeedPagedQuery = graphql(`
 `);
 
 const revisionDetailQuery = graphql(`
-    query revisionDetail($revision: Long!) {
-        revisionDetail(revision: $revision) {
+    query revisionDetail($revision: Long!, $limitPerType: Int!) {
+        revisionDetail(revision: $revision, limitPerType: $limitPerType) {
             revision
             modifiedAt
             modifiedBy
             source
             operation
             comment
+            summary {
+                type
+                count
+                returned
+            }
             entities {
                 type
                 entityId
@@ -199,8 +204,10 @@ export async function getRevisionFeedPaged(args: RevisionFeedArgs): Promise<Revi
     return mapConnection(data?.revisionFeedPaged);
 }
 
+const REVISION_DETAIL_LIMIT_PER_TYPE = 20;
+
 export async function getRevisionDetail(revision: number): Promise<RevisionDetail | null> {
-    const data = await runQuery(revisionDetailQuery, {revision});
+    const data = await runQuery(revisionDetailQuery, {revision, limitPerType: REVISION_DETAIL_LIMIT_PER_TYPE});
 
     return (data?.revisionDetail as RevisionDetail | undefined) ?? null;
 }

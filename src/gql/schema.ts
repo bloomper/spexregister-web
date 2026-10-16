@@ -1227,6 +1227,7 @@ export type QueryRevisionArgs = {
 
 
 export type QueryRevisionDetailArgs = {
+    limitPerType?: Scalars['Int']['input'];
     revision: Scalars['Long']['input'];
 };
 
@@ -1530,6 +1531,7 @@ export type RevisionDetail = {
     operation?: Maybe<Scalars['String']['output']>;
     revision: Scalars['Long']['output'];
     source?: Maybe<AuditSource>;
+    summary: Array<RevisionTypeSummary>;
 };
 
 export type RevisionEntityChange = {
@@ -1578,6 +1580,13 @@ export enum RevisionType {
     Del = 'DEL',
     Mod = 'MOD'
 }
+
+export type RevisionTypeSummary = {
+    __typename?: 'RevisionTypeSummary';
+    count: Scalars['Long']['output'];
+    returned: Scalars['Int']['output'];
+    type: AuditedType;
+};
 
 export type SavedSearch = {
     __typename?: 'SavedSearch';

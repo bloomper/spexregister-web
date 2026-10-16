@@ -84,4 +84,25 @@ describe("RevisionDetailPanel", () => {
         expect(screen.queryByRole("link")).not.toBeInTheDocument();
         expect(screen.getByText("Audit.recordRemoved")).toBeInTheDocument();
     });
+
+    it("says how much a bulk revision touched when only part of it is listed", () => {
+        render(<RevisionDetailPanel detail={detail({
+            summary: [
+                {type: AuditedType.Spexare, count: 1542, returned: 20},
+                {type: AuditedType.Tag, count: 14, returned: 14},
+            ],
+        })}/>);
+
+        expect(screen.getByText(/Audit.bulkSummary/)).toBeInTheDocument();
+        expect(screen.getByText(/Audit.typeCount/)).toBeInTheDocument();
+        expect(screen.getByText("14")).toBeInTheDocument();
+    });
+
+    it("keeps an ordinary revision free of bulk counts", () => {
+        render(<RevisionDetailPanel detail={detail({
+            summary: [{type: AuditedType.Spexare, count: 1, returned: 1}],
+        })}/>);
+
+        expect(screen.queryByText(/Audit.bulkSummary/)).not.toBeInTheDocument();
+    });
 });

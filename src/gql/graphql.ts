@@ -484,6 +484,7 @@ export type RevisionFeedPagedQuery = {
 
 export type RevisionDetailQueryVariables = Exact<{
     revision: any;
+    limitPerType: number;
 }>;
 
 
@@ -495,6 +496,7 @@ export type RevisionDetailQuery = {
         source: AuditSource | null,
         operation: string | null,
         comment: string | null,
+        summary: Array<{ type: AuditedType, count: any, returned: number }>,
         entities: Array<{
             type: AuditedType,
             entityId: any,
@@ -7138,6 +7140,10 @@ export const RevisionDetailDocument = {
             "kind": "VariableDefinition",
             "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "revision"}},
             "type": {"kind": "NonNullType", "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "Long"}}}
+        }, {
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "limitPerType"}},
+            "type": {"kind": "NonNullType", "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "Int"}}}
         }],
         "selectionSet": {
             "kind": "SelectionSet", "selections": [{
@@ -7147,6 +7153,10 @@ export const RevisionDetailDocument = {
                     "kind": "Argument",
                     "name": {"kind": "Name", "value": "revision"},
                     "value": {"kind": "Variable", "name": {"kind": "Name", "value": "revision"}}
+                }, {
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "limitPerType"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "limitPerType"}}
                 }],
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -7159,6 +7169,14 @@ export const RevisionDetailDocument = {
                     }, {"kind": "Field", "name": {"kind": "Name", "value": "operation"}}, {
                         "kind": "Field",
                         "name": {"kind": "Name", "value": "comment"}
+                    }, {
+                        "kind": "Field", "name": {"kind": "Name", "value": "summary"}, "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "type"}}, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "count"}
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "returned"}}]
+                        }
                     }, {
                         "kind": "Field", "name": {"kind": "Name", "value": "entities"}, "selectionSet": {
                             "kind": "SelectionSet",

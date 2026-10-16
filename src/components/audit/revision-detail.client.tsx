@@ -44,6 +44,10 @@ function groupByTarget(entities: RevisionEntityChange[]) {
 export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
     const t = useTranslations();
     const groups = groupByTarget(detail.entities);
+    const summary = detail.summary ?? [];
+    const truncated = summary.filter((entry) => entry.count > entry.returned);
+    const total = summary.reduce((sum, entry) => sum + Number(entry.count), 0);
+    const limit = Math.max(0, ...truncated.map((entry) => entry.returned));
 
     return (
         <div className="flex flex-col gap-3 rounded-lg border bg-muted/20 p-3">
@@ -61,6 +65,26 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
                     <span className="text-muted-foreground">{t("Audit.originUnknown")}</span>
                 )}
             </div>
+
+            {truncated.length > 0 && (
+                <div className="flex flex-col gap-2">
+                    <p className="text-xs text-muted-foreground">
+                        {t("Audit.bulkSummary", {count: total, limit})}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                        {summary.map((entry) => (
+                            <Badge key={entry.type} variant="outline" className="gap-1 text-xs sm:text-[10px]">
+                                <span className="font-semibold">{auditTypeLabel(t, entry.type)}</span>
+                                <span className="text-muted-foreground">
+                                    {entry.count > entry.returned
+                                        ? t("Audit.typeCount", {shown: entry.returned, count: Number(entry.count)})
+                                        : entry.count}
+                                </span>
+                            </Badge>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {groups.length === 0 && (
                 <p className="text-xs text-muted-foreground">{t("Audit.noChanges")}</p>

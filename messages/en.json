@@ -144,6 +144,8 @@
     "originUnknown": "The origin of this revision is not known.",
     "recordRemoved": "The record was removed.",
     "noFieldChanges": "No fields changed.",
+    "bulkSummary": "This revision touched {count, plural, =1 {# record} other {# records}}. Showing at most {limit} of each type.",
+    "typeCount": "{shown} of {count}",
     "restoreReason": "Restored from revision {revision}",
     "restoreReasonCascade": "Restored from revision {revision}, including related records",
     "sources": {
