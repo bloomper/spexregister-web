@@ -236,7 +236,7 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
                                             </div>
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                                         </PopoverTrigger>
-                                        <PopoverContent className="w-[350px] p-0" align="start">
+                                        <PopoverContent className="w-(--anchor-width) p-0" align="start">
                                             <Command shouldFilter={false}>
                                                 <CommandInput
                                                     placeholder={t("Common.searchPlaceholder")}

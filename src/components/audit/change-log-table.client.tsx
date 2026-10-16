@@ -167,7 +167,7 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
                                     </TableRow>
                                     {isExpanded && (
                                         <TableRow className="hover:bg-transparent">
-                                            <TableCell colSpan={COLUMN_COUNT} className="p-3">
+                                            <TableCell colSpan={COLUMN_COUNT} className="whitespace-normal p-3">
                                                 {detail
                                                     ? <RevisionDetailPanel detail={detail}/>
                                                     : (

@@ -115,7 +115,7 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
                                         {auditTypeLabel(t, entity.type)}
                                     </span>
                                     {entity.entityLabel && (
-                                        <span className="truncate text-muted-foreground">{entity.entityLabel}</span>
+                                        <span className="min-w-0 truncate text-muted-foreground">{entity.entityLabel}</span>
                                     )}
                                     <Badge variant="outline" className="text-xs sm:text-[10px]">
                                         {t(`Common.revisionTypes.${entity.revisionType}`)}

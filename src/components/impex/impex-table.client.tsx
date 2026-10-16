@@ -284,7 +284,7 @@ export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
                                     <div className="space-y-1">
                                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                             {t("Impex.createdAt")}
