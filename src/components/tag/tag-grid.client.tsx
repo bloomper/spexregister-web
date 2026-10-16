@@ -17,6 +17,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {Sheet} from "@/components/ui/sheet";
 import {TagForm} from "@/components/tag/tag-form.client";
 import {TagViewDialog} from "@/components/tag/tag-view-dialog.client";
+import {textFilter} from "@/utils/filter";
 
 export function TagGrid({
                             initialItems = [],
@@ -49,7 +50,7 @@ export function TagGrid({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
             first: args.pageSize,
-            filter: filterQuery.trim() ? `name:*${filterQuery.trim()}*` : undefined,
+            filter: textFilter(["name"], filterQuery) || undefined,
         }),
         pageSize: 24,
         rootMargin: "600px",

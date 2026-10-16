@@ -36,6 +36,7 @@ import {useIsClient} from "@/hooks/use-is-client.client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 import {BulkActionsMenu} from "@/components/bulk";
 import {useLazyFull} from "@/hooks/use-lazy-full.client";
+import {textFilter} from "@/utils/filter";
 
 
 export const columns: DataTableColumnDef<Spexare>[] = [
@@ -124,8 +125,9 @@ export function SpexareTable({
 
     const buildFilterString = (query: string, published: Set<string>, deceased: Set<string>) => {
         const parts: string[] = ["(published:TRUE OR published:FALSE)"];
-        if (query) {
-            parts.push(`(firstName:*${query}* OR lastName:*${query}* OR nickName:*${query}*)`);
+        const text = textFilter(["firstName", "lastName", "nickName"], query);
+        if (text) {
+            parts.push(text);
         }
         if (published.size < 2) {
             if (published.size === 0) {

@@ -47,6 +47,7 @@ import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client.client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
+import {textFilter} from "@/utils/filter";
 
 const restoreActions = {
     preview: getRestorePreviewAction,
@@ -170,8 +171,9 @@ export function SpexTable({
 
     const buildFilterString = (query: string, selectedCategories: Set<string>, categories: SpexCategory[]) => {
         const parts: string[] = ["parent:NULL"];
-        if (query) {
-            parts.push(`(year:*${query}* OR details.title:*${query}*)`);
+        const text = textFilter(["year", "details.title"], query);
+        if (text) {
+            parts.push(text);
         }
         if (categories.length > 0 && selectedCategories.size < categories.length) {
             const categoryFilters = Array.from(selectedCategories)

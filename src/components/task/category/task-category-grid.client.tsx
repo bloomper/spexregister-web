@@ -17,6 +17,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {Sheet} from "@/components/ui/sheet";
 import {TaskCategoryForm} from "@/components/task/category/task-category-form.client";
 import {TaskCategoryViewDialog} from "@/components/task/category/task-category-view-dialog.client";
+import {textFilter} from "@/utils/filter";
 
 export function TaskCategoryGrid({
                                      initialItems = [],
@@ -49,7 +50,7 @@ export function TaskCategoryGrid({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
             first: args.pageSize,
-            filter: filterQuery.trim() ? `name:*${filterQuery.trim()}*` : undefined,
+            filter: textFilter(["name"], filterQuery) || undefined,
         }),
         pageSize: 24,
         rootMargin: "600px",

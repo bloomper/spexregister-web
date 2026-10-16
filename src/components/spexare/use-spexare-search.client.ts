@@ -7,6 +7,7 @@ import {Facet, Spexare} from "@/gql/schema";
 import {CursorPageInfo, SpexarePage} from "@/types/pagination";
 import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
 import {appendFacetParams, toAggregationFilters} from "@/utils/utils";
+import {textFilter} from "@/utils/filter";
 
 type UseSpexareSearchArgs = {
     mode: "filter" | "search";
@@ -89,9 +90,9 @@ export function useSpexareSearch({
 
         const parts: string[] = [];
 
-        if (filterQuery.trim()) {
-            const query = filterQuery.trim();
-            parts.push(`(firstName:*${query}* OR lastName:*${query}* OR nickName:*${query}*)`);
+        const text = textFilter(["firstName", "lastName", "nickName"], filterQuery);
+        if (text) {
+            parts.push(text);
         }
 
         if (selectedDeceasedValues.size < 2) {

@@ -19,6 +19,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {Sheet} from "@/components/ui/sheet";
 import {SpexCategoryForm} from "@/components/spex/category/spex-category-form.client";
 import {SpexCategoryViewDialog} from "@/components/spex/category/spex-category-view-dialog.client";
+import {textFilter} from "@/utils/filter";
 
 export function SpexCategoryGrid({
                                      initialItems = [],
@@ -51,7 +52,7 @@ export function SpexCategoryGrid({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
             first: args.pageSize,
-            filter: filterQuery.trim() ? `(name:*${filterQuery.trim()}* OR firstYear:*${filterQuery.trim()}*)` : undefined,
+            filter: textFilter(["name", "firstYear"], filterQuery) || undefined,
         }),
         pageSize: 24,
         rootMargin: "600px",

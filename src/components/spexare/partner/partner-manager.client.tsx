@@ -12,6 +12,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {Input} from "@/components/ui/input";
 import {Badge} from "@/components/ui/badge";
 import {getProxiedImageUrl} from "@/utils/utils";
+import {textFilter} from "@/utils/filter";
 
 type PartnerLike = Spexare | SpexarePartner;
 
@@ -29,14 +30,13 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
     const [isSearching, setIsSearching] = useState(false);
 
     const handleSearch = useCallback(async () => {
-        if (!searchQuery.trim()) {
+        const fieldFilter = textFilter(["firstName", "lastName", "nickName"], searchQuery);
+        if (!fieldFilter) {
             setSearchResults([]);
             return;
         }
         setIsSearching(true);
         try {
-            const query = searchQuery.trim();
-            const fieldFilter = `(firstName:*${query}* OR lastName:*${query}* OR nickName:*${query}*)`;
             const filter = `${fieldFilter} AND (published:TRUE OR published:FALSE)`;
 
             const results = await getPageAction({

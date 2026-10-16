@@ -31,6 +31,7 @@ import {Newspaper, Pencil} from "lucide-react";
 import {GridFilterHeader} from "@/components/grid-filter-header.client";
 import {DataEmpty} from "@/components/data-empty";
 import {AuditTrail} from "../data-audit-trail.client";
+import {textFilter} from "@/utils/filter";
 
 const restoreActions = {
     preview: getRestorePreviewAction,
@@ -66,7 +67,7 @@ export function NewsGrid({
         fetchPageAction: (args) => getPageAction({
             after: args.after,
             first: args.pageSize,
-            filter: filterQuery.trim() ? `subject:*${filterQuery.trim()}*` : undefined,
+            filter: textFilter(["subject"], filterQuery) || undefined,
         }),
         pageSize: 24,
         rootMargin: "600px",

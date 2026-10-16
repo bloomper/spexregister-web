@@ -45,6 +45,7 @@ import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client.client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
+import {textFilter} from "@/utils/filter";
 
 const restoreActions = {
     preview: getRestorePreviewAction,
@@ -95,8 +96,9 @@ export function NewsTable({
 
     const buildFilterString = (query: string, published: Set<string>) => {
         const parts: string[] = [];
-        if (query) {
-            parts.push(`subject:*${query}*`);
+        const text = textFilter(["subject"], query);
+        if (text) {
+            parts.push(text);
         }
         if (published.size < 2) {
             if (published.size === 0) {

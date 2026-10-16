@@ -5,6 +5,7 @@ import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {Task, TaskCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {getPageAction} from "@/app/(app)/tasks/actions.server";
+import {textFilter} from "@/utils/filter";
 
 type UseTaskSearchArgs = {
     categories: TaskCategory[];
@@ -31,9 +32,9 @@ export function useTaskSearch({categories, initialItems, initialPageInfo, maxIte
     const fetchPageWithFilters = useCallback((args: { after: string | null; pageSize: number }) => {
         const filterParts = [];
 
-        if (filterQuery.trim()) {
-            const escapedQuery = filterQuery.trim();
-            filterParts.push(`(name:*${escapedQuery}*)`);
+        const text = textFilter(["name"], filterQuery);
+        if (text) {
+            filterParts.push(text);
         }
 
         const totalOptionCount = categories.length + 1;

@@ -26,6 +26,7 @@ import {getPaged as getSpexarePaged} from "@/lib/spexare";
 import {getRestorePreview, restore} from "@/lib/audit/audit.server";
 import {revalidateTag} from "next/cache";
 import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
+import {textFilter} from "@/utils/filter";
 
 export async function getPageAction(args: {
     first?: number;
@@ -169,9 +170,13 @@ export async function removeSpexareAction(userId: string) {
 
 export async function searchSpexareAction(query: string) {
     return withPolicyAction(Policies.user.requireRead, async () => {
+        const nameFilter = textFilter(["firstName", "lastName", "nickName"], query);
+        if (!nameFilter) {
+            return [];
+        }
         const result = await getSpexarePaged({
             first: 10,
-            filter: `(firstName:*${query}* OR lastName:*${query}* OR nickName:*${query}*) AND user:NULL`,
+            filter: `${nameFilter} AND user:NULL`,
             full: false
         });
         return result.items;

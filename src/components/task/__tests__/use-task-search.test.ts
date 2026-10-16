@@ -78,7 +78,7 @@ describe("useTaskSearch filter building", () => {
                 vi.advanceTimersByTime(300);
             });
             await fetchWith();
-            expect(getPageAction).toHaveBeenLastCalledWith({after: null, first: 24, filter: "(name:*lighting*)"});
+            expect(getPageAction).toHaveBeenLastCalledWith({after: null, first: 24, filter: "name:*lighting*"});
         } finally {
             vi.useRealTimers();
         }

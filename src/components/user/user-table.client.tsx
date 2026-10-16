@@ -45,6 +45,7 @@ import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
 import {useIsClient} from "@/hooks/use-is-client.client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
+import {textFilter} from "@/utils/filter";
 
 const restoreActions = {
     preview: getRestorePreviewAction,
@@ -144,8 +145,9 @@ export function UserTable({
 
     const buildFilterString = (query: string) => {
         const parts: string[] = [];
-        if (query) {
-            parts.push(`externalId:*${query}*`);
+        const text = textFilter(["externalId"], query);
+        if (text) {
+            parts.push(text);
         }
         return parts.join("");
     };

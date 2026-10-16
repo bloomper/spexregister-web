@@ -5,6 +5,7 @@ import {useInfiniteList} from "@/hooks/use-infinite-list.client";
 import {Spex, SpexCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {getPageAction} from "@/app/(app)/spex/actions.server";
+import {textFilter} from "@/utils/filter";
 
 type UseSpexSearchArgs = {
     categories: SpexCategory[];
@@ -31,9 +32,9 @@ export function useSpexSearch({categories, initialItems, initialPageInfo, maxIte
     const fetchPageWithFilters = useCallback((args: { after: string | null; pageSize: number }) => {
         const filterParts = ["parent:NULL"];
 
-        if (filterQuery.trim()) {
-            const escapedQuery = filterQuery.trim();
-            filterParts.push(`(details.title:*${escapedQuery}* OR year:*${escapedQuery}*)`);
+        const text = textFilter(["details.title", "year"], filterQuery);
+        if (text) {
+            filterParts.push(text);
         }
 
         if (categories.length > 0 && selectedCategories.size < categories.length) {
