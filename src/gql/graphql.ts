@@ -3,18 +3,20 @@
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-import {AuditedType} from './schema';
-import {AuditSource} from './schema';
-import {BulkOutcome} from './schema';
-import {GraphEdgeType} from './schema';
-import {GraphNodeType} from './schema';
-import {ImpexType} from './schema';
-import {ReportType} from './schema';
-import {RestoreAction} from './schema';
-import {RevisionType} from './schema';
-import {SortDirection} from './schema';
-import {SpexareBulkOperation} from './schema';
-import {TypeType} from './schema';
+import {
+    AuditedType,
+    AuditSource,
+    BulkOutcome,
+    GraphEdgeType,
+    GraphNodeType,
+    ImpexType,
+    ReportType,
+    RestoreAction,
+    RevisionType,
+    SortDirection,
+    SpexareBulkOperation,
+    TypeType
+} from './schema';
 import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/core';
 
 export type ActorCreate = {
@@ -7170,12 +7172,17 @@ export const RevisionDetailDocument = {
                         "kind": "Field",
                         "name": {"kind": "Name", "value": "comment"}
                     }, {
-                        "kind": "Field", "name": {"kind": "Name", "value": "summary"}, "selectionSet": {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "summary"},
+                        "selectionSet": {
                             "kind": "SelectionSet",
-                            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "type"}}, {
+                            "selections": [{
                                 "kind": "Field",
-                                "name": {"kind": "Name", "value": "count"}
-                            }, {"kind": "Field", "name": {"kind": "Name", "value": "returned"}}]
+                                "name": {"kind": "Name", "value": "type"}
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "count"}}, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "returned"}
+                            }]
                         }
                     }, {
                         "kind": "Field", "name": {"kind": "Name", "value": "entities"}, "selectionSet": {
