@@ -250,6 +250,7 @@
     "select": "Select",
     "selectAll": "Select all",
     "selectDate": "Select date",
+    "selectType": "Select type",
     "selected": "{count, plural, =1 {# selected} other {# selected}}",
     "themeDark": "Dark",
     "themeLight": "Light",
@@ -667,6 +668,7 @@
     "invalidEmailAddress": "Invalid email address",
     "spexare": "Spexare?",
     "spexareHeading": "Spexare",
+    "spexareSearchPlaceholder": "Search for a spexare to link...",
     "state": "State"
   }
 }

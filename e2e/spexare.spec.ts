@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import {expect, test} from "./fixtures";
 
 test.describe("spexare grid", () => {
     test("renders the list from the backend", async ({page}) => {

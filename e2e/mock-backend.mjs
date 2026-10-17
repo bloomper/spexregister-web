@@ -91,18 +91,50 @@ const longMemberships = [
     {id: "long-mem", year: "1991", type: {id: "mtype-3", label: "FGV", type: "MEMBERSHIP"}, ...audit},
 ];
 
-const spexareFull = (s) => ({
-    ...s,
-    activities: s.id === "1" ? careerActivities : s.id === "3" ? longActivities : [],
-    memberships: s.id === "1" ? careerMemberships : s.id === "3" ? longMemberships : [],
-    addresses: [], consents: [], taggings: [], toggles: [],
-    ...audit,
+const typeList = [
+    {id: "mtype-1", label: "Fullvärdig", type: "MEMBERSHIP"},
+    {id: "mtype-2", label: "Stödjande", type: "MEMBERSHIP"},
+    {id: "vocal-1", label: "Sopran", type: "VOCAL"},
+];
+
+// Relations are kept per spexare and seeded on first use, so edits made through the UI are
+// visible on the next read, the way they are against the real backend.
+let relations = new Map();
+let nextId = 1;
+const newId = (prefix) => `${prefix}-new-${nextId++}`;
+
+const seedRelations = (id) => structuredClone({
+    activities: id === "1" ? careerActivities : id === "3" ? longActivities : [],
+    memberships: id === "1" ? careerMemberships : id === "3" ? longMemberships : [],
+    taggings: [],
 });
 
-const newsList = [
+function relationsOf(spexareId) {
+    const id = String(spexareId);
+    if (!relations.has(id)) {
+        relations.set(id, seedRelations(id));
+    }
+    return relations.get(id);
+}
+
+const activityOf = (spexareId, activityId) =>
+    relationsOf(spexareId).activities.find((activity) => activity.id === String(activityId));
+
+const spexareFull = (s) => {
+    const {activities, memberships, taggings} = relationsOf(s.id);
+    return {
+        ...s,
+        activities, memberships, taggings,
+        addresses: [], consents: [], toggles: [],
+        ...audit,
+    };
+};
+
+const newsSeed = [
     {id: "1", subject: "Premiär 2026", text: "Biljetterna släpps snart.", visibleFrom: "2026-01-01"},
     {id: "2", subject: "Nya lokaler", text: "Vi har flyttat.", visibleFrom: "2026-02-01"},
 ];
+let newsList = structuredClone(newsSeed);
 
 const totals = {
     spexareCount: 3, spexareCountHistory: [{label: "2024", count: 2}, {label: "2025", count: 3}],
@@ -271,14 +303,28 @@ const taskCategoryList = [
     {id: "1", name: "Ensemble", actorPresent: true},
     {id: "2", name: "Kommitté", actorPresent: false},
 ];
-const taskList = [
+const taskSeed = [
     {id: "1", name: "Ensemblist", category: {id: "1", name: "Ensemble", actorPresent: true}},
     {id: "2", name: "Scenmästare", category: {id: "2", name: "Kommitté", actorPresent: false}},
 ];
-const tagList = [
+let taskList = structuredClone(taskSeed);
+const tagSeed = [
     {id: "1", name: "Hedersmedlem"},
     {id: "2", name: "Grundare"},
 ];
+let tagList = structuredClone(tagSeed);
+
+const spexShape = (spex) => {
+    const category = spexCategoryList.find((c) => c.id === spex.category?.id);
+    return {
+        id: spex.id, year: String(spex.year), title: spex.title, revival: spex.revival,
+        posterUrl: null, parent: null,
+        category: category ? {...category, firstYear: String(category.firstYear), ...audit} : null,
+        ...audit,
+    };
+};
+
+const taskShape = (task) => ({...task, category: task.category ? withAudit(task.category) : null, ...audit});
 
 // One plain edit and one restore that spanned a spexare and one of its addresses, which between
 // them exercise every part of the change log: origin, co-changes and navigation.
@@ -383,7 +429,24 @@ const userList = [
 const withAudit = (s) => ({...s, ...audit});
 
 // Mutable so a test can save a search and then see it listed.
-const savedSearchList = [];
+let savedSearchList = [];
+
+function resetState() {
+    relations = new Map();
+    nextId = 1;
+    newsList = structuredClone(newsSeed);
+    taskList = structuredClone(taskSeed);
+    tagList = structuredClone(tagSeed);
+    savedSearchList = [];
+}
+
+const removeById = (list, id) => {
+    const index = list.findIndex((item) => item.id === String(id));
+    if (index >= 0) {
+        list.splice(index, 1);
+    }
+    return index >= 0;
+};
 
 const resolvers = {
     UserMe: () => ({me: {spexare: null}}),
@@ -392,21 +455,26 @@ const resolvers = {
     Analytics: () => ({analytics}),
     AnalyticsSummary: () => ({analytics}),
     Countries: () => ({countries: [{isoCode: "SE", label: "Sverige"}, {isoCode: "NO", label: "Norge"}]}),
-    Types: () => ({types: []}),
+    Types: () => ({types: typeList}),
 
     NewsPagedSummary: () => paged("newsPaged", newsList),
     NewsPagedFull: () => paged("newsPaged", newsList),
-    NewsUpdate: (v) => ({
-        newsUpdate: {
+    NewsUpdate: (v) => {
+        const updated = {
             id: v?.input?.id ?? "1",
             subject: v?.input?.subject ?? "",
             text: v?.input?.text ?? "",
             visibleFrom: v?.input?.visibleFrom ?? null,
             visibleTo: v?.input?.visibleTo ?? null,
             published: v?.input?.published ?? false,
-            ...audit,
-        },
-    }),
+        };
+        const index = newsList.findIndex((n) => n.id === String(updated.id));
+        if (index >= 0) {
+            newsList[index] = {...newsList[index], ...updated};
+        }
+        return {newsUpdate: withAudit(updated)};
+    },
+    NewsDelete: (v) => ({newsDelete: removeById(newsList, v?.id)}),
 
     SpexarePagedSummary: (v) => spexarePaged(v),
     SpexarePagedFull: (v) => spexarePaged(v),
@@ -463,6 +531,68 @@ const resolvers = {
     }),
     SpexareExport: () => ({spexareExport: {id: "export-job-1"}}),
 
+    ActivityCreate: (v) => {
+        const activity = withAudit({id: newId("act"), spexActivity: null, taskActivities: []});
+        relationsOf(v?.spexareId).activities.push(activity);
+        return {activityCreate: activity};
+    },
+    ActivityDelete: (v) => ({activityDelete: removeById(relationsOf(v?.spexareId).activities, v?.id)}),
+    SpexActivityCreate: (v) => {
+        const activity = activityOf(v?.spexareId, v?.activityId);
+        const spex = spexList.find((s) => s.id === String(v?.spexId));
+        if (!activity || !spex) {
+            return {spexActivityCreate: null};
+        }
+        activity.spexActivity = withAudit({id: newId("spexact"), spex: spexShape(spex)});
+        return {spexActivityCreate: activity.spexActivity};
+    },
+    SpexActivityUpdate: (v) => {
+        const activity = activityOf(v?.spexareId, v?.activityId);
+        const spex = spexList.find((s) => s.id === String(v?.spexId));
+        if (!activity?.spexActivity || !spex) {
+            return {spexActivityUpdate: null};
+        }
+        activity.spexActivity = {...activity.spexActivity, spex: spexShape(spex)};
+        return {spexActivityUpdate: activity.spexActivity};
+    },
+    SpexActivityDelete: (v) => {
+        const activity = activityOf(v?.spexareId, v?.activityId);
+        if (activity) {
+            activity.spexActivity = null;
+        }
+        return {spexActivityDelete: !!activity};
+    },
+    TaskActivityCreate: (v) => {
+        const activity = activityOf(v?.spexareId, v?.activityId);
+        const task = taskList.find((t) => t.id === String(v?.taskId));
+        if (!activity || !task) {
+            return {taskActivityCreate: null};
+        }
+        const taskActivity = withAudit({id: newId("taskact"), task: taskShape(task), actors: []});
+        activity.taskActivities.push(taskActivity);
+        return {taskActivityCreate: taskActivity};
+    },
+    TaskActivityDelete: (v) => {
+        const activity = activityOf(v?.spexareId, v?.activityId);
+        return {taskActivityDelete: activity ? removeById(activity.taskActivities, v?.id) : false};
+    },
+    MembershipCreate: (v) => {
+        const type = typeList.find((t) => t.id === String(v?.typeId));
+        const membership = withAudit({id: newId("mem"), year: String(v?.input?.year ?? ""), type});
+        relationsOf(v?.spexareId).memberships.push(membership);
+        return {membershipCreate: membership};
+    },
+    MembershipDelete: (v) => ({membershipDelete: removeById(relationsOf(v?.spexareId).memberships, v?.id)}),
+    TaggingCreate: (v) => {
+        const tag = tagList.find((t) => t.id === String(v?.tagId));
+        const {taggings} = relationsOf(v?.spexareId);
+        if (tag && !taggings.some((t) => t.id === tag.id)) {
+            taggings.push(withAudit(tag));
+        }
+        return {taggingCreate: !!tag};
+    },
+    TaggingDelete: (v) => ({taggingDelete: removeById(relationsOf(v?.spexareId).taggings, v?.tagId)}),
+
     SavedSearches: () => ({savedSearches: savedSearchList}),
     SavedSearchGet: (v) => ({savedSearch: savedSearchList.find((s) => s.id === String(v?.id)) ?? null}),
     SavedSearchCreate: (v) => {
@@ -492,8 +622,13 @@ const resolvers = {
 
     TagPagedSummary: () => paged("tagPaged", tagList),
     TagPagedFull: () => paged("tagPaged", tagList.map(withAudit)),
-    TagCreate: (v) => ({tagCreate: withAudit({id: "new-tag", name: v?.input?.name ?? ""})}),
+    TagCreate: (v) => {
+        const created = {id: newId("tag"), name: v?.input?.name ?? ""};
+        tagList.push(created);
+        return {tagCreate: withAudit(created)};
+    },
     TagUpdate: (v) => ({tagUpdate: withAudit(applyTagUpdate(v?.input))}),
+    TagDelete: (v) => ({tagDelete: removeById(tagList, v?.id)}),
     TagGet: (v) => {
         const tag = tagList.find((t) => t.id === String(v?.id));
         return {tag: tag ? withAudit(tag) : null};
@@ -502,6 +637,29 @@ const resolvers = {
     TaskPagedSummary: () => paged("taskPaged", taskList),
     TaskPagedFull: () => paged("taskPaged", taskList.map(withAudit)),
     TaskGet: (v) => single("task", taskList, v?.id),
+    TaskUpdate: (v) => {
+        const task = taskList.find((t) => t.id === String(v?.input?.id));
+        if (task) {
+            task.name = v?.input?.name ?? task.name;
+        }
+        return {taskUpdate: task ? withAudit(task) : null};
+    },
+    TaskDelete: (v) => ({taskDelete: removeById(taskList, v?.id)}),
+    TaskCategoryAdd: (v) => {
+        const task = taskList.find((t) => t.id === String(v?.id));
+        const category = taskCategoryList.find((c) => c.id === String(v?.categoryId));
+        if (task && category) {
+            task.category = category;
+        }
+        return {taskCategoryAdd: task ? withAudit(task) : null};
+    },
+    TaskCategoryRemove: (v) => {
+        const task = taskList.find((t) => t.id === String(v?.id));
+        if (task) {
+            task.category = null;
+        }
+        return {taskCategoryRemove: task ? withAudit(task) : null};
+    },
 
     TaskCategoryPagedSummary: () => paged("taskCategoryPaged", taskCategoryList),
     TaskCategoryPagedFull: () => paged("taskCategoryPaged", taskCategoryList.map(withAudit)),
@@ -786,6 +944,11 @@ const server = createServer((req, res) => {
         }
         if (path.endsWith("/protocol/openid-connect/logout")) {
             handleLogout(url, res);
+            return;
+        }
+        if (req.method === "POST" && path === "/__reset") {
+            resetState();
+            res.writeHead(204).end();
             return;
         }
         if (req.method === "POST" && path.includes("/api/graphql")) {

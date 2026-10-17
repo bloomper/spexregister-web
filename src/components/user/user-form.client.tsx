@@ -239,7 +239,7 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
                                         <PopoverContent className="w-(--anchor-width) p-0" align="start">
                                             <Command shouldFilter={false}>
                                                 <CommandInput
-                                                    placeholder={t("Common.searchPlaceholder")}
+                                                    placeholder={t("User.spexareSearchPlaceholder")}
                                                     onValueChange={handleSpexareSearch}
                                                 />
                                                 <CommandList>

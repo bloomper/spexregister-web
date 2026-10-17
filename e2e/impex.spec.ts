@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import {expect, test} from "./fixtures";
 
 test.describe("impex", () => {
     test("the manage page lists a completed, downloadable job", async ({page}) => {

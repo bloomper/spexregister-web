@@ -250,6 +250,7 @@
     "select": "Välj",
     "selectAll": "Välj alla",
     "selectDate": "Välj datum",
+    "selectType": "Välj typ",
     "selected": "{count, plural, =1 {# vald} other {# valda}}",
     "themeDark": "Mörk",
     "themeLight": "Ljus",
@@ -667,6 +668,7 @@
     "invalidEmailAddress": "Ogiltig e-postadress",
     "spexare": "Spexare?",
     "spexareHeading": "Spexare",
+    "spexareSearchPlaceholder": "Sök efter spexare att koppla...",
     "state": "Status"
   }
 }

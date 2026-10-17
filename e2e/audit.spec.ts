@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import {expect, test} from "./fixtures";
 
 test("the history of a tag lists its revisions and their field changes", async ({page}) => {
     await page.goto("/tags/manage");

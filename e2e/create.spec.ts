@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import {expect, test} from "./fixtures";
 
 test("creating a spexare submits the form and navigates to manage", async ({page}) => {
     await page.goto("/spexare/create");

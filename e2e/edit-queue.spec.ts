@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import {expect, test} from "./fixtures";
 
 test("bulk-editing via the queue: warn on unsaved changes, save one, save & next", async ({page}) => {
     const discarded = `Kastad ${Date.now()}`;

@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import {expect, test} from "./fixtures";
 
 test.describe("graph explorer", () => {
     test("searches for a start node and seeds the graph with it", async ({page}) => {

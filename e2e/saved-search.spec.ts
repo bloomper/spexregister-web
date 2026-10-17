@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import {expect, test} from "./fixtures";
 
 test.describe("saved searches", () => {
     test("saves the current search and reapplies it later", async ({page}) => {

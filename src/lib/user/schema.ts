@@ -2,7 +2,7 @@ import {z} from "zod";
 
 export const userFormSchema = z.object({
     email: z
-        .email("User.invalidEmail")
+        .email("User.invalidEmailAddress")
         .min(1, "Common.fieldRequired")
         .max(255, "Common.fieldTooLong"),
     stateId: z

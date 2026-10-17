@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import {expect, test} from "./fixtures";
 
 test("authenticated dashboard renders news from the backend", async ({page}) => {
     await page.goto("/");

@@ -69,7 +69,7 @@ export function SpexareViewDialog({
                     />
                 ) : (
                     <div className="p-6 text-sm text-muted-foreground">
-                        {t("Common.noData")}
+                        {t("Common.noDataFound")}
                     </div>
                 )}
 
