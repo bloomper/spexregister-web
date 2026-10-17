@@ -11,7 +11,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {createMembershipAction, deleteMembershipAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {MembershipFormOutput} from "@/lib/spexare/membership/schema";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 import {Badge} from "@/components/ui/badge";
 
 export function MembershipManager({
@@ -24,7 +24,7 @@ export function MembershipManager({
     types: Type[]
 }) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
     const [isAdding, setIsAdding] = useState(false);
 
@@ -41,7 +41,7 @@ export function MembershipManager({
                 await createMembershipAction(spexareId, data.typeId, data);
                 toast.success(t("Common.updateSuccess"));
                 setIsAdding(false);
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
@@ -54,7 +54,7 @@ export function MembershipManager({
             try {
                 await deleteMembershipAction(spexareId, typeId, id);
                 toast.success(t("Common.deleteSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));

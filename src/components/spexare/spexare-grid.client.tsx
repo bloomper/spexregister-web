@@ -98,7 +98,7 @@ export function SpexareGrid({
     const selectedId = selection ? selection.id : deepLink?.id ?? null;
     const setSelectedId = (id: string | null) => setSelection({id});
     const {full: selectedFull, isLoading: isSelectedLoading} = useLazyFull(selectedId, getAction);
-    const {full: editFullItem, isLoading: isEditLoading} = useLazyFull(editId, getAction);
+    const {full: editFullItem, isLoading: isEditLoading, reload: reloadEditItem} = useLazyFull(editId, getAction);
     const selected = selectedId ? items.find((i) => i.id === selectedId) ?? null : null;
     const [filtersOpen, setFiltersOpen] = useState(false);
     const activeFacetCount = Object.values(selectedFacets).filter(values => values.size > 0).length;
@@ -259,6 +259,7 @@ export function SpexareGrid({
                     reset();
                     router.refresh();
                 }}
+                onChange={reloadEditItem}
                 types={types}
                 countries={countries}
                 tags={tags}

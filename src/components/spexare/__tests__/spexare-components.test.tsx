@@ -78,7 +78,7 @@ describe("SpexareViewDialog", () => {
 
 describe("SpexareEditSheet", () => {
     const baseProps = {
-        onClose: vi.fn(), onSuccess: vi.fn(), isLoading: false,
+        onClose: vi.fn(), onSuccess: vi.fn(), onChange: vi.fn(), isLoading: false,
         types: [], countries: [], tags: [], tasks: [], taskCategories: [], spex: [], spexCategories: [],
     };
 

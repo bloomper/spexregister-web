@@ -33,7 +33,7 @@ import {
     TaskCategory,
     Type
 } from "@/gql/schema";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 
 interface ActivityManagerProps {
     spexareId: string;
@@ -55,7 +55,7 @@ export function ActivityManager({
                                     initialActivities
                                 }: ActivityManagerProps) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
     const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
 
@@ -64,7 +64,7 @@ export function ActivityManager({
             try {
                 await createActivityAction(spexareId);
                 toast.success(t("Common.updateSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
@@ -77,7 +77,7 @@ export function ActivityManager({
             try {
                 await deleteActivityAction(spexareId, id);
                 toast.success(t("Common.deleteSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));

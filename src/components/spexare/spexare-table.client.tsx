@@ -106,7 +106,11 @@ export function SpexareTable({
     useDeepLinkItem(getAction, setViewItem);
 
     const {full: viewFullItem, isLoading: isViewLoading} = useLazyFull(viewItem?.id ?? null, getAction);
-    const {full: editFullItem, isLoading: isEditLoading} = useLazyFull(editItem?.id ?? null, getAction);
+    const {
+        full: editFullItem,
+        isLoading: isEditLoading,
+        reload: reloadEditItem
+    } = useLazyFull(editItem?.id ?? null, getAction);
 
     useEffect(() => {
         if (viewItem) {
@@ -311,6 +315,7 @@ export function SpexareTable({
                     setSelectedDeceasedValues(new Set(["true", "false"]));
                     router.refresh();
                 }}
+                onChange={reloadEditItem}
                 types={types}
                 countries={countries}
                 tags={tags}

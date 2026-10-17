@@ -4,6 +4,7 @@ import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory
 import {Sheet} from "@/components/ui/sheet";
 import {Spinner} from "@/components/ui/spinner";
 import {SpexareForm} from "@/components/spexare/spexare-form.client";
+import {RefreshContext} from "@/hooks/use-refresh.client";
 
 type SpexareEditSheetProps = {
     open: boolean;
@@ -11,6 +12,7 @@ type SpexareEditSheetProps = {
     full: Spexare | null;
     isLoading: boolean;
     onSuccess: () => void;
+    onChange: () => void;
     types: Type[];
     countries: Country[];
     tags: TagType[];
@@ -26,6 +28,7 @@ export function SpexareEditSheet({
                                      full,
                                      isLoading,
                                      onSuccess,
+                                     onChange,
                                      types,
                                      countries,
                                      tags,
@@ -50,17 +53,19 @@ export function SpexareEditSheet({
                     </div>
                 </div>
             ) : full ? (
-                <SpexareForm
-                    types={types}
-                    countries={countries}
-                    tags={tags}
-                    tasks={tasks}
-                    taskCategories={taskCategories}
-                    spex={spex}
-                    spexCategories={spexCategories}
-                    item={full}
-                    onSuccess={onSuccess}
-                />
+                <RefreshContext value={onChange}>
+                    <SpexareForm
+                        types={types}
+                        countries={countries}
+                        tags={tags}
+                        tasks={tasks}
+                        taskCategories={taskCategories}
+                        spex={spex}
+                        spexCategories={spexCategories}
+                        item={full}
+                        onSuccess={onSuccess}
+                    />
+                </RefreshContext>
             ) : null}
         </Sheet>
     );

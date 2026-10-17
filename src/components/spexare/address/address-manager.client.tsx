@@ -11,7 +11,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {createAddressAction, deleteAddressAction, updateAddressAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {AddressFormOutput} from "@/lib/spexare/address/schema";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 
 export function AddressManager({
                                    spexareId,
@@ -25,7 +25,7 @@ export function AddressManager({
     countries: Country[];
 }) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export function AddressManager({
                 await createAddressAction(spexareId, data.typeId, data);
                 toast.success(t("Common.updateSuccess"));
                 setIsAdding(false);
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
@@ -53,7 +53,7 @@ export function AddressManager({
                 await updateAddressAction(spexareId, data.typeId, id, data);
                 toast.success(t("Common.updateSuccess"));
                 setEditingId(null);
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
@@ -66,7 +66,7 @@ export function AddressManager({
             try {
                 await deleteAddressAction(spexareId, typeId, id);
                 toast.success(t("Common.deleteSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));

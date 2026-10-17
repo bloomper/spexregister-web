@@ -15,7 +15,7 @@ import {Spex, SpexActivity, SpexCategory} from "@/gql/schema";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import {Check, ChevronsUpDown, Plus} from "lucide-react";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 
 interface SpexActivityFormProps {
     spexareId: string;
@@ -35,7 +35,7 @@ export function SpexActivityForm({
                                      onSuccess
                                  }: SpexActivityFormProps) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
     const [open, setOpen] = useState(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
@@ -67,7 +67,7 @@ export function SpexActivityForm({
                     await createSpexActivityAction(spexareId, activityId, data.spexId);
                 }
                 toast.success(t("Common.updateSuccess"));
-                router.refresh();
+                refresh();
                 onSuccess?.();
             } catch (error) {
                 void error;

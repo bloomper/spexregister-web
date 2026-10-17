@@ -11,7 +11,7 @@ import {DataEmpty} from "@/components/data-empty";
 import {createConsentAction, deleteConsentAction, updateConsentAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {ConsentFormOutput} from "@/lib/spexare/consent/schema";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 import {Badge} from "@/components/ui/badge";
 
 export function ConsentManager({
@@ -24,7 +24,7 @@ export function ConsentManager({
     types: Type[]
 }) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -38,7 +38,7 @@ export function ConsentManager({
                 await createConsentAction(spexareId, data.typeId, data);
                 toast.success(t("Common.updateSuccess"));
                 setIsAdding(false);
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
@@ -52,7 +52,7 @@ export function ConsentManager({
                 await updateConsentAction(spexareId, data.typeId, id, data);
                 toast.success(t("Common.updateSuccess"));
                 setEditingId(null);
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
@@ -65,7 +65,7 @@ export function ConsentManager({
             try {
                 await deleteConsentAction(spexareId, typeId, id);
                 toast.success(t("Common.deleteSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));

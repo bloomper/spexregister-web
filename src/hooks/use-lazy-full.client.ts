@@ -1,18 +1,23 @@
 "use client";
 
-import {useEffect, useEffectEvent, useState} from "react";
+import {useCallback, useEffect, useEffectEvent, useRef, useState} from "react";
 
 export function useLazyFull<T>(
     id: string | null | undefined,
     loadAction: (id: string) => Promise<T | null | undefined>,
-): { full: T | null; isLoading: boolean } {
+): { full: T | null; isLoading: boolean; reload: () => void } {
     const [full, setFull] = useState<T | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [version, setVersion] = useState(0);
+    const reloadingRef = useRef(false);
 
     const loadFull = useEffectEvent(loadAction);
 
     useEffect(() => {
         let cancelled = false;
+        const reloading = reloadingRef.current;
+
+        reloadingRef.current = false;
 
         async function load() {
             if (!id) {
@@ -21,8 +26,10 @@ export function useLazyFull<T>(
                 return;
             }
 
-            setIsLoading(true);
-            setFull(null);
+            if (!reloading) {
+                setIsLoading(true);
+                setFull(null);
+            }
 
             try {
                 const data = await loadFull(id);
@@ -40,7 +47,12 @@ export function useLazyFull<T>(
         return () => {
             cancelled = true;
         };
-    }, [id]);
+    }, [id, version]);
 
-    return {full, isLoading};
+    const reload = useCallback(() => {
+        reloadingRef.current = true;
+        setVersion((current) => current + 1);
+    }, []);
+
+    return {full, isLoading, reload};
 }

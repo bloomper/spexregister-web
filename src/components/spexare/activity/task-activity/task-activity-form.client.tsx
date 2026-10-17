@@ -14,7 +14,7 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import {cn, translateError} from "@/utils/utils";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 import {Task, TaskActivity, TaskCategory} from "@/gql/schema";
 
 interface TaskFormProps {
@@ -37,7 +37,7 @@ export function TaskActivityForm({
                                      onSuccess
                                  }: TaskFormProps) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
     const [open, setOpen] = useState(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
@@ -71,7 +71,7 @@ export function TaskActivityForm({
                 }
                 toast.success(t("Common.updateSuccess"));
                 onSuccess?.();
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));

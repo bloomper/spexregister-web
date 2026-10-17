@@ -26,6 +26,7 @@ import {
 } from "@/components/edit-queue/edit-queue-form-state.client";
 import {type EditQueueOptions, getEditQueueOptions} from "@/app/(app)/edit-queue/actions.server";
 import {emitDataRefresh} from "@/hooks/use-data-refresh.client";
+import {RefreshContext} from "@/hooks/use-refresh.client";
 
 const EMPTY_OPTIONS: EditQueueOptions = {
     types: [], countries: [], tags: [], tasks: [], taskCategories: [],
@@ -102,6 +103,18 @@ export function EditQueueDrawer() {
             cancelled = true;
         };
     }, [current, entry, currentKey, fullItemByKey]);
+
+    const reloadCurrent = useCallback(() => {
+        if (!current || !entry?.fetchFull) {
+            return;
+        }
+        const key = currentKey;
+        void entry.fetchFull(current.item.id).then((full) => {
+            if (full) {
+                setFullItemByKey((prev) => ({...prev, [key]: full}));
+            }
+        });
+    }, [current, entry, currentKey]);
 
     const refreshTables = useCallback(() => {
         emitDataRefresh();
@@ -258,13 +271,15 @@ export function EditQueueDrawer() {
                     <div className="flex-1 min-h-0 overflow-hidden">
                         {ready && resolvedItem ? (
                             <EditQueueFormStateProvider onFormStateChange={setFormState}>
-                                <entry.Form
-                                    key={`${currentKey}#${formNonce}`}
-                                    item={resolvedItem}
-                                    options={options}
-                                    onSuccess={handleSaved}
-                                    onError={handleError}
-                                />
+                                <RefreshContext value={reloadCurrent}>
+                                    <entry.Form
+                                        key={`${currentKey}#${formNonce}`}
+                                        item={resolvedItem}
+                                        options={options}
+                                        onSuccess={handleSaved}
+                                        onError={handleError}
+                                    />
+                                </RefreshContext>
                             </EditQueueFormStateProvider>
                         ) : (
                             <div className="flex h-full items-center justify-center">

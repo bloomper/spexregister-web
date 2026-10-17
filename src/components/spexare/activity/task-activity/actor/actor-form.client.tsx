@@ -13,7 +13,7 @@ import {Input} from "@/components/ui/input";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {translateError} from "@/utils/utils";
 import {Actor, Type} from "@/gql/schema";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 import {Plus} from "lucide-react";
 
 interface ActorFormProps {
@@ -27,7 +27,7 @@ interface ActorFormProps {
 
 export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, onSuccess}: ActorFormProps) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
 
     const {
@@ -53,7 +53,7 @@ export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, 
                 }
                 toast.success(t("Common.updateSuccess"));
                 onSuccess?.();
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));

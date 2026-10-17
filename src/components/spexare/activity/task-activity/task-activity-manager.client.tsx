@@ -23,7 +23,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 
 interface TaskActivityManagerProps {
     spexareId: string;
@@ -43,7 +43,7 @@ export function TaskActivityManager({
                                         initialTaskActivities
                                     }: TaskActivityManagerProps) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
     const [editingActorId, setEditingActorId] = useState<string | null>(null);
     const [editingTaskActivityId, setEditingTaskActivityId] = useState<string | null>(null);
@@ -55,7 +55,7 @@ export function TaskActivityManager({
             try {
                 await deleteTaskActivityAction(spexareId, activityId, id);
                 toast.success(t("Common.deleteSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
@@ -68,7 +68,7 @@ export function TaskActivityManager({
             try {
                 await deleteActorAction(spexareId, activityId, taskActivityId, vocalId, id);
                 toast.success(t("Common.deleteSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));

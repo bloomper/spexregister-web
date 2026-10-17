@@ -7,7 +7,7 @@ import {Plus, Tag as TagIcon, X} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {createTaggingAction, deleteTaggingAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
-import {useRouter} from "next/navigation";
+import {useRefresh} from "@/hooks/use-refresh.client";
 import {DataEmpty} from "@/components/data-empty";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
@@ -23,7 +23,7 @@ export function TaggingManager({
     allTags: Tag[]
 }) {
     const t = useTranslations();
-    const router = useRouter();
+    const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
 
     const usedTagIds = new Set(initialTaggings.map(tag => tag.id));
@@ -34,7 +34,7 @@ export function TaggingManager({
             try {
                 await createTaggingAction(spexareId, tagId);
                 toast.success(t("Common.updateSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
@@ -47,7 +47,7 @@ export function TaggingManager({
             try {
                 await deleteTaggingAction(spexareId, tagId);
                 toast.success(t("Common.deleteSuccess"));
-                router.refresh();
+                refresh();
             } catch (error) {
                 void error;
                 toast.error(t("Common.errorOccurred"));
