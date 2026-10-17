@@ -30,6 +30,14 @@ export function matchesTerm(node: GraphNode, term: string): boolean {
         || (node.sublabel ?? "").toLowerCase().includes(term);
 }
 
+function mergeLabels(existing: string | null | undefined, incoming: string | null | undefined): string | null {
+    const parts = [existing, incoming]
+        .flatMap((label) => (label ?? "").split("; "))
+        .filter((part) => part !== "");
+
+    return parts.length ? [...new Set(parts)].join("; ") : null;
+}
+
 export function mergeNeighbourhood(state: GraphState, neighbourhood: GraphNeighbourhood): GraphState {
     const nodes = new Map(state.nodes.map((node) => [node.id, node]));
     const edges = new Map(state.edges.map((edge) => [edge.id, edge]));
@@ -45,7 +53,7 @@ export function mergeNeighbourhood(state: GraphState, neighbourhood: GraphNeighb
             nodes.set(node.id, {...node, expanded: existing?.expanded ?? false});
         }
         for (const edge of group.edges ?? []) {
-            edges.set(edge.id, edge);
+            edges.set(edge.id, {...edge, label: mergeLabels(edges.get(edge.id)?.label, edge.label)});
         }
     }
 
@@ -77,13 +85,17 @@ export function mergeNodes(state: GraphState, origin: LoadedNode, edge: GraphEdg
     for (const node of added) {
         const existing = nodes.get(node.id);
 
+        const id = `${node.id}->${origin.id}:${edge}`;
+
         nodes.set(node.id, {...node, expanded: existing?.expanded ?? false});
-        edges.set(`${node.id}->${origin.id}:${edge}`, {
-            id: `${node.id}->${origin.id}:${edge}`,
+        edges.set(id, {
+            id,
             source: node.id,
             target: origin.id,
             type: edge,
-            label: null,
+            label: edges.get(id)?.label
+                ?? (edge === GraphEdgeType.Participation && origin.type === GraphNodeType.Spex ? origin.sublabel : null)
+                ?? null,
         } as GraphEdge);
     }
 

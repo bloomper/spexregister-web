@@ -23,6 +23,8 @@ export type ForceNode = {
 export type ForceLink = {
     source: string;
     target: string;
+    label: string;
+    caption: string;
 };
 
 type ForceProps = {
@@ -58,6 +60,7 @@ function textureFor(key: string, draw: () => HTMLCanvasElement) {
 }
 
 const CAPTION_SCREEN_HEIGHT = 0.03;
+const LINK_CAPTION_SCREEN_HEIGHT = 0.024;
 
 function discFor(node: ForceNode, dimmed: boolean) {
     const key = `${node.type}:${node.color}:${node.revival}`;
@@ -125,8 +128,30 @@ function captionFor(node: ForceNode, ink: string) {
 
     sprite.renderOrder = 1;
 
+    sprite.center.set(0.5, 1);
     sprite.scale.set(CAPTION_SCREEN_HEIGHT * aspect, CAPTION_SCREEN_HEIGHT, 1);
-    sprite.position.set(0, -(node.size / 2 + 2), 0);
+    sprite.position.set(0, -(node.size / 2 + 1), 0);
+
+    return sprite;
+}
+
+function linkCaptionFor(link: ForceLink, ink: string, halo: string) {
+    if (!link.caption) {
+        return new THREE.Object3D();
+    }
+
+    const key = `link:${link.caption}:${halo}:${ink}`;
+    const texture = textureFor(key, () => drawCaption(link.caption, halo, ink).canvas);
+    const aspect = texture.image instanceof HTMLCanvasElement ? texture.image.width / texture.image.height : 1;
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthWrite: false,
+        sizeAttenuation: false,
+    }));
+
+    sprite.renderOrder = 1;
+    sprite.scale.set(LINK_CAPTION_SCREEN_HEIGHT * aspect, LINK_CAPTION_SCREEN_HEIGHT, 1);
 
     return sprite;
 }
@@ -221,6 +246,14 @@ export default function GraphForce3D({
                 linkOpacity={0.7}
                 linkWidth={0.4}
                 nodeLabel="label"
+                linkLabel="label"
+                linkThreeObjectExtend
+                linkThreeObject={(link: object) => linkCaptionFor(link as ForceLink, captionInk, background)}
+                linkPositionUpdate={(object, {start, end}) => {
+                    object.position.set((start.x + end.x) / 2, (start.y + end.y) / 2, (start.z + end.z) / 2);
+
+                    return true;
+                }}
                 nodeThreeObject={(node: object) => objectFor(
                     node as ForceNode, captionInk, dimmedIds.has(String((node as ForceNode).id)))}
                 onNodeClick={(node) => onNodeClick(String(node.id))}

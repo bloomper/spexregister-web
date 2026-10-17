@@ -74,6 +74,21 @@ describe("mergeNeighbourhood", () => {
         expect(second.nodes.find((n) => n.id === "SPEXARE:1")?.expanded).toBe(true);
     });
 
+    it("combines distinct labels of a shared edge", () => {
+        const functionEdge = (label: string) => ({
+            type: GraphEdgeType.Function,
+            totalCount: 1,
+            nodes: [],
+            edges: [{id: "f1", source: "TASK:5", target: "SPEX:101", type: GraphEdgeType.Function, label}],
+        });
+        const first = mergeNeighbourhood(EMPTY, neighbourhood(ada, [functionEdge("Ada Lovelace (Kung)")]));
+        const second = mergeNeighbourhood(first, neighbourhood(node("SPEXARE:2", GraphNodeType.Spexare, "Grace Hopper"),
+            [functionEdge("Grace Hopper")]));
+        const third = mergeNeighbourhood(second, neighbourhood(ada, [functionEdge("Ada Lovelace (Kung)")]));
+
+        expect(third.edges.find((e) => e.id === "f1")?.label).toBe("Ada Lovelace (Kung); Grace Hopper");
+    });
+
     it("records a pending group only when the total exceeds what was returned", () => {
         const state = mergeNeighbourhood(EMPTY, neighbourhood(bacchus, [
             // A hub: capped at one of 275, so there is more to fetch.
@@ -104,6 +119,16 @@ describe("mergeNodes", () => {
         expect(more.nodes.map((n) => n.id)).toContain("SPEXARE:2");
         expect(more.pending[0]).toMatchObject({shown: 2, totalCount: 3});
         expect(more.edges.some((e) => e.source === "SPEXARE:2" && e.target === "SPEX:100")).toBe(true);
+    });
+
+    it("labels a further page of participants with the spex year", () => {
+        const seeded = mergeNeighbourhood(EMPTY, adaNeighbourhood);
+        const origin = {...seeded.nodes.find((n) => n.id === "SPEX:101")!, sublabel: "2015"};
+        const more = mergeNodes(seeded, origin, GraphEdgeType.Participation, [
+            node("SPEXARE:2", GraphNodeType.Spexare, "Grace Hopper"),
+        ]);
+
+        expect(more.edges.find((e) => e.source === "SPEXARE:2")?.label).toBe("2015");
     });
 
     it("does not duplicate a node that is already loaded", () => {

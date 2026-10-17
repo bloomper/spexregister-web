@@ -2,7 +2,7 @@
 
 import {useEffect, useMemo, useRef, useState} from "react";
 import dynamic from "next/dynamic";
-import {GraphEdge, GraphNodeType} from "@/gql/schema";
+import {GraphEdge, GraphEdgeType, GraphNodeType} from "@/gql/schema";
 import {Skeleton} from "@/components/ui/skeleton";
 import {getProxiedImageUrl} from "@/utils/utils";
 import type {ForceNode} from "@/components/graph/graph-force-3d.client";
@@ -144,6 +144,7 @@ export function GraphCanvas({nodes, edges, tooltips, dimmedIds, focusId, onSelec
 
     const data = useMemo(() => {
         const live = new Set(nodes.map((node) => node.id));
+        const expanded = new Set(nodes.filter((node) => node.expanded).map((node) => node.id));
 
         for (const key of [...nodeObjects.keys()]) {
             if (!live.has(key)) {
@@ -175,7 +176,12 @@ export function GraphCanvas({nodes, edges, tooltips, dimmedIds, focusId, onSelec
 
         return {
             nodes: forceNodes,
-            links: edges.map((edge) => ({source: edge.source, target: edge.target})),
+            links: edges.map((edge) => ({
+                source: edge.source,
+                target: edge.target,
+                label: edge.label ?? "",
+                caption: edge.type === GraphEdgeType.Participation && expanded.has(edge.source) ? edge.label ?? "" : "",
+            })),
         };
     }, [nodes, edges, colors, tooltips]);
 
