@@ -78,7 +78,7 @@ export function AboutPage({feedbackEmail}: { feedbackEmail: string }) {
                         <Drama className="size-10"/>
                     </div>
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-                        {t("title")}
+                        {t("heading")}
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                         {t("description")}
