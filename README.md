@@ -7,11 +7,11 @@ Spexregister Web is the second generation of the frontend responsible for servin
 ## Tech Stack
 
 - **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
-- **UI & Styling:
-  ** [shadcn/ui](https://ui.shadcn.com/), [Radix UI](https://www.radix-ui.com/) & [Tailwind CSS 4](https://tailwindcss.com/)
+- **UI & Styling:** [shadcn/ui](https://ui.shadcn.com/), [Base UI](https://base-ui.com/) &
+  [Tailwind CSS 4](https://tailwindcss.com/)
 - **Data Fetching:** [urql](https://formidable.com/open-source/urql/) (GraphQL) & [Axios](https://axios-http.com/)
   (REST)
-- **State Management:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/) for validation
+- **Forms:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/) for validation
 - **Authentication:** [Better Auth](https://better-auth.com/) (Keycloak integration, stateless sessions)
 - **Internationalization:** [next-intl](https://next-intl-docs.vercel.app/) (Supports English & Swedish)
 
@@ -19,7 +19,7 @@ Spexregister Web is the second generation of the frontend responsible for servin
 
 ### Prerequisites
 
-- Node.js 26+
+- Node.js 26 (see `.nvmrc`)
 - npm (package manager)
 - Docker & Docker Compose (optional, for containerized setup)
 
@@ -27,11 +27,22 @@ Spexregister Web is the second generation of the frontend responsible for servin
 
 1. **Install dependencies:**
    ```bash
-   npm install
+   npm ci
    ```
 
 2. **Configure environment:**
-   Create a `.env.local` file based on your environment requirements (API endpoints, Auth secrets).
+   Start [Spexregister Server][1]'s local stack, then create `.env.local` (`.env` already holds the rest):
+   ```
+   BETTER_AUTH_URL=http://localhost:3000
+   AUTH_SECRET=<random string of at least 32 characters>
+   AUTH_KEYCLOAK_ID=spexregister
+   AUTH_KEYCLOAK_SECRET=<secret of the spexregister client>
+   AUTH_KEYCLOAK_ISSUER=https://auth.fgv.local.nu:8443/auth/realms/fgv
+   API_GRAPHQL_ENDPOINT=https://api.register.fgv.local.nu:8443/api/graphql
+   API_REST_BASE_URL=https://api.register.fgv.local.nu:8443
+   ```
+   `npm run dev` trusts the certificate in `.docker/caddy/root.crt`. Replace it with your server stack's Caddy root
+   certificate (`.docker/caddy/data/caddy/pki/authorities/local/root.crt` in Spexregister Server).
 
 3. **Generate GraphQL types:**
    If you change GraphQL queries or the schema, regenerate types:
@@ -55,11 +66,11 @@ proxy setup for local development with HTTPS.
 To start the application along with the Caddy reverse proxy:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-The application will be accessible via the configured hostnames (e.g., `https://register.fgv.local.nu` if your hosts
-file is configured).
+The application will be accessible at `https://register.fgv.local.nu` if your hosts file is configured. It talks to
+the server's local stack at `api.register.fgv.local.nu:8443` and `auth.fgv.local.nu:8443`.
 
 ### Published images
 
@@ -79,6 +90,11 @@ The image contains no environment-specific values. All configuration is read at 
 `API_REST_BASE_URL`, `SUPPORT_EMAIL`, `FEEDBACK_EMAIL`, `SUPPORTED_LOCALES` and `DEFAULT_LOCALE`.
 
 ## Building and Deployment
+
+### Tests
+
+`npm run test` runs the unit tests and `npm run test:e2e` the Playwright tests. See the [contributor guidelines][5]
+for the checks CI runs.
 
 ### Production Build
 
@@ -101,9 +117,7 @@ You can contribute to Spexregister Web by:
 
 Spexregister Web is open source software released under the [Apache 2.0 license][6].
 
-[1]: https://register.fgv.nu/docs/
-
-[2]: https://gradle.org
+[1]: https://github.com/bloomper/spexregister-server
 
 [3]: CODE_OF_CONDUCT.md
 
@@ -112,5 +126,3 @@ Spexregister Web is open source software released under the [Apache 2.0 license]
 [5]: CONTRIBUTING.md
 
 [6]: https://www.apache.org/licenses/LICENSE-2.0.html
-
-[7]: http://localhost:8080/docs/

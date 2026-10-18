@@ -140,7 +140,7 @@ changing routing or data fetching; this area differs sharply from older Next.
 ## Audit and the change log
 
 - Every revision records **why** it happened, not just what changed: `source` (`WEB | IMPORT |
-  RESTORE | SYSTEM`), `operation` and a free-text `comment` on `revinfo`. The server decides
+  RESTORE | SYSTEM | MCP`), `operation` and a free-text `comment` on `revinfo`. The server decides
   `source`; the only thing a client contributes is the comment, via an **`X-Audit-Reason`** header —
   use `auditReason()` from `src/lib/graphql.server.ts` and pass it as the mutation context, as the
   restore dialog does so the reason is recorded in the user's language.
@@ -172,7 +172,7 @@ changing routing or data fetching; this area differs sharply from older Next.
 previously hit in this codebase:
 
 - `useTable()` returns a **new object on every state change**. Never put `table` in a `useEffect`
-  dependency array — derive from state instead (see the comment at `src/components/data-table.client.tsx:187`).
+  dependency array — derive from state instead, as `src/components/data-table.client.tsx` does.
 - A column's `id` is **not** the backend sort path. Put the entity path in `meta.sortKey`
   (`"category.name"`, `"details.title"`); `getSortKey` reads it. A wrong key silently returns an
   empty page.
@@ -184,7 +184,7 @@ Forms use `react-hook-form` + `zodResolver`.
 ## Edit queue
 
 Global bulk-edit drawer (`src/components/edit-queue/`) that reuses each entity's own form. Adding
-an entity means registering it in `registry.tsx` (form, label, `getById`, optional `fetchFull`).
+an entity means registering it in `registry.client.tsx` (form, label, `getById`, optional `fetchFull`).
 
 ## Bulk actions
 
@@ -205,8 +205,8 @@ which walks records one at a time.
   reader confirms are the counts they get. Per record the outcome is `APPLIED`, `UNCHANGED`
   (already as asked — a skip, not a failure) or `NOT_PERMITTED` (no ACL write permission).
 - `BulkTarget` takes **`ids` or `filter`, never both**, mirroring `spexareExport`, so an action can
-  run on a whole filtered set without ticking every row. The size cap is checked *before* the rows
-  are loaded — a `Spexare` carries an eager image blob.
+  run on a whole filtered set without ticking every row. The size cap (500 records) is checked
+  *before* the rows are loaded.
 - The payload's tag/spex/task/type ids are resolved **before the first write**, so a bad id fails the
   batch having changed nothing. The batch is otherwise all-or-nothing: one transaction.
 - Adding an operation: the enum case plus a handler in `SpexareBulkService`, then an entry in
