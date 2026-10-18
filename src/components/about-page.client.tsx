@@ -55,6 +55,7 @@ const contributorData = [
     },
     {
         name: "Emil Reinfeldt",
+        nickName: "Ministern",
         image: "https://gravatar.com/avatar/ea11d8104bc579a900cdd80be8457a8c47c3fd4e87de9eb02bf0a35666c6ddf3?s=200",
     }
 ];
