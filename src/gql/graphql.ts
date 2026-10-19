@@ -99,6 +99,33 @@ export type NewsUpdate = {
     visibleTo?: any;
 };
 
+export type Permission =
+    | 'ADMINISTRATION'
+    | 'DELETE'
+    | 'READ'
+    | 'WRITE';
+
+export type PermissionGrantCreate = {
+    permission: Permission;
+    role?: string | null | undefined;
+    scope: PermissionGrantScope;
+    spexId?: string | number | null | undefined;
+    spexareId?: string | number | null | undefined;
+    userId?: string | number | null | undefined;
+    validUntil?: any;
+};
+
+export type PermissionGrantScope =
+    | 'SPEX'
+    | 'SPEXARE'
+    | 'SPEX_PARTICIPANTS';
+
+export type PermissionGrantUpdate = {
+    id: string | number;
+    permission: Permission;
+    validUntil?: any;
+};
+
 export {ReportType};
 
 export {RestoreAction};
@@ -732,7 +759,13 @@ export type JobDeleteMutationVariables = Exact<{
 
 export type JobDeleteMutation = { jobDelete: any };
 
-export type NewsSummaryFragment = { id: string, subject: string, text: string, visibleFrom: any };
+export type NewsSummaryFragment = {
+    id: string,
+    subject: string,
+    text: string,
+    visibleFrom: any,
+    permissions: { write: boolean, delete: boolean }
+};
 
 export type NewsFullFragment = {
     published: boolean | null,
@@ -744,7 +777,8 @@ export type NewsFullFragment = {
     id: string,
     subject: string,
     text: string,
-    visibleFrom: any
+    visibleFrom: any,
+    permissions: { write: boolean, delete: boolean }
 };
 
 export type NewsPagedSummaryQueryVariables = Exact<{
@@ -761,7 +795,16 @@ export type NewsPagedSummaryQueryVariables = Exact<{
 export type NewsPagedSummaryQuery = {
     newsPaged: {
         totalCount: number,
-        edges: Array<{ cursor: string, node: { id: string, subject: string, text: string, visibleFrom: any } } | null>,
+        edges: Array<{
+            cursor: string,
+            node: {
+                id: string,
+                subject: string,
+                text: string,
+                visibleFrom: any,
+                permissions: { write: boolean, delete: boolean }
+            }
+        } | null>,
         pageInfo: {
             hasNextPage: boolean,
             hasPreviousPage: boolean,
@@ -797,7 +840,8 @@ export type NewsPagedFullQuery = {
                 id: string,
                 subject: string,
                 text: string,
-                visibleFrom: any
+                visibleFrom: any,
+                permissions: { write: boolean, delete: boolean }
             }
         } | null>,
         pageInfo: {
@@ -825,7 +869,8 @@ export type NewsGetQuery = {
         id: string,
         subject: string,
         text: string,
-        visibleFrom: any
+        visibleFrom: any,
+        permissions: { write: boolean, delete: boolean }
     } | null
 };
 
@@ -845,7 +890,8 @@ export type NewsCreateMutation = {
         id: string,
         subject: string,
         text: string,
-        visibleFrom: any
+        visibleFrom: any,
+        permissions: { write: boolean, delete: boolean }
     } | null
 };
 
@@ -865,7 +911,8 @@ export type NewsUpdateMutation = {
         id: string,
         subject: string,
         text: string,
-        visibleFrom: any
+        visibleFrom: any,
+        permissions: { write: boolean, delete: boolean }
     } | null
 };
 
@@ -884,6 +931,120 @@ export type NewsExportQueryVariables = Exact<{
 
 
 export type NewsExportQuery = { newsExport: { id: string } | null };
+
+export type PermissionGrantSummaryFragment = {
+    id: string,
+    role: string | null,
+    permission: Permission,
+    scope: PermissionGrantScope,
+    validUntil: any,
+    expired: boolean,
+    createdBy: string,
+    createdAt: any,
+    lastModifiedBy: string | null,
+    lastModifiedAt: any,
+    user: { id: string, email: any, spexare: { id: string, firstName: string, lastName: string } | null } | null,
+    spexare: { id: string, firstName: string, lastName: string } | null,
+    spex: { id: string, year: any, title: string } | null
+};
+
+export type PermissionGrantsPagedQueryVariables = Exact<{
+    first?: number | null | undefined;
+    last?: number | null | undefined;
+    after?: string | null | undefined;
+    before?: string | null | undefined;
+    sort: Array<string | null | undefined> | string;
+    direction?: SortDirection | null | undefined;
+    filter: string;
+}>;
+
+
+export type PermissionGrantsPagedQuery = {
+    permissionGrantPaged: {
+        totalCount: number,
+        edges: Array<{
+            cursor: string,
+            node: {
+                id: string,
+                role: string | null,
+                permission: Permission,
+                scope: PermissionGrantScope,
+                validUntil: any,
+                expired: boolean,
+                createdBy: string,
+                createdAt: any,
+                lastModifiedBy: string | null,
+                lastModifiedAt: any,
+                user: {
+                    id: string,
+                    email: any,
+                    spexare: { id: string, firstName: string, lastName: string } | null
+                } | null,
+                spexare: { id: string, firstName: string, lastName: string } | null,
+                spex: { id: string, year: any, title: string } | null
+            }
+        } | null>,
+        pageInfo: {
+            hasNextPage: boolean,
+            hasPreviousPage: boolean,
+            startCursor: string | null,
+            endCursor: string | null
+        }
+    } | null
+};
+
+export type PermissionGrantCreateMutationVariables = Exact<{
+    input: PermissionGrantCreate;
+}>;
+
+
+export type PermissionGrantCreateMutation = {
+    permissionGrantCreate: {
+        id: string,
+        role: string | null,
+        permission: Permission,
+        scope: PermissionGrantScope,
+        validUntil: any,
+        expired: boolean,
+        createdBy: string,
+        createdAt: any,
+        lastModifiedBy: string | null,
+        lastModifiedAt: any,
+        user: { id: string, email: any, spexare: { id: string, firstName: string, lastName: string } | null } | null,
+        spexare: { id: string, firstName: string, lastName: string } | null,
+        spex: { id: string, year: any, title: string } | null
+    } | null
+};
+
+export type PermissionGrantUpdateMutationVariables = Exact<{
+    input: PermissionGrantUpdate;
+}>;
+
+
+export type PermissionGrantUpdateMutation = {
+    permissionGrantUpdate: {
+        id: string,
+        role: string | null,
+        permission: Permission,
+        scope: PermissionGrantScope,
+        validUntil: any,
+        expired: boolean,
+        createdBy: string,
+        createdAt: any,
+        lastModifiedBy: string | null,
+        lastModifiedAt: any,
+        user: { id: string, email: any, spexare: { id: string, firstName: string, lastName: string } | null } | null,
+        spexare: { id: string, firstName: string, lastName: string } | null,
+        spex: { id: string, year: any, title: string } | null
+    } | null
+};
+
+export type PermissionGrantDeleteMutationVariables = Exact<{
+    id: string | number;
+}>;
+
+
+export type PermissionGrantDeleteMutation = { permissionGrantDelete: any };
 
 export type SavedSearchFieldsFragment = {
     id: string,
@@ -1130,6 +1291,7 @@ export type SpexSummaryFragment = {
     title: string,
     posterUrl: string | null,
     revival: boolean | null,
+    permissions: { write: boolean, delete: boolean },
     revivals: Array<{ id: string, year: any } | null> | null,
     category: { id: string, name: string } | null
 };
@@ -1144,6 +1306,7 @@ export type SpexFullFragment = {
     title: string,
     posterUrl: string | null,
     revival: boolean | null,
+    permissions: { write: boolean, delete: boolean },
     revivals: Array<{ id: string, year: any } | null> | null,
     category: { id: string, name: string } | null
 };
@@ -1170,6 +1333,7 @@ export type SpexPagedSummaryQuery = {
                 title: string,
                 posterUrl: string | null,
                 revival: boolean | null,
+                permissions: { write: boolean, delete: boolean },
                 revivals: Array<{ id: string, year: any } | null> | null,
                 category: { id: string, name: string } | null
             }
@@ -1209,6 +1373,7 @@ export type SpexPagedFullQuery = {
                 title: string,
                 posterUrl: string | null,
                 revival: boolean | null,
+                permissions: { write: boolean, delete: boolean },
                 revivals: Array<{ id: string, year: any } | null> | null,
                 category: { id: string, name: string } | null
             }
@@ -1238,6 +1403,7 @@ export type SpexGetQuery = {
         title: string,
         posterUrl: string | null,
         revival: boolean | null,
+        permissions: { write: boolean, delete: boolean },
         revivals: Array<{ id: string, year: any } | null> | null,
         category: { id: string, name: string } | null
     } | null
@@ -1259,6 +1425,7 @@ export type SpexCreateMutation = {
         title: string,
         posterUrl: string | null,
         revival: boolean | null,
+        permissions: { write: boolean, delete: boolean },
         revivals: Array<{ id: string, year: any } | null> | null,
         category: { id: string, name: string } | null
     } | null
@@ -1280,6 +1447,7 @@ export type SpexUpdateMutation = {
         title: string,
         posterUrl: string | null,
         revival: boolean | null,
+        permissions: { write: boolean, delete: boolean },
         revivals: Array<{ id: string, year: any } | null> | null,
         category: { id: string, name: string } | null
     } | null
@@ -1888,6 +2056,7 @@ export type SpexareBaseFragment = {
     graduation: string | null,
     comment: string | null,
     imageUrl: string | null,
+    permissions: { write: boolean, delete: boolean },
     partner: {
         id: string,
         firstName: string,
@@ -1909,6 +2078,7 @@ export type SpexareSummaryFragment = {
     graduation: string | null,
     comment: string | null,
     imageUrl: string | null,
+    permissions: { write: boolean, delete: boolean },
     partner: {
         id: string,
         firstName: string,
@@ -2017,6 +2187,7 @@ export type SpexareFullFragment = {
         value: boolean,
         type: { id: string, label: string }
     } | null> | null,
+    permissions: { write: boolean, delete: boolean },
     partner: {
         id: string,
         firstName: string,
@@ -2054,6 +2225,7 @@ export type SpexarePagedSummaryQuery = {
                 graduation: string | null,
                 comment: string | null,
                 imageUrl: string | null,
+                permissions: { write: boolean, delete: boolean },
                 partner: {
                     id: string,
                     firstName: string,
@@ -2192,6 +2364,7 @@ export type SpexarePagedFullQuery = {
                     value: boolean,
                     type: { id: string, label: string }
                 } | null> | null,
+                permissions: { write: boolean, delete: boolean },
                 partner: {
                     id: string,
                     firstName: string,
@@ -2321,6 +2494,7 @@ export type SpexareCreateMutation = {
             value: boolean,
             type: { id: string, label: string }
         } | null> | null,
+        permissions: { write: boolean, delete: boolean },
         partner: {
             id: string,
             firstName: string,
@@ -2442,6 +2616,7 @@ export type SpexareUpdateMutation = {
             value: boolean,
             type: { id: string, label: string }
         } | null> | null,
+        permissions: { write: boolean, delete: boolean },
         partner: {
             id: string,
             firstName: string,
@@ -2577,6 +2752,7 @@ export type SpexareGetQuery = {
             value: boolean,
             type: { id: string, label: string }
         } | null> | null,
+        permissions: { write: boolean, delete: boolean },
         partner: {
             id: string,
             firstName: string,
@@ -2603,6 +2779,7 @@ export type SpexareMeSummaryQuery = {
         graduation: string | null,
         comment: string | null,
         imageUrl: string | null,
+        permissions: { write: boolean, delete: boolean },
         partner: {
             id: string,
             firstName: string,
@@ -2722,6 +2899,7 @@ export type SpexareMeFullQuery = {
             value: boolean,
             type: { id: string, label: string }
         } | null> | null,
+        permissions: { write: boolean, delete: boolean },
         partner: {
             id: string,
             firstName: string,
@@ -2800,6 +2978,7 @@ export type SpexareSearchQuery = {
                 graduation: string | null,
                 comment: string | null,
                 imageUrl: string | null,
+                permissions: { write: boolean, delete: boolean },
                 partner: {
                     id: string,
                     firstName: string,
@@ -3668,6 +3847,7 @@ export type UserMeQuery = {
                 value: boolean,
                 type: { id: string, label: string }
             } | null> | null,
+            permissions: { write: boolean, delete: boolean },
             partner: {
                 id: string,
                 firstName: string,
@@ -4221,6 +4401,16 @@ export const NewsSummaryFragmentDoc = {
             }, {"kind": "Field", "name": {"kind": "Name", "value": "text"}}, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "visibleFrom"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
             }]
         }
     }]
@@ -4259,10 +4449,86 @@ export const NewsFullFragmentDoc = {
             }, {"kind": "Field", "name": {"kind": "Name", "value": "text"}}, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "visibleFrom"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
             }]
         }
     }]
 } as unknown as DocumentNode<NewsFullFragment, unknown>;
+export const PermissionGrantSummaryFragmentDoc = {
+    "kind": "Document", "definitions": [{
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "PermissionGrantSummary"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "PermissionGrant"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "role"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "permission"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "scope"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "validUntil"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "expired"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdBy"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "createdAt"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedBy"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "lastModifiedAt"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "user"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "email"}
+                    }, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "spexare"},
+                        "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "firstName"}
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}]
+                        }
+                    }]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexare"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "firstName"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spex"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "year"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "title"}}]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<PermissionGrantSummaryFragment, unknown>;
 export const SavedSearchFieldsFragmentDoc = {
     "kind": "Document",
     "definitions": [{
@@ -4338,8 +4604,7 @@ export const SpexCategoryFullFragmentDoc = {
     }]
 } as unknown as DocumentNode<SpexCategoryFullFragment, unknown>;
 export const SpexSummaryFragmentDoc = {
-    "kind": "Document",
-    "definitions": [{
+    "kind": "Document", "definitions": [{
         "kind": "FragmentDefinition",
         "name": {"kind": "Name", "value": "SpexSummary"},
         "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Spex"}},
@@ -4352,6 +4617,16 @@ export const SpexSummaryFragmentDoc = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "posterUrl"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "revival"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "revivals"},
                 "selectionSet": {
@@ -4407,6 +4682,16 @@ export const SpexFullFragmentDoc = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "posterUrl"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "revival"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "revivals"},
                 "selectionSet": {
@@ -4834,6 +5119,16 @@ export const SpexareBaseFragmentDoc = {
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
                 "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -4881,6 +5176,16 @@ export const SpexareSummaryFragmentDoc = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
@@ -5922,6 +6227,16 @@ export const SpexareFullFragmentDoc = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
@@ -7991,6 +8306,16 @@ export const NewsPagedSummaryDocument = {
             }, {"kind": "Field", "name": {"kind": "Name", "value": "text"}}, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "visibleFrom"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
             }]
         }
     }]
@@ -8116,6 +8441,16 @@ export const NewsPagedFullDocument = {
             }, {"kind": "Field", "name": {"kind": "Name", "value": "text"}}, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "visibleFrom"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
             }]
         }
     }, {
@@ -8179,6 +8514,16 @@ export const NewsGetDocument = {
             }, {"kind": "Field", "name": {"kind": "Name", "value": "text"}}, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "visibleFrom"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
             }]
         }
     }, {
@@ -8245,6 +8590,16 @@ export const NewsCreateDocument = {
             }, {"kind": "Field", "name": {"kind": "Name", "value": "text"}}, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "visibleFrom"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
             }]
         }
     }, {
@@ -8311,6 +8666,16 @@ export const NewsUpdateDocument = {
             }, {"kind": "Field", "name": {"kind": "Name", "value": "text"}}, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "visibleFrom"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
             }]
         }
     }, {
@@ -8407,6 +8772,404 @@ export const NewsExportDocument = {
         }
     }]
 } as unknown as DocumentNode<NewsExportQuery, NewsExportQueryVariables>;
+export const PermissionGrantsPagedDocument = {
+    "kind": "Document", "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "query",
+        "name": {"kind": "Name", "value": "PermissionGrantsPaged"},
+        "variableDefinitions": [{
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "first"}},
+            "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "Int"}}
+        }, {
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "last"}},
+            "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "Int"}}
+        }, {
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "after"}},
+            "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}
+        }, {
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "before"}},
+            "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}
+        }, {
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "sort"}},
+            "type": {
+                "kind": "NonNullType",
+                "type": {"kind": "ListType", "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}}
+            }
+        }, {
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "direction"}},
+            "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "SortDirection"}}
+        }, {
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "filter"}},
+            "type": {"kind": "NonNullType", "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}}
+        }],
+        "selectionSet": {
+            "kind": "SelectionSet", "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissionGrantPaged"},
+                "arguments": [{
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "first"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "first"}}
+                }, {
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "last"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "last"}}
+                }, {
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "after"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "after"}}
+                }, {
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "before"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "before"}}
+                }, {
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "sort"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "sort"}}
+                }, {
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "direction"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "direction"}}
+                }, {
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "filter"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "filter"}}
+                }],
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "edges"},
+                        "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [{
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "cursor"}
+                            }, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "node"},
+                                "selectionSet": {
+                                    "kind": "SelectionSet",
+                                    "selections": [{
+                                        "kind": "FragmentSpread",
+                                        "name": {"kind": "Name", "value": "PermissionGrantSummary"}
+                                    }]
+                                }
+                            }]
+                        }
+                    }, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "pageInfo"},
+                        "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [{
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "hasNextPage"}
+                            }, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "hasPreviousPage"}
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "startCursor"}}, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "endCursor"}
+                            }]
+                        }
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "totalCount"}}]
+                }
+            }]
+        }
+    }, {
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "PermissionGrantSummary"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "PermissionGrant"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "role"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "permission"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "scope"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "validUntil"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "expired"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdBy"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "createdAt"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedBy"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "lastModifiedAt"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "user"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "email"}
+                    }, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "spexare"},
+                        "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "firstName"}
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}]
+                        }
+                    }]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexare"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "firstName"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spex"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "year"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "title"}}]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<PermissionGrantsPagedQuery, PermissionGrantsPagedQueryVariables>;
+export const PermissionGrantCreateDocument = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "mutation",
+        "name": {"kind": "Name", "value": "PermissionGrantCreate"},
+        "variableDefinitions": [{
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "input"}},
+            "type": {
+                "kind": "NonNullType",
+                "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "PermissionGrantCreate"}}
+            }
+        }],
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissionGrantCreate"},
+                "arguments": [{
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "input"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "input"}}
+                }],
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{
+                        "kind": "FragmentSpread",
+                        "name": {"kind": "Name", "value": "PermissionGrantSummary"}
+                    }]
+                }
+            }]
+        }
+    }, {
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "PermissionGrantSummary"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "PermissionGrant"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "role"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "permission"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "scope"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "validUntil"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "expired"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdBy"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "createdAt"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedBy"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "lastModifiedAt"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "user"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "email"}
+                    }, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "spexare"},
+                        "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "firstName"}
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}]
+                        }
+                    }]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexare"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "firstName"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spex"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "year"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "title"}}]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<PermissionGrantCreateMutation, PermissionGrantCreateMutationVariables>;
+export const PermissionGrantUpdateDocument = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "mutation",
+        "name": {"kind": "Name", "value": "PermissionGrantUpdate"},
+        "variableDefinitions": [{
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "input"}},
+            "type": {
+                "kind": "NonNullType",
+                "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "PermissionGrantUpdate"}}
+            }
+        }],
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissionGrantUpdate"},
+                "arguments": [{
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "input"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "input"}}
+                }],
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{
+                        "kind": "FragmentSpread",
+                        "name": {"kind": "Name", "value": "PermissionGrantSummary"}
+                    }]
+                }
+            }]
+        }
+    }, {
+        "kind": "FragmentDefinition",
+        "name": {"kind": "Name", "value": "PermissionGrantSummary"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "PermissionGrant"}},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "role"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "permission"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "scope"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "validUntil"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "expired"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdBy"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "createdAt"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedBy"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "lastModifiedAt"}
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "user"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "email"}
+                    }, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "spexare"},
+                        "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                                "kind": "Field",
+                                "name": {"kind": "Name", "value": "firstName"}
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}]
+                        }
+                    }]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexare"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "firstName"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spex"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "year"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "title"}}]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<PermissionGrantUpdateMutation, PermissionGrantUpdateMutationVariables>;
+export const PermissionGrantDeleteDocument = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "mutation",
+        "name": {"kind": "Name", "value": "PermissionGrantDelete"},
+        "variableDefinitions": [{
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "id"}},
+            "type": {"kind": "NonNullType", "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "ID"}}}
+        }],
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissionGrantDelete"},
+                "arguments": [{
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "id"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "id"}}
+                }]
+            }]
+        }
+    }]
+} as unknown as DocumentNode<PermissionGrantDeleteMutation, PermissionGrantDeleteMutationVariables>;
 export const SavedSearchesDocument = {
     "kind": "Document",
     "definitions": [{
@@ -9304,6 +10067,16 @@ export const SpexPagedSummaryDocument = {
                 "name": {"kind": "Name", "value": "posterUrl"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "revival"}}, {
                 "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
                 "name": {"kind": "Name", "value": "revivals"},
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -9449,6 +10222,16 @@ export const SpexPagedFullDocument = {
                 "name": {"kind": "Name", "value": "posterUrl"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "revival"}}, {
                 "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
                 "name": {"kind": "Name", "value": "revivals"},
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -9528,6 +10311,16 @@ export const SpexGetDocument = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "posterUrl"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "revival"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "revivals"},
                 "selectionSet": {
@@ -9612,6 +10405,16 @@ export const SpexCreateDocument = {
                 "name": {"kind": "Name", "value": "posterUrl"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "revival"}}, {
                 "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
                 "name": {"kind": "Name", "value": "revivals"},
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -9694,6 +10497,16 @@ export const SpexUpdateDocument = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "posterUrl"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "revival"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "revivals"},
                 "selectionSet": {
@@ -11782,6 +12595,16 @@ export const SpexarePagedSummaryDocument = {
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
                 "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -11936,6 +12759,16 @@ export const SpexarePagedFullDocument = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
@@ -12427,6 +13260,16 @@ export const SpexareCreateDocument = {
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
                 "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -12916,6 +13759,16 @@ export const SpexareUpdateDocument = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
@@ -13458,6 +14311,16 @@ export const SpexareGetDocument = {
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
                 "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -13935,6 +14798,16 @@ export const SpexareMeSummaryDocument = {
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
                 "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
                     "kind": "SelectionSet",
@@ -13997,6 +14870,16 @@ export const SpexareMeFullDocument = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
@@ -14780,6 +15663,16 @@ export const SpexareSearchDocument = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {
@@ -17602,6 +18495,16 @@ export const UserMeDocument = {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "comment"}
             }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "permissions"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "delete"}
+                    }]
+                }
+            }, {
                 "kind": "Field",
                 "name": {"kind": "Name", "value": "partner"},
                 "selectionSet": {

@@ -205,8 +205,8 @@ which walks records one at a time.
   reader confirms are the counts they get. Per record the outcome is `APPLIED`, `UNCHANGED`
   (already as asked — a skip, not a failure) or `NOT_PERMITTED` (no ACL write permission).
 - `BulkTarget` takes **`ids` or `filter`, never both**, mirroring `spexareExport`, so an action can
-  run on a whole filtered set without ticking every row. The size cap (500 records) is checked
-  *before* the rows are loaded.
+  run on a whole filtered set without ticking every row. The size cap (500 records) is checked *before* the rows are
+  loaded.
 - The payload's tag/spex/task/type ids are resolved **before the first write**, so a bad id fails the
   batch having changed nothing. The batch is otherwise all-or-nothing: one transaction.
 - Adding an operation: the enum case plus a handler in `SpexareBulkService`, then an entry in

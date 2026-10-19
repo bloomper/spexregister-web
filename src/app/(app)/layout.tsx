@@ -77,7 +77,7 @@ export default async function AppLayout({children}: { children: React.ReactNode 
         );
     }
 
-    const accountUrl = `${(process.env.AUTH_KEYCLOAK_ISSUER ?? "").replace(/\/$/, "")}/account`;
+    const accountUrl = `${(process.env.KEYCLOAK_ISSUER ?? "").replace(/\/$/, "")}/account`;
 
     return (
         <div className="[--header-height:calc(--spacing(14))]">

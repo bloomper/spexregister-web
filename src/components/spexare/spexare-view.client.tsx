@@ -72,12 +72,14 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored, in
                         </div>
                         <div className="flex flex-wrap justify-end gap-2 mt-1 shrink-0">
                             {spexare.deceased && (
-                                <Badge variant="outline" className="text-xs sm:text-[10px] uppercase tracking-wider shrink-0 mt-1">
+                                <Badge variant="outline"
+                                       className="text-xs sm:text-[10px] uppercase tracking-wider shrink-0 mt-1">
                                     {t("Spexare.deceasedBadges.true")}
                                 </Badge>
                             )}
                             {!spexare.published && (
-                                <Badge variant="outline" className="text-xs sm:text-[10px] uppercase tracking-wider shrink-0 mt-1">
+                                <Badge variant="outline"
+                                       className="text-xs sm:text-[10px] uppercase tracking-wider shrink-0 mt-1">
                                     {t("Spexare.publishedBadges.false")}
                                 </Badge>
                             )}

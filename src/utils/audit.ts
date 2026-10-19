@@ -20,6 +20,7 @@ const NAMESPACES: Record<AuditedType, string> = {
     [AuditedType.User]: "User",
     [AuditedType.State]: "User",
     [AuditedType.Type]: "Audit.fields",
+    [AuditedType.PermissionGrant]: "PermissionGrant",
 };
 
 const ALIASES: Record<string, string> = {

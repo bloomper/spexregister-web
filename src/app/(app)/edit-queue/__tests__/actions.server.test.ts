@@ -16,7 +16,10 @@ vi.mock("@/utils/policy.server", () => ({
     },
 }));
 vi.mock("next-intl/server", () => ({getLocale: async () => "en"}));
-vi.mock("@/lib/settings", () => ({getTypes: vi.fn(async () => ["type"]), getCountries: vi.fn(async () => ["country"])}));
+vi.mock("@/lib/settings", () => ({
+    getTypes: vi.fn(async () => ["type"]),
+    getCountries: vi.fn(async () => ["country"])
+}));
 vi.mock("@/lib/tag", () => ({getAll: async () => ["tag"]}));
 vi.mock("@/lib/task", () => ({getAll: async () => ["task"]}));
 vi.mock("@/lib/task/category", () => ({getAll: async () => ["taskCategory"]}));

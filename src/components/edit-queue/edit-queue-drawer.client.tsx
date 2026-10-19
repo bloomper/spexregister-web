@@ -288,7 +288,8 @@ export function EditQueueDrawer() {
                         )}
                     </div>
 
-                    <div className="p-4 border-t bg-muted/30 shrink-0 flex flex-wrap items-center justify-between gap-2 sm:p-6 sm:pt-4">
+                    <div
+                        className="p-4 border-t bg-muted/30 shrink-0 flex flex-wrap items-center justify-between gap-2 sm:p-6 sm:pt-4">
                         <div className="flex items-center gap-2">
                             <Button
                                 type="button"

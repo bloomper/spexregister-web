@@ -177,7 +177,8 @@ export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps)
                                             <span className="text-sm font-medium">{s.firstName} {s.lastName}</span>
                                             <div className="flex gap-2">
                                                 {!s.published && (
-                                                    <span className="text-xs sm:text-[10px] text-muted-foreground uppercase">
+                                                    <span
+                                                        className="text-xs sm:text-[10px] text-muted-foreground uppercase">
                                                         {t("Spexare.publishedBadges.false")}
                                                     </span>
                                                 )}

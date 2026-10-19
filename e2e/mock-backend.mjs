@@ -448,9 +448,95 @@ const removeById = (list, id) => {
     return index >= 0;
 };
 
+// Permission grants the admin page lists, creates and revokes. Kept in memory so a test sees its own changes.
+const permissionGrants = [
+    {
+        id: "g1",
+        role: null,
+        permission: "WRITE",
+        scope: "SPEX_PARTICIPANTS",
+        validUntil: null,
+        expired: false,
+        createdBy: "admin@example.com",
+        createdAt: "2026-10-01T00:00:00Z",
+        lastModifiedBy: null,
+        lastModifiedAt: null,
+        user: {id: "1", email: "admin@example.com", spexare: null},
+        spexare: null,
+        spex: {id: "1", year: 1996, title: "Nobel"},
+    },
+];
+let nextPermissionGrantId = 2;
+
+function createPermissionGrant(input) {
+    const spex = spexList.find((s) => s.id === input.spexId);
+    const user = userList.find((u) => u.id === input.userId);
+    const grant = {
+        id: `g${nextPermissionGrantId++}`,
+        role: input.role ?? null,
+        permission: input.permission,
+        scope: input.scope,
+        validUntil: input.validUntil ?? null,
+        expired: false,
+        createdBy: "admin@example.com",
+        createdAt: new Date().toISOString(),
+        lastModifiedBy: null,
+        lastModifiedAt: null,
+        user: user ? {id: user.id, email: user.email, spexare: user.spexare} : null,
+        spexare: null,
+        spex: spex ? {id: spex.id, year: spex.year, title: spex.title} : null,
+    };
+    permissionGrants.unshift(grant);
+    return grant;
+}
+
 const resolvers = {
+    PermissionGrantsPaged: (v) => {
+        // Only the equality terms the permissions table sends, e.g. "(permission:READ OR permission:WRITE) AND scope:SPEX"
+        const filter = String(v?.filter ?? "");
+        const allowed = (field) => {
+            const values = [...filter.matchAll(new RegExp(`${field}:([A-Z_]+)`, "g"))].map((m) => m[1]);
+            return values.length ? new Set(values) : null;
+        };
+        const permissions = allowed("permission");
+        const scopes = allowed("scope");
+        const matched = permissionGrants.filter((g) =>
+            (!permissions || permissions.has(g.permission)) && (!scopes || scopes.has(g.scope)));
+
+        return {
+            permissionGrantPaged: {
+                edges: matched.map((node, i) => ({cursor: `c${i}`, node})),
+                pageInfo: pageInfo(false, null),
+                totalCount: matched.length,
+            },
+        };
+    },
+    PermissionGrantCreate: (v) => ({permissionGrantCreate: createPermissionGrant(v.input)}),
+    PermissionGrantUpdate: (v) => {
+        const grant = permissionGrants.find((g) => g.id === v.input.id);
+        if (grant) {
+            grant.permission = v.input.permission;
+            grant.validUntil = v.input.validUntil ?? null;
+            grant.lastModifiedBy = "admin@example.com";
+            grant.lastModifiedAt = new Date().toISOString();
+        }
+        return {permissionGrantUpdate: grant ?? null};
+    },
+    PermissionGrantDelete: (v) => {
+        const index = permissionGrants.findIndex((g) => g.id === v.id);
+        if (index >= 0) {
+            permissionGrants.splice(index, 1);
+        }
+        return {permissionGrantDelete: null};
+    },
     UserMe: () => ({me: {spexare: null}}),
-    Authorities: () => ({authorities: []}),
+    Authorities: () => ({
+        authorities: [
+            {id: "ADMIN", label: "Administratör"},
+            {id: "EDITOR", label: "Redaktör"},
+            {id: "USER", label: "Användare"},
+        ],
+    }),
     States: () => ({states: []}),
     Analytics: () => ({analytics}),
     AnalyticsSummary: () => ({analytics}),

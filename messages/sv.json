@@ -174,7 +174,8 @@
       "TASK_CATEGORY": "Funktionskategori",
       "USER": "Användare",
       "STATE": "Tillstånd",
-      "TYPE": "Typ"
+      "TYPE": "Typ",
+      "PERMISSION_GRANT": "Behörighet"
     }
   },
   "Common": {
@@ -428,6 +429,60 @@
     "text": "Text",
     "visibleFrom": "Synlig från",
     "visibleTo": "Synlig till"
+  },
+  "PermissionGrant": {
+    "heading": "Behörigheter",
+    "description": "Ge en användare, eller alla med en roll, extra rättigheter i en del av registret. En behörighet lägger bara till det rollen redan tillåter, och varje ändring syns i ändringsloggen.",
+    "ownSpexareNote": "Varje användare kan redan läsa och ändra den spexare som är kopplad till det egna kontot, och partnerns. Det behövs ingen behörighet för det.",
+    "create": "Ny behörighet",
+    "created": "Behörigheten har skapats",
+    "error": "Ändringen kunde inte sparas",
+    "grantee": "Mottagare",
+    "permission": "Rättighet",
+    "scope": "Omfattning",
+    "validUntil": "Gäller till och med",
+    "noEnd": "Inget slutdatum",
+    "expired": "Har gått ut",
+    "cancel": "Avbryt",
+    "roleGrantee": "Alla med rollen {role}",
+    "granteeType": "Ge till",
+    "granteeTypes": {
+      "USER": "En användare",
+      "ROLE": "Alla med en roll"
+    },
+    "user": "Användare",
+    "role": "Roll",
+    "spexare": "Spexare",
+    "spex": "Spex",
+    "choose": "Välj",
+    "searchSpexare": "Sök spexare på namn",
+    "searchUser": "Sök användare på namn eller e-post",
+    "searchSpex": "Sök spex på titel eller år",
+    "searchMinLength": "Skriv minst två tecken",
+    "clearValidUntil": "Ta bort slutdatum",
+    "clearChoice": "Rensa {field}",
+    "editHeading": "Ändra behörighet",
+    "permissions": {
+      "READ": "Läsa",
+      "WRITE": "Redigera",
+      "DELETE": "Ta bort",
+      "ADMINISTRATION": "Full kontroll"
+    },
+    "scopes": {
+      "SPEXARE": "En spexare",
+      "SPEX_PARTICIPANTS": "Alla i ett spex",
+      "SPEX": "Ett spex",
+      "SPEXARE_ONE": "Spexare {name}",
+      "SPEX_PARTICIPANTS_ONE": "Alla i {name}",
+      "SPEX_ONE": "Spex {name}"
+    },
+    "validation": {
+      "userRequired": "Välj en användare",
+      "roleRequired": "Välj en roll",
+      "spexareRequired": "Välj en spexare",
+      "spexRequired": "Välj ett spex",
+      "validUntilPast": "Slutdatumet kan inte ha passerat"
+    }
   },
   "SavedSearch": {
     "heading": "Sparade sökningar",

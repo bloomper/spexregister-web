@@ -11,7 +11,7 @@ import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/tasks/categories/actions.server";
 import {useRouter} from "next/navigation";
-import {Shapes, Pencil} from "lucide-react";
+import {Pencil, Shapes} from "lucide-react";
 import {GridFilterHeader} from "@/components/grid-filter-header.client";
 import {DataEmpty} from "@/components/data-empty";
 import {Sheet} from "@/components/ui/sheet";
