@@ -12,6 +12,10 @@ export const SpexSummary = graphql(`
         title
         posterUrl
         revival
+        permissions {
+            write
+            delete
+        }
         revivals {
             id
             year

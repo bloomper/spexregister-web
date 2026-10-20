@@ -10,6 +10,10 @@ export const NewsSummary = graphql(`
         subject
         text
         visibleFrom
+        permissions {
+            write
+            delete
+        }
     }
 `);
 

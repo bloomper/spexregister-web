@@ -122,7 +122,7 @@ export function SpexGrid({
                         key={n.id}
                         spex={n}
                         index={index}
-                        canUpdate={canUpdate}
+                        canUpdate={canUpdate || Boolean(n.permissions?.write)}
                         onSelect={() => setSelected(n)}
                         onEdit={() => setEditItem(n)}
                     />

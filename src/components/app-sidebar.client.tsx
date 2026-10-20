@@ -212,6 +212,7 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                 items: [
                     {title: t("Admin.maintenance"), url: "/admin/maintenance"},
                     {title: t("Audit.title"), url: "/admin/change-log"},
+                    {title: t("PermissionGrant.heading"), url: "/admin/permissions"},
                 ],
             });
         }

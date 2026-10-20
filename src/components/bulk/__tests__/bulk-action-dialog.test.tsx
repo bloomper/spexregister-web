@@ -63,7 +63,6 @@ const renderDialog = (props: Partial<Parameters<typeof BulkActionDialog>[0]> = {
         />,
     );
 
-/** The picker is a popover; open it and tick a tag so the payload is complete. */
 const pickTag = async (user: ReturnType<typeof userEvent.setup>, name: string) => {
     await user.click(screen.getByRole("button", {name: /Spexare\.bulk\.fields\.tags/}));
     await user.click(await screen.findByRole("button", {name}));

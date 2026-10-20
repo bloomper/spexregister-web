@@ -72,7 +72,7 @@ export const Policies = {
             return requireAnyRole(["ADMIN"]);
         },
         async requireUpdate(): Promise<AuthzResult> {
-            return requireAnyRole(["EDITOR", "ADMIN"]);
+            return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
         },
         async requireDelete(): Promise<AuthzResult> {
             return requireAnyRole(["ADMIN"]);

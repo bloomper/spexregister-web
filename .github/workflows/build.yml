@@ -39,9 +39,9 @@ jobs:
         run: npm run build
         env:
           AUTH_SECRET: build-time-dummy-secret
-          AUTH_KEYCLOAK_ID: dummy
-          AUTH_KEYCLOAK_SECRET: dummy
-          AUTH_KEYCLOAK_ISSUER: https://keycloak.example/realms/spexregister
+          KEYCLOAK_CLIENT_ID: dummy
+          KEYCLOAK_CLIENT_SECRET: dummy
+          KEYCLOAK_ISSUER: https://keycloak.example/realms/spexregister
           API_GRAPHQL_ENDPOINT: https://api.example/api/graphql
           API_REST_BASE_URL: https://api.example
           BETTER_AUTH_URL: https://app.example

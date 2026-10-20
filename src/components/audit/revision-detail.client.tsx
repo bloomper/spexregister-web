@@ -53,7 +53,8 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
         <div className="flex flex-col gap-3 rounded-lg border bg-muted/20 p-3">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs">
                 {detail.source && (
-                    <Badge variant={SOURCE_VARIANTS[detail.source]} className="text-xs sm:text-[10px] uppercase tracking-wide">
+                    <Badge variant={SOURCE_VARIANTS[detail.source]}
+                           className="text-xs sm:text-[10px] uppercase tracking-wide">
                         {t(`Audit.sources.${detail.source}`)}
                     </Badge>
                 )}
@@ -115,7 +116,8 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
                                         {auditTypeLabel(t, entity.type)}
                                     </span>
                                     {entity.entityLabel && (
-                                        <span className="min-w-0 truncate text-muted-foreground">{entity.entityLabel}</span>
+                                        <span
+                                            className="min-w-0 truncate text-muted-foreground">{entity.entityLabel}</span>
                                     )}
                                     <Badge variant="outline" className="text-xs sm:text-[10px]">
                                         {t(`Common.revisionTypes.${entity.revisionType}`)}

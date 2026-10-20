@@ -174,7 +174,8 @@
       "TASK_CATEGORY": "Task category",
       "USER": "User",
       "STATE": "State",
-      "TYPE": "Type"
+      "TYPE": "Type",
+      "PERMISSION_GRANT": "Permission grant"
     }
   },
   "Common": {
@@ -428,6 +429,60 @@
     "text": "Text",
     "visibleFrom": "Visible from",
     "visibleTo": "Visible to"
+  },
+  "PermissionGrant": {
+    "heading": "Permissions",
+    "description": "Give a user, or everyone with a role, extra rights on part of the register. Grants only add to what their role allows, and every change is in the change log.",
+    "ownSpexareNote": "Every user can already read and change the spexare linked to their own account, and their partner's. No grant is needed for that.",
+    "create": "New grant",
+    "created": "Grant created",
+    "error": "The change could not be saved",
+    "grantee": "Grantee",
+    "permission": "Permission",
+    "scope": "Scope",
+    "validUntil": "Valid until",
+    "noEnd": "No end date",
+    "expired": "Expired",
+    "cancel": "Cancel",
+    "roleGrantee": "Everyone with the role {role}",
+    "granteeType": "Grant to",
+    "granteeTypes": {
+      "USER": "A user",
+      "ROLE": "Everyone with a role"
+    },
+    "user": "User",
+    "role": "Role",
+    "spexare": "Spexare",
+    "spex": "Spex",
+    "choose": "Choose",
+    "searchSpexare": "Search spexare by name",
+    "searchUser": "Search users by name or email",
+    "searchSpex": "Search spex by title or year",
+    "searchMinLength": "Type at least two characters",
+    "clearValidUntil": "Clear end date",
+    "clearChoice": "Clear {field}",
+    "editHeading": "Edit grant",
+    "permissions": {
+      "READ": "Read",
+      "WRITE": "Edit",
+      "DELETE": "Delete",
+      "ADMINISTRATION": "Full control"
+    },
+    "scopes": {
+      "SPEXARE": "One spexare",
+      "SPEX_PARTICIPANTS": "Everyone in a spex",
+      "SPEX": "One spex",
+      "SPEXARE_ONE": "Spexare {name}",
+      "SPEX_PARTICIPANTS_ONE": "Everyone in {name}",
+      "SPEX_ONE": "Spex {name}"
+    },
+    "validation": {
+      "userRequired": "Choose a user",
+      "roleRequired": "Choose a role",
+      "spexareRequired": "Choose a spexare",
+      "spexRequired": "Choose a spex",
+      "validUntilPast": "The end date can't be in the past"
+    }
   },
   "SavedSearch": {
     "heading": "Saved searches",

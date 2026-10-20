@@ -264,7 +264,8 @@ export function UserTable({
                                 {viewItem?.email}
                             </DialogTitle>
                             {viewItem && (
-                                <Badge variant="outline" className="text-xs sm:text-[10px] uppercase tracking-wider h-5 shrink-0">
+                                <Badge variant="outline"
+                                       className="text-xs sm:text-[10px] uppercase tracking-wider h-5 shrink-0">
                                     {viewItem.state?.label}
                                 </Badge>
                             )}

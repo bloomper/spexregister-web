@@ -17,11 +17,7 @@ import {
 import {Textarea} from "@/components/ui/textarea";
 import {useJobTracker} from "@/hooks/use-job-tracker.client";
 import {ImpexType} from "@/gql/schema";
-import {
-    exportMineAction,
-    getMineExportStatusAction,
-    requestRemovalAction
-} from "@/app/(app)/my-profile/actions.server";
+import {exportMineAction, getMineExportStatusAction, requestRemovalAction} from "@/app/(app)/my-profile/actions.server";
 
 const REASON_MAX_LENGTH = 2000;
 

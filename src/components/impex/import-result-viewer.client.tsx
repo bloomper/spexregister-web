@@ -66,7 +66,8 @@ export function ImportResultViewer({result}: ImportResultViewerProps) {
             {result.data && (
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                        <Label className="flex items-center gap-2 text-xs sm:text-[10px] font-bold uppercase tracking-widest">
+                        <Label
+                            className="flex items-center gap-2 text-xs sm:text-[10px] font-bold uppercase tracking-widest">
                             {t("Impex.data")}
                         </Label>
                         <Button

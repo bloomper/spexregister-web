@@ -132,7 +132,8 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
                                                     : <ChevronRight className="h-4 w-4"/>}
                                             </Button>
                                         </TableCell>
-                                        <TableCell className="hidden font-mono text-xs sm:table-cell">{entry.revision}</TableCell>
+                                        <TableCell
+                                            className="hidden font-mono text-xs sm:table-cell">{entry.revision}</TableCell>
                                         <TableCell>{formatDateTime(entry.modifiedAt)}</TableCell>
                                         <TableCell>
                                             <div className="flex flex-col gap-0.5">

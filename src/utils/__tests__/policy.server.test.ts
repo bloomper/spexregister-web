@@ -16,12 +16,12 @@ async function rolesFor(policy: () => Promise<unknown>): Promise<Role[]> {
 }
 
 describe("Policies role matrix", () => {
-    it("spex: read is open to all authenticated roles, create is admin-only", async () => {
+    it("spex: read and update are open to all roles (a grant decides on the server), create and delete are admin-only", async () => {
         expect(await rolesFor(Policies.spex.requireRead)).toEqual(["USER", "EDITOR", "ADMIN"]);
         requireAnyRole.mockClear();
         expect(await rolesFor(Policies.spex.requireCreate)).toEqual(["ADMIN"]);
         requireAnyRole.mockClear();
-        expect(await rolesFor(Policies.spex.requireUpdate)).toEqual(["EDITOR", "ADMIN"]);
+        expect(await rolesFor(Policies.spex.requireUpdate)).toEqual(["USER", "EDITOR", "ADMIN"]);
         requireAnyRole.mockClear();
         expect(await rolesFor(Policies.spex.requireDelete)).toEqual(["ADMIN"]);
     });

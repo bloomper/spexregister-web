@@ -30,6 +30,10 @@ export const SpexareBase = graphql(`
         graduation
         comment
         imageUrl
+        permissions {
+            write
+            delete
+        }
         partner {
             id
             firstName

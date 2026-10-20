@@ -156,12 +156,14 @@ export function SpexareGrid({
                                 <SlidersHorizontal className="mr-2 h-4 w-4"/>
                                 {t("Common.filters")}
                                 {activeFacetCount > 0 && ` (${activeFacetCount})`}
-                                <ChevronDown className={cn("ml-1 h-4 w-4 transition-transform", filtersOpen && "rotate-180")}/>
+                                <ChevronDown
+                                    className={cn("ml-1 h-4 w-4 transition-transform", filtersOpen && "rotate-180")}/>
                             </Button>
                         )}
 
                         {mode === "search" && (
-                            <div className={cn("flex-wrap items-center gap-2 sm:contents", filtersOpen ? "flex w-full" : "hidden")}>
+                            <div
+                                className={cn("flex-wrap items-center gap-2 sm:contents", filtersOpen ? "flex w-full" : "hidden")}>
                                 {currentFacets.map((facet) => {
                                     const selectedValues = selectedFacets[facet.id] || new Set();
                                     return (
@@ -221,7 +223,8 @@ export function SpexareGrid({
             ) : (
                 items.map((n, index) => {
                     const isMe = Boolean(currentSpexareId && n.id === currentSpexareId);
-                    const canEdit = isMe || canManage;
+                    // A grant can let a user change a record their role alone wouldn't
+                    const canEdit = isMe || canManage || Boolean(n.permissions?.write);
 
                     return (
                         <SpexareCard

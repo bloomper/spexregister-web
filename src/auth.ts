@@ -7,7 +7,7 @@ import {resolveGravatarImage} from "@/lib/gravatar.server";
 
 const appUrl = process.env.BETTER_AUTH_URL;
 
-const issuer = (process.env.AUTH_KEYCLOAK_ISSUER ?? "").replace(/\/$/, "");
+const issuer = (process.env.KEYCLOAK_ISSUER ?? "").replace(/\/$/, "");
 const endpoint = (name: string) => `${issuer}/protocol/openid-connect/${name}`;
 
 export const auth = betterAuth({
@@ -22,8 +22,8 @@ export const auth = betterAuth({
                 {
                     ...keycloak({
                         issuer,
-                        clientId: process.env.AUTH_KEYCLOAK_ID ?? "",
-                        clientSecret: process.env.AUTH_KEYCLOAK_SECRET ?? "",
+                        clientId: process.env.KEYCLOAK_CLIENT_ID ?? "",
+                        clientSecret: process.env.KEYCLOAK_CLIENT_SECRET ?? "",
                         postLogoutRedirectURI: appUrl,
                     }),
                     authorizationUrl: endpoint("auth"),

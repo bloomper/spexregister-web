@@ -122,7 +122,7 @@ export function NewsGrid({
                     key={n.id}
                     className="h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden relative group"
                 >
-                    {canUpdate && (
+                    {(canUpdate || Boolean(n.permissions?.write)) && (
                         <div className="absolute top-2 right-2 z-20">
                             <Button
                                 variant="secondary"

@@ -31,18 +31,19 @@ Spexregister Web is the second generation of the frontend responsible for servin
    ```
 
 2. **Configure environment:**
-   Start [Spexregister Server][1]'s local stack, then create `.env.local` (`.env` already holds the rest):
+   Start fgv-infra-deploy's local stack and [Spexregister Server][1]'s, then create `.env.local` (`.env` already holds the rest):
    ```
    BETTER_AUTH_URL=http://localhost:3000
    AUTH_SECRET=<random string of at least 32 characters>
-   AUTH_KEYCLOAK_ID=spexregister
-   AUTH_KEYCLOAK_SECRET=<secret of the spexregister client>
-   AUTH_KEYCLOAK_ISSUER=https://auth.fgv.local.nu:8443/auth/realms/fgv
+   KEYCLOAK_CLIENT_ID=spexregister
+   KEYCLOAK_CLIENT_SECRET=<secret of the spexregister client>
+   KEYCLOAK_ISSUER=https://auth.fgv.local.nu:8443/auth/realms/fgv
    API_GRAPHQL_ENDPOINT=https://api.register.fgv.local.nu:8443/api/graphql
    API_REST_BASE_URL=https://api.register.fgv.local.nu:8443
    ```
-   `npm run dev` trusts the certificate in `.docker/caddy/root.crt`. Replace it with your server stack's Caddy root
-   certificate (`.docker/caddy/data/caddy/pki/authorities/local/root.crt` in Spexregister Server).
+   `npm run dev` and `docker compose` trust the root certificate of fgv-infra-deploy's local Caddy
+   (`local/.docker/caddy/data/caddy/pki/authorities/local/root.crt`), read from `../fgv-infra-deploy`, or from
+   `INFRA_DEPLOY` if it is checked out elsewhere.
 
 3. **Generate GraphQL types:**
    If you change GraphQL queries or the schema, regenerate types:
@@ -70,7 +71,8 @@ docker compose up --build
 ```
 
 The application will be accessible at `https://register.fgv.local.nu` if your hosts file is configured. It talks to
-the server's local stack at `api.register.fgv.local.nu:8443` and `auth.fgv.local.nu:8443`.
+the server's API at `api.register.fgv.local.nu:8443` and to Keycloak at `auth.fgv.local.nu:8443`, both behind
+fgv-infra-deploy's local Caddy.
 
 ### Published images
 
@@ -86,7 +88,7 @@ To release, set `version` in `package.json` to `X.Y.Z`, merge to `main`, then
 already on Docker Hub.
 
 The image contains no environment-specific values. All configuration is read at runtime: `BETTER_AUTH_URL`,
-`AUTH_SECRET`, `AUTH_KEYCLOAK_ID`, `AUTH_KEYCLOAK_SECRET`, `AUTH_KEYCLOAK_ISSUER`, `API_GRAPHQL_ENDPOINT`,
+`AUTH_SECRET`, `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET`, `KEYCLOAK_ISSUER`, `API_GRAPHQL_ENDPOINT`,
 `API_REST_BASE_URL`, `SUPPORT_EMAIL`, `FEEDBACK_EMAIL`, `SUPPORTED_LOCALES` and `DEFAULT_LOCALE`.
 
 ## Building and Deployment
