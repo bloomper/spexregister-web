@@ -18,6 +18,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {track} from "@/utils/umami";
 
 interface ImportButtonProps {
     importAction: (type: ImpexType, file: File) => Promise<JobReference>;
@@ -82,6 +83,7 @@ export function ImportButton({importAction}: ImportButtonProps) {
         try {
             const result = await importAction(selectedType, pendingFile);
             setActiveJobId(result.id);
+            track("import", {format: selectedType});
             toast.info(t("Impex.importStarted"));
             setOpen(false);
             reset();

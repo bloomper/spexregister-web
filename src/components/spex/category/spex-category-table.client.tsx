@@ -85,7 +85,8 @@ export function SpexCategoryTable({
         bulkDeleteAction,
         () => {
             setFilterQuery("");
-        }
+        },
+        "spex-category",
     );
 
     useDeepLinkItem(getAction, setViewItem);

@@ -86,7 +86,8 @@ export function TaskTable({
         () => {
             setFilterQuery("");
             setSelectedCategories(new Set([...categories.map(c => c.id), "none"]));
-        }
+        },
+        "task",
     );
 
     useDeepLinkItem(getAction, setViewItem);

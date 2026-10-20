@@ -17,6 +17,7 @@ import {translateError} from "@/utils/utils";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
 import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
+import {track} from "@/utils/umami";
 
 interface TaskFormProps {
     item?: Task;
@@ -87,6 +88,7 @@ export function TaskForm({
                     }
                 }
 
+                track(item ? "task-update" : "task-create");
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
                 const updated = item ? {...item, ...data} : undefined;
                 onSuccess(updated);

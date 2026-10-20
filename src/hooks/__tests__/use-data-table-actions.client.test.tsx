@@ -14,12 +14,16 @@ vi.mock("sonner", () => ({
     }
 }));
 
+const track = vi.fn();
+vi.mock("@/utils/umami", () => ({track: (...a: unknown[]) => track(...a)}));
+
 type Row = { id: string };
 
 beforeEach(() => {
     refresh.mockClear();
     toastSuccess.mockClear();
     toastError.mockClear();
+    track.mockClear();
 });
 
 describe("useDataTableActions - single delete", () => {
@@ -89,5 +93,38 @@ describe("useDataTableActions - bulk delete", () => {
 
         act(() => result.current.handleBulkDelete());
         expect(bulkDeleteAction).not.toHaveBeenCalled();
+    });
+});
+
+describe("useDataTableActions - tracking", () => {
+    it("tracks deletes only for a tracked entity", async () => {
+        const deleteAction = vi.fn().mockResolvedValue(undefined);
+        const bulkDeleteAction = vi.fn().mockResolvedValue(undefined);
+        const {result} = renderHook(() => useDataTableActions<Row>(deleteAction, bulkDeleteAction, undefined, "tag"));
+
+        act(() => result.current.setDeleteItem({id: "1"}));
+        await act(async () => {
+            result.current.handleDelete();
+        });
+        await waitFor(() => expect(track).toHaveBeenCalledWith("tag-delete", {count: 1}));
+
+        act(() => result.current.setSelectedRows([{id: "2"}, {id: "3"}]));
+        await act(async () => {
+            result.current.handleBulkDelete();
+        });
+        await waitFor(() => expect(track).toHaveBeenCalledWith("tag-delete", {count: 2}));
+    });
+
+    it("tracks nothing without an entity", async () => {
+        const deleteAction = vi.fn().mockResolvedValue(undefined);
+        const {result} = renderHook(() => useDataTableActions<Row>(deleteAction));
+
+        act(() => result.current.setDeleteItem({id: "1"}));
+        await act(async () => {
+            result.current.handleDelete();
+        });
+
+        await waitFor(() => expect(result.current.deleteItem).toBeNull());
+        expect(track).not.toHaveBeenCalled();
     });
 });

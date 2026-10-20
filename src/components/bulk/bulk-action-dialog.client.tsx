@@ -19,6 +19,7 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import {Separator} from "@/components/ui/separator";
 import {BulkResult, SpexareBulkInput, SpexareBulkOperation} from "@/gql/schema";
 import {BulkOptions, BulkPayload, findBulkOperation} from "@/components/bulk/registry.client";
+import {track} from "@/utils/umami";
 
 export type BulkActions = {
     preview: (input: SpexareBulkInput) => Promise<BulkResult>;
@@ -82,6 +83,7 @@ export function BulkActionDialog({
         startTransition(async () => {
             try {
                 setPreview({key, result: await actions.preview(input)});
+                track("bulk-preview", {operation, target: effectiveTarget});
             } catch (e) {
                 console.error("Failed to preview bulk operation", e);
                 toast.error(t("Spexare.bulk.previewFailed"));
@@ -100,6 +102,7 @@ export function BulkActionDialog({
                 const result = await actions.apply(input, reason);
 
                 setApplied(result);
+                track("bulk-apply", {operation, target: effectiveTarget, count: result.applied});
                 toast.success(t("Spexare.bulk.applied", {count: result.applied}));
                 router.refresh();
             } catch (e) {

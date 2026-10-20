@@ -83,7 +83,8 @@ export function TagTable({
         bulkDeleteAction,
         () => {
             setFilterQuery("");
-        }
+        },
+        "tag",
     );
 
     useDeepLinkItem(getAction, setViewItem);

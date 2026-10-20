@@ -83,7 +83,8 @@ export function TaskCategoryTable({
         bulkDeleteAction,
         () => {
             setFilterQuery("");
-        }
+        },
+        "task-category",
     );
 
     useDeepLinkItem(getAction, setViewItem);

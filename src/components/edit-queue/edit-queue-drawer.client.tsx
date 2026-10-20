@@ -27,6 +27,7 @@ import {
 import {type EditQueueOptions, getEditQueueOptions} from "@/app/(app)/edit-queue/actions.server";
 import {emitDataRefresh} from "@/hooks/use-data-refresh.client";
 import {RefreshContext} from "@/hooks/use-refresh.client";
+import {track} from "@/utils/umami";
 
 const EMPTY_OPTIONS: EditQueueOptions = {
     types: [], countries: [], tags: [], tasks: [], taskCategories: [],
@@ -172,6 +173,8 @@ export function EditQueueDrawer() {
             const type = current.entityType;
             const id = current.item.id;
             const key = currentKey;
+
+            track("edit-queue-save", {entity: type});
             const fetchFull = entry.fetchFull;
 
             if (updated) {

@@ -7,6 +7,7 @@ import {useTheme} from "next-themes"
 import {Button} from "@/components/ui/button"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
 import {useTranslations} from "next-intl";
+import {track} from "@/utils/umami";
 
 export function ModeToggle() {
     const {setTheme} = useTheme();
@@ -18,6 +19,7 @@ export function ModeToggle() {
 
     const persistThemeCookie = (value: "light" | "dark" | "system") => {
         document.cookie = `theme=${encodeURIComponent(value)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        track("theme-change", {theme: value});
     };
 
     return (

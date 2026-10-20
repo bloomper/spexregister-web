@@ -261,6 +261,25 @@ Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytic
 - `dataQuality.total` (the readable population, the denominator for the gap shares) is deliberately **not**
   `totals.spexareCount`, which counts published records only.
 
+## Visitor statistics
+
+Umami, self-hosted in `fgv-infra-deploy`, reached server-side at `UMAMI_URL` (`http://umami-server:3000` on the
+shared network). Browsers never talk to it: `src/app/stats/` serves the tracker as `/stats/script.js` and forwards
+`/stats/api/send` (the tracker posts to `<script dir>/api/send`), so the CSP stays `'self'` and the Umami host can sit
+behind Cloudflare Access. The forwarder must pass the browser's IP (`cf-connecting-ip`) and user agent, or every
+visit looks like one visitor from the server. `src/components/umami.tsx` renders nothing unless `UMAMI_URL` and
+`UMAMI_WEBSITE_ID` are both set, and sets `data-exclude-search` — query strings carry searches with names and
+personnummer, so keep it.
+
+Custom events go through `track()` (`src/utils/umami.ts`), a no-op when the tracker isn't loaded. Umami records the
+page path with every event, so don't repeat it. Event data is enum values, counts and booleans only — never names,
+personnummer, record ids or typed text; Umami cannot remove a single field afterwards. `data-performance` sends Web
+Vitals through the same `/api/send` forwarder. Replays and heatmaps would need Umami's `recorder.js` and
+`/api/record`, which are deliberately not forwarded. Reference data emits one event name per entity, since goals
+and funnels pick events by name: `<entity>-create` / `-update` from its form and `<entity>-delete` from
+`useDataTableActions`, which tracks only when a table passes its `trackedEntity` (`spex`, `spex-category`, `task`,
+`task-category`, `tag`).
+
 ## Testing
 
 - Unit: Vitest, tests in `__tests__/` beside the code.
