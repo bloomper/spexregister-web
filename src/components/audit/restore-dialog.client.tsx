@@ -20,6 +20,7 @@ import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Switch} from "@/components/ui/switch";
 import {AuditedType, RestorePreview, RestoreResult} from "@/gql/schema";
+import {track} from "@/utils/umami";
 
 const CASCADING_TYPES: AuditedType[] = [AuditedType.Spexare, AuditedType.Activity, AuditedType.TaskActivity];
 
@@ -78,6 +79,7 @@ export function RestoreDialog({id, type, revision, actions, onRestored}: Restore
                     : t("Audit.restoreReason", {revision});
 
                 await actions.restore(type, id, revision, cascade, reason);
+                track("restore", {type, cascade});
                 toast.success(t("Audit.restored"));
                 setOpen(false);
                 onRestored?.();

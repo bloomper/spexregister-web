@@ -16,6 +16,7 @@ import {
     deleteSavedSearchAction,
     updateSavedSearchAction
 } from "@/app/(app)/spexare/search/actions.server";
+import {track} from "@/utils/umami";
 
 const currentQuery = () => window.location.search.replace(/^\?/, "");
 
@@ -77,6 +78,7 @@ export function SavedSearchBar({savedSearches = []}: { savedSearches?: SavedSear
 
         const existing = matching(trimmed);
 
+        track("saved-search-save", {update: Boolean(existing)});
         run(
             () => existing
                 ? updateSavedSearchAction(existing.id, {name: trimmed, query})
@@ -87,6 +89,7 @@ export function SavedSearchBar({savedSearches = []}: { savedSearches?: SavedSear
     };
 
     const apply = (savedSearch: SavedSearch) => {
+        track("saved-search-apply");
         router.push(`/spexare/search?${savedSearch.query}`);
     };
 

@@ -19,6 +19,7 @@ services:
       - "register.fgv.local.nu:host-gateway"
       - "auth.fgv.local.nu:host-gateway"
       - "api.register.fgv.local.nu:host-gateway"
+      - "analytics.fgv.local.nu:host-gateway"
     restart: always
     volumes:
       - ${INFRA_DEPLOY:-../fgv-infra-deploy}/local/.docker/caddy/data/caddy/pki/authorities/local/root.crt:/usr/local/share/ca-certificates/caddy-root.crt:ro

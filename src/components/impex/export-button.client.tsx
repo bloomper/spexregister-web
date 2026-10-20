@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {useJobTracker} from "@/hooks/use-job-tracker.client";
 import {useTranslations} from "next-intl";
+import {track} from "@/utils/umami";
 
 type ExportAction = (ids: string[] | null, filter: string | null, type: ImpexType) => Promise<JobReference>;
 type ExportActionWithReportType = (ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType) => Promise<JobReference>;
@@ -56,6 +57,11 @@ export function ExportButton({
             }
 
             setActiveJobId(result.id);
+            track("export", {
+                format: type,
+                scope: ids ? "selection" : filter ? "filter" : "all",
+                ...(reportType && {report: reportType}),
+            });
             toast.info(t("Impex.exportStarted"));
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);

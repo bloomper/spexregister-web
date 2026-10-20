@@ -6,6 +6,7 @@ import Provider from "@/app/provider.client";
 import React, {Suspense} from "react";
 import {normalizeLocale} from "@/utils/utils.server";
 import {Spinner} from "@/components/ui/spinner";
+import {Umami} from "@/components/umami";
 import enMessages from "../../messages/en.json";
 import svMessages from "../../messages/sv.json";
 
@@ -59,6 +60,9 @@ export default async function RootLayout({
             <RootProvider>
                 {children}
             </RootProvider>
+        </Suspense>
+        <Suspense>
+            <Umami/>
         </Suspense>
         </body>
         </html>

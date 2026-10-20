@@ -164,7 +164,8 @@ export function SpexTable({
         () => {
             setFilterQuery("");
             setSelectedCategories(new Set(categories.map(c => c.id)));
-        }
+        },
+        "spex",
     );
 
     useDeepLinkItem(getAction, setViewItem);

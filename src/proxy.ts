@@ -74,5 +74,5 @@ function applySetCookie(request: NextRequest, setCookie: string) {
 }
 
 export const config = {
-    matcher: ["/((?!_next/static|_next/image|favicon.ico|static/).*)"],
+    matcher: ["/((?!_next/static|_next/image|favicon.ico|static/|stats/).*)"],
 };

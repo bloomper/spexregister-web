@@ -4,11 +4,13 @@ import {useState, useTransition} from "react";
 import {toast} from "sonner";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
+import {track} from "@/utils/umami";
 
 export function useDataTableActions<T extends { id: string }>(
     deleteAction: (id: string) => Promise<unknown>,
     bulkDeleteAction?: (ids: string[]) => Promise<unknown>,
     onSuccess?: (deleted?: T) => void,
+    trackedEntity?: string,
 ) {
     const t = useTranslations();
     const router = useRouter();
@@ -27,6 +29,9 @@ export function useDataTableActions<T extends { id: string }>(
         startTransition(async () => {
             try {
                 await deleteAction(deleteItem.id);
+                if (trackedEntity) {
+                    track(`${trackedEntity}-delete`, {count: 1});
+                }
                 setDeleteItem(null);
                 toast.success(t("Common.deleteSuccess"));
                 onSuccess?.(deleteItem);
@@ -46,6 +51,9 @@ export function useDataTableActions<T extends { id: string }>(
         startTransition(async () => {
             try {
                 await bulkDeleteAction(ids);
+                if (trackedEntity) {
+                    track(`${trackedEntity}-delete`, {count: ids.length});
+                }
                 setIsBulkDeleting(false);
                 setSelectedRows([]);
                 toast.success(t("Common.deleteBulkSuccess"));

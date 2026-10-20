@@ -41,6 +41,9 @@ Spexregister Web is the second generation of the frontend responsible for servin
    API_GRAPHQL_ENDPOINT=https://api.register.fgv.local.nu:8443/api/graphql
    API_REST_BASE_URL=https://api.register.fgv.local.nu:8443
    ```
+   For visitor statistics, add a website in the local Umami (`https://analytics.fgv.local.nu:8443`, see
+   fgv-infra-deploy's README) and put its ID in `.env.local` as `UMAMI_WEBSITE_ID`. `.env` already points `UMAMI_URL`
+   at it.
    `npm run dev` and `docker compose` trust the root certificate of fgv-infra-deploy's local Caddy
    (`local/.docker/caddy/data/caddy/pki/authorities/local/root.crt`), read from `../fgv-infra-deploy`, or from
    `INFRA_DEPLOY` if it is checked out elsewhere.
@@ -89,7 +92,8 @@ already on Docker Hub.
 
 The image contains no environment-specific values. All configuration is read at runtime: `BETTER_AUTH_URL`,
 `AUTH_SECRET`, `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET`, `KEYCLOAK_ISSUER`, `API_GRAPHQL_ENDPOINT`,
-`API_REST_BASE_URL`, `SUPPORT_EMAIL`, `FEEDBACK_EMAIL`, `SUPPORTED_LOCALES` and `DEFAULT_LOCALE`.
+`API_REST_BASE_URL`, `SUPPORT_EMAIL`, `FEEDBACK_EMAIL`, `SUPPORTED_LOCALES`, `DEFAULT_LOCALE`, `UMAMI_URL` and
+`UMAMI_WEBSITE_ID`. Visitor statistics go to Umami only when both Umami variables are set.
 
 ## Building and Deployment
 

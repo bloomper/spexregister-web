@@ -17,6 +17,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
 import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
+import {track} from "@/utils/umami";
 
 interface TaskCategoryFormProps {
     item?: TaskCategory;
@@ -54,6 +55,7 @@ export function TaskCategoryForm({item, onSuccess, onError, embedded, formId}: T
                     await createAction(data);
                 }
 
+                track(item ? "task-category-update" : "task-category-create");
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
                 const updated = item ? {...item, ...data} : undefined;
                 onSuccess(updated);

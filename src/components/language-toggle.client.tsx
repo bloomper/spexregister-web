@@ -8,6 +8,7 @@ import {SE, US} from "@/components/flags";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {useLocaleContext} from "@/app/provider.client";
+import {track} from "@/utils/umami";
 
 type FlagIcon = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
@@ -45,7 +46,10 @@ export function LanguageToggle() {
                     return (
                         <DropdownMenuItem
                             key={language.code}
-                            onClick={() => changeLocale(language.code)}
+                            onClick={() => {
+                                track("language-change", {locale: language.code});
+                                void changeLocale(language.code);
+                            }}
                             className={currentLocale === language.code ? "bg-accent" : ""}
                         >
                             <Icon className="mr-2 h-4 w-4 rounded-[2px]" aria-hidden="true"/>

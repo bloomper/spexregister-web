@@ -8,6 +8,7 @@ import {CursorPageInfo, SpexarePage} from "@/types/pagination";
 import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
 import {appendFacetParams, toAggregationFilters} from "@/utils/utils";
 import {textFilter} from "@/utils/filter";
+import {track} from "@/utils/umami";
 
 type UseSpexareSearchArgs = {
     mode: "filter" | "search";
@@ -155,8 +156,16 @@ export function useSpexareSearch({
         if (previousResetKeyRef.current !== resetKey) {
             previousResetKeyRef.current = resetKey;
             reset();
+
+            if (mode === "search") {
+                const facetNames = Object.keys(selectedFacets).filter((name) => selectedFacets[name].size > 0).sort();
+                track("spexare-search", {
+                    text: filterQuery.trim() !== "",
+                    facets: facetNames.join(",") || "none",
+                });
+            }
         }
-    }, [resetKey, reset]);
+    }, [resetKey, reset, mode, selectedFacets, filterQuery]);
 
     const handleReset = useCallback(() => {
         startTransition(() => {

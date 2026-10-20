@@ -28,6 +28,7 @@ import {useRoles} from "@/components/roles-provider.client";
 import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {getMineAction} from "@/app/(app)/spexare/actions.server";
 import {Spexare} from "@/gql/schema";
+import {track} from "@/utils/umami";
 
 type PaletteEntry = {
     id: string;
@@ -133,10 +134,11 @@ export function CommandPalette() {
     const matchingNavigation = matching(navigation);
     const matchingActions = matching(actions);
 
-    const go = useCallback((href: string) => {
+    const go = useCallback((entry: PaletteEntry) => {
+        track("command-palette", {target: entry.id});
         setOpen(false);
         setQuery("");
-        router.push(href);
+        router.push(entry.href);
     }, [router]);
 
     const hasResults = matchingNavigation.length > 0 || matchingActions.length > 0;
@@ -168,7 +170,7 @@ export function CommandPalette() {
                             {matchingNavigation.length > 0 && (
                                 <CommandGroup heading={t("CommandPalette.navigation")}>
                                     {matchingNavigation.map((entry) => (
-                                        <CommandItem key={entry.id} value={entry.id} onSelect={() => go(entry.href)}>
+                                        <CommandItem key={entry.id} value={entry.id} onSelect={() => go(entry)}>
                                             <entry.icon/>
                                             <span>{entry.label}</span>
                                         </CommandItem>
@@ -179,7 +181,7 @@ export function CommandPalette() {
                             {matchingActions.length > 0 && (
                                 <CommandGroup heading={t("CommandPalette.create")}>
                                     {matchingActions.map((entry) => (
-                                        <CommandItem key={entry.id} value={entry.id} onSelect={() => go(entry.href)}>
+                                        <CommandItem key={entry.id} value={entry.id} onSelect={() => go(entry)}>
                                             <entry.icon/>
                                             <span>{entry.label}</span>
                                         </CommandItem>

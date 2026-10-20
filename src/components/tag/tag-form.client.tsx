@@ -16,6 +16,7 @@ import {translateError} from "@/utils/utils";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
 import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
+import {track} from "@/utils/umami";
 
 interface TagFormProps {
     item?: Tag;
@@ -47,9 +48,11 @@ export function TagForm({item, onSuccess, onError, embedded, formId}: TagFormPro
             try {
                 if (item) {
                     await updateAction(item.id, data);
+                    track("tag-update");
                     toast.success(t("Common.updateSuccess"));
                 } else {
                     await createAction(data);
+                    track("tag-create");
                     toast.success(t("Common.createSuccess"));
                 }
                 const updated = item ? {...item, ...data} : undefined;

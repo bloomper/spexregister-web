@@ -15,7 +15,7 @@ const messages = {
         cookieBanner: {
             ...baseTranslations.en.cookieBanner,
             title: "Cookies on this site",
-            description: "This site uses only strictly necessary cookies. They keep you signed in and remember your language and display preferences. No cookies are used for analytics, tracking or advertising.",
+            description: "This site uses only strictly necessary cookies. They keep you signed in and remember your language and display preferences. No cookies are used for analytics, tracking or advertising. Anonymous visitor statistics are collected without cookies.",
         },
     },
     sv: {
@@ -27,7 +27,7 @@ const messages = {
         cookieBanner: {
             ...baseTranslations.sv.cookieBanner,
             title: "Cookies på den här webbplatsen",
-            description: "Den här webbplatsen använder endast nödvändiga cookies. De håller dig inloggad och kommer ihåg ditt språk och dina visningsinställningar. Inga cookies används för analys, spårning eller annonsering.",
+            description: "Den här webbplatsen använder endast nödvändiga cookies. De håller dig inloggad och kommer ihåg ditt språk och dina visningsinställningar. Inga cookies används för analys, spårning eller annonsering. Anonym besöksstatistik samlas in utan cookies.",
         },
     },
 };
