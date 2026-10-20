@@ -266,7 +266,9 @@ Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytic
 Umami, self-hosted in `fgv-infra-deploy`, reached server-side at `UMAMI_URL` (`http://umami-server:3000` on the
 shared network). Browsers never talk to it: `src/app/stats/` serves the tracker as `/stats/script.js` and forwards
 `/stats/api/send` (the tracker posts to `<script dir>/api/send`), so the CSP stays `'self'` and the Umami host can sit
-behind Cloudflare Access. The forwarder must pass the browser's IP (`cf-connecting-ip`) and user agent, or every
+behind Cloudflare Access. The tracker sends events without cookies unless `data-fetch-credentials="same-origin"`
+is set, and Access on staging's `WEB_HOST` then redirects them to its login page, which CSP blocks. The forwarder
+must pass the browser's IP (`cf-connecting-ip`) and user agent, or every
 visit looks like one visitor from the server. `src/components/umami.tsx` renders nothing unless `UMAMI_URL` and
 `UMAMI_WEBSITE_ID` are both set, and sets `data-exclude-search` — query strings carry searches with names and
 personnummer, so keep it.

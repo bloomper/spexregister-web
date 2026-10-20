@@ -41,9 +41,8 @@ Spexregister Web is the second generation of the frontend responsible for servin
    API_GRAPHQL_ENDPOINT=https://api.register.fgv.local.nu:8443/api/graphql
    API_REST_BASE_URL=https://api.register.fgv.local.nu:8443
    ```
-   For visitor statistics, add a website in the local Umami (`https://analytics.fgv.local.nu:8443`, see
-   fgv-infra-deploy's README) and put its ID in `.env.local` as `UMAMI_WEBSITE_ID`. `.env` already points `UMAMI_URL`
-   at it.
+   For visitor statistics, run `bin/configure-umami.sh local` in fgv-infra-deploy and put the ID it prints in
+   `.env.local` as `UMAMI_WEBSITE_ID`. `.env` already points `UMAMI_URL` at the local Umami.
    `npm run dev` and `docker compose` trust the root certificate of fgv-infra-deploy's local Caddy
    (`local/.docker/caddy/data/caddy/pki/authorities/local/root.crt`), read from `../fgv-infra-deploy`, or from
    `INFRA_DEPLOY` if it is checked out elsewhere.

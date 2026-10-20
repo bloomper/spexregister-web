@@ -18,6 +18,7 @@ export async function Umami() {
             data-exclude-search="true"
             data-do-not-track="true"
             data-performance="true"
+            data-fetch-credentials="same-origin"
             strategy="afterInteractive"
         />
     );
