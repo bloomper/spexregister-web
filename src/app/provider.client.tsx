@@ -44,8 +44,7 @@ export default function Provider({
     }, [locale, messages]);
 
     return (
-        <NextIntlClientProvider locale={locale} messages={messages} onError={() => {
-        }}>
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Stockholm">
             <LocaleContext.Provider value={{locale, changeLocale}}>
                 <ThemeProvider
                     attribute="class"

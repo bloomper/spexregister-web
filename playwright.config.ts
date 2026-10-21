@@ -9,6 +9,8 @@ const appEnv: Record<string, string> = {
     API_GRAPHQL_ENDPOINT: `http://localhost:${MOCK_PORT}/api/graphql`,
     API_REST_BASE_URL: `http://localhost:${MOCK_PORT}`,
     BETTER_AUTH_URL: BASE_URL,
+    UMAMI_URL: "",
+    UMAMI_WEBSITE_ID: "",
 };
 
 export default defineConfig({
