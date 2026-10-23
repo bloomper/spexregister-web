@@ -61,7 +61,7 @@ export function ConsentManager({children}: { children: ReactNode }) {
                 },
             }}
         >
-            <ConsentBanner hideBranding layout={["dismiss"]} position="bottom-right"/>
+            <ConsentBanner hideBranding position="bottom-right"/>
             <ConsentDialog hideBranding/>
             {children}
         </ConsentProvider>
