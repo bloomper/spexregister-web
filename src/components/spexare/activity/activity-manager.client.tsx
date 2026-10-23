@@ -155,7 +155,7 @@ export function ActivityManager({
                                                     <AlertDialogCancel>{t("Common.cancel")}</AlertDialogCancel>
                                                     <AlertDialogClose
                                                         render={<AlertDialogAction
-                                                            className="bg-destructive text-destructive-foreground"/>}
+                                                            variant="destructive"/>}
                                                         onClick={() => handleDeleteActivity(activity.id)}
                                                     >
                                                         {t("Common.delete")}

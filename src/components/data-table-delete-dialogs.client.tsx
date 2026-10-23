@@ -84,7 +84,7 @@ export function DataTableDeleteDialogs<T>({
                                 handleDelete();
                             }}
                             disabled={isPending}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            variant="destructive"
                         >
                             {isPending ? t("Common.deleting") : t("Common.delete")}
                         </AlertDialogAction>
@@ -109,7 +109,7 @@ export function DataTableDeleteDialogs<T>({
                                 handleBulkDelete();
                             }}
                             disabled={isPending}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            variant="destructive"
                         >
                             {isPending ? t("Common.deleting") : t("Common.delete")}
                         </AlertDialogAction>

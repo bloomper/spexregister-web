@@ -147,7 +147,7 @@ export function TaskActivityManager({
                                                             <AlertDialogCancel>{t("Common.cancel")}</AlertDialogCancel>
                                                             <AlertDialogClose
                                                                 render={<AlertDialogAction
-                                                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"/>}
+                                                                    variant="destructive"/>}
                                                                 onClick={() => {
                                                                     if (actor.vocal?.id) {
                                                                         handleDeleteActor(actor.id, actor.vocal.id, taskActivity.id);
@@ -196,7 +196,7 @@ export function TaskActivityManager({
                                                     <AlertDialogCancel>{t("Common.cancel")}</AlertDialogCancel>
                                                     <AlertDialogClose
                                                         render={<AlertDialogAction
-                                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"/>}
+                                                            variant="destructive"/>}
                                                         onClick={() => handleDeleteTaskActivity(taskActivity.id)}
                                                     >
                                                         {t("Common.delete")}
