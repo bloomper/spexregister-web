@@ -103,6 +103,8 @@ changing routing or data fetching; this area differs sharply from older Next.
   `withPolicyPage(Policies.<entity>.require<Op>, async (authz) => …)` — take roles from `authz`
   rather than calling the session again. Don't hand-roll role checks —
   `requireUser` / `requireAnyRole` are in `src/utils/auth.server.ts`. Roles: `USER | EDITOR | ADMIN`.
+- A page refused by its policy shows `src/app/forbidden.tsx` (Next's `forbidden()`, enabled by
+  `experimental.authInterrupts`); a user with no role at all is redirected to `/no-access` instead.
 - **The personnummer's last four digits are sensitive.** Unless the caller is EDITOR/ADMIN or it
   is their own record (`SpexareSensitiveData`), the backend returns `socialSecurityNumber` cut to
   its birth date (`yyyyMMdd`, the same shape as a number stored without the optional suffix), does

@@ -26,3 +26,13 @@ test("a visitor who is not logged in is sent from the no-access page to the sign
 
     await expect(page.getByText("Du behöver vara inloggad för att använda adressregistret.")).toBeVisible();
 });
+
+test("a user who lacks the page's role sees the forbidden page inside the app", async ({page, request}) => {
+    await request.post(`http://localhost:${MOCK_PORT}/__roles`, {data: {roles: ["USER"]}});
+
+    await page.goto("/api/auth/login");
+    await page.goto("/admin/maintenance");
+
+    await expect(page).toHaveURL(/\/admin\/maintenance$/);
+    await expect(page.getByRole("heading", {name: "Du har inte behörighet"})).toBeVisible();
+});

@@ -3,7 +3,7 @@ import "server-only";
 import type {NextRequest} from "next/server";
 import {NextResponse} from "next/server";
 import type {AuthzFail, AuthzOk, AuthzResult} from "@/types/auth";
-import {redirect} from "next/navigation";
+import {forbidden, redirect} from "next/navigation";
 import {requireUser} from "@/utils/auth.server";
 
 const LOGIN_PATH = "/api/auth/login";
@@ -57,6 +57,9 @@ export async function withPolicyPage<T>(
     const authz = await policy();
     if (!authz.ok && authz.status === 403 && (await requireUser()).roles.length === 0) {
         redirect(NO_ACCESS_PATH);
+    }
+    if (!authz.ok && authz.status === 403) {
+        forbidden();
     }
     return withPolicyAction(async () => authz, handler);
 }

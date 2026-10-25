@@ -212,6 +212,8 @@
     "fieldRequired": "Fältet är obligatoriskt",
     "fieldTooLong": "Fälter är för långt",
     "fileTooLarge": "Filen är för stor. Max filstorlek är 15MB.",
+    "forbidden": "Du har inte behörighet",
+    "forbiddenDescription": "Du har inte behörighet till den här sidan. Kontakta en administratör om du behöver den.",
     "general": "Allmänt",
     "history": "Historik",
     "imageUploadHint": "PNG, JPEG, GIF eller SVG (max 15MB)",

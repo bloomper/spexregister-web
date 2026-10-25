@@ -5,7 +5,13 @@ import {authzFailureResponse, withPolicyAction, withPolicyPage, withPolicyRoute}
 const redirectMock = vi.fn((url: string) => {
     throw new Error(`NEXT_REDIRECT:${url}`);
 });
-vi.mock("next/navigation", () => ({redirect: (url: string) => redirectMock(url)}));
+const forbiddenMock = vi.fn(() => {
+    throw new Error("NEXT_HTTP_ERROR_FALLBACK;403");
+});
+vi.mock("next/navigation", () => ({
+    redirect: (url: string) => redirectMock(url),
+    forbidden: () => forbiddenMock(),
+}));
 
 vi.mock("next/server", () => ({
     NextResponse: {
@@ -69,8 +75,8 @@ describe("withPolicyPage", () => {
         await expect(withPolicyPage(async () => unauth, vi.fn())).rejects.toThrow("NEXT_REDIRECT:/api/auth/login");
     });
 
-    it("throws on 403", async () => {
-        await expect(withPolicyPage(async () => forbidden, vi.fn())).rejects.toThrow("Not authorized");
+    it("shows the forbidden page on 403", async () => {
+        await expect(withPolicyPage(async () => forbidden, vi.fn())).rejects.toThrow("NEXT_HTTP_ERROR_FALLBACK;403");
         expect(redirectMock).not.toHaveBeenCalled();
     });
 

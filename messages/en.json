@@ -212,6 +212,8 @@
     "fieldRequired": "Field is required",
     "fieldTooLong": "Field is too long",
     "fileTooLarge": "File too large. Maximum file size is 15MB.",
+    "forbidden": "You do not have permission",
+    "forbiddenDescription": "You do not have permission to see this page. Contact an administrator if you need it.",
     "general": "General",
     "history": "History",
     "imageUploadHint": "PNG, JPEG, GIF or SVG (max. 15MB)",
