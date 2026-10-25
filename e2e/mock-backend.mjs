@@ -438,6 +438,7 @@ function resetState() {
     taskList = structuredClone(taskSeed);
     tagList = structuredClone(tagSeed);
     savedSearchList = [];
+    userRoles = ["ADMIN"];
 }
 
 const removeById = (list, id) => {
@@ -919,6 +920,8 @@ const publicJwk = {...(await exportJWK(publicKey)), kid: KID, alg: "RS256", use:
 
 const pendingCodes = new Map();
 
+let userRoles = ["ADMIN"];
+
 const signJwt = (claims, {audience, expiresIn = TOKEN_TTL}) =>
     new SignJWT(claims)
         .setProtectedHeader({alg: "RS256", kid: KID, typ: "JWT"})
@@ -935,7 +938,7 @@ const accessToken = () =>
             ...E2E_USER,
             typ: "Bearer",
             azp: CLIENT_ID,
-            resource_access: {spexregister: {roles: ["ADMIN"]}},
+            resource_access: {spexregister: {roles: userRoles}},
         },
         {audience: "account"},
     );
@@ -1034,6 +1037,11 @@ const server = createServer((req, res) => {
         }
         if (req.method === "POST" && path === "/__reset") {
             resetState();
+            res.writeHead(204).end();
+            return;
+        }
+        if (req.method === "POST" && path === "/__roles") {
+            userRoles = JSON.parse(Buffer.concat(chunks).toString("utf8")).roles;
             res.writeHead(204).end();
             return;
         }

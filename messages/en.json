@@ -430,6 +430,10 @@
     "visibleFrom": "Visible from",
     "visibleTo": "Visible to"
   },
+  "NoAccess": {
+    "title": "You do not have access",
+    "text": "Your FGV account ({email}) does not have access to the address register. Contact an administrator if you need access, or log out and log in with another account."
+  },
   "PermissionGrant": {
     "heading": "Permissions",
     "description": "Give a user, or everyone with a role, extra rights on part of the register. Grants only add to what their role allows, and every change is in the change log.",

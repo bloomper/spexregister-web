@@ -16,6 +16,9 @@ vi.mock("next/server", () => ({
     },
 }));
 
+const requireUserMock = vi.fn(async () => ({session: {}, roles: ["USER"]}));
+vi.mock("@/utils/auth.server", () => ({requireUser: () => requireUserMock()}));
+
 const ok: AuthzResult = {ok: true, roles: ["ADMIN"]};
 const unauth: AuthzResult = {ok: false, status: 401, message: "Not authenticated"};
 const forbidden: AuthzResult = {ok: false, status: 403, message: "Not authorized"};
@@ -68,6 +71,15 @@ describe("withPolicyPage", () => {
 
     it("throws on 403", async () => {
         await expect(withPolicyPage(async () => forbidden, vi.fn())).rejects.toThrow("Not authorized");
+        expect(redirectMock).not.toHaveBeenCalled();
+    });
+
+    it("redirects to the no-access page on 403 when the user has no role at all", async () => {
+        requireUserMock.mockResolvedValueOnce({session: {}, roles: []});
+        const handler = vi.fn();
+
+        await expect(withPolicyPage(async () => forbidden, handler)).rejects.toThrow("NEXT_REDIRECT:/no-access");
+        expect(handler).not.toHaveBeenCalled();
     });
 });
 

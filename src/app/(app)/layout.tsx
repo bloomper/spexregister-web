@@ -1,5 +1,6 @@
 import * as React from "react";
 import {Suspense} from "react";
+import {redirect} from "next/navigation";
 import {getTranslations} from "next-intl/server";
 import {AppSidebar} from "@/components/app-sidebar.client";
 import {RolesProvider} from "@/components/roles-provider.client";
@@ -75,6 +76,10 @@ export default async function AppLayout({children}: { children: React.ReactNode 
                 </main>
             </div>
         );
+    }
+
+    if (roles.length === 0) {
+        redirect("/no-access");
     }
 
     const accountUrl = `${(process.env.KEYCLOAK_ISSUER ?? "").replace(/\/$/, "")}/account`;

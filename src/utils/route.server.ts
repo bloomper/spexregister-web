@@ -4,8 +4,10 @@ import type {NextRequest} from "next/server";
 import {NextResponse} from "next/server";
 import type {AuthzFail, AuthzOk, AuthzResult} from "@/types/auth";
 import {redirect} from "next/navigation";
+import {requireUser} from "@/utils/auth.server";
 
 const LOGIN_PATH = "/api/auth/login";
+const NO_ACCESS_PATH = "/no-access";
 
 type RouteContext = unknown;
 
@@ -48,4 +50,13 @@ export async function withPolicyAction<T>(
     return handler(authz);
 }
 
-export const withPolicyPage = withPolicyAction;
+export async function withPolicyPage<T>(
+    policy: () => Promise<AuthzResult>,
+    handler: (authz: AuthzOk) => Promise<T>
+): Promise<T> {
+    const authz = await policy();
+    if (!authz.ok && authz.status === 403 && (await requireUser()).roles.length === 0) {
+        redirect(NO_ACCESS_PATH);
+    }
+    return withPolicyAction(async () => authz, handler);
+}

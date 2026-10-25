@@ -430,6 +430,10 @@
     "visibleFrom": "Synlig från",
     "visibleTo": "Synlig till"
   },
+  "NoAccess": {
+    "title": "Du har inte åtkomst",
+    "text": "Ditt FGV-konto ({email}) har inte åtkomst till adressregistret. Kontakta en administratör om du behöver åtkomst, eller logga ut och logga in med ett annat konto."
+  },
   "PermissionGrant": {
     "heading": "Behörigheter",
     "description": "Ge en användare, eller alla med en roll, extra rättigheter i en del av registret. En behörighet lägger bara till det rollen redan tillåter, och varje ändring syns i ändringsloggen.",
