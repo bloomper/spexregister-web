@@ -41,6 +41,8 @@ describe("impex-result-download-proxy GET", () => {
         expect(res.headers.get("Content-Type")).toBe("text/csv");
         expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="export.csv"');
         expect(res.headers.get("Cache-Control")).toBe("no-store");
+        expect(res.headers.get("Content-Security-Policy")).toContain("sandbox");
+        expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
     });
 
     it("defaults content-type and content-disposition when headers are absent", async () => {

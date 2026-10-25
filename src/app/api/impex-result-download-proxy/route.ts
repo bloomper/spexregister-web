@@ -29,6 +29,9 @@ export async function GET(request: NextRequest) {
             headers: {
                 "Content-Type": contentType,
                 "Content-Disposition": contentDisposition,
+                // Never run in the application's origin, should a result be opened inline
+                "Content-Security-Policy": "default-src 'none'; sandbox",
+                "X-Content-Type-Options": "nosniff",
                 "Cache-Control": "no-store",
             },
         });

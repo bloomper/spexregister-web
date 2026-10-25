@@ -31,6 +31,18 @@ const nextConfig: NextConfig = {
                     {key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()"},
                 ],
             },
+            // The page policy above would otherwise replace the routes' own sandbox, since the last matching header wins
+            {
+                source: "/api/image-download-proxy",
+                headers: [{
+                    key: "Content-Security-Policy",
+                    value: "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+                }],
+            },
+            {
+                source: "/api/impex-result-download-proxy",
+                headers: [{key: "Content-Security-Policy", value: "default-src 'none'; sandbox"}],
+            },
         ];
     },
     turbopack: {

@@ -69,4 +69,11 @@ describe("stats send POST", () => {
 
         expect(res.status).toBe(502);
     });
+
+    it("refuses a body larger than an event", async () => {
+        const large = new Request("http://localhost/stats/api/send", {method: "POST", body: "x".repeat(16 * 1024 + 1)});
+
+        expect((await POST(large)).status).toBe(413);
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
 });
