@@ -30,6 +30,10 @@ const empty: EditQueueOptions = {
     spex: [], spexCategories: [], authorities: [], states: [],
 };
 
+/**
+ * The choices the edit queue's forms need for one kind of record, such as the types, tags and spex for a spexare, and
+ * none for the others.
+ */
 export async function getEditQueueOptions(entityType: EntityType): Promise<EditQueueOptions> {
     switch (entityType) {
         case "spexare":

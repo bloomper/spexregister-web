@@ -6,6 +6,9 @@ import {getAccessToken} from "@/utils/auth.server";
 import {authExchange} from "@urql/exchange-auth";
 import {getLocale} from "next-intl/server";
 
+/**
+ * An urql client per request that sends the signed-in user's access token and their language, and never uses GET.
+ */
 const makeClient = () => {
     return createClient({
         url: process.env.API_GRAPHQL_ENDPOINT || "",
@@ -58,4 +61,7 @@ const makeClient = () => {
     });
 };
 
+/**
+ * The urql client of the current request.
+ */
 export const {getClient} = registerUrql(makeClient);

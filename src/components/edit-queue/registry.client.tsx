@@ -39,6 +39,10 @@ type RegistryEntry = {
     getById: (id: string) => Promise<{ id: string } | null | undefined>;
 };
 
+/**
+ * How the edit queue edits each kind of record: its form, how to name it, whether the form needs choices such as types
+ * and tags, and how to load the full record.
+ */
 export const editQueueRegistry: Record<EntityType, RegistryEntry> = {
     spexare: {
         needsOptions: true,

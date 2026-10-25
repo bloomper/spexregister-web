@@ -22,6 +22,9 @@ function ownerOf(change: FieldChange, fallback: AuditedType): AuditedType {
     return change.type ?? fallback;
 }
 
+/**
+ * The fields changed in a revision with their old and new values, images as thumbnails.
+ */
 export function AuditDiff({changes, type, entityId, revision, previousRevisionOf, className}: AuditDiffProps) {
     const t = useTranslations();
 

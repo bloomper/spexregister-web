@@ -24,6 +24,9 @@ import {
 const PAGE_SIZE = 15;
 const COLUMN_COUNT = 5;
 
+/**
+ * The change log: every revision, newest first, filtered and paged, each opening to what it changed.
+ */
 export function ChangeLogTable({initialData, authors}: { initialData: RevisionFeedPage; authors: string[] }) {
     const t = useTranslations();
     const [page, setPage] = useState(initialData);

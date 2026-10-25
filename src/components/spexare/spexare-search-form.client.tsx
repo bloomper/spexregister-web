@@ -8,6 +8,9 @@ import {useTranslations} from "next-intl";
 import {useRouter, useSearchParams} from "next/navigation";
 import React, {useState} from "react";
 
+/**
+ * The search field of the header, going to the spexare search with the text as `q`.
+ */
 export function SpexareSearchForm({...props}: React.ComponentProps<"form">) {
     const t = useTranslations();
     const router = useRouter();

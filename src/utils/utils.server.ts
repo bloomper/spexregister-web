@@ -3,6 +3,9 @@ import "server-only";
 import {PageInfo} from "@/gql/schema";
 import {CursorPage} from "@/types/pagination";
 
+/**
+ * A GraphQL connection as a page of items, without the empty edges.
+ */
 export function mapConnection<T, E extends { cursor: string; node: T }>(
     connection: { edges: (E | null | undefined)[]; pageInfo: PageInfo; totalCount?: number | null } | null | undefined
 ): CursorPage<T> & { edges: E[] } {
@@ -35,10 +38,17 @@ const DEFAULT_LOCALE = process.env.DEFAULT_LOCALE && SUPPORTED_LOCALES.has(proce
     ? process.env.DEFAULT_LOCALE
     : "sv";
 
+/**
+ * The locale when it is supported, or else the default locale.
+ */
 export function normalizeLocale(input: string | undefined): string {
     return input && SUPPORTED_LOCALES.has(input) ? input : DEFAULT_LOCALE;
 }
 
+/**
+ * The address on the API that a relative or absolute URL names, or null when it points outside the API's `/api/`, so
+ * that the proxies cannot be used to fetch anything else.
+ */
 export function resolveBackendUrl(url: string, baseUrl: string | undefined): URL | null {
     if (!baseUrl) {
         return null;
@@ -61,6 +71,9 @@ export function resolveBackendUrl(url: string, baseUrl: string | undefined): URL
     }
 }
 
+/**
+ * Deletes each id in turn, going on past failures, and throws afterwards naming those that failed.
+ */
 export async function deleteEach(ids: string[], del: (id: string) => Promise<unknown>): Promise<void> {
     const failed: string[] = [];
 

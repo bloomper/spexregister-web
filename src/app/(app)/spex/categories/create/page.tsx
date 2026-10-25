@@ -5,6 +5,9 @@ import {withPolicyPage} from "@/utils/route.server";
 import {SpexCategoryCreateForm} from "./create.client";
 import {getPaged} from "@/lib/spex/category";
 
+/**
+ * For administrators: the spex category table with the form to add one.
+ */
 export default async function SpexCategoryCreatePage() {
     return withPolicyPage(Policies.spexCategory.requireCreate, async () => {
         const defaultPageSize = 15;

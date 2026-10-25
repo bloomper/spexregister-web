@@ -45,6 +45,9 @@ interface ActivityManagerProps {
     initialActivities: ActivityType[];
 }
 
+/**
+ * A spexare's activities: adding one with its spex, and the tasks and roles of each.
+ */
 export function ActivityManager({
                                     spexareId,
                                     types,

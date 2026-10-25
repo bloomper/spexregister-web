@@ -2,6 +2,9 @@ import Link from "next/link";
 import {getTranslations} from "next-intl/server";
 import {Button} from "@/components/ui/button";
 
+/**
+ * Shown when there is no such page or record.
+ */
 export default async function NotFoundPage() {
     const t = await getTranslations();
 

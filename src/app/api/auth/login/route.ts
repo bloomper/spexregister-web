@@ -4,6 +4,9 @@ import {auth} from "@/auth";
 import {normalizeLocale} from "@/utils/utils.server";
 import {normalizeTheme} from "@/utils/auth";
 
+/**
+ * Starts signing in with Keycloak, showing its pages in the user's language and theme.
+ */
 export const GET = async (req: NextRequest) => {
     const cookieLocale = req.cookies.get("locale")?.value;
     const locale = normalizeLocale(cookieLocale);

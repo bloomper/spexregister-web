@@ -7,6 +7,10 @@ import {getAuthorities, getPaged as getUsers} from "@/lib/user";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {PermissionGrants} from "@/components/admin/permission/permission-grants.client";
 
+/**
+ * For administrators: the permission grants, and adding one for a user or role on a spexare, a spex's participants or a
+ * spex. Users are offered from the first 500.
+ */
 export default async function PermissionsPage() {
     return withPolicyPage(Policies.admin.requireAdmin, async () => {
         const t = await getTranslations();

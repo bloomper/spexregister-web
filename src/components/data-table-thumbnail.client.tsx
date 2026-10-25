@@ -12,6 +12,9 @@ interface TableThumbnailProps {
     className?: string;
 }
 
+/**
+ * A small image of a row through the image proxy, or an icon when there is none.
+ */
 export function TableThumbnail({
                                    url,
                                    lastModifiedAt,

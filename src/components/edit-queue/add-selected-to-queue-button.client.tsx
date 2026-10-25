@@ -6,6 +6,9 @@ import {Button} from "@/components/ui/button";
 import {type EntityType, useEditQueue} from "@/components/edit-queue/edit-queue-provider.client";
 import {track} from "@/utils/umami";
 
+/**
+ * Adds a table's selected rows to the edit queue.
+ */
 export function AddSelectedToQueueButton<T extends { id: string }>({
                                                                        entityType,
                                                                        items,

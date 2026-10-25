@@ -5,6 +5,9 @@ import {NewsTable} from "@/components/news";
 import {withPolicyPage} from "@/utils/route.server";
 import {NewsCreateForm} from "./create.client";
 
+/**
+ * For editors: the news table with the form to add a news item.
+ */
 export default async function NewsCreatePage() {
     return withPolicyPage(Policies.news.requireCreate, async () => {
         const defaultPageSize = 15;

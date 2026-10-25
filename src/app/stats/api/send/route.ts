@@ -3,6 +3,10 @@ import {forwardedHeaders, umamiUrl} from "@/lib/umami.server";
 // An Umami event is well under a kilobyte; anyone may post here, so nothing larger is forwarded
 const MAX_BODY = 16 * 1024;
 
+/**
+ * Passes Umami events on from the browser, so analytics is served from the application's own origin. Bodies over 16 KB
+ * are refused.
+ */
 export async function POST(request: Request) {
     const url = umamiUrl("/api/send");
 

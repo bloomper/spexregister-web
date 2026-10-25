@@ -5,6 +5,9 @@ import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {Tag} from "lucide-react";
 
+/**
+ * The tags as cards, scrolling on.
+ */
 export default async function TagPage() {
     return withPolicyPage(Policies.tag.requireRead, async () => {
         const [page, canUpdate] = await Promise.all([

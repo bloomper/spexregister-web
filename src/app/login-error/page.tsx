@@ -1,6 +1,9 @@
 import {getTranslations} from "next-intl/server";
 import {Button} from "@/components/ui/button";
 
+/**
+ * Shown when signing in failed, with a way to try again.
+ */
 export default async function LoginErrorPage() {
     const t = await getTranslations();
 

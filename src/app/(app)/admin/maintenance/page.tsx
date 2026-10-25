@@ -3,6 +3,9 @@ import {withPolicyPage} from "@/utils/route.server";
 import {getTranslations} from "next-intl/server";
 import {AdminTasks} from "@/components/admin";
 
+/**
+ * For administrators: maintenance of the application, such as rebuilding the search index.
+ */
 export default async function MaintenancePage() {
     return withPolicyPage(Policies.admin.requireAdmin, async () => {
         const t = await getTranslations();

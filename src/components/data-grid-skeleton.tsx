@@ -1,3 +1,6 @@
+/**
+ * A placeholder of a grid of cards while its page loads.
+ */
 export function DataGridSkeleton({count = 24}: { count?: number }) {
     return (
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">

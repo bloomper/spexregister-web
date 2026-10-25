@@ -4,6 +4,9 @@ import {X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 
+/**
+ * The title and text filter above a grid of cards.
+ */
 export function GridFilterHeader({title, placeholder, value, onChange}: {
     title: string;
     placeholder: string;

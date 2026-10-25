@@ -45,6 +45,9 @@ const mode = offline({
     }],
 });
 
+/**
+ * The cookie banner, in the user's language. Only necessary cookies are used, so it informs rather than asks.
+ */
 export function ConsentManager({children}: { children: ReactNode }) {
     const {locale} = useLocaleContext();
 

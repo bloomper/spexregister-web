@@ -107,10 +107,16 @@ const TaskCategoryRemoveMutation = graphql(`
     }
 `);
 
+/**
+ * Puts the task in the category.
+ */
 export async function addCategory(id: string, categoryId: string) {
     return runMutationField(TaskCategoryAddMutation, {id, categoryId}, "taskCategoryAdd");
 }
 
+/**
+ * Takes the task out of its category.
+ */
 export async function removeCategory(id: string) {
     return runMutationField(TaskCategoryRemoveMutation, {id}, "taskCategoryRemove");
 }

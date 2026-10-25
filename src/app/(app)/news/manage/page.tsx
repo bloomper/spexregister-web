@@ -4,6 +4,9 @@ import {getTranslations} from "next-intl/server";
 import {NewsTable} from "@/components/news";
 import {withPolicyPage} from "@/utils/route.server";
 
+/**
+ * For editors: all news, published or not, as a table.
+ */
 export default async function NewsManagePage() {
     return withPolicyPage(Policies.news.requireUpdate, async () => {
         const defaultPageSize = 15;

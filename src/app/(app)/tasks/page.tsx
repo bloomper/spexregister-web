@@ -6,6 +6,9 @@ import {Policies} from "@/utils/policy.server";
 import {getAll as getAllCategories} from "@/lib/task/category";
 import {ClipboardList} from "lucide-react";
 
+/**
+ * The tasks as cards, scrolling on.
+ */
 export default async function TaskPage() {
     return withPolicyPage(Policies.task.requireRead, async () => {
         const [page, categories, canUpdate] = await Promise.all([

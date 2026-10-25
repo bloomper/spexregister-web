@@ -17,6 +17,10 @@ export type SessionContext = {
 
 const unauthenticated: SessionContext = {session: null, accessToken: null, roles: []};
 
+/**
+ * The signed-in user's session, a valid access token and the Spexregister roles in it, once per request. Without a
+ * session or a usable token, the user counts as signed out.
+ */
 export const getSessionContext = cache(async (): Promise<SessionContext> => {
     const headerList = await headers();
 
@@ -47,12 +51,18 @@ export const getSessionContext = cache(async (): Promise<SessionContext> => {
     }
 });
 
+/**
+ * The signed-in user's session and roles; the session is null when signed out.
+ */
 export async function requireUser() {
     const {session, roles} = await getSessionContext();
 
     return {session, roles};
 }
 
+/**
+ * The signed-in user's access token, or null when signed out.
+ */
 export async function getAccessToken(): Promise<string | null> {
     return (await getSessionContext()).accessToken;
 }
@@ -65,6 +75,9 @@ function notAuthorized(): AuthzFail {
     return {ok: false, status: 403, message: "Not authorized"};
 }
 
+/**
+ * Allowed when the user has one of the roles: 401 when signed out, 403 without them.
+ */
 export async function requireAnyRole(required: Role[]): Promise<AuthzResult> {
     const {session, roles} = await requireUser();
 
@@ -84,6 +97,9 @@ export async function requireAnyRole(required: Role[]): Promise<AuthzResult> {
     };
 }
 
+/**
+ * Allowed when the user has all the roles: 401 when signed out, 403 without them.
+ */
 export async function requireAllRoles(required: Role[]): Promise<AuthzResult> {
     const {session, roles} = await requireUser();
 

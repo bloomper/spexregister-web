@@ -7,6 +7,10 @@ import {useTranslations} from "next-intl";
 
 type JobStatusAction = typeof getJobStatusAction;
 
+/**
+ * Polls an import or export job every three seconds until it completes or fails, shows the outcome and reports it to
+ * `onComplete`.
+ */
 export function useJobTracker(
     jobId: string | null,
     onComplete?: (succeeded: boolean) => void,

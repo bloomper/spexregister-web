@@ -7,6 +7,9 @@ export type LoadedNode = GraphNode & {
     expanded?: boolean;
 };
 
+/**
+ * Neighbours of a node not shown yet, as a neighbourhood returns only the first of each edge type.
+ */
 export type PendingGroup = {
     nodeId: string;
     type: GraphNodeType;
@@ -24,6 +27,9 @@ export type GraphState = {
 
 const EMPTY: GraphState = {nodes: [], edges: [], pending: []};
 
+/**
+ * Whether a node's label or sublabel contains the lower-case term, or the term is empty.
+ */
 export function matchesTerm(node: GraphNode, term: string): boolean {
     return !term
         || node.label.toLowerCase().includes(term)
@@ -38,6 +44,10 @@ function mergeLabels(existing: string | null | undefined, incoming: string | nul
     return parts.length ? [...new Set(parts)].join("; ") : null;
 }
 
+/**
+ * Adds a node's neighbourhood to the graph and marks the node expanded. Edges seen twice keep both labels, and the
+ * groups with more neighbours than returned become pending.
+ */
 export function mergeNeighbourhood(state: GraphState, neighbourhood: GraphNeighbourhood): GraphState {
     const nodes = new Map(state.nodes.map((node) => [node.id, node]));
     const edges = new Map(state.edges.map((edge) => [edge.id, edge]));
@@ -78,6 +88,9 @@ export function mergeNeighbourhood(state: GraphState, neighbourhood: GraphNeighb
     };
 }
 
+/**
+ * Adds more neighbours of a node along one edge type, counting them off its pending group.
+ */
 export function mergeNodes(state: GraphState, origin: LoadedNode, edge: GraphEdgeType, added: GraphNode[]): GraphState {
     const nodes = new Map(state.nodes.map((node) => [node.id, node]));
     const edges = new Map(state.edges.map((e) => [e.id, e]));
@@ -108,6 +121,9 @@ export function mergeNodes(state: GraphState, origin: LoadedNode, edge: GraphEdg
     };
 }
 
+/**
+ * Folds a node back: removes the neighbours that hang only on it and its pending groups.
+ */
 export function collapse(state: GraphState, id: string): GraphState {
     const degree = new Map<string, number>();
 
@@ -130,6 +146,9 @@ export function collapse(state: GraphState, id: string): GraphState {
     };
 }
 
+/**
+ * The nodes, edges and pending groups of the explored graph, with the functions that grow and shrink it.
+ */
 export function useGraphState() {
     const [state, setState] = useState<GraphState>(EMPTY);
 

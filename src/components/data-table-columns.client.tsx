@@ -80,6 +80,10 @@ function ActionsCell<T extends RowData>({row, table}: {
     );
 }
 
+/**
+ * The usual columns of a data table: selection, sortable text, dates, an image thumbnail, yes or no, the audit fields
+ * and the row's actions.
+ */
 export const columnHelper = {
     select: <T extends RowData, >(): DataTableColumnDef<T> => ({
         id: "select",

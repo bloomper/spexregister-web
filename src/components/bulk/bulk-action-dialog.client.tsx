@@ -37,6 +37,10 @@ interface BulkActionDialogProps {
     filter: string | null;
 }
 
+/**
+ * Runs one bulk operation on the selected spexare or on those matching the table's filter: collect what it needs,
+ * preview its outcome for each, then apply it with a reason for the change log.
+ */
 export function BulkActionDialog({
                                      operation,
                                      onClose,

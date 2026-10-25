@@ -22,6 +22,9 @@ interface BulkActionsMenuProps {
     filter: string | null;
 }
 
+/**
+ * The menu of bulk operations on spexare, opening the dialog of the one chosen.
+ */
 export function BulkActionsMenu({options, actions, selectedIds, filter}: BulkActionsMenuProps) {
     const t = useTranslations();
     const [operation, setOperation] = useState<SpexareBulkOperation | null>(null);

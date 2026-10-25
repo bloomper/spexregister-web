@@ -2,6 +2,9 @@ import {NextRequest, NextResponse} from "next/server";
 import axios from "@/lib/axios.server";
 import {isAxiosError} from "axios";
 
+/**
+ * Downloads the file of one of the user's export jobs with their token, sandboxed should it be opened in the browser.
+ */
 export async function GET(request: NextRequest) {
     const jobId = request.nextUrl.searchParams.get("id");
 

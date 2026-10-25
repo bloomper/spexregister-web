@@ -20,6 +20,10 @@ type UseSpexareSearchArgs = {
     initialSelectedFacets?: Record<string, Set<string>>;
 };
 
+/**
+ * The state of the spexare grid's search. In `search` mode it runs the free-text search with facets and keeps them in
+ * the address; in `filter` mode it filters the list on names and the deceased flag. Typing is debounced.
+ */
 export function useSpexareSearch({
                                      mode,
                                      initialSearchQuery,

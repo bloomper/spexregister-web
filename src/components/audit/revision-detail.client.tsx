@@ -41,6 +41,10 @@ function groupByTarget(entities: RevisionEntityChange[]) {
     return [...groups.values()];
 }
 
+/**
+ * Everything changed in a revision, grouped by the record it belongs to, noting when a type has more changes than
+ * shown.
+ */
 export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
     const t = useTranslations();
     const groups = groupByTarget(detail.entities);

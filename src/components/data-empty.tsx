@@ -2,6 +2,9 @@ import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/co
 import {LucideIcon, Search} from "lucide-react";
 import {useTranslations} from "next-intl";
 
+/**
+ * Shown when a list has nothing to show.
+ */
 export function DataEmpty({
                               title,
                               description,

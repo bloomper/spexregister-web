@@ -2,6 +2,10 @@ import Script from "next/script";
 import {connection} from "next/server";
 
 // Query strings are dropped: searches and filters may hold names and personnummer
+/**
+ * Loads the Umami tracking script from the application's own origin, when Umami is configured, without search
+ * parameters in the tracked addresses.
+ */
 export async function Umami() {
     await connection();
 

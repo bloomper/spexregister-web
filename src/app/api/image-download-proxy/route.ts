@@ -6,6 +6,11 @@ import {resolveBackendUrl} from "@/utils/utils.server";
 const SVG_CONTENT_TYPE = "image/svg+xml";
 const IMAGE_CONTENT_TYPES = new Set(["image/png", "image/jpeg", "image/gif", "image/webp", SVG_CONTENT_TYPE]);
 
+/**
+ * Fetches an image from the API with the user's token, so the browser can show it. Only addresses under the API's
+ * `/api/` and image types are passed on, with a sandboxing content security policy. With a `t` parameter the image is
+ * cached for good, as the parameter changes with the image.
+ */
 export async function GET(request: NextRequest) {
     const imageUrl = request.nextUrl.searchParams.get("url");
     const versioned = request.nextUrl.searchParams.has("t");

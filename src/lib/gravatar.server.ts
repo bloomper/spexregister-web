@@ -4,6 +4,9 @@ import {createHash} from "node:crypto";
 
 const LOOKUP_TIMEOUT_MS = 2000;
 
+/**
+ * The Gravatar address of an email, 128 pixels and without a fallback image, so a missing one gives 404.
+ */
 export function gravatarImageUrl(email?: string | null): string | undefined {
     const normalized = email?.trim().toLowerCase();
 
@@ -15,6 +18,9 @@ export function gravatarImageUrl(email?: string | null): string | undefined {
     return `https://www.gravatar.com/avatar/${emailHash}?d=404&s=128`;
 }
 
+/**
+ * The Gravatar address of an email when Gravatar has an image for it, looked up within two seconds.
+ */
 export async function resolveGravatarImage(email?: string | null): Promise<string | undefined> {
     const url = gravatarImageUrl(email);
 

@@ -14,6 +14,9 @@ type Report = (state: EditQueueFormState) => void;
 
 const EditQueueFormStateContext = createContext<Report | null>(null);
 
+/**
+ * Lets a form inside the edit queue tell the drawer whether it has unsaved changes and can be saved.
+ */
 export function EditQueueFormStateProvider({
                                                onFormStateChange,
                                                children,
@@ -28,6 +31,10 @@ export function EditQueueFormStateProvider({
     );
 }
 
+/**
+ * Reports the form's state to the edit queue drawer, and that it is idle when it goes away. Does nothing outside the
+ * queue.
+ */
 export function useReportEditQueueFormState({isDirty, canSubmit = true}: {
     isDirty: boolean;
     canSubmit?: boolean;

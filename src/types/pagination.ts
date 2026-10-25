@@ -41,6 +41,9 @@ export type CursorPageInfo = {
     endCursor: string | null;
 };
 
+/**
+ * A page of a GraphQL connection: its items, where it is and the size of the whole list.
+ */
 export type CursorPage<TItem> = {
     items: TItem[];
     pageInfo: CursorPageInfo;

@@ -14,6 +14,10 @@ import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
+/**
+ * The free-text spexare search with facets, as given by `q` and the `f.<facet>` parameters, and the user's saved
+ * searches.
+ */
 export default async function SpexareSearchPage({
                                                     searchParams,
                                                 }: {

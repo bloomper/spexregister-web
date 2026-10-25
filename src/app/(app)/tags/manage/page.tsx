@@ -4,6 +4,9 @@ import {getTranslations} from "next-intl/server";
 import {TagTable} from "@/components/tag";
 import {withPolicyPage} from "@/utils/route.server";
 
+/**
+ * For editors: the tags as a table.
+ */
 export default async function TagManagePage() {
     return withPolicyPage(Policies.tag.requireUpdate, async () => {
         const defaultPageSize = 15;

@@ -5,6 +5,9 @@ import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {Newspaper} from "lucide-react";
 
+/**
+ * The news as cards, scrolling on.
+ */
 export default async function NewsPage() {
     return withPolicyPage(Policies.news.requireRead, async () => {
         const [page, canUpdate] = await Promise.all([

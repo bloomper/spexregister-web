@@ -9,6 +9,11 @@ import {CursorPage} from "@/types/pagination";
 import axios from "@/lib/axios.server";
 import {getRevisions} from "@/lib/audit/audit.server";
 
+/**
+ * Runs a query against the API as the signed-in user, in their language.
+ *
+ * Throws the urql error when the query fails, GraphQL errors included.
+ */
 export async function runQuery<TData, TVariables extends AnyVariables>(
     query: TypedDocumentNode<TData, TVariables>,
     variables: TVariables,
@@ -33,10 +38,19 @@ export async function runQuery<TData>(
     return result.data;
 }
 
+/**
+ * The context that sends a reason for a change in the `X-Audit-Reason` header, where the server records it with the
+ * revision. Nothing without a reason.
+ */
 export function auditReason(reason: string | null | undefined): Partial<OperationContext> | undefined {
     return reason ? {fetchOptions: {headers: {"X-Audit-Reason": encodeURIComponent(reason)}}} : undefined;
 }
 
+/**
+ * Runs a mutation against the API as the signed-in user, in their language.
+ *
+ * Throws the urql error when the mutation fails, GraphQL errors included.
+ */
 export async function runMutation<TData, TVariables extends AnyVariables>(
     mutation: TypedDocumentNode<TData, TVariables>,
     variables: TVariables,
@@ -61,6 +75,9 @@ export async function runMutation<TData>(
     return result.data;
 }
 
+/**
+ * Runs a mutation and returns the one field of its result.
+ */
 export async function runMutationField<TData, TVariables extends AnyVariables, TField extends keyof TData>(
     mutation: TypedDocumentNode<TData, TVariables>,
     variables: TVariables,
@@ -80,6 +97,9 @@ export async function runMutationField(
     return data?.[field];
 }
 
+/**
+ * Runs a mutation and returns the one field of its result, throwing `errorMessage` when the field is empty.
+ */
 export async function mutateForData<TData, TVariables extends AnyVariables, TField extends keyof TData>(
     mutation: TypedDocumentNode<TData, TVariables>,
     variables: TVariables,
@@ -113,6 +133,10 @@ export async function mutateForData(
 
 const MAX_COLLECT_PAGES = 1000;
 
+/**
+ * Fetches every page of a connection, following `endCursor` until there is no next page. Stops with an error after 1000
+ * pages rather than loop for ever.
+ */
 export async function collectAllPages<TItem>(
     fetchPage: (after: string | null) => Promise<CursorPage<TItem>>,
 ): Promise<TItem[]> {
@@ -140,6 +164,9 @@ type ConnectionShape<TEdge> = {
     totalCount?: number | null;
 };
 
+/**
+ * What to read of a `*Paged` query. `full` asks for the full fragment rather than the summary.
+ */
 export type PagedArgs = {
     first?: number;
     last?: number;
@@ -167,6 +194,10 @@ export type ExportQueryVariables = {
     type: ImpexType;
 };
 
+/**
+ * The queries, mutations and defaults of one kind of resource, for `createResourceClient`. The GraphQL fields are named
+ * after `singular`: `<singular>Paged`, `<singular>Create` and so on.
+ */
 export type ResourceClientConfig<TCreateInput, TUpdateInput> = {
     singular: string;
     pagedSummaryQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
@@ -184,6 +215,10 @@ export type ResourceClientConfig<TCreateInput, TUpdateInput> = {
     defaultFilter: string;
 };
 
+/**
+ * The usual operations on one kind of resource: paging, get, create, update, delete, export, import through the REST
+ * API, and its revisions. Reads are tagged with `cacheTag`, so a change can revalidate them.
+ */
 export function createResourceClient<
     TNode,
     TEdge extends { cursor: string; node: TNode },

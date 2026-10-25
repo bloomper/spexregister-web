@@ -2,6 +2,10 @@
 
 import {useCallback, useEffect, useEffectEvent, useRef, useState} from "react";
 
+/**
+ * Loads the full record of an id when it changes, for a dialog shown from a summary. A reload keeps the current record
+ * on screen until the new one arrives.
+ */
 export function useLazyFull<T>(
     id: string | null | undefined,
     loadAction: (id: string) => Promise<T | null | undefined>,

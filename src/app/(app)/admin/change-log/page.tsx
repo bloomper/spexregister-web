@@ -4,6 +4,9 @@ import {getTranslations} from "next-intl/server";
 import {getRevisionAuthors, getRevisionFeedPaged} from "@/lib/audit/audit.server";
 import {ChangeLogTable} from "@/components/audit/change-log-table.client";
 
+/**
+ * For administrators: every change in the register, newest first, filtered by type, author, source and period.
+ */
 export default async function ChangeLogPage() {
     return withPolicyPage(Policies.audit.requireRestore, async () => {
         const defaultPageSize = 15;

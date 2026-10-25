@@ -4,6 +4,9 @@ import {ImpexTable} from "@/components/impex/impex-table.client";
 import {withPolicyPage} from "@/utils/route.server";
 import {jobs as getJobs} from "@/lib/impex";
 
+/**
+ * The user's own import and export jobs, their outcome and their files.
+ */
 export default async function ImpexManagePage() {
     return withPolicyPage(Policies.impex.requireRead, async () => {
         const t = await getTranslations();

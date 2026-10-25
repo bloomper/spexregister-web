@@ -5,6 +5,9 @@ import {getRevisionsAction} from "@/app/(app)/spexare/actions.server";
 
 const PARTNER_FIELDS = ["partner"];
 
+/**
+ * The history of a spexare's partner.
+ */
 export function PartnerAuditTrail({spexareId, onRestored}: { spexareId: string; onRestored?: () => void }) {
     return <AuditTrail id={spexareId} fetchAction={getRevisionsAction} fields={PARTNER_FIELDS}
                        onRestored={onRestored}/>;

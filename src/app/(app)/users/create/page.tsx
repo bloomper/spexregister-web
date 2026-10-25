@@ -5,6 +5,9 @@ import {UserTable} from "@/components/user";
 import {withPolicyPage} from "@/utils/route.server";
 import {UserCreateForm} from "./create.client";
 
+/**
+ * For administrators: the user table with the form to add a user.
+ */
 export default async function UserCreatePage() {
     return withPolicyPage(Policies.user.requireCreate, async () => {
         const defaultPageSize = 15;

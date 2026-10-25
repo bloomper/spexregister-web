@@ -11,6 +11,9 @@ import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
+/**
+ * For editors: the spexare table with the form to add a spexare.
+ */
 export default async function SpexareCreatePage() {
     return withPolicyPage(Policies.spexare.requireCreate, async () => {
         const defaultPageSize = 15;

@@ -13,6 +13,9 @@ function normalizeRole(value: string): Role | null {
     return null;
 }
 
+/**
+ * The Spexregister roles in an access token, from the `spexregister` client's roles, once each.
+ */
 export function extractRolesFromClaims(claims: AccessTokenClaims): Role[] {
     const rawRoles = claims.resource_access?.spexregister?.roles ?? [];
     const roles = rawRoles
@@ -22,11 +25,17 @@ export function extractRolesFromClaims(claims: AccessTokenClaims): Role[] {
     return Array.from(new Set(roles));
 }
 
+/**
+ * The theme, when it is one of light, dark and system.
+ */
 export function normalizeTheme(value?: string): "light" | "dark" | "system" | undefined {
     if (value === "light" || value === "dark" || value === "system") return value;
     return undefined;
 }
 
+/**
+ * The Keycloak logout address with the user's language and theme, so the logout page matches the application.
+ */
 export const appendLogoutParams = (
     logoutUrl: string,
     locale?: string,

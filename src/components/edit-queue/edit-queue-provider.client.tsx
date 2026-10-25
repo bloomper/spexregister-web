@@ -3,6 +3,9 @@
 import * as React from "react";
 import {createContext, useCallback, useContext, useMemo, useState} from "react";
 
+/**
+ * The kinds of record that can be queued for editing.
+ */
 export type EntityType =
     | "spexare"
     | "news"
@@ -48,6 +51,9 @@ type EditQueueContextValue = {
 
 const EditQueueContext = createContext<EditQueueContextValue | null>(null);
 
+/**
+ * The edit queue: records picked from tables to edit one after the other in a drawer. A record is queued once.
+ */
 export function EditQueueProvider({children}: { children: React.ReactNode }) {
     const [entries, setEntries] = useState<QueueEntry[]>([]);
     const [isOpen, setIsOpen] = useState(false);
@@ -147,6 +153,9 @@ export function EditQueueProvider({children}: { children: React.ReactNode }) {
     return <EditQueueContext.Provider value={value}>{children}</EditQueueContext.Provider>;
 }
 
+/**
+ * The edit queue of the nearest `EditQueueProvider`.
+ */
 export function useEditQueue() {
     const ctx = useContext(EditQueueContext);
     if (!ctx) {

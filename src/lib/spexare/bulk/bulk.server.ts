@@ -36,6 +36,9 @@ const SpexareBulkApplyMutation = graphql(`
     }
 `);
 
+/**
+ * What a bulk change would do to each spexare, without changing anything and without caching.
+ */
 export async function preview(input: SpexareBulkInput): Promise<BulkResult> {
     const data = await runQuery(SpexareBulkPreviewQuery, {input}, {
         fetchOptions: {cache: "no-store"},
@@ -48,6 +51,9 @@ export async function preview(input: SpexareBulkInput): Promise<BulkResult> {
     return data.spexareBulkPreview as BulkResult;
 }
 
+/**
+ * Applies a bulk change, recording the reason with the revision.
+ */
 export async function apply(input: SpexareBulkInput, reason?: string): Promise<BulkResult> {
     return mutateForData(
         SpexareBulkApplyMutation,

@@ -37,6 +37,10 @@ interface RestoreDialogProps {
     onRestored?: () => void;
 }
 
+/**
+ * Restores a record to a revision after showing what would change, with a reason for the change log. A spexare, an
+ * activity and a task activity can be restored with the records that belong to them.
+ */
 export function RestoreDialog({id, type, revision, actions, onRestored}: RestoreDialogProps) {
     const t = useTranslations();
     const router = useRouter();

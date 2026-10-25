@@ -53,6 +53,10 @@ function PurgeCheckbox({id, purge, disabled}: { id: string; purge: PurgeOption; 
     );
 }
 
+/**
+ * The confirmations of deleting one row and the selected rows, with the option to purge the audit history too when
+ * `purge` is given.
+ */
 export function DataTableDeleteDialogs<T>({
                                               deleteItem,
                                               setDeleteItem,

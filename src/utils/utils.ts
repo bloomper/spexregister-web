@@ -2,10 +2,16 @@ import {type ClassValue, clsx} from "clsx";
 import {twMerge} from "tailwind-merge";
 import {format, parseISO} from "date-fns";
 
+/**
+ * Joins class names, letting later Tailwind classes override earlier ones.
+ */
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
+/**
+ * An ISO date as yyyy-MM-dd, or an empty string when it cannot be read.
+ */
 export function formatDate(date: string) {
     if (!date) {
         return "";
@@ -17,6 +23,9 @@ export function formatDate(date: string) {
     }
 }
 
+/**
+ * An ISO instant as yyyy-MM-dd HH:mm in the browser's time zone.
+ */
 export function formatDateTime(date: string) {
     if (!date) {
         return "";
@@ -28,6 +37,10 @@ export function formatDateTime(date: string) {
     }
 }
 
+/**
+ * The address of an API image through the image proxy, which adds the user's token. The last modified time busts the
+ * browser's cache when the image changes.
+ */
 export function getProxiedImageUrl(url?: string | null, lastModifiedAt?: string | null) {
     if (!url) {
         return "";
@@ -42,6 +55,9 @@ export function getProxiedImageUrl(url?: string | null, lastModifiedAt?: string 
     return `/api/image-download-proxy?${params.toString()}`;
 }
 
+/**
+ * A form error with its message key translated.
+ */
 export function translateError<T extends { message?: string }>(t: (key: string) => string, error?: T) {
     if (!error?.message) {
         return error;
@@ -68,6 +84,9 @@ function facetParamEntries(source: FacetParamSource): [string, string][] {
     });
 }
 
+/**
+ * The selected facet values in search parameters named `f.<facet>`.
+ */
 export function parseFacetParams(source: FacetParamSource): Record<string, Set<string>> {
     const selected: Record<string, Set<string>> = {};
 
@@ -85,6 +104,9 @@ export function parseFacetParams(source: FacetParamSource): Record<string, Set<s
     return selected;
 }
 
+/**
+ * Adds the selected facet values as `f.<facet>` parameters, sorted so that the same selection gives the same address.
+ */
 export function appendFacetParams(params: URLSearchParams, selectedFacets: Record<string, Set<string>>) {
     for (const id of Object.keys(selectedFacets).sort()) {
         for (const value of [...selectedFacets[id]].sort()) {
@@ -94,6 +116,9 @@ export function appendFacetParams(params: URLSearchParams, selectedFacets: Recor
     return params;
 }
 
+/**
+ * The selected facet values as the search's aggregation filters.
+ */
 export function toAggregationFilters(selectedFacets: Record<string, Set<string>>): { name: string; value: string }[] {
     return Object.keys(selectedFacets)
         .sort()

@@ -19,10 +19,16 @@ type AuthedRouteHandler = (
     authz: AuthzOk
 ) => Promise<Response> | Response;
 
+/**
+ * The JSON response of a refused request, with its status.
+ */
 export function authzFailureResponse(authz: AuthzFail): Response {
     return NextResponse.json({error: authz.message}, {status: authz.status});
 }
 
+/**
+ * Guards a route handler: a signed-out user is sent to the start page and a refused one gets the failure response.
+ */
 export function withPolicyRoute(policy: () => Promise<AuthzResult>, handler: AuthedRouteHandler): RouteHandler {
     return async (request, context) => {
         const authz = await policy();
@@ -36,6 +42,9 @@ export function withPolicyRoute(policy: () => Promise<AuthzResult>, handler: Aut
     };
 }
 
+/**
+ * Guards a server action: a signed-out user is sent to sign in, and a refusal throws.
+ */
 export async function withPolicyAction<T>(
     policy: () => Promise<AuthzResult>,
     handler: (authz: AuthzOk) => Promise<T>
@@ -50,6 +59,10 @@ export async function withPolicyAction<T>(
     return handler(authz);
 }
 
+/**
+ * Guards a page: a user without any Spexregister role is sent to `/no-access`, and one without the roles needed gets
+ * 403.
+ */
 export async function withPolicyPage<T>(
     policy: () => Promise<AuthzResult>,
     handler: (authz: AuthzOk) => Promise<T>

@@ -84,6 +84,10 @@ function useResolvedColors() {
     return colors;
 }
 
+/**
+ * Draws the graph in 3D in the theme's colours, telling a single click, which selects, from a double click, which
+ * opens.
+ */
 export function GraphCanvas({nodes, edges, tooltips, dimmedIds, focusId, onSelect, onOpen}: CanvasProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const pendingClickRef = useRef<{ id: string; timer: ReturnType<typeof setTimeout> } | null>(null);

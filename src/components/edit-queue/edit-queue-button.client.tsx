@@ -6,6 +6,9 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import {useEditQueue} from "@/components/edit-queue/edit-queue-provider.client";
 
+/**
+ * Opens the edit queue, showing how many records are in it.
+ */
 export function EditQueueButton() {
     const t = useTranslations();
     const {count, open} = useEditQueue();

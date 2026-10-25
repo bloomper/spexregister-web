@@ -21,6 +21,9 @@ interface PartnerManagerProps {
     initialPartner?: PartnerLike | null;
 }
 
+/**
+ * Shows a spexare's partner and lets the user search for another spexare to link, or unlink the partner.
+ */
 export function PartnerManager({spexareId, initialPartner}: PartnerManagerProps) {
     const t = useTranslations();
     const [isPending, startTransition] = useTransition();

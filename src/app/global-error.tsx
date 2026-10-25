@@ -2,6 +2,9 @@
 
 import {useEffect} from "react";
 
+/**
+ * Shown when the root layout itself fails.
+ */
 export default function GlobalError({error, reset}: {
     error: Error & { digest?: string };
     reset: () => void;

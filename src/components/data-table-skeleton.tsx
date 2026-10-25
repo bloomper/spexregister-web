@@ -8,6 +8,9 @@ interface DataTableSkeletonProps {
     columnTypes?: ("text" | "image" | "checkbox")[];
 }
 
+/**
+ * A placeholder of a data table while its page loads.
+ */
 export function DataTableSkeleton({
                                       rowCount = 15,
                                       columnCount = 5,

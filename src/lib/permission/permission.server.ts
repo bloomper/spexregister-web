@@ -72,6 +72,9 @@ const PermissionGrantDeleteMutation = graphql(`
 
 export type PermissionGrant = PermissionGrantSummaryFragment;
 
+/**
+ * A page of the permission grants, for administrators.
+ */
 export async function getGrantsPage(args: {
     first?: number;
     last?: number;
@@ -104,14 +107,23 @@ export async function getGrantsPage(args: {
     };
 }
 
+/**
+ * Gives a user, or everyone with a role, a permission on a spexare, a spex's participants or a spex.
+ */
 export async function createGrant(input: PermissionGrantCreate) {
     return runMutation(PermissionGrantCreateMutation, {input});
 }
 
+/**
+ * Changes a grant's permission and last valid day.
+ */
 export async function updateGrant(input: PermissionGrantUpdate) {
     return runMutation(PermissionGrantUpdateMutation, {input});
 }
 
+/**
+ * Removes a grant.
+ */
 export async function deleteGrant(id: string) {
     return runMutation(PermissionGrantDeleteMutation, {id});
 }

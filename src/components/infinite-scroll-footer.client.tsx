@@ -15,6 +15,10 @@ interface InfiniteScrollFooterProps {
     className?: string;
 }
 
+/**
+ * The end of an infinitely scrolling list: the sentinel that loads more, a spinner while loading, and an error with a
+ * way to try again.
+ */
 export function InfiniteScrollFooter({
                                          sentinelRef,
                                          loading,

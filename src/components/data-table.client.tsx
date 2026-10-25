@@ -40,6 +40,12 @@ interface DataTableProps<TData extends { id: string }> {
     }) => Promise<CursorPage<TData>>
 }
 
+/**
+ * A table over a cursor-paged GraphQL list, with server-side sorting, filtering, paging by first, previous, next and
+ * last page, and row selection. New `initialData` starts it over. Through `meta` it hands its refresh and filter
+ * functions to the toolbar, and it refreshes itself on `emitDataRefresh`. A response that arrives after a newer request
+ * is dropped.
+ */
 export function DataTable<TData extends { id: string }>({
                                                             columns,
                                                             initialData,

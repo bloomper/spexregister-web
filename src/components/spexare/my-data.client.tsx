@@ -21,6 +21,9 @@ import {exportMineAction, getMineExportStatusAction, requestRemovalAction} from 
 
 const REASON_MAX_LENGTH = 2000;
 
+/**
+ * The user's own data: an export of their spexare, and a request to be removed from the register.
+ */
 export function MyData() {
     const t = useTranslations();
     const [jobId, setJobId] = useState<string | null>(null);

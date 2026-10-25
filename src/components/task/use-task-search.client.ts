@@ -14,6 +14,9 @@ type UseTaskSearchArgs = {
     maxItems?: number;
 };
 
+/**
+ * The state of the task grid's filter on name and category, including tasks without one, typing debounced.
+ */
 export function useTaskSearch({categories, initialItems, initialPageInfo, maxItems}: UseTaskSearchArgs) {
     const [searchValue, setSearchValue] = useState("");
     const [filterQuery, setFilterQuery] = useState("");

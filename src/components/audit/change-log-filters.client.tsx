@@ -14,6 +14,9 @@ import {auditTypeLabel} from "@/utils/audit";
 
 export const ALL_TYPES = "ALL";
 
+/**
+ * What the change log is filtered by: an entity type, authors, sources and a period.
+ */
 export type ChangeLogFilter = {
     type: string;
     authors: Set<string>;

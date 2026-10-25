@@ -10,6 +10,9 @@ interface AuditInfo {
     lastModifiedBy?: string | null;
 }
 
+/**
+ * Who created and last changed a record and when.
+ */
 export function AuditInfo({item}: { item: AuditInfo }) {
     const t = useTranslations();
 

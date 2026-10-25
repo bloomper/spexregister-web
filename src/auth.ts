@@ -10,6 +10,10 @@ const appUrl = process.env.BETTER_AUTH_URL;
 const issuer = (process.env.KEYCLOAK_ISSUER ?? "").replace(/\/$/, "");
 const endpoint = (name: string) => `${issuer}/protocol/openid-connect/${name}`;
 
+/**
+ * Signing in with Keycloak through Better Auth. Without an image in Keycloak, the user's Gravatar is used when there is
+ * one. Errors during sign-in go to `/api/auth/login-error`.
+ */
 export const auth = betterAuth({
     baseURL: appUrl,
     secret: process.env.AUTH_SECRET,

@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
+/**
+ * Provides the messages of the locale in the `locale` cookie, or of the default locale.
+ */
 async function RootProvider({children}: { children: React.ReactNode }) {
     const store = await cookies();
     const cookieLocale = store.get("locale")?.value;
@@ -40,8 +43,15 @@ const metaByLocale: Record<string, { title: string; description: string }> = {
 
 const defaultLocale = normalizeLocale(undefined);
 
+/**
+ * Static, in the default locale, so that no route waits for cookies to render its metadata. The title in the user's
+ * language is set in the browser.
+ */
 export const metadata: Metadata = metaByLocale[defaultLocale] ?? metaByLocale.sv;
 
+/**
+ * The document with its fonts, the messages of the user's locale and the Umami tracking script.
+ */
 export default async function RootLayout({
                                              children,
                                          }: Readonly<{

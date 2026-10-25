@@ -1,6 +1,9 @@
 import {connection} from "next/server";
 import {umamiUrl} from "@/lib/umami.server";
 
+/**
+ * Serves Umami's tracking script from the application's own origin, cached for an hour.
+ */
 export async function GET() {
     await connection();
 

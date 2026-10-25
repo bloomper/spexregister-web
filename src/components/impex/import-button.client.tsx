@@ -24,6 +24,9 @@ interface ImportButtonProps {
     importAction: (type: ImpexType, file: File) => Promise<JobReference>;
 }
 
+/**
+ * Picks an Excel file and its format and starts an import of it, telling the user when the job is done.
+ */
 export function ImportButton({importAction}: ImportButtonProps) {
     const t = useTranslations();
     const [loading, setLoading] = useState(false);

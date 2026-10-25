@@ -22,6 +22,10 @@ interface DataFilterProps {
     onClear?: () => void
 }
 
+/**
+ * A multi-select filter in a popover, with search over labels and group labels, options in groups, and a count of the
+ * values chosen.
+ */
 export function DataFilter({
                                title,
                                options,

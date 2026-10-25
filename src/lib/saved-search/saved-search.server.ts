@@ -48,6 +48,9 @@ const DeleteMutation = graphql(`
 
 const cacheTag = "saved-search";
 
+/**
+ * The user's own saved searches, by name.
+ */
 export async function getAll(): Promise<SavedSearch[]> {
     const data = await runQuery(ListQuery, {}, {
         fetchOptions: {

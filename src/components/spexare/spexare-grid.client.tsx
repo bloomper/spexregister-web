@@ -22,6 +22,9 @@ import {useEditQueue} from "@/components/edit-queue";
 import {useDataRefresh} from "@/hooks/use-data-refresh.client";
 import {useDeepLink} from "@/hooks/use-deep-link-item.client";
 
+/**
+ * The spexare as cards scrolling on, filtered or searched with facets as `mode` says, opening a card's record.
+ */
 export function SpexareGrid({
                                 countries = [],
                                 initialItems = [],

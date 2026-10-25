@@ -6,6 +6,9 @@ import {Policies} from "@/utils/policy.server";
 import {withPolicyPage} from "@/utils/route.server";
 import {ChartNoAxesCombined} from "lucide-react";
 
+/**
+ * The statistics of the register, with data quality for editors and operations for administrators.
+ */
 export default async function AnalyticsPage() {
     return withPolicyPage(Policies.analytics.requireRead, async () => {
         const [data, t] = await Promise.all([

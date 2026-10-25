@@ -5,6 +5,9 @@ import {withPolicyPage} from "@/utils/route.server";
 import {TaskCategoryCreateForm} from "./create.client";
 import {getPaged} from "@/lib/task/category";
 
+/**
+ * For administrators: the task category table with the form to add one.
+ */
 export default async function TaskCategoryCreatePage() {
     return withPolicyPage(Policies.taskCategory.requireCreate, async () => {
         const defaultPageSize = 15;

@@ -22,6 +22,10 @@ const currentQuery = () => window.location.search.replace(/^\?/, "");
 
 const sameName = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
+/**
+ * The user's saved searches: running one, saving the current search under a name, and renaming, updating or removing
+ * one. A search is saved as the search page's query string.
+ */
 export function SavedSearchBar({savedSearches = []}: { savedSearches?: SavedSearch[] }) {
     const t = useTranslations();
     const router = useRouter();

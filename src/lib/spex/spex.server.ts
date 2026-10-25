@@ -133,22 +133,37 @@ const SpexRevivalDeleteMutation = graphql(`
     }
 `);
 
+/**
+ * Sets the category of the spex, shared with its original and revivals.
+ */
 export async function addCategory(id: string, categoryId: string) {
     return runMutationField(SpexCategoryAddMutation, {id, categoryId}, "spexCategoryAdd");
 }
 
+/**
+ * Clears the category of the spex, shared with its original and revivals.
+ */
 export async function removeCategory(id: string) {
     return runMutationField(SpexCategoryRemoveMutation, {id}, "spexCategoryRemove");
 }
 
+/**
+ * Adds a revival of the spex in the year.
+ */
 export async function createRevival(spexId: string, year: string) {
     return runMutationField(SpexRevivalCreateMutation, {spexId, year}, "spexRevivalCreate");
 }
 
+/**
+ * Removes a revival of the spex.
+ */
 export async function deleteRevival(spexId: string, id: string) {
     return runMutationField(SpexRevivalDeleteMutation, {spexId, id}, "spexRevivalDelete");
 }
 
+/**
+ * Replaces the poster through the REST API; it is shared with the original and revivals.
+ */
 export async function uploadPoster(id: string, file: File) {
     const arrayBuffer = await file.arrayBuffer();
     const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spex/${id}/poster`, arrayBuffer, {
@@ -159,6 +174,9 @@ export async function uploadPoster(id: string, file: File) {
     return response.data;
 }
 
+/**
+ * Removes the poster, shared with the original and revivals.
+ */
 export async function deletePoster(id: string) {
     await axios.delete(`${process.env.API_REST_BASE_URL}/api/spex/${id}/poster`);
     return {success: true};

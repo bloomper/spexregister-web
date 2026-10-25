@@ -4,6 +4,9 @@ import {getCountries} from "@/lib/settings";
 import {Policies} from "@/utils/policy.server";
 import {withPolicyPage} from "@/utils/route.server";
 
+/**
+ * The register as a graph to explore from a spexare, spex, task or tag.
+ */
 export default async function GraphPage() {
     return withPolicyPage(Policies.spexare.requireRead, async () => {
         const locale = await getLocale();

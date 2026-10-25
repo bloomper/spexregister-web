@@ -4,6 +4,11 @@ import {auth} from "@/auth";
 const AUTH_BASE_PATH = "/api/auth";
 const ACCOUNT_COOKIE = "account_data";
 
+/**
+ * Refreshes the Keycloak access token before the page renders when it has expired, so that server components and
+ * actions use a valid one and the browser gets the new cookies. Requests to Better Auth itself, prefetches and requests
+ * without an account cookie pass through untouched.
+ */
 export async function proxy(request: NextRequest) {
     const response = NextResponse.next();
 
@@ -54,6 +59,10 @@ export async function proxy(request: NextRequest) {
     return response;
 }
 
+/**
+ * Applies a `Set-Cookie` header to the request, so the rest of this request sees the refreshed cookies; an expired
+ * cookie is removed.
+ */
 function applySetCookie(request: NextRequest, setCookie: string) {
     const [pair, ...attributes] = setCookie.split(";").map(part => part.trim());
     const separator = pair.indexOf("=");

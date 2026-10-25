@@ -5,6 +5,9 @@ import {useTranslations} from "next-intl";
 import {AuditedType} from "@/gql/schema";
 import {auditBinaryUrl} from "@/utils/audit";
 
+/**
+ * An image as it was in a revision, or a note that it changed when it cannot be shown.
+ */
 export function AuditBinaryThumbnail({type, entityId, revision, field}: {
     type: AuditedType;
     entityId: string;

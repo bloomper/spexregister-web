@@ -13,6 +13,9 @@ interface ImportResultViewerProps {
     result: ImportResult;
 }
 
+/**
+ * What an import created, updated and removed, and the rows that failed.
+ */
 export function ImportResultViewer({result}: ImportResultViewerProps) {
     const t = useTranslations();
 

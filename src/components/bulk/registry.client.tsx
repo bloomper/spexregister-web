@@ -25,6 +25,9 @@ export type BulkOptions = {
     types: Type[];
 };
 
+/**
+ * What a bulk operation needs, as the dialog collects it.
+ */
 export type BulkPayload = {
     tags?: string[];
     spex?: string[];
@@ -276,6 +279,9 @@ const taskOperation = (operation: SpexareBulkOperation): BulkOperationDef => ({
     Fields: TaskFields,
 });
 
+/**
+ * The bulk operations offered on spexare: the fields each needs and when it has enough to run.
+ */
 export const bulkRegistry: BulkOperationDef[] = [
     tagOperation(SpexareBulkOperation.TagAdd),
     tagOperation(SpexareBulkOperation.TagRemove),
@@ -308,6 +314,9 @@ export const bulkRegistry: BulkOperationDef[] = [
 
 export const bulkMenuIcon = ListChecks;
 
+/**
+ * The definition of a bulk operation; throws for one that is not offered.
+ */
 export function findBulkOperation(operation: SpexareBulkOperation): BulkOperationDef {
     const found = bulkRegistry.find((def) => def.operation === operation);
 

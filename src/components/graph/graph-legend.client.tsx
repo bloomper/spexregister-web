@@ -13,6 +13,9 @@ const ORDER: GraphNodeType[] = [
     GraphNodeType.Tag,
 ];
 
+/**
+ * The colours of the node types in the graph.
+ */
 export function GraphLegend({present}: { present: Set<GraphNodeType> }) {
     const t = useTranslations();
 

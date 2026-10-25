@@ -160,20 +160,32 @@ const restoreMutation = graphql(`
     }
 `);
 
+/**
+ * The cache tag of history reads, revalidated after a restore.
+ */
 export const AUDIT_CACHE_TAG = "revisions";
 
+/**
+ * The revisions of a record, newest first.
+ */
 export async function getRevisions(type: AuditedType, id: string): Promise<Revision[]> {
     const data = await runQuery(revisionsQuery, {type, id});
 
     return (data?.revisions as Revision[] | undefined) ?? [];
 }
 
+/**
+ * The revisions of the records of `relatedType` that belong to a record, such as a spexare's addresses.
+ */
 export async function getRelatedRevisions(type: AuditedType, id: string, relatedType: AuditedType): Promise<Revision[]> {
     const data = await runQuery(relatedRevisionsQuery, {type, id, relatedType});
 
     return (data?.relatedRevisions as Revision[] | undefined) ?? [];
 }
 
+/**
+ * Which revisions to list in the change log. Without `from`, the period starts `sinceInDays` days back.
+ */
 export type RevisionFeedArgs = {
     first?: number;
     last?: number;
@@ -187,6 +199,9 @@ export type RevisionFeedArgs = {
     sinceInDays?: number | null;
 };
 
+/**
+ * A page of the change log, newest first.
+ */
 export async function getRevisionFeedPaged(args: RevisionFeedArgs): Promise<RevisionFeedPage> {
     const data = await runQuery(revisionFeedPagedQuery, {
         first: args.first ?? null,
@@ -206,6 +221,9 @@ export async function getRevisionFeedPaged(args: RevisionFeedArgs): Promise<Revi
 
 const REVISION_DETAIL_LIMIT_PER_TYPE = 20;
 
+/**
+ * Everything changed in a revision, at most 20 records of each type.
+ */
 export async function getRevisionDetail(revision: number): Promise<RevisionDetail | null> {
     const data = await runQuery(revisionDetailQuery, {revision, limitPerType: REVISION_DETAIL_LIMIT_PER_TYPE});
 
@@ -218,6 +236,9 @@ export async function getRevisionAuthors(): Promise<string[]> {
     return data?.revisionAuthors ?? [];
 }
 
+/**
+ * What restoring the record to the revision would change, without changing anything.
+ */
 export async function getRestorePreview(
     type: AuditedType,
     id: string,
@@ -233,6 +254,10 @@ export async function getRestorePreview(
     return data.restorePreview as RestorePreview;
 }
 
+/**
+ * Restores the record to the revision, with the records that belong to it when `cascade` is set, recording the reason
+ * with the new revision.
+ */
 export async function restore(
     type: AuditedType,
     id: string,

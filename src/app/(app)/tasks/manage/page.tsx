@@ -5,6 +5,9 @@ import {TaskTable} from "@/components/task";
 import {withPolicyPage} from "@/utils/route.server";
 import {getAll as getAllCategories} from "@/lib/task/category";
 
+/**
+ * For editors: the tasks as a table.
+ */
 export default async function TaskManagePage() {
     return withPolicyPage(Policies.task.requireUpdate, async () => {
         const defaultPageSize = 15;

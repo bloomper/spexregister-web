@@ -14,6 +14,9 @@ type UseSpexSearchArgs = {
     maxItems?: number;
 };
 
+/**
+ * The state of the spex grid's filter on title and category, typing debounced.
+ */
 export function useSpexSearch({categories, initialItems, initialPageInfo, maxItems}: UseSpexSearchArgs) {
     const [searchValue, setSearchValue] = useState("");
     const [filterQuery, setFilterQuery] = useState("");

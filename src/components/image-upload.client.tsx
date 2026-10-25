@@ -18,6 +18,10 @@ interface ImageUploadProps {
     onFileDelete?: () => void;
 }
 
+/**
+ * Picks, previews, uploads and removes an image. With `onUpload` the image is sent at once; otherwise it goes to
+ * `onFileSelect` for the form to send when it is saved, as when creating a record.
+ */
 export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, onFileDelete}: ImageUploadProps) {
     use(io());
     const t = useTranslations();

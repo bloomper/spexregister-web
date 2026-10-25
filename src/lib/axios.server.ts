@@ -4,6 +4,9 @@ import axios from "axios";
 import {getAccessToken} from "@/utils/auth.server";
 import {getLocale} from "next-intl/server";
 
+/**
+ * An axios instance for the REST API that sends the signed-in user's access token and their language.
+ */
 const instance = axios.create({
     timeout: 10000,
     headers: {

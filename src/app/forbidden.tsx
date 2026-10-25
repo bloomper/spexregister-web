@@ -2,6 +2,9 @@ import Link from "next/link";
 import {getTranslations} from "next-intl/server";
 import {Button} from "@/components/ui/button";
 
+/**
+ * Shown when the user lacks the role a page needs.
+ */
 export default async function ForbiddenPage() {
     const t = await getTranslations();
 

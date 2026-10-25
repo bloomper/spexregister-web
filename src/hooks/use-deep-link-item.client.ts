@@ -6,6 +6,9 @@ import {AUDIT_OPEN_PARAM, AUDIT_TAB_PARAM} from "@/utils/audit";
 
 export type DeepLink = { id: string; tab: string | null };
 
+/**
+ * The record and tab the address asks to open, as the change log links to it, or null.
+ */
 export function useDeepLink(): DeepLink | null {
     const params = useSearchParams();
     const id = params.get(AUDIT_OPEN_PARAM);
@@ -13,6 +16,9 @@ export function useDeepLink(): DeepLink | null {
     return id ? {id, tab: params.get(AUDIT_TAB_PARAM)} : null;
 }
 
+/**
+ * Fetches the record the address asks to open and hands it to `onFound` with the tab to show.
+ */
 export function useDeepLinkItem<TItem extends { id: string }>(
     fetchById: (id: string) => Promise<TItem | null | undefined>,
     onFound: (item: TItem, tab: string | null) => void,

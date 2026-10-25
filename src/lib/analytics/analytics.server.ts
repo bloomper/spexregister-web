@@ -108,12 +108,18 @@ const context = {
     }
 };
 
+/**
+ * Every section of the statistics the user may see, revalidated when spexare, spex, tasks, tags or users change.
+ */
 export async function get(): Promise<Analytics | undefined> {
     const data = await runQuery(AnalyticsQuery, {}, context);
 
     return data?.analytics as Analytics | undefined;
 }
 
+/**
+ * The totals, participation by year and data quality issues only, for the start page.
+ */
 export async function getSummary(): Promise<Analytics | undefined> {
     const data = await runQuery(AnalyticsSummaryQuery, {}, context);
 

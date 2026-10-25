@@ -106,6 +106,10 @@ export async function getMineAction() {
     });
 }
 
+/**
+ * Adds a spexare from the form. The birth date and the last four digits are only the form's way of entering the social
+ * security number and are not sent; deceased and published default to false.
+ */
 export async function createAction(data: unknown) {
     return withPolicyAction(Policies.spexare.requireCreate, async () => {
         const validated = spexareFormSchema.parse(data);
@@ -129,6 +133,9 @@ export async function getAction(id: string) {
     });
 }
 
+/**
+ * Changes a spexare from the form, as `createAction` sends it.
+ */
 export async function updateAction(id: string, data: unknown) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = spexareFormSchema.parse(data);
@@ -146,6 +153,9 @@ export async function updateAction(id: string, data: unknown) {
     });
 }
 
+/**
+ * Removes a spexare, and with `purge` its audit history too, which only administrators may do.
+ */
 export async function deleteAction(id: string, purge = false) {
     return withPolicyAction(Policies.spexare.requireDelete, async () => {
         const result = await (purge ? delAndPurge(id) : del(id));
@@ -154,6 +164,9 @@ export async function deleteAction(id: string, purge = false) {
     });
 }
 
+/**
+ * Removes each spexare, going on past failures, and reports those that failed.
+ */
 export async function bulkDeleteAction(ids: string[], purge = false) {
     await withPolicyAction(Policies.spexare.requireDelete, async () => {
         try {
@@ -164,12 +177,18 @@ export async function bulkDeleteAction(ids: string[], purge = false) {
     });
 }
 
+/**
+ * What a bulk change would do to each spexare, without changing anything.
+ */
 export async function bulkPreviewAction(data: unknown) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         return bulkPreview(bulkInputSchema.parse(data) as SpexareBulkInput);
     });
 }
 
+/**
+ * Applies a bulk change, recording the reason with the revision.
+ */
 export async function bulkApplyAction(data: unknown, reason?: string) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const result = await bulkApply(bulkInputSchema.parse(data) as SpexareBulkInput, reason);

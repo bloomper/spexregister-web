@@ -4,6 +4,9 @@ import {getTranslations} from "next-intl/server";
 import {TaskCategoryTable} from "@/components/task/category";
 import {withPolicyPage} from "@/utils/route.server";
 
+/**
+ * For administrators: the task categories as a table.
+ */
 export default async function TaskCategoryManagePage() {
     return withPolicyPage(Policies.taskCategory.requireUpdate, async () => {
         const defaultPageSize = 15;

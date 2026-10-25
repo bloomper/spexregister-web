@@ -6,6 +6,9 @@ import {withPolicyPage} from "@/utils/route.server";
 import {TaskCreateForm} from "./create.client";
 import {getAll as getAllCategories} from "@/lib/task/category";
 
+/**
+ * For administrators: the task table with the form to add a task.
+ */
 export default async function TaskCreatePage() {
     return withPolicyPage(Policies.task.requireCreate, async () => {
         const defaultPageSize = 15;

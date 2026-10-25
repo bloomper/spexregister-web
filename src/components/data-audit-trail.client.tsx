@@ -60,6 +60,10 @@ interface AuditTrailProps {
     onRestored?: () => void;
 }
 
+/**
+ * A record's history, loaded when opened: each revision's changes, limited to `fields` when given, and for
+ * administrators a way to restore one.
+ */
 export function AuditTrail({id, fetchAction, restoreActions, fields, onRestored}: AuditTrailProps) {
     const t = useTranslations();
     const canRestore = isAdmin(useRoles());

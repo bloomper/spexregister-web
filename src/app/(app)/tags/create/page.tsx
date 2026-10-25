@@ -5,6 +5,9 @@ import {TagTable} from "@/components/tag";
 import {withPolicyPage} from "@/utils/route.server";
 import {TagCreateForm} from "./create.client";
 
+/**
+ * For editors: the tag table with the form to add a tag.
+ */
 export default async function TagCreatePage() {
     return withPolicyPage(Policies.tag.requireCreate, async () => {
         const defaultPageSize = 15;

@@ -6,6 +6,9 @@ import {Policies} from "@/utils/policy.server";
 import {getAll as getAllCategories} from "@/lib/spex/category";
 import {Clapperboard} from "lucide-react";
 
+/**
+ * The spex as cards, scrolling on.
+ */
 export default async function SpexPage() {
     return withPolicyPage(Policies.spex.requireRead, async () => {
         const [page, categories, canUpdate] = await Promise.all([

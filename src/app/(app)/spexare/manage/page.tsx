@@ -10,6 +10,9 @@ import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
+/**
+ * All spexare, published or not, as a table for those who may change them.
+ */
 export default async function SpexareManagePage() {
     const locale = await getLocale();
 

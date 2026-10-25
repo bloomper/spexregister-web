@@ -29,6 +29,10 @@ interface ExportButtonProps {
     requiresReportType?: boolean;
 }
 
+/**
+ * Starts an export of the selected records, or of those matching the filter, as Excel or as a PDF report when
+ * `requiresReportType` is set.
+ */
 export function ExportButton({
                                  exportAction,
                                  selectedIds = [],

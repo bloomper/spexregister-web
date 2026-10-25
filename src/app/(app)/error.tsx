@@ -4,6 +4,9 @@ import {useEffect} from "react";
 import {useTranslations} from "next-intl";
 import {Button} from "@/components/ui/button";
 
+/**
+ * Shown when a page fails, with a way to try again.
+ */
 export default function AppError({error, reset}: {
     error: Error & { digest?: string };
     reset: () => void;

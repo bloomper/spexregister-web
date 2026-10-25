@@ -11,6 +11,9 @@ import {AnalyticsHighlights, AnalyticsTotals} from "@/components/analytics";
 import {requireUser} from "@/utils/auth.server";
 import {redirect} from "next/navigation";
 
+/**
+ * The start page: the register's totals and highlights, and the latest news.
+ */
 export default async function HomePage() {
     const {session} = await requireUser();
     if (!session) {

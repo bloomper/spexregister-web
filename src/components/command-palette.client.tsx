@@ -39,6 +39,10 @@ type PaletteEntry = {
 
 const normalize = (value: string) => value.trim().toLowerCase();
 
+/**
+ * The command palette, opened with Ctrl+K or Cmd+K: the pages the user may visit, their own profile and the actions
+ * their roles allow.
+ */
 export function CommandPalette() {
     const t = useTranslations();
     const router = useRouter();

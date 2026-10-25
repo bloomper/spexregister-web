@@ -13,6 +13,10 @@ import {Activity} from "@/gql/schema";
 import {redirect} from "next/navigation";
 import {revalidateTag} from "next/cache";
 
+/**
+ * The user's own spexare: their spex career, their details to change, an export of their data and a request to be
+ * removed. Users without a spexare are sent to the start page.
+ */
 export default async function MyProfilePage() {
     const item = await getMine({full: true});
 

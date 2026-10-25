@@ -100,6 +100,10 @@ function valuesFilter(field: string, chosen: Set<string>, all: readonly string[]
     return terms.length > 1 ? `(${terms.join(" OR ")})` : terms[0];
 }
 
+/**
+ * The permission grants as a table, with adding, changing and removing them. A grant is to a user or a role, on a
+ * spexare, a spex's participants or a spex, and may end on a date.
+ */
 export function PermissionGrants({initialData, users, spex, roles}: PermissionGrantsProps) {
     const t = useTranslations("PermissionGrant");
     const common = useTranslations("Common");

@@ -5,6 +5,10 @@ import {CursorPage, CursorPageInfo} from "@/types/pagination";
 
 const EMPTY_ITEMS: never[] = [];
 
+/**
+ * How to fetch and seed an infinitely scrolling list. `getKeyAction` drops items already loaded; `initialItems` and
+ * `initialPageInfo` start the list from a page rendered on the server.
+ */
 export type UseInfiniteCursorOptions<TItem> = {
     fetchPageAction: (args: { after: string | null; pageSize: number }) => Promise<CursorPage<TItem>>;
     pageSize?: number;
@@ -37,6 +41,11 @@ function useInView<T extends Element>(options?: IntersectionObserverInit) {
     return {ref, inView};
 }
 
+/**
+ * Loads the next page of a cursor-paged list whenever the sentinel scrolls into view, and the first page when the list
+ * is empty. New initial items restart the list, and a page that arrives after a restart is dropped. After an error it
+ * loads again only when forced.
+ */
 export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem>) {
     const {
         fetchPageAction,

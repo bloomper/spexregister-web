@@ -11,6 +11,9 @@ interface ActivityTimelineProps {
     activities: Activity[];
 }
 
+/**
+ * A spexare's activities as a timeline, newest spex first.
+ */
 export function ActivityTimeline({activities}: ActivityTimelineProps) {
     const t = useTranslations();
 

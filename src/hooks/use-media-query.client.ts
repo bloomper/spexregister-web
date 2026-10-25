@@ -2,6 +2,9 @@
 
 import {useSyncExternalStore} from "react";
 
+/**
+ * Whether the media query matches, following its changes; `serverValue` when rendered on the server.
+ */
 export function useMediaQuery(query: string, serverValue = false) {
     return useSyncExternalStore(
         (onChange) => {

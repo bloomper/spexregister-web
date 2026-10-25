@@ -3,6 +3,9 @@ import {getPaged} from "@/lib/spex/category";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 
+/**
+ * The spex categories as cards.
+ */
 export default async function SpexCategoryPage() {
     return withPolicyPage(Policies.spexCategory.requireRead, async () => {
         const [page, canUpdate] = await Promise.all([

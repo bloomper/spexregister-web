@@ -52,9 +52,19 @@ const SPEXARE_TABS: Partial<Record<AuditedType, string>> = {
     [AuditedType.Actor]: "activities",
 };
 
+/**
+ * The search parameter that opens a record on its list page, for links from the change log.
+ */
 export const AUDIT_OPEN_PARAM = "open";
+/**
+ * The search parameter that picks the tab of the opened record.
+ */
 export const AUDIT_TAB_PARAM = "tab";
 
+/**
+ * The page that shows a changed record: its list page opening it, and for a spexare the tab of what changed. Null for
+ * types without a page of their own.
+ */
 export function auditEntityHref(
     target: { type: AuditedType; id: string | number } | null | undefined,
     changedType?: AuditedType,
@@ -80,6 +90,9 @@ type Translator = {
     has: (key: string) => boolean;
 };
 
+/**
+ * The address of an image as it was in a revision, through the image proxy.
+ */
 export function auditBinaryUrl(type: AuditedType, entityId: string, revision: number, field: string): string {
     const params = new URLSearchParams();
 
@@ -88,6 +101,10 @@ export function auditBinaryUrl(type: AuditedType, entityId: string, revision: nu
     return `/api/image-download-proxy?${params.toString()}`;
 }
 
+/**
+ * A changed value as shown in the change log: a yes or no in words, by the field's own wording when it has one, and any
+ * other value as it is.
+ */
 export function auditFieldValue(t: Translator, type: AuditedType, field: string, value: string): string {
     if (value !== "true" && value !== "false") {
         return value;
@@ -102,12 +119,19 @@ export function auditFieldValue(t: Translator, type: AuditedType, field: string,
     return value === "true" ? t("Common.yes") : t("Common.no");
 }
 
+/**
+ * The name of an audited type in the user's language.
+ */
 export function auditTypeLabel(t: Translator, type: AuditedType): string {
     const key = `Audit.types.${type}`;
 
     return t.has(key) ? t(key) : humanize(type);
 }
 
+/**
+ * The name of a field in the user's language, from the type's own messages, then the change log's, and last the field
+ * name in words.
+ */
 export function auditFieldLabel(t: Translator, type: AuditedType, field: string): string {
     const name = ALIASES[field] ?? field;
 

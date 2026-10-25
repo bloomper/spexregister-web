@@ -5,6 +5,9 @@ import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {Shapes} from "lucide-react";
 
+/**
+ * The task categories as cards, scrolling on.
+ */
 export default async function TaskCategoryPage() {
     return withPolicyPage(Policies.taskCategory.requireRead, async () => {
         const [page, canUpdate] = await Promise.all([

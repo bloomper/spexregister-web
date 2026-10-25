@@ -13,6 +13,9 @@ const restoreActions = {
     restore: restoreRevisionAction,
 };
 
+/**
+ * The history of the records of one type that belong to a spexare, such as its addresses.
+ */
 export function AggregateAuditTrail({spexareId, relatedType, onRestored}: {
     spexareId: string;
     relatedType: AuditedType;

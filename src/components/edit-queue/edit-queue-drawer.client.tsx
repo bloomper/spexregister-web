@@ -42,6 +42,11 @@ type QueueAction =
 
 type SaveMode = "stay" | "next" | "deferred";
 
+/**
+ * Edits the queued records one after the other with each kind's form. Leaving a form with unsaved changes asks first,
+ * and saving can stay, go on to the next record or finish the move that was asked for. The tables are refreshed when
+ * the queue is done.
+ */
 export function EditQueueDrawer() {
     const t = useTranslations();
     const {count, index, current, isOpen, setOpen, goTo, updateItem, remove, clear} = useEditQueue();

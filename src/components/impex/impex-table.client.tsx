@@ -27,6 +27,9 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 
+/**
+ * The user's import and export jobs, their status, the download of an export and the result of an import.
+ */
 export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
     const t = useTranslations();
     const [viewItem, setViewItem] = useState<Job | null>(null);

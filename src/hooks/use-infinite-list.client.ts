@@ -6,6 +6,9 @@ export type UseInfiniteListOptions<TItem> = UseInfiniteCursorOptions<TItem> & {
     maxItems?: number;
 };
 
+/**
+ * An infinitely scrolling list, or with `maxItems` a list cut at that many items that does not scroll on.
+ */
 export function useInfiniteList<TItem>({maxItems, ...cursorOptions}: UseInfiniteListOptions<TItem>) {
     const infinite = useInfiniteCursor<TItem>(cursorOptions);
     const items = maxItems ? infinite.items.slice(0, maxItems) : infinite.items;

@@ -100,6 +100,9 @@ const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategory
 
 export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;
 
+/**
+ * Replaces the category's logo through the REST API.
+ */
 export async function uploadLogo(id: string, file: File) {
     const arrayBuffer = await file.arrayBuffer();
     const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spex/categories/${id}/logo`, arrayBuffer, {
@@ -110,6 +113,9 @@ export async function uploadLogo(id: string, file: File) {
     return response.data;
 }
 
+/**
+ * Removes the category's logo.
+ */
 export async function deleteLogo(id: string) {
     await axios.delete(`${process.env.API_REST_BASE_URL}/api/spex/categories/${id}/logo`);
     return {success: true};

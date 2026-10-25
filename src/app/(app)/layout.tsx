@@ -18,6 +18,10 @@ import {Role} from "@/types/auth";
 
 export const instant = false;
 
+/**
+ * The application's frame: the sidebar by role, the header and the page. Signed out, a landing page with a sign-in
+ * button takes the place of every page, which is why this tree cannot prerender a static shell.
+ */
 export default async function AppLayout({children}: { children: React.ReactNode }) {
     const {session, roles} = await requireUser();
     const t = await getTranslations();

@@ -5,6 +5,10 @@ import {redirect} from "next/navigation";
 const RETRY_COOKIE = "login_retry";
 const RETRYABLE_ERRORS = new Set(["state_mismatch"]);
 
+/**
+ * Where Better Auth sends failed sign-ins. A state mismatch, as when signing in from an old tab, is retried once;
+ * anything else, or a second failure, goes to `/login-error`.
+ */
 export const GET = async (req: NextRequest) => {
     const error = req.nextUrl.searchParams.get("error") ?? "unknown";
     const store = await cookies();

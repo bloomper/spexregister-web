@@ -98,6 +98,9 @@ function buildYears(activities: Activity[]): YearEntry[] {
     });
 }
 
+/**
+ * A spexare's spex by year, coloured by spex category, with the tasks held, or as a table.
+ */
 export function SpexareCareer({activities = []}: CareerProps) {
     const t = useTranslations();
     const [showTable, setShowTable] = useState(false);

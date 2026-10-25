@@ -6,6 +6,11 @@ import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {track} from "@/utils/umami";
 
+/**
+ * The state of a data table's view, edit and delete dialogs and its selection, and the handlers that delete one row or
+ * the selected rows, show the outcome and refresh the page. Deletions are tracked in Umami when `trackedEntity` is
+ * given.
+ */
 export function useDataTableActions<T extends { id: string }>(
     deleteAction: (id: string) => Promise<unknown>,
     bulkDeleteAction?: (ids: string[]) => Promise<unknown>,

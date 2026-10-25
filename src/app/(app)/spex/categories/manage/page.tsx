@@ -4,6 +4,9 @@ import {getTranslations} from "next-intl/server";
 import {SpexCategoryTable} from "@/components/spex/category";
 import {withPolicyPage} from "@/utils/route.server";
 
+/**
+ * For administrators: the spex categories as a table.
+ */
 export default async function SpexCategoryManagePage() {
     return withPolicyPage(Policies.spexCategory.requireUpdate, async () => {
         const defaultPageSize = 15;

@@ -183,32 +183,53 @@ export async function meOrNull(): Promise<User | null> {
     }
 }
 
+/**
+ * The Spexregister roles, labelled in the user's language.
+ */
 export async function getAuthorities(): Promise<Authority[]> {
     const data = await runQuery(AuthoritiesQuery, {});
     return (data?.authorities ?? []) as Authority[];
 }
 
+/**
+ * Gives the user's Keycloak account the roles it lacks.
+ */
 export async function addAuthorities(userId: string, ids: string[]) {
     return runMutationField(AuthoritiesAddMutation, {userId, ids}, "userAuthoritiesAdd");
 }
 
+/**
+ * Takes the roles from the user's Keycloak account.
+ */
 export async function removeAuthorities(userId: string, ids: string[]) {
     return runMutationField(AuthoritiesRemoveMutation, {userId, ids}, "userAuthoritiesRemove");
 }
 
+/**
+ * The user states, labelled in the user's language.
+ */
 export async function getStates(): Promise<State[]> {
     const data = await runQuery(StatesQuery, {});
     return (data?.states ?? []) as State[];
 }
 
+/**
+ * Moves the user to the state, enabling or disabling the Keycloak account to match.
+ */
 export async function setState(userId: string, id: string) {
     return runMutationField(StateSetMutation, {userId, id}, "userStateSet");
 }
 
+/**
+ * Links the user to their spexare.
+ */
 export async function addSpexare(userId: string, id: string) {
     return runMutationField(SpexareAddMutation, {userId, id}, "userSpexareAdd");
 }
 
+/**
+ * Unlinks the user from their spexare.
+ */
 export async function removeSpexare(userId: string) {
     return runMutationField(SpexareRemoveMutation, {userId}, "userSpexareRemove");
 }

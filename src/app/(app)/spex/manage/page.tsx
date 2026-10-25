@@ -5,6 +5,9 @@ import {SpexTable} from "@/components/spex";
 import {withPolicyPage} from "@/utils/route.server";
 import {getAll as getAllCategories} from "@/lib/spex/category";
 
+/**
+ * The original spex as a table, with their revivals, for those who may change them.
+ */
 export default async function SpexManagePage() {
     return withPolicyPage(Policies.spex.requireUpdate, async () => {
         const defaultPageSize = 15;

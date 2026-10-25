@@ -13,6 +13,9 @@ import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
+/**
+ * The published spexare as cards, scrolling on.
+ */
 export default async function SpexarePage() {
     return withPolicyPage(Policies.spexare.requireRead, async (authz) => {
         const canUpdate = isAdminOrEditor(authz.roles);

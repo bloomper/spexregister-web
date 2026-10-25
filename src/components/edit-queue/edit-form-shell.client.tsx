@@ -3,6 +3,9 @@
 import {ReactNode} from "react";
 import {SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 
+/**
+ * The frame of a form inside the edit queue.
+ */
 export function EditFormShell({
                                   embedded = false,
                                   title,

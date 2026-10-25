@@ -3,6 +3,10 @@ import "server-only";
 import {requireAnyRole} from "@/utils/auth.server";
 import {AuthzResult} from "@/types/auth";
 
+/**
+ * Page and action guards by role, mirroring what the server allows. They only decide what to show; the server enforces
+ * every rule, and what a user may do with a spexare, spex or news item comes from its `permissions`.
+ */
 export const Policies = {
     admin: {
         async requireAdmin(): Promise<AuthzResult> {

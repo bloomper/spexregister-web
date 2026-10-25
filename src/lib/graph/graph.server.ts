@@ -54,18 +54,27 @@ const context = {
     }
 };
 
+/**
+ * The graph nodes matching the text; a blank text gives the user's own spexare or a random one.
+ */
 export async function search(q: string, first = 10): Promise<GraphNode[]> {
     const data = await runQuery(SearchQuery, {q, first}, context);
 
     return (data?.graphSearch ?? []) as GraphNode[];
 }
 
+/**
+ * A node with at most `first` neighbours of each edge type, or null when it cannot be read.
+ */
 export async function getNeighbourhood(type: GraphNodeType, id: string, first = 25): Promise<GraphNeighbourhood | null> {
     const data = await runQuery(NeighbourhoodQuery, {type, id, first}, context);
 
     return (data?.graphNeighbourhood as GraphNeighbourhood | undefined) ?? null;
 }
 
+/**
+ * A page of all neighbours of a node along one edge type.
+ */
 export async function getNeighbours(args: {
     type: GraphNodeType;
     id: string;

@@ -56,6 +56,9 @@ function drawRings(context: CanvasRenderingContext2D, color: string, revival: bo
     context.stroke();
 }
 
+/**
+ * A canvas with a node's label, as a sprite texture.
+ */
 export function drawCaption(label: string, color: string, ink: string) {
     const text = label.length > 24 ? `${label.slice(0, 23)}…` : label;
     const font = `600 ${CAPTION_FONT}px system-ui, -apple-system, 'Segoe UI', sans-serif`;
@@ -88,6 +91,10 @@ export function drawCaption(label: string, color: string, ink: string) {
     return {canvas: element, aspect: width / CAPTION_HEIGHT};
 }
 
+/**
+ * A canvas with the glyph of a node's type on a disc of its colour, for nodes without an image, ringed as a revival
+ * when it is one.
+ */
 export function drawFallback(type: GraphNodeType, color: string, revival: boolean) {
     const element = canvas(DISC, DISC);
     const context = element.getContext("2d");
@@ -119,6 +126,9 @@ export function drawFallback(type: GraphNodeType, color: string, revival: boolea
     return element;
 }
 
+/**
+ * A canvas with a node's image, ringed in its type's colour and as a revival when it is one.
+ */
 export function drawImage(image: HTMLImageElement, color: string, revival: boolean) {
     const element = canvas(DISC, DISC);
     const context = element.getContext("2d");

@@ -24,6 +24,9 @@ const TypesQuery = graphql(`
     }
 `);
 
+/**
+ * Runs a query without a user, for settings that are the same for everyone and can be cached.
+ */
 async function fetchStatic<TData>(query: TypedDocumentNode<TData, Record<string, never>>, locale: string): Promise<TData> {
     const response = await fetch(process.env.API_GRAPHQL_ENDPOINT || "", {
         method: "POST",
@@ -43,12 +46,18 @@ async function fetchStatic<TData>(query: TypedDocumentNode<TData, Record<string,
     return result.data;
 }
 
+/**
+ * The countries labelled in the locale, cached across requests.
+ */
 export async function getCountries(locale: string): Promise<Country[]> {
     "use cache";
     const data = await fetchStatic(CountriesQuery, locale);
     return (data.countries ?? []) as Country[];
 }
 
+/**
+ * The address, consent, membership, vocal and toggle types labelled in the locale, cached across requests.
+ */
 export async function getTypes(locale: string): Promise<Type[]> {
     "use cache";
     const data = await fetchStatic(TypesQuery, locale);

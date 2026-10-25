@@ -22,6 +22,9 @@ type NodeListProps = {
     onShowMore: (group: PendingGroup) => void;
 };
 
+/**
+ * The graph's nodes as a list beside the canvas, filtered, with expanding, folding and loading the rest of a group.
+ */
 export function GraphNodeList({
                                   nodes, pending, busyId, focusId, filter, onFilterChange,
                                   onExpand, onCollapse, onFocus, onOpen, onShowMore,
