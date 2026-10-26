@@ -45,6 +45,7 @@ import {
     deleteGrantAction,
     getGrantsPageAction,
     searchSpexareAction,
+    searchUsersAction,
     updateGrantAction
 } from "@/app/(app)/admin/permissions/actions.server";
 
@@ -54,7 +55,6 @@ const GRANTEE_TYPES = ["USER", "ROLE"] as const;
 
 interface PermissionGrantsProps {
     initialData: CursorPage<PermissionGrant>;
-    users: Option[];
     spex: Option[];
     /** The roles with their names, as Spexregister's authorities */
     roles: Option[];
@@ -104,7 +104,7 @@ function valuesFilter(field: string, chosen: Set<string>, all: readonly string[]
  * The permission grants as a table, with adding, changing and removing them. A grant is to a user or a role, on a
  * spexare, a spex's participants or a spex, and may end on a date.
  */
-export function PermissionGrants({initialData, users, spex, roles}: PermissionGrantsProps) {
+export function PermissionGrants({initialData, spex, roles}: PermissionGrantsProps) {
     const t = useTranslations("PermissionGrant");
     const common = useTranslations("Common");
     const isClient = useIsClient();
@@ -251,7 +251,6 @@ export function PermissionGrants({initialData, users, spex, roles}: PermissionGr
             <PermissionGrantDialog
                 open={creating}
                 onOpenChange={setCreating}
-                users={users}
                 spex={spex}
                 roles={roles}
                 onCreated={() => {
@@ -287,17 +286,18 @@ export function PermissionGrants({initialData, users, spex, roles}: PermissionGr
 interface PermissionGrantDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    users: Option[];
     spex: Option[];
     roles: Option[];
     onCreated: () => void;
 }
 
-function PermissionGrantDialog({open, onOpenChange, users, spex, roles, onCreated}: PermissionGrantDialogProps) {
+function PermissionGrantDialog({open, onOpenChange, spex, roles, onCreated}: PermissionGrantDialogProps) {
     const t = useTranslations("PermissionGrant");
     const common = useTranslations("Common");
     const [isPending, startTransition] = useTransition();
     const [isSearching, startSearch] = useTransition();
+    const [isSearchingUsers, startUserSearch] = useTransition();
+    const [userOptions, setUserOptions] = useState<Option[]>([]);
     const [query, setQuery] = useState("");
     const [spexareOptions, setSpexareOptions] = useState<Option[]>([]);
     const {control, handleSubmit, reset, formState: {errors}} = useForm<PermissionGrantFormInput>({
@@ -320,6 +320,12 @@ function PermissionGrantDialog({open, onOpenChange, users, spex, roles, onCreate
         });
     }
 
+    function searchUsers(value: string) {
+        startUserSearch(async () => {
+            setUserOptions(await searchUsersAction(value.trim()));
+        });
+    }
+
     const onSubmit = handleSubmit((value) => {
         startTransition(async () => {
             try {
@@ -328,6 +334,7 @@ function PermissionGrantDialog({open, onOpenChange, users, spex, roles, onCreate
                 reset();
                 setQuery("");
                 setSpexareOptions([]);
+                setUserOptions([]);
                 onCreated();
             } catch (error) {
                 void error;
@@ -368,7 +375,8 @@ function PermissionGrantDialog({open, onOpenChange, users, spex, roles, onCreate
                                     <FieldLabel>{t("user")}</FieldLabel>
                                     <Controller control={control} name="userId" render={({field}) => (
                                         <SearchSelect label={t("user")} value={field.value} onChange={field.onChange}
-                                                      options={users} searchPlaceholder={t("searchUser")}/>
+                                                      options={userOptions} searchPlaceholder={t("searchUser")}
+                                                      onSearch={searchUsers} searching={isSearchingUsers}/>
                                     )}/>
                                     {errorOf(errors.userId?.message)}
                                 </Field>

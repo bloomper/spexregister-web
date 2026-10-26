@@ -190,7 +190,7 @@ type Documents = {
     "\n    mutation UserStateSet($userId: ID!, $id: ID!) {\n        userStateSet(userId: $userId, id: $id)\n    }\n": typeof types.UserStateSetDocument,
     "\n    mutation UserSpexareAdd($userId: ID!, $id: ID!) {\n        userSpexareAdd(userId: $userId, id: $id)\n    }\n": typeof types.UserSpexareAddDocument,
     "\n    mutation UserSpexareRemove($userId: ID!) {\n        userSpexareRemove(userId: $userId)\n    }\n": typeof types.UserSpexareRemoveDocument,
-    "\n    query UserMe {\n        me {\n            spexare {\n                ...SpexareFull\n            }\n        }\n    }\n": typeof types.UserMeDocument,
+    "\n    query UserSearch($query: String!, $first: Int!) {\n        userSearch(query: $query, first: $first) { ...UserSummary }\n    }\n": typeof types.UserSearchDocument,
     "\n    query Authorities {\n        authorities {\n            id\n            label\n        }\n    }\n": typeof types.AuthoritiesDocument,
     "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n": typeof types.StatesDocument,
 };
@@ -371,7 +371,7 @@ const documents: Documents = {
     "\n    mutation UserStateSet($userId: ID!, $id: ID!) {\n        userStateSet(userId: $userId, id: $id)\n    }\n": types.UserStateSetDocument,
     "\n    mutation UserSpexareAdd($userId: ID!, $id: ID!) {\n        userSpexareAdd(userId: $userId, id: $id)\n    }\n": types.UserSpexareAddDocument,
     "\n    mutation UserSpexareRemove($userId: ID!) {\n        userSpexareRemove(userId: $userId)\n    }\n": types.UserSpexareRemoveDocument,
-    "\n    query UserMe {\n        me {\n            spexare {\n                ...SpexareFull\n            }\n        }\n    }\n": types.UserMeDocument,
+    "\n    query UserSearch($query: String!, $first: Int!) {\n        userSearch(query: $query, first: $first) { ...UserSummary }\n    }\n": types.UserSearchDocument,
     "\n    query Authorities {\n        authorities {\n            id\n            label\n        }\n    }\n": types.AuthoritiesDocument,
     "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n": types.StatesDocument,
 };
@@ -1097,7 +1097,7 @@ export function graphql(source: "\n    mutation UserSpexareRemove($userId: ID!) 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query UserMe {\n        me {\n            spexare {\n                ...SpexareFull\n            }\n        }\n    }\n"): (typeof documents)["\n    query UserMe {\n        me {\n            spexare {\n                ...SpexareFull\n            }\n        }\n    }\n"];
+export function graphql(source: "\n    query UserSearch($query: String!, $first: Int!) {\n        userSearch(query: $query, first: $first) { ...UserSummary }\n    }\n"): (typeof documents)["\n    query UserSearch($query: String!, $first: Int!) {\n        userSearch(query: $query, first: $first) { ...UserSummary }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

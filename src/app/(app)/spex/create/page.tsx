@@ -12,13 +12,14 @@ import {getAll as getAllCategories} from "@/lib/spex/category";
 export default async function SpexCreatePage() {
     return withPolicyPage(Policies.spex.requireCreate, async () => {
         const defaultPageSize = 15;
-        const [initialData, categories] = await Promise.all([
+        const [initialData, categories, canDelete] = await Promise.all([
             getPaged({
                 first: defaultPageSize,
                 filter: "parent:NULL",
                 full: true
             }),
-            getAllCategories()
+            getAllCategories(),
+            Policies.spex.requireDelete()
         ]);
         const t = await getTranslations();
 
@@ -30,6 +31,7 @@ export default async function SpexCreatePage() {
                 <SpexTable
                     initialData={initialData}
                     categories={categories}
+                    canDelete={canDelete.ok}
                 />
                 <SpexCreateForm
                     categories={categories}

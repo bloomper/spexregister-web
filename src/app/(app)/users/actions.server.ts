@@ -14,7 +14,6 @@ import {
     getPaged,
     getStates,
     imp,
-    me,
     removeAuthorities,
     removeSpexare,
     revisions,
@@ -43,12 +42,6 @@ export async function getPageAction(args: {
             ...args,
             full: args.full === true || args.full === "true"
         });
-    });
-}
-
-export async function meAction() {
-    return withPolicyAction(Policies.user.requireReadMe, async () => {
-        return await me();
     });
 }
 

@@ -11,12 +11,13 @@ import {getAll as getAllCategories} from "@/lib/task/category";
 export default async function TaskManagePage() {
     return withPolicyPage(Policies.task.requireUpdate, async () => {
         const defaultPageSize = 15;
-        const [initialData, categories] = await Promise.all([
+        const [initialData, categories, canDelete] = await Promise.all([
             getPaged({
                 first: defaultPageSize,
                 full: true
             }),
-            getAllCategories()
+            getAllCategories(),
+            Policies.task.requireDelete()
         ]);
         const t = await getTranslations();
 
@@ -28,6 +29,7 @@ export default async function TaskManagePage() {
                 <TaskTable
                     initialData={initialData}
                     categories={categories}
+                    canDelete={canDelete.ok}
                 />
             </div>
         );

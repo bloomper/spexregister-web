@@ -49,6 +49,7 @@ export type AddressUpdate = {
     streetAddress?: string | null | undefined;
 };
 
+/** Narrows a search to hits with a facet value, as named by Facet.id and FacetValue.id. */
 export type AggregationFilterInput = {
     name: string;
     value: string;
@@ -60,6 +61,7 @@ export {AuditedType};
 
 export {BulkOutcome};
 
+/** The spexare to change: either ids or a filter, not both. */
 export type BulkTarget = {
     filter?: string | null | undefined;
     ids?: Array<string | number> | null | undefined;
@@ -99,6 +101,7 @@ export type NewsUpdate = {
     visibleTo?: any;
 };
 
+/** What a caller may do. ADMINISTRATION includes the others, and any permission includes READ. */
 export type Permission =
     | 'ADMINISTRATION'
     | 'DELETE'
@@ -115,6 +118,7 @@ export type PermissionGrantCreate = {
     validUntil?: any;
 };
 
+/** What a grant applies to: one spexare, everyone with a spex activity in a spex, or a spex. */
 export type PermissionGrantScope =
     | 'SPEX'
     | 'SPEXARE'
@@ -167,11 +171,16 @@ export type SpexUpdate = {
     year: any;
 };
 
+/** The fields of FIELDS_SET; omitted ones are left unchanged. */
 export type SpexareBulkFields = {
     deceased?: boolean | null | undefined;
     published?: boolean | null | undefined;
 };
 
+/**
+ * The operation and what it needs: tags for TAG_ADD and TAG_REMOVE, spex for SPEX_ADD and SPEX_REMOVE, spexId and tasks
+ * for TASK_ADD and TASK_REMOVE, values for CONSENT_SET and TOGGLE_SET, and fields for FIELDS_SET.
+ */
 export type SpexareBulkInput = {
     fields?: SpexareBulkFields | null | undefined;
     operation: SpexareBulkOperation;
@@ -185,6 +194,7 @@ export type SpexareBulkInput = {
 
 export {SpexareBulkOperation};
 
+/** A new spexare. */
 export type SpexareCreate = {
     comment?: string | null | undefined;
     deceased: boolean;
@@ -196,6 +206,7 @@ export type SpexareCreate = {
     socialSecurityNumber?: any;
 };
 
+/** Omitted values are left unchanged. */
 export type SpexareUpdate = {
     comment?: string | null | undefined;
     deceased: boolean;
@@ -249,6 +260,7 @@ export type ToggleUpdate = {
 
 export {TypeType};
 
+/** A consent or toggle type and the value to set. */
 export type TypeValue = {
     typeId: string | number;
     value: boolean;
@@ -3739,126 +3751,21 @@ export type UserSpexareRemoveMutationVariables = Exact<{
 
 export type UserSpexareRemoveMutation = { userSpexareRemove: any };
 
-export type UserMeQueryVariables = Exact<{ [key: string]: never; }>;
+export type UserSearchQueryVariables = Exact<{
+    query: string;
+    first: number;
+}>;
 
 
-export type UserMeQuery = {
-    me: {
-        spexare: {
-            socialSecurityNumber: any,
-            createdAt: any,
-            createdBy: string,
-            lastModifiedAt: any,
-            lastModifiedBy: string | null,
-            id: string,
-            firstName: string,
-            lastName: string,
-            nickName: string | null,
-            deceased: boolean,
-            published: boolean,
-            graduation: string | null,
-            comment: string | null,
-            imageUrl: string | null,
-            activities: Array<{
-                createdAt: any,
-                createdBy: string,
-                lastModifiedAt: any,
-                lastModifiedBy: string | null,
-                id: string,
-                spexActivity: {
-                    createdAt: any,
-                    createdBy: string,
-                    lastModifiedAt: any,
-                    lastModifiedBy: string | null,
-                    id: string,
-                    spex: {
-                        id: string,
-                        year: any,
-                        title: string,
-                        revival: boolean | null,
-                        category: { name: string } | null
-                    }
-                } | null,
-                taskActivities: Array<{
-                    createdAt: any,
-                    createdBy: string,
-                    lastModifiedAt: any,
-                    lastModifiedBy: string | null,
-                    id: string,
-                    actors: Array<{
-                        createdAt: any,
-                        createdBy: string,
-                        lastModifiedAt: any,
-                        lastModifiedBy: string | null,
-                        id: string,
-                        role: string | null,
-                        vocal: { id: string, label: string } | null
-                    } | null> | null,
-                    task: { id: string, name: string, category: { name: string, actorPresent: boolean } | null }
-                } | null> | null
-            } | null> | null,
-            addresses: Array<{
-                createdAt: any,
-                createdBy: string,
-                lastModifiedAt: any,
-                lastModifiedBy: string | null,
-                id: string,
-                streetAddress: string | null,
-                postalCode: string | null,
-                city: string | null,
-                country: any,
-                phone: string | null,
-                phoneMobile: string | null,
-                emailAddress: string | null,
-                type: { id: string, label: string }
-            } | null> | null,
-            consents: Array<{
-                createdAt: any,
-                createdBy: string,
-                lastModifiedAt: any,
-                lastModifiedBy: string | null,
-                id: string,
-                value: boolean,
-                type: { id: string, label: string }
-            } | null> | null,
-            memberships: Array<{
-                createdAt: any,
-                createdBy: string,
-                lastModifiedAt: any,
-                lastModifiedBy: string | null,
-                id: string,
-                year: any,
-                type: { id: string, label: string }
-            } | null> | null,
-            taggings: Array<{
-                createdAt: any,
-                createdBy: string,
-                lastModifiedAt: any,
-                lastModifiedBy: string | null,
-                id: string,
-                name: string
-            } | null> | null,
-            toggles: Array<{
-                createdAt: any,
-                createdBy: string,
-                lastModifiedAt: any,
-                lastModifiedBy: string | null,
-                id: string,
-                value: boolean,
-                type: { id: string, label: string }
-            } | null> | null,
-            permissions: { write: boolean, delete: boolean },
-            partner: {
-                id: string,
-                firstName: string,
-                lastName: string,
-                nickName: string | null,
-                deceased: boolean,
-                published: boolean,
-                imageUrl: string | null
-            } | null
-        } | null
-    } | null
+export type UserSearchQuery = {
+    userSearch: Array<{
+        id: string,
+        externalId: string,
+        email: any,
+        authorities: Array<{ id: string, label: string } | null> | null,
+        state: { id: string, label: string } | null,
+        spexare: { id: string, firstName: string, lastName: string, nickName: string | null } | null
+    }>
 };
 
 export type AuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
@@ -18452,61 +18359,72 @@ export const UserSpexareRemoveDocument = {
         }
     }]
 } as unknown as DocumentNode<UserSpexareRemoveMutation, UserSpexareRemoveMutationVariables>;
-export const UserMeDocument = {
-    "kind": "Document",
-    "definitions": [{
+export const UserSearchDocument = {
+    "kind": "Document", "definitions": [{
         "kind": "OperationDefinition",
         "operation": "query",
-        "name": {"kind": "Name", "value": "UserMe"},
+        "name": {"kind": "Name", "value": "UserSearch"},
+        "variableDefinitions": [{
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "query"}},
+            "type": {"kind": "NonNullType", "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}}
+        }, {
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "first"}},
+            "type": {"kind": "NonNullType", "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "Int"}}}
+        }],
         "selectionSet": {
             "kind": "SelectionSet",
             "selections": [{
                 "kind": "Field",
-                "name": {"kind": "Name", "value": "me"},
+                "name": {"kind": "Name", "value": "userSearch"},
+                "arguments": [{
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "query"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "query"}}
+                }, {
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "first"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "first"}}
+                }],
                 "selectionSet": {
                     "kind": "SelectionSet",
-                    "selections": [{
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "spexare"},
-                        "selectionSet": {
-                            "kind": "SelectionSet",
-                            "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "SpexareFull"}}]
-                        }
-                    }]
+                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "UserSummary"}}]
                 }
             }]
         }
     }, {
         "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "SpexareBase"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Spexare"}},
+        "name": {"kind": "Name", "value": "UserSummary"},
+        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "User"}},
         "selectionSet": {
             "kind": "SelectionSet",
             "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
                 "kind": "Field",
-                "name": {"kind": "Name", "value": "firstName"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}, {
+                "name": {"kind": "Name", "value": "externalId"}
+            }, {"kind": "Field", "name": {"kind": "Name", "value": "email"}}, {
                 "kind": "Field",
-                "name": {"kind": "Name", "value": "nickName"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "deceased"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "published"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "graduation"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "comment"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "permissions"},
+                "name": {"kind": "Name", "value": "authorities"},
                 "selectionSet": {
                     "kind": "SelectionSet",
-                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "write"}}, {
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
                         "kind": "Field",
-                        "name": {"kind": "Name", "value": "delete"}
+                        "name": {"kind": "Name", "value": "label"}
                     }]
                 }
             }, {
                 "kind": "Field",
-                "name": {"kind": "Name", "value": "partner"},
+                "name": {"kind": "Name", "value": "state"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "label"}
+                    }]
+                }
+            }, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexare"},
                 "selectionSet": {
                     "kind": "SelectionSet",
                     "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
@@ -18515,437 +18433,12 @@ export const UserMeDocument = {
                     }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}, {
                         "kind": "Field",
                         "name": {"kind": "Name", "value": "nickName"}
-                    }, {"kind": "Field", "name": {"kind": "Name", "value": "deceased"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "published"}
-                    }, {"kind": "Field", "name": {"kind": "Name", "value": "imageUrl"}}]
-                }
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "ActivityBase"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Activity"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "SpexActivityBase"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "SpexActivity"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "spex"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "year"}
-                    }, {"kind": "Field", "name": {"kind": "Name", "value": "title"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "revival"}
-                    }, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "category"},
-                        "selectionSet": {
-                            "kind": "SelectionSet",
-                            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "name"}}]
-                        }
                     }]
                 }
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "SpexActivityFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "SpexActivity"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "SpexActivityBase"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "TaskActivityBase"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "TaskActivity"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "task"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "name"}
-                    }, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "category"},
-                        "selectionSet": {
-                            "kind": "SelectionSet",
-                            "selections": [{
-                                "kind": "Field",
-                                "name": {"kind": "Name", "value": "name"}
-                            }, {"kind": "Field", "name": {"kind": "Name", "value": "actorPresent"}}]
-                        }
-                    }]
-                }
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "ActorSummary"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Actor"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "role"}
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "vocal"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "label"}
-                    }]
-                }
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "ActorFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Actor"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "ActorSummary"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "TaskActivityFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "TaskActivity"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "TaskActivityBase"}
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "actors"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "ActorFull"}}]
-                }
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "ActivityFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Activity"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "ActivityBase"}
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "spexActivity"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "SpexActivityFull"}}]
-                }
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "taskActivities"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "TaskActivityFull"}}]
-                }
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "AddressSummary"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Address"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "streetAddress"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "postalCode"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "city"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "country"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "phone"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "phoneMobile"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "emailAddress"}
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "type"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "label"}
-                    }]
-                }
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "AddressFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Address"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "AddressSummary"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "ConsentSummary"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Consent"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "value"}
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "type"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "label"}
-                    }]
-                }
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "ConsentFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Consent"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "ConsentSummary"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "MembershipSummary"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Membership"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "year"}
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "type"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "label"}
-                    }]
-                }
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "MembershipFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Membership"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "MembershipSummary"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "TaggingSummary"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Tag"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "name"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "TaggingFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Tag"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "TaggingSummary"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "ToggleSummary"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Toggle"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "value"}
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "type"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
-                        "kind": "Field",
-                        "name": {"kind": "Name", "value": "label"}
-                    }]
-                }
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "ToggleFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Toggle"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "ToggleSummary"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
-            }]
-        }
-    }, {
-        "kind": "FragmentDefinition",
-        "name": {"kind": "Name", "value": "SpexareFull"},
-        "typeCondition": {"kind": "NamedType", "name": {"kind": "Name", "value": "Spexare"}},
-        "selectionSet": {
-            "kind": "SelectionSet",
-            "selections": [{
-                "kind": "FragmentSpread",
-                "name": {"kind": "Name", "value": "SpexareBase"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "socialSecurityNumber"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "activities"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "ActivityFull"}}]
-                }
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "addresses"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "AddressFull"}}]
-                }
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "consents"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "ConsentFull"}}]
-                }
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "memberships"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "MembershipFull"}}]
-                }
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "taggings"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "TaggingFull"}}]
-                }
-            }, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "toggles"},
-                "selectionSet": {
-                    "kind": "SelectionSet",
-                    "selections": [{"kind": "FragmentSpread", "name": {"kind": "Name", "value": "ToggleFull"}}]
-                }
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "createdAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "createdBy"}
-            }, {"kind": "Field", "name": {"kind": "Name", "value": "lastModifiedAt"}}, {
-                "kind": "Field",
-                "name": {"kind": "Name", "value": "lastModifiedBy"}
             }]
         }
     }]
-} as unknown as DocumentNode<UserMeQuery, UserMeQueryVariables>;
+} as unknown as DocumentNode<UserSearchQuery, UserSearchQueryVariables>;
 export const AuthoritiesDocument = {
     "kind": "Document",
     "definitions": [{

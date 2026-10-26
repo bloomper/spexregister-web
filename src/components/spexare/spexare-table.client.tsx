@@ -61,6 +61,8 @@ interface SpexareTableProps {
     spexCategories?: SpexCategory[],
     initialData: CursorPage<Spexare>,
     currentSpexareId?: string | null,
+    /** Offers deleting rows; without it there is no delete action */
+    canDelete: boolean,
 }
 
 export function SpexareTable({
@@ -73,6 +75,7 @@ export function SpexareTable({
                                  spexCategories = [],
                                  initialData,
                                  currentSpexareId,
+                                 canDelete,
                              }: SpexareTableProps) {
     const t = useTranslations();
     const router = useRouter();
@@ -191,10 +194,10 @@ export function SpexareTable({
                 }
                 meta={{
                     setEditItem,
-                    setDeleteItem: (item: Spexare | null) => {
+                    setDeleteItem: canDelete ? (item: Spexare | null) => {
                         setPurge(false);
                         setDeleteItem(item);
-                    },
+                    } : undefined,
                     addToQueue: (item) => enqueue("spexare", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
@@ -248,7 +251,7 @@ export function SpexareTable({
                                 </Button>
                             )}
 
-                            {selectedRows.length > 0 && (
+                            {canDelete && selectedRows.length > 0 && (
                                 <Button
                                     variant="destructive"
                                     size="sm"

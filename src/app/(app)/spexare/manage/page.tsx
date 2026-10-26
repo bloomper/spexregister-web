@@ -18,7 +18,7 @@ export default async function SpexareManagePage() {
 
     return withPolicyPage(Policies.spexare.requireUpdate, async () => {
         const defaultPageSize = 15;
-        const [initialData, types, countries, tags, tasks, taskCategories, spex, spexCategories, mySpexare, t] = await Promise.all([
+        const [initialData, types, countries, tags, tasks, taskCategories, spex, spexCategories, mySpexare, t, canDelete] = await Promise.all([
             getPaged({
                 first: defaultPageSize,
                 filter: "(published:TRUE OR published:FALSE)",
@@ -32,7 +32,8 @@ export default async function SpexareManagePage() {
             getAllSpex(),
             getAllSpexCategories(),
             getMine(),
-            getTranslations()
+            getTranslations(),
+            Policies.spexare.requireDelete()
         ]);
 
         return (
@@ -50,6 +51,7 @@ export default async function SpexareManagePage() {
                     spexCategories={spexCategories}
                     initialData={initialData}
                     currentSpexareId={mySpexare?.id ?? null}
+                    canDelete={canDelete.ok}
                 />
             </div>
         );

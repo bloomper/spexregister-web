@@ -19,7 +19,7 @@ export default async function SpexareCreatePage() {
         const defaultPageSize = 15;
         const locale = await getLocale();
 
-        const [initialData, types, countries, tags, tasks, taskCategories, spex, spexCategories, mySpexare, t] = await Promise.all([
+        const [initialData, types, countries, tags, tasks, taskCategories, spex, spexCategories, mySpexare, t, canDelete] = await Promise.all([
             getPaged({
                 first: defaultPageSize,
                 filter: "(published:TRUE OR published:FALSE)",
@@ -33,7 +33,8 @@ export default async function SpexareCreatePage() {
             getAllSpex(),
             getAllSpexCategories(),
             getMine(),
-            getTranslations()
+            getTranslations(),
+            Policies.spexare.requireDelete()
         ]);
 
         return (
@@ -51,6 +52,7 @@ export default async function SpexareCreatePage() {
                     spexCategories={spexCategories}
                     initialData={initialData}
                     currentSpexareId={mySpexare?.id ?? null}
+                    canDelete={canDelete.ok}
                 />
                 <SpexareCreateForm
                     types={types}

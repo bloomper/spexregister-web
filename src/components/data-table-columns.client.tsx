@@ -71,9 +71,11 @@ function ActionsCell<T extends RowData>({row, table}: {
                             {t("EditQueue.add")}
                         </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem className="text-destructive" onClick={() => meta?.setDeleteItem?.(row.original)}>
-                        {t("Common.delete")}
-                    </DropdownMenuItem>
+                    {meta?.setDeleteItem && (
+                        <DropdownMenuItem className="text-destructive" onClick={() => meta.setDeleteItem?.(row.original)}>
+                            {t("Common.delete")}
+                        </DropdownMenuItem>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>

@@ -530,7 +530,6 @@ const resolvers = {
         }
         return {permissionGrantDelete: null};
     },
-    UserMe: () => ({me: {spexare: null}}),
     Authorities: () => ({
         authorities: [
             {id: "ADMIN", label: "Administratör"},
@@ -762,6 +761,12 @@ const resolvers = {
 
     UserPagedSummary: () => paged("userPaged", userList),
     UserPagedFull: () => paged("userPaged", userList.map(withAudit)),
+    UserSearch: (v) => {
+        const q = (v.query ?? "").toLowerCase();
+        const matched = userList.filter((u) =>
+            [u.email, u.spexare?.firstName, u.spexare?.lastName].some((value) => value?.toLowerCase().includes(q)));
+        return {userSearch: matched.slice(0, v.first ?? 20)};
+    },
 
     revisions: () => ({
         revisions: [

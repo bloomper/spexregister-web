@@ -57,9 +57,12 @@ export const columns: DataTableColumnDef<Task>[] = [
 export function TaskTable({
                               initialData,
                               categories,
+                              canDelete,
                           }: {
     initialData: CursorPage<Task>,
     categories: TaskCategory[],
+    /** Offers deleting rows; without it there is no delete action */
+    canDelete: boolean,
 }) {
     const t = useTranslations();
     const router = useRouter();
@@ -153,7 +156,7 @@ export function TaskTable({
                 onFetch={(args) => getPageAction({...args, full: true})}
                 meta={{
                     setEditItem,
-                    setDeleteItem,
+                    setDeleteItem: canDelete ? setDeleteItem : undefined,
                     addToQueue: (item) => enqueue("task", item),
                     setFilter: (handler) => {
                         setFilterQueryRef.current = handler;
@@ -200,7 +203,7 @@ export function TaskTable({
                                 </Button>
                             )}
 
-                            {selectedRows.length > 0 && (
+                            {canDelete && selectedRows.length > 0 && (
                                 <Button
                                     variant="destructive"
                                     size="sm"

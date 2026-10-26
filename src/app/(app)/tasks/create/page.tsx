@@ -12,12 +12,13 @@ import {getAll as getAllCategories} from "@/lib/task/category";
 export default async function TaskCreatePage() {
     return withPolicyPage(Policies.task.requireCreate, async () => {
         const defaultPageSize = 15;
-        const [initialData, categories] = await Promise.all([
+        const [initialData, categories, canDelete] = await Promise.all([
             getPaged({
                 first: defaultPageSize,
                 full: true
             }),
-            getAllCategories()
+            getAllCategories(),
+            Policies.task.requireDelete()
         ]);
         const t = await getTranslations();
 
@@ -29,6 +30,7 @@ export default async function TaskCreatePage() {
                 <TaskTable
                     initialData={initialData}
                     categories={categories}
+                    canDelete={canDelete.ok}
                 />
                 <TaskCreateForm
                     categories={categories}

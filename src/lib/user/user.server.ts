@@ -136,13 +136,9 @@ const SpexareRemoveMutation = graphql(`
     }
 `);
 
-const MeQuery = graphql(`
-    query UserMe {
-        me {
-            spexare {
-                ...SpexareFull
-            }
-        }
+const UserSearchQuery = graphql(`
+    query UserSearch($query: String!, $first: Int!) {
+        userSearch(query: $query, first: $first) { ...UserSummary }
     }
 `);
 
@@ -164,23 +160,12 @@ const StatesQuery = graphql(`
     }
 `);
 
-export async function me(): Promise<User | null | undefined> {
-    const data = await runQuery(MeQuery, {}, {
-        fetchOptions: {
-            next: {tags: ["me"]}
-        }
-    });
-
-    return data?.me as User | null | undefined;
-}
-
-export async function meOrNull(): Promise<User | null> {
-    try {
-        return (await me()) ?? null;
-    } catch (error) {
-        console.warn("Could not load the current user; rendering without it", error);
-        return null;
-    }
+/**
+ * Users to pick from, found by the email, username or name of their account or by the name of their spexare.
+ */
+export async function search(query: string, first = 20): Promise<User[]> {
+    const data = await runQuery(UserSearchQuery, {query, first});
+    return (data?.userSearch ?? []) as User[];
 }
 
 /**

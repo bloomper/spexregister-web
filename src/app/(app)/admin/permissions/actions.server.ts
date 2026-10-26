@@ -12,7 +12,9 @@ import {
     toUpdateInput
 } from "@/lib/permission/schema";
 import {search} from "@/lib/spexare";
+import {search as searchUsers} from "@/lib/user";
 import type {PermissionGrantCreate, PermissionGrantUpdate} from "@/gql/graphql";
+import type {User} from "@/gql/schema";
 import type {SortDirection} from "@/gql/schema";
 
 export async function getGrantsPageAction(args: {
@@ -71,4 +73,19 @@ export async function searchSpexareAction(q: string) {
             label: [spexare.firstName, spexare.nickName ? `"${spexare.nickName}"` : null, spexare.lastName].filter(Boolean).join(" "),
         }));
     });
+}
+
+export async function searchUsersAction(q: string) {
+    return withPolicyAction(Policies.admin.requireAdmin, async () => {
+        const users = await searchUsers(q.trim());
+
+        return users.map(toOption);
+    });
+}
+
+function toOption(user: User) {
+    return {
+        id: user.id,
+        label: user.spexare ? `${user.spexare.firstName} ${user.spexare.lastName} (${user.email})` : user.email,
+    };
 }

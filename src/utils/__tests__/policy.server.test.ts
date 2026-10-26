@@ -26,9 +26,7 @@ describe("Policies role matrix", () => {
         expect(await rolesFor(Policies.spex.requireDelete)).toEqual(["ADMIN"]);
     });
 
-    it("user: self-read is broad, admin controls the rest", async () => {
-        expect(await rolesFor(Policies.user.requireReadMe)).toEqual(["USER", "EDITOR", "ADMIN"]);
-        requireAnyRole.mockClear();
+    it("user: admin controls everything", async () => {
         expect(await rolesFor(Policies.user.requireRead)).toEqual(["ADMIN"]);
         requireAnyRole.mockClear();
         expect(await rolesFor(Policies.user.requireDelete)).toEqual(["ADMIN"]);
