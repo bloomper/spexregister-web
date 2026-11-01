@@ -362,7 +362,7 @@ export type FieldChange = {
     __typename?: 'FieldChange';
     /** Whether the field holds a binary value such as an image; the values are then content types. */
     binary: Scalars['Boolean']['output'];
-    entityId?: Maybe<Scalars['Long']['output']>;
+    entityId?: Maybe<Scalars['ID']['output']>;
     field: Scalars['String']['output'];
     newValue?: Maybe<Scalars['String']['output']>;
     oldValue?: Maybe<Scalars['String']['output']>;
@@ -2403,7 +2403,7 @@ export type RestorePreviewEntry = {
     __typename?: 'RestorePreviewEntry';
     action: RestoreAction;
     changes: Array<FieldChange>;
-    id?: Maybe<Scalars['Long']['output']>;
+    id?: Maybe<Scalars['ID']['output']>;
     type: AuditedType;
 };
 
@@ -2420,14 +2420,9 @@ export type RestoreResult = {
 /** Something a restore could not do as asked. */
 export type RestoreWarning = {
     __typename?: 'RestoreWarning';
-    /**
-     * ID_REASSIGNED when a removed record was re-created under a new id, REFERENCE_MISSING when it pointed at something
-     * that no longer exists.
-     */
+    /** REFERENCE_MISSING when a restored record pointed at something that no longer exists. */
     code: Scalars['String']['output'];
     message: Scalars['String']['output'];
-    newId?: Maybe<Scalars['Long']['output']>;
-    previousId?: Maybe<Scalars['Long']['output']>;
 };
 
 /** A change to one entity in one revision. */
@@ -2435,7 +2430,7 @@ export type Revision = {
     __typename?: 'Revision';
     /** The audited fields that changed. A social security number is shown as the birth date to those who may not see it. */
     changes: Array<FieldChange>;
-    entityId?: Maybe<Scalars['Long']['output']>;
+    entityId?: Maybe<Scalars['ID']['output']>;
     entityLabel?: Maybe<Scalars['String']['output']>;
     modifiedAt: Scalars['Instant']['output'];
     /** Who made it, by email; for the revival service, its account on behalf of the person it acted for. */
@@ -2462,7 +2457,7 @@ export type RevisionDetail = {
 export type RevisionEntityChange = {
     __typename?: 'RevisionEntityChange';
     changes: Array<FieldChange>;
-    entityId?: Maybe<Scalars['Long']['output']>;
+    entityId?: Maybe<Scalars['ID']['output']>;
     entityLabel?: Maybe<Scalars['String']['output']>;
     revisionType: RevisionType;
     /** What to open to see the change, such as the spexare an address belongs to. */
@@ -2501,7 +2496,7 @@ export type RevisionFeedEntry = {
 /** The entity whose history a change belongs to. */
 export type RevisionTarget = {
     __typename?: 'RevisionTarget';
-    id: Scalars['Long']['output'];
+    id: Scalars['ID']['output'];
     label?: Maybe<Scalars['String']['output']>;
     type: AuditedType;
 };

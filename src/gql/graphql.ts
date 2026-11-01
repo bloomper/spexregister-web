@@ -442,7 +442,7 @@ export type RevisionsQuery = {
     revisions: Array<{
         revision: any,
         type: AuditedType,
-        entityId: any,
+        entityId: string | null,
         entityLabel: string | null,
         revisionType: RevisionType,
         modifiedAt: any,
@@ -453,7 +453,7 @@ export type RevisionsQuery = {
             newValue: string | null,
             binary: boolean,
             type: AuditedType | null,
-            entityId: any
+            entityId: string | null
         }>
     } | null> | null
 };
@@ -469,7 +469,7 @@ export type RelatedRevisionsQuery = {
     relatedRevisions: Array<{
         revision: any,
         type: AuditedType,
-        entityId: any,
+        entityId: string | null,
         entityLabel: string | null,
         revisionType: RevisionType,
         modifiedAt: any,
@@ -480,7 +480,7 @@ export type RelatedRevisionsQuery = {
             newValue: string | null,
             binary: boolean,
             type: AuditedType | null,
-            entityId: any
+            entityId: string | null
         }>
     } | null> | null
 };
@@ -540,7 +540,7 @@ export type RevisionDetailQuery = {
         summary: Array<{ type: AuditedType, count: any, returned: number }>,
         entities: Array<{
             type: AuditedType,
-            entityId: any,
+            entityId: string | null,
             entityLabel: string | null,
             revisionType: RevisionType,
             changes: Array<{
@@ -549,9 +549,9 @@ export type RevisionDetailQuery = {
                 newValue: string | null,
                 binary: boolean,
                 type: AuditedType | null,
-                entityId: any
+                entityId: string | null
             }>,
-            target: { type: AuditedType, id: any, label: string | null } | null
+            target: { type: AuditedType, id: string, label: string | null } | null
         }>
     } | null
 };
@@ -573,11 +573,11 @@ export type RestorePreviewQuery = {
     restorePreview: {
         entries: Array<{
             type: AuditedType,
-            id: any,
+            id: string | null,
             action: RestoreAction,
             changes: Array<{ field: string, oldValue: string | null, newValue: string | null, binary: boolean }>
         }>,
-        warnings: Array<{ code: string, message: string, previousId: any, newId: any }>
+        warnings: Array<{ code: string, message: string }>
     } | null
 };
 
@@ -595,7 +595,7 @@ export type RestoreMutation = {
         updated: number,
         created: number,
         deleted: number,
-        warnings: Array<{ code: string, message: string, previousId: any, newId: any }>
+        warnings: Array<{ code: string, message: string }>
     } | null
 };
 
@@ -7552,10 +7552,7 @@ export const RestorePreviewDocument = {
                             "selections": [{
                                 "kind": "Field",
                                 "name": {"kind": "Name", "value": "code"}
-                            }, {"kind": "Field", "name": {"kind": "Name", "value": "message"}}, {
-                                "kind": "Field",
-                                "name": {"kind": "Name", "value": "previousId"}
-                            }, {"kind": "Field", "name": {"kind": "Name", "value": "newId"}}]
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "message"}}]
                         }
                     }]
                 }
@@ -7625,10 +7622,7 @@ export const RestoreDocument = {
                             "selections": [{
                                 "kind": "Field",
                                 "name": {"kind": "Name", "value": "code"}
-                            }, {"kind": "Field", "name": {"kind": "Name", "value": "message"}}, {
-                                "kind": "Field",
-                                "name": {"kind": "Name", "value": "previousId"}
-                            }, {"kind": "Field", "name": {"kind": "Name", "value": "newId"}}]
+                            }, {"kind": "Field", "name": {"kind": "Name", "value": "message"}}]
                         }
                     }]
                 }
