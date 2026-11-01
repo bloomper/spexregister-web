@@ -44,7 +44,7 @@ describe("AuditDiff", () => {
 
     it("labels a field by its owner when the change names one", () => {
         render(<AuditDiff
-            changes={[change({field: "streetAddress", type: AuditedType.Address, entityId: 12})]}
+            changes={[change({field: "streetAddress", type: AuditedType.Address, entityId: "12"})]}
             type={AuditedType.Spexare} entityId="88" revision={2}/>);
 
         // `has()` is false under the test intl mock, so the humanized fallback is what shows.
@@ -54,7 +54,7 @@ describe("AuditDiff", () => {
     it("addresses a binary at the timeline's entity, which is what grants access", () => {
         capture.current = [];
         render(<AuditDiff
-            changes={[change({field: "poster", binary: true, type: AuditedType.SpexDetails, entityId: 3})]}
+            changes={[change({field: "poster", binary: true, type: AuditedType.SpexDetails, entityId: "3"})]}
             type={AuditedType.Spex} entityId="7" revision={2}
             previousRevisionOf={() => 1}/>);
 

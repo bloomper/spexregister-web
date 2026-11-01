@@ -136,8 +136,6 @@ const restorePreviewQuery = graphql(`
             warnings {
                 code
                 message
-                previousId
-                newId
             }
         }
     }
@@ -153,8 +151,6 @@ const restoreMutation = graphql(`
             warnings {
                 code
                 message
-                previousId
-                newId
             }
         }
     }

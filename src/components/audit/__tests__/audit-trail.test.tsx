@@ -24,7 +24,7 @@ vi.mock("@/components/audit/audit-binary-thumbnail.client", () => ({
 const revision = (overrides: Partial<Revision> = {}): Revision => ({
     revision: 2,
     type: AuditedType.Tag,
-    entityId: 1,
+    entityId: "1",
     revisionType: RevisionType.Mod,
     modifiedAt: "2026-09-08T14:02:00Z",
     modifiedBy: "anna@spexregister.com",
@@ -133,14 +133,14 @@ describe("AuditTrail binary changes", () => {
         const fetchAction = vi.fn().mockResolvedValue([
             revision({
                 type: AuditedType.Spex,
-                entityId: 7,
+                entityId: "7",
                 changes: [{
                     field: "poster",
                     oldValue: null,
                     newValue: "image/png",
                     binary: true,
                     type: AuditedType.SpexDetails,
-                    entityId: 42,
+                    entityId: "42",
                 }],
             } as Partial<Revision>),
         ]);
@@ -217,9 +217,9 @@ describe("AuditTrail restore availability", () => {
     it("still offers restore for a live entity listed beside a removed one", async () => {
         roles.current = ["ADMIN"];
         const fetchAction = vi.fn().mockResolvedValue([
-            revision({revision: 9, entityId: 2, revisionType: RevisionType.Del, changes: []}),
-            revision({revision: 5, entityId: 1}),
-            revision({revision: 1, entityId: 1, revisionType: RevisionType.Add, changes: []}),
+            revision({revision: 9, entityId: "2", revisionType: RevisionType.Del, changes: []}),
+            revision({revision: 5, entityId: "1"}),
+            revision({revision: 1, entityId: "1", revisionType: RevisionType.Add, changes: []}),
         ]);
         render(<AuditTrail id="1" fetchAction={fetchAction}
                            restoreActions={{preview: vi.fn(), restore: vi.fn()}}/>);
@@ -234,26 +234,26 @@ describe("AuditTrail across several entities", () => {
     const sharedRevision = () => [
         revision({
             revision: 1,
-            entityId: 1,
+            entityId: "1",
             changes: [{
                 field: "city",
                 oldValue: null,
                 newValue: "Göteborg",
                 binary: false,
                 type: AuditedType.Address,
-                entityId: 1
+                entityId: "1"
             }],
         } as Partial<Revision>),
         revision({
             revision: 1,
-            entityId: 2,
+            entityId: "2",
             changes: [{
                 field: "city",
                 oldValue: null,
                 newValue: "Stockholm",
                 binary: false,
                 type: AuditedType.Address,
-                entityId: 2
+                entityId: "2"
             }],
         } as Partial<Revision>),
     ];
@@ -285,8 +285,8 @@ describe("AuditTrail entity labelling and filtering", () => {
     it("names the entity when the timeline covers more than one", async () => {
         roles.current = [];
         const fetchAction = vi.fn().mockResolvedValue([
-            revision({revision: 1, entityId: 1, entityLabel: "1962"} as Partial<Revision>),
-            revision({revision: 1, entityId: 2, entityLabel: "1989"} as Partial<Revision>),
+            revision({revision: 1, entityId: "1", entityLabel: "1962"} as Partial<Revision>),
+            revision({revision: 1, entityId: "2", entityLabel: "1989"} as Partial<Revision>),
         ]);
         render(<AuditTrail id="1" fetchAction={fetchAction}/>);
 
@@ -299,8 +299,8 @@ describe("AuditTrail entity labelling and filtering", () => {
     it("leaves the label out when the timeline is about a single entity", async () => {
         roles.current = [];
         const fetchAction = vi.fn().mockResolvedValue([
-            revision({revision: 3, entityId: 1, entityLabel: "1962"} as Partial<Revision>),
-            revision({revision: 1, entityId: 1, entityLabel: "1962"} as Partial<Revision>),
+            revision({revision: 3, entityId: "1", entityLabel: "1962"} as Partial<Revision>),
+            revision({revision: 1, entityId: "1", entityLabel: "1962"} as Partial<Revision>),
         ]);
         render(<AuditTrail id="1" fetchAction={fetchAction}/>);
 

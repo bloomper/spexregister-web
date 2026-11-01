@@ -7,11 +7,11 @@ vi.mock("@/components/audit/audit-binary-thumbnail.client", () => ({
     AuditBinaryThumbnail: () => <span data-testid="binary-thumbnail"/>,
 }));
 
-const spexareTarget = {type: AuditedType.Spexare, id: 88, label: "Anna Andersson"};
+const spexareTarget = {type: AuditedType.Spexare, id: "88", label: "Anna Andersson"};
 
 const entity = (overrides: Partial<RevisionEntityChange> = {}): RevisionEntityChange => ({
     type: AuditedType.Spexare,
-    entityId: 88,
+    entityId: "88",
     entityLabel: "Anna Andersson",
     revisionType: RevisionType.Mod,
     changes: [{field: "firstName", oldValue: "Anna", newValue: "Anna-Karin", binary: false}],
@@ -54,7 +54,7 @@ describe("RevisionDetailPanel", () => {
                 entity(),
                 entity({
                     type: AuditedType.Address,
-                    entityId: 12,
+                    entityId: "12",
                     entityLabel: "Storgatan 1",
                     changes: [{field: "city", oldValue: "Göteborg", newValue: "Mölndal", binary: false}],
                 }),
@@ -69,7 +69,7 @@ describe("RevisionDetailPanel", () => {
 
     it("links each changed entity to the tab of its root that shows it", () => {
         render(<RevisionDetailPanel detail={detail({
-            entities: [entity({type: AuditedType.Membership, entityId: 3, entityLabel: "2024"})],
+            entities: [entity({type: AuditedType.Membership, entityId: "3", entityLabel: "2024"})],
         })}/>);
 
         expect(screen.getByRole("link", {name: "Membership: Audit.openRecord"}))
