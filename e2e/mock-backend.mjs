@@ -860,6 +860,9 @@ function operationNameOf(query) {
     return null;
 }
 
+// Operation name -> the classification its next call fails with, set by the mock fixture
+const failNext = new Map();
+
 function handleGraphql(body, res) {
     let payload;
     try {
@@ -875,8 +878,15 @@ function handleGraphql(body, res) {
         res.end(JSON.stringify({data: {}}));
         return;
     }
-    const data = resolver(payload.variables || {});
+    const failure = failNext.get(op);
+
     res.writeHead(200, {"content-type": "application/json"});
+    if (failure) {
+        failNext.delete(op);
+        res.end(JSON.stringify({data: null, errors: [{message: "Avsiktligt fel i E2E-testet", extensions: {classification: failure}}]}));
+        return;
+    }
+    const data = resolver(payload.variables || {});
     res.end(JSON.stringify({data}));
 }
 
@@ -1040,7 +1050,15 @@ const server = createServer((req, res) => {
             handleLogout(url, res);
             return;
         }
+        if (req.method === "POST" && path === "/__fail") {
+            const {operation, classification} = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+
+            failNext.set(operation, classification);
+            res.writeHead(204).end();
+            return;
+        }
         if (req.method === "POST" && path === "/__reset") {
+            failNext.clear();
             resetState();
             res.writeHead(204).end();
             return;
