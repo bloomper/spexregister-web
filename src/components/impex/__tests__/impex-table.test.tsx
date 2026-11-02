@@ -65,6 +65,7 @@ describe("ImpexTable", () => {
 
     it("offers downloading a finished export and deleting a job", async () => {
         vi.mocked(actions.deleteAction).mockResolvedValue(undefined as never);
+        vi.mocked(actions.getJobsAction).mockResolvedValue(jobs.slice(1));
         render(<ImpexTable initialData={pageOf(jobs)}/>);
 
         await userEvent.click(screen.getAllByRole("button", {name: "Common.openMenu"})[0]);
@@ -74,5 +75,7 @@ describe("ImpexTable", () => {
         await userEvent.click(await screen.findByRole("button", {name: /^Common.delete$/}));
 
         await waitFor(() => expect(actions.deleteAction).toHaveBeenCalledWith("job-1"));
+        await waitFor(() => expect(screen.queryByText("spexareExport")).not.toBeInTheDocument());
+        expect(actions.getJobsAction).toHaveBeenCalled();
     });
 });
