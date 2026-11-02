@@ -106,6 +106,7 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                 items: [
                     {title: t("Common.search"), url: "/spexare/search"},
                     {title: t("Explore.heading"), url: "/spexare/explore"},
+                    {title: t("Map.heading"), url: "/spexare/map"},
                     ...(isCurrentUserAdminOrEditor ? [
                         {title: t("Common.manage"), url: "/spexare/manage"},
                         {title: t("Common.create"), url: "/spexare/create"},

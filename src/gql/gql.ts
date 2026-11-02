@@ -14,7 +14,8 @@ import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/co
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n    mutation IndexSpexare {\n        indexSpexare\n    }\n": typeof types.IndexSpexareDocument,
+    "\n    query MaintenanceJobs {\n        maintenanceJobs {\n            job\n            schedule\n            running\n            lastStartedAt\n            lastFinishedAt\n            lastSucceeded\n        }\n    }\n": typeof types.MaintenanceJobsDocument,
+    "\n    mutation MaintenanceJobRun($job: MaintenanceJob!) {\n        maintenanceJobRun(job: $job)\n    }\n": typeof types.MaintenanceJobRunDocument,
     "\n    fragment BucketFields on Bucket {\n        key\n        label\n        count\n        facet\n    }\n": typeof types.BucketFieldsFragmentDoc,
     "\n    fragment TotalsFields on Totals {\n        spexareCount\n        spexareCountHistory { label count }\n        userCount\n        userCountHistory { label count }\n        spexCount\n        spexCountHistory { label count }\n        spexRevivalCount\n        spexRevivalCountHistory { label count }\n        taskCount\n        taskCountByCategory { ...BucketFields }\n    }\n": typeof types.TotalsFieldsFragmentDoc,
     "\n    fragment AnalyticsFields on Analytics {\n        totals { ...TotalsFields }\n        participation {\n            bySpexYear { ...BucketFields }\n            bySpexCategory { ...BucketFields }\n            topSpex { ...BucketFields }\n            byTaskCategory { ...BucketFields }\n            topTask { ...BucketFields }\n            byVocal { ...BucketFields }\n        }\n        demographics {\n            byCountry { ...BucketFields }\n            byAddressType { ...BucketFields }\n            byMembership { ...BucketFields }\n            byTag { ...BucketFields }\n            byToggle { ...BucketFields }\n            byStatus { ...BucketFields }\n            consentCompletion {\n                key\n                label\n                granted\n                denied\n                missing\n            }\n        }\n        lifecycle {\n            newcomersByYear { ...BucketFields }\n            lastActiveByYear { ...BucketFields }\n            byEngagement { ...BucketFields }\n            byDormancy { ...BucketFields }\n            oneTimers\n            returning\n            veterans\n            neverActive\n        }\n        dataQuality {\n            total\n            issues { ...BucketFields }\n            complete\n        }\n        operations {\n            usersByState { ...BucketFields }\n            usersWithoutSpexare\n            spexareWithoutUser\n            revisionsByMonth { ...BucketFields }\n            revisionsBySource { ...BucketFields }\n            topEditors { ...BucketFields }\n        }\n    }\n": typeof types.AnalyticsFieldsFragmentDoc,
@@ -37,6 +38,7 @@ type Documents = {
     "\n    query JobById($id: ID!) {\n        job(id: $id) {\n            ...JobFields\n        }\n    }\n": typeof types.JobByIdDocument,
     "\n    query Jobs {\n        jobs {\n            ...JobFields\n        }\n    }\n": typeof types.JobsDocument,
     "\n    mutation JobDelete($id: ID!) {\n        jobDelete(id: $id)\n    }\n": typeof types.JobDeleteDocument,
+    "\n    query SpexareLocations {\n        spexareLocations {\n            id\n            firstName\n            lastName\n            nickName\n            latitude\n            longitude\n        }\n    }\n": typeof types.SpexareLocationsDocument,
     "\n    fragment NewsSummary on News {\n        id\n        subject\n        text\n        visibleFrom\n        permissions {\n            write\n            delete\n        }\n    }\n": typeof types.NewsSummaryFragmentDoc,
     "\n    fragment NewsFull on News {\n        ...NewsSummary\n        published\n        visibleTo\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.NewsFullFragmentDoc,
     "\n    query NewsPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...NewsSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.NewsPagedSummaryDocument,
@@ -195,7 +197,8 @@ type Documents = {
     "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n": typeof types.StatesDocument,
 };
 const documents: Documents = {
-    "\n    mutation IndexSpexare {\n        indexSpexare\n    }\n": types.IndexSpexareDocument,
+    "\n    query MaintenanceJobs {\n        maintenanceJobs {\n            job\n            schedule\n            running\n            lastStartedAt\n            lastFinishedAt\n            lastSucceeded\n        }\n    }\n": types.MaintenanceJobsDocument,
+    "\n    mutation MaintenanceJobRun($job: MaintenanceJob!) {\n        maintenanceJobRun(job: $job)\n    }\n": types.MaintenanceJobRunDocument,
     "\n    fragment BucketFields on Bucket {\n        key\n        label\n        count\n        facet\n    }\n": types.BucketFieldsFragmentDoc,
     "\n    fragment TotalsFields on Totals {\n        spexareCount\n        spexareCountHistory { label count }\n        userCount\n        userCountHistory { label count }\n        spexCount\n        spexCountHistory { label count }\n        spexRevivalCount\n        spexRevivalCountHistory { label count }\n        taskCount\n        taskCountByCategory { ...BucketFields }\n    }\n": types.TotalsFieldsFragmentDoc,
     "\n    fragment AnalyticsFields on Analytics {\n        totals { ...TotalsFields }\n        participation {\n            bySpexYear { ...BucketFields }\n            bySpexCategory { ...BucketFields }\n            topSpex { ...BucketFields }\n            byTaskCategory { ...BucketFields }\n            topTask { ...BucketFields }\n            byVocal { ...BucketFields }\n        }\n        demographics {\n            byCountry { ...BucketFields }\n            byAddressType { ...BucketFields }\n            byMembership { ...BucketFields }\n            byTag { ...BucketFields }\n            byToggle { ...BucketFields }\n            byStatus { ...BucketFields }\n            consentCompletion {\n                key\n                label\n                granted\n                denied\n                missing\n            }\n        }\n        lifecycle {\n            newcomersByYear { ...BucketFields }\n            lastActiveByYear { ...BucketFields }\n            byEngagement { ...BucketFields }\n            byDormancy { ...BucketFields }\n            oneTimers\n            returning\n            veterans\n            neverActive\n        }\n        dataQuality {\n            total\n            issues { ...BucketFields }\n            complete\n        }\n        operations {\n            usersByState { ...BucketFields }\n            usersWithoutSpexare\n            spexareWithoutUser\n            revisionsByMonth { ...BucketFields }\n            revisionsBySource { ...BucketFields }\n            topEditors { ...BucketFields }\n        }\n    }\n": types.AnalyticsFieldsFragmentDoc,
@@ -218,6 +221,7 @@ const documents: Documents = {
     "\n    query JobById($id: ID!) {\n        job(id: $id) {\n            ...JobFields\n        }\n    }\n": types.JobByIdDocument,
     "\n    query Jobs {\n        jobs {\n            ...JobFields\n        }\n    }\n": types.JobsDocument,
     "\n    mutation JobDelete($id: ID!) {\n        jobDelete(id: $id)\n    }\n": types.JobDeleteDocument,
+    "\n    query SpexareLocations {\n        spexareLocations {\n            id\n            firstName\n            lastName\n            nickName\n            latitude\n            longitude\n        }\n    }\n": types.SpexareLocationsDocument,
     "\n    fragment NewsSummary on News {\n        id\n        subject\n        text\n        visibleFrom\n        permissions {\n            write\n            delete\n        }\n    }\n": types.NewsSummaryFragmentDoc,
     "\n    fragment NewsFull on News {\n        ...NewsSummary\n        published\n        visibleTo\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.NewsFullFragmentDoc,
     "\n    query NewsPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        newsPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...NewsSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.NewsPagedSummaryDocument,
@@ -393,7 +397,11 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation IndexSpexare {\n        indexSpexare\n    }\n"): (typeof documents)["\n    mutation IndexSpexare {\n        indexSpexare\n    }\n"];
+export function graphql(source: "\n    query MaintenanceJobs {\n        maintenanceJobs {\n            job\n            schedule\n            running\n            lastStartedAt\n            lastFinishedAt\n            lastSucceeded\n        }\n    }\n"): (typeof documents)["\n    query MaintenanceJobs {\n        maintenanceJobs {\n            job\n            schedule\n            running\n            lastStartedAt\n            lastFinishedAt\n            lastSucceeded\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation MaintenanceJobRun($job: MaintenanceJob!) {\n        maintenanceJobRun(job: $job)\n    }\n"): (typeof documents)["\n    mutation MaintenanceJobRun($job: MaintenanceJob!) {\n        maintenanceJobRun(job: $job)\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -482,6 +490,10 @@ export function graphql(source: "\n    query Jobs {\n        jobs {\n           
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation JobDelete($id: ID!) {\n        jobDelete(id: $id)\n    }\n"): (typeof documents)["\n    mutation JobDelete($id: ID!) {\n        jobDelete(id: $id)\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SpexareLocations {\n        spexareLocations {\n            id\n            firstName\n            lastName\n            nickName\n            latitude\n            longitude\n        }\n    }\n"): (typeof documents)["\n    query SpexareLocations {\n        spexareLocations {\n            id\n            firstName\n            lastName\n            nickName\n            latitude\n            longitude\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

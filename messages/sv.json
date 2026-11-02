@@ -9,13 +9,42 @@
     "title": "Om"
   },
   "Admin": {
-    "description": "Underhållsuppgifter för administratörer.",
+    "description": "De schemalagda underhållsjobben. Vart och ett körs av sig självt enligt sitt schema, och du kan också starta det nu.",
     "heading": "Administration",
-    "indexSpexare": "Bygg om spexarindex",
-    "indexSpexareStarted": "Ombyggnaden av sökindexet har startat. Den körs i bakgrunden.",
+    "jobAlreadyRunning": "{job} körs redan.",
+    "jobStarted": "{job} har startat. Det körs i bakgrunden.",
+    "jobs": {
+      "SEARCH_INDEX": {
+        "title": "Sökindex",
+        "description": "Bygger om sökindexet för spexare från databasen. Använd det om sökresultaten ser felaktiga eller ofullständiga ut."
+      },
+      "USER_SYNC": {
+        "title": "Användarsynk",
+        "description": "Lägger till användare som fått en roll i Keycloak, tar bort dem som raderats där och fyller i saknade namn från kopplade spexare."
+      },
+      "NEWS_PUBLISHING": {
+        "title": "Publicering av nyheter",
+        "description": "Publicerar nyheter vars visningsperiod har börjat och avpublicerar nyheter vars period har tagit slut."
+      },
+      "JOB_CLEANUP": {
+        "title": "Städning av import och export",
+        "description": "Tar bort gamla import- och exportjobb och deras filer."
+      },
+      "ADDRESS_GEOCODING": {
+        "title": "Kartpositioner",
+        "description": "Slår upp kartpositionen för spexare vars adress är ny eller har ändrats, ett begränsat antal per körning."
+      }
+    },
+    "lastRun": "Senaste körning",
+    "lastRunFailed": "Misslyckades, startade {at}",
+    "lastRunStarted": "Startade {at}",
+    "lastRunSucceeded": "Lyckades {at}",
     "maintenance": "Underhåll",
-    "searchIndexDescription": "Bygger om sökindexet för spexare från databasen. Använd det om sökresultaten ser felaktiga eller ofullständiga ut.",
-    "searchIndexHeading": "Sökindex"
+    "neverRun": "Inte sedan servern startade",
+    "notScheduled": "Inte schemalagt",
+    "runNow": "Kör nu",
+    "running": "Körs",
+    "schedule": "Schema"
   },
   "Analytics": {
     "heading": "Analys",
@@ -399,6 +428,15 @@
     "selectFormat": "Välj format",
     "startedAt": "Startad",
     "status": "Status"
+  },
+  "Map": {
+    "heading": "Karta",
+    "description": "Spexare på sin hemadress, eller en annan adress när hemadress saknas. Klicka på en markör för att se spexaren. Positionerna uppdateras några gånger per dygn, så en ändrad adress kan dröja innan den flyttar.",
+    "filterPlaceholder": "Filtrera på namn...",
+    "count": "{shown} av {total} spexare",
+    "attribution": "OpenStreetMap-bidragsgivare",
+    "emptyTitle": "Inga spexare på kartan än",
+    "emptyDescription": "Positioner slås upp från adresser av ett schemalagt jobb. När det har körts syns spexarna här."
   },
   "Meta": {
     "description": "Adressregister för medlemmar i Chalmersspexet",

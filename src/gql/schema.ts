@@ -533,6 +533,33 @@ export type Lifecycle = {
     veterans: Scalars['Long']['output'];
 };
 
+/**
+ * A scheduled maintenance job: rebuilding the search index (SEARCH_INDEX), syncing users with Keycloak (USER_SYNC),
+ * publishing and unpublishing news by their visibility period (NEWS_PUBLISHING), removing old import and export jobs
+ * (JOB_CLEANUP) and geocoding changed addresses for the map (ADDRESS_GEOCODING).
+ */
+export enum MaintenanceJob {
+    AddressGeocoding = 'ADDRESS_GEOCODING',
+    JobCleanup = 'JOB_CLEANUP',
+    NewsPublishing = 'NEWS_PUBLISHING',
+    SearchIndex = 'SEARCH_INDEX',
+    UserSync = 'USER_SYNC'
+}
+
+/** A maintenance job and how its latest run went. Runs are remembered until the server restarts. */
+export type MaintenanceJobStatus = {
+    __typename?: 'MaintenanceJobStatus';
+    job: MaintenanceJob;
+    lastFinishedAt?: Maybe<Scalars['Instant']['output']>;
+    /** When the latest run started, or null when it has not run since the server started. */
+    lastStartedAt?: Maybe<Scalars['Instant']['output']>;
+    /** Whether the latest run finished without an error; null while it runs. */
+    lastSucceeded?: Maybe<Scalars['Boolean']['output']>;
+    running: Scalars['Boolean']['output'];
+    /** The job's cron expression, or null when it is not scheduled. */
+    schedule?: Maybe<Scalars['String']['output']>;
+};
+
 /** Membership of an association in one year. */
 export type Membership = {
     __typename?: 'Membership';
@@ -596,6 +623,8 @@ export type Mutation = {
     indexSpexare?: Maybe<Scalars['Void']['output']>;
     /** ADMIN or EDITOR. Removes one of the caller's finished jobs with its files. */
     jobDelete?: Maybe<Scalars['Void']['output']>;
+    /** ADMIN. Starts the job in the background, as its schedule would. False when it is already running. */
+    maintenanceJobRun: Scalars['Boolean']['output'];
     /**
      * Every role, with WRITE on the spexare. typeId is a MEMBERSHIP type such as FGV; fails when the spexare already is a
      * member that year.
@@ -842,6 +871,11 @@ export type MutationConsentUpdateArgs = {
 
 export type MutationJobDeleteArgs = {
     id: Scalars['ID']['input'];
+};
+
+
+export type MutationMaintenanceJobRunArgs = {
+    job: MaintenanceJob;
 };
 
 
@@ -1402,6 +1436,8 @@ export type Query = {
     language?: Maybe<Language>;
     /** Open to everyone. The languages Spexregister is available in. */
     languages?: Maybe<Array<Maybe<Language>>>;
+    /** ADMIN. The scheduled maintenance jobs, with their schedules and how their latest runs went. */
+    maintenanceJobs: Array<MaintenanceJobStatus>;
     me?: Maybe<User>;
     /** ADMIN, EDITOR or USER. USER sees published news only. */
     news?: Maybe<News>;
@@ -1470,6 +1506,12 @@ export type Query = {
      * report.
      */
     spexareExport?: Maybe<JobReference>;
+    /**
+     * ADMIN, EDITOR or USER. Every living spexare the caller may read whose address has been geocoded, placed at their home
+     * address, or another address when there is none. Addresses are geocoded by a scheduled job, so a changed address
+     * moves on the map after its next run.
+     */
+    spexareLocations: Array<SpexareLocation>;
     /** ADMIN, EDITOR or USER. The caller's own spexare, or null when their user has none. */
     spexareMe?: Maybe<Spexare>;
     /** ADMIN, EDITOR or USER. Starts an export of the caller's own spexare. Fails when their user has none. */
@@ -2889,6 +2931,20 @@ export type SpexareEdge = {
     __typename?: 'SpexareEdge';
     cursor: Scalars['String']['output'];
     node: Spexare;
+};
+
+/** A spexare on the map. */
+export type SpexareLocation = {
+    __typename?: 'SpexareLocation';
+    firstName?: Maybe<Scalars['String']['output']>;
+    /** The spexare's id. */
+    id: Scalars['ID']['output'];
+    lastName?: Maybe<Scalars['String']['output']>;
+    /** The latitude of the address, in WGS 84. */
+    latitude: Scalars['Float']['output'];
+    /** The longitude of the address, in WGS 84. */
+    longitude: Scalars['Float']['output'];
+    nickName?: Maybe<Scalars['String']['output']>;
 };
 
 /** A spexare's partner, another spexare who has the first as partner in turn. */

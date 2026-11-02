@@ -1,6 +1,7 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {indexSpexareAction} from "@/app/(app)/admin/maintenance/actions.server";
-import {indexSpexare} from "@/lib/admin";
+import {getMaintenanceJobsAction, runMaintenanceJobAction} from "@/app/(app)/admin/maintenance/actions.server";
+import {getMaintenanceJobs, runMaintenanceJob} from "@/lib/admin";
+import {MaintenanceJob} from "@/gql/schema";
 
 vi.mock("@/utils/route.server", () => ({
     withPolicyAction: (_policy: unknown, cb: () => unknown) => cb(),
@@ -10,7 +11,8 @@ vi.mock("@/utils/policy.server", () => {
     return {Policies: deep};
 });
 vi.mock("@/lib/admin", () => ({
-    indexSpexare: vi.fn(),
+    getMaintenanceJobs: vi.fn(),
+    runMaintenanceJob: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -18,9 +20,16 @@ beforeEach(() => {
 });
 
 describe("admin actions", () => {
-    it("indexSpexareAction starts indexing", async () => {
-        await indexSpexareAction();
+    it("runMaintenanceJobAction starts the job", async () => {
+        vi.mocked(runMaintenanceJob).mockResolvedValue(true);
 
-        expect(indexSpexare).toHaveBeenCalledTimes(1);
+        expect(await runMaintenanceJobAction(MaintenanceJob.UserSync)).toBe(true);
+        expect(runMaintenanceJob).toHaveBeenCalledWith(MaintenanceJob.UserSync);
+    });
+
+    it("getMaintenanceJobsAction returns the jobs", async () => {
+        vi.mocked(getMaintenanceJobs).mockResolvedValue([{job: MaintenanceJob.SearchIndex, running: false}]);
+
+        expect(await getMaintenanceJobsAction()).toEqual([{job: MaintenanceJob.SearchIndex, running: false}]);
     });
 });

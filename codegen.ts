@@ -7,6 +7,7 @@ const enumValues = {
     GraphEdgeType: "./schema#GraphEdgeType",
     GraphNodeType: "./schema#GraphNodeType",
     ImpexType: "./schema#ImpexType",
+    MaintenanceJob: "./schema#MaintenanceJob",
     ReportType: "./schema#ReportType",
     RestoreAction: "./schema#RestoreAction",
     RevisionType: "./schema#RevisionType",
