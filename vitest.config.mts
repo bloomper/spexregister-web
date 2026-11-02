@@ -35,10 +35,10 @@ export default defineConfig({
             ],
             // A floor at today's level over the widened scope, to be raised as the components get tests
             thresholds: {
-                statements: 37,
-                branches: 32,
-                functions: 31,
-                lines: 37,
+                statements: 68,
+                branches: 59,
+                functions: 60,
+                lines: 68,
             },
         },
     },

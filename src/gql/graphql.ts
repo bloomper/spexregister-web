@@ -10,6 +10,7 @@ import {
     GraphEdgeType,
     GraphNodeType,
     ImpexType,
+    MaintenanceJob,
     ReportType,
     RestoreAction,
     RevisionType,
@@ -81,6 +82,8 @@ export {GraphEdgeType};
 export {GraphNodeType};
 
 export {ImpexType};
+
+export {MaintenanceJob};
 
 export type MembershipCreate = {
     year: any;
@@ -275,10 +278,26 @@ export type UserUpdate = {
     id: string | number;
 };
 
-export type IndexSpexareMutationVariables = Exact<{ [key: string]: never; }>;
+export type MaintenanceJobsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type IndexSpexareMutation = { indexSpexare: any };
+export type MaintenanceJobsQuery = {
+    maintenanceJobs: Array<{
+        job: MaintenanceJob,
+        schedule: string | null,
+        running: boolean,
+        lastStartedAt: any,
+        lastFinishedAt: any,
+        lastSucceeded: boolean | null
+    }>
+};
+
+export type MaintenanceJobRunMutationVariables = Exact<{
+    job: MaintenanceJob;
+}>;
+
+
+export type MaintenanceJobRunMutation = { maintenanceJobRun: boolean };
 
 export type BucketFieldsFragment = { key: string, label: string, count: any, facet: string | null };
 
@@ -770,6 +789,20 @@ export type JobDeleteMutationVariables = Exact<{
 
 
 export type JobDeleteMutation = { jobDelete: any };
+
+export type SpexareLocationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SpexareLocationsQuery = {
+    spexareLocations: Array<{
+        id: string,
+        firstName: string | null,
+        lastName: string | null,
+        nickName: string | null,
+        latitude: number,
+        longitude: number
+    }>
+};
 
 export type NewsSummaryFragment = {
     id: string,
@@ -6552,18 +6585,62 @@ export const UserFullFragmentDoc = {
         }
     }]
 } as unknown as DocumentNode<UserFullFragment, unknown>;
-export const IndexSpexareDocument = {
+export const MaintenanceJobsDocument = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "query",
+        "name": {"kind": "Name", "value": "MaintenanceJobs"},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "maintenanceJobs"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "job"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "schedule"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "running"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "lastStartedAt"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "lastFinishedAt"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "lastSucceeded"}
+                    }]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<MaintenanceJobsQuery, MaintenanceJobsQueryVariables>;
+export const MaintenanceJobRunDocument = {
     "kind": "Document",
     "definitions": [{
         "kind": "OperationDefinition",
         "operation": "mutation",
-        "name": {"kind": "Name", "value": "IndexSpexare"},
+        "name": {"kind": "Name", "value": "MaintenanceJobRun"},
+        "variableDefinitions": [{
+            "kind": "VariableDefinition",
+            "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "job"}},
+            "type": {
+                "kind": "NonNullType",
+                "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "MaintenanceJob"}}
+            }
+        }],
         "selectionSet": {
             "kind": "SelectionSet",
-            "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "indexSpexare"}}]
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "maintenanceJobRun"},
+                "arguments": [{
+                    "kind": "Argument",
+                    "name": {"kind": "Name", "value": "job"},
+                    "value": {"kind": "Variable", "name": {"kind": "Name", "value": "job"}}
+                }]
+            }]
         }
     }]
-} as unknown as DocumentNode<IndexSpexareMutation, IndexSpexareMutationVariables>;
+} as unknown as DocumentNode<MaintenanceJobRunMutation, MaintenanceJobRunMutationVariables>;
 export const AnalyticsDocument = {
     "kind": "Document",
     "definitions": [{
@@ -8086,6 +8163,34 @@ export const JobDeleteDocument = {
         }
     }]
 } as unknown as DocumentNode<JobDeleteMutation, JobDeleteMutationVariables>;
+export const SpexareLocationsDocument = {
+    "kind": "Document",
+    "definitions": [{
+        "kind": "OperationDefinition",
+        "operation": "query",
+        "name": {"kind": "Name", "value": "SpexareLocations"},
+        "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [{
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "spexareLocations"},
+                "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "firstName"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "lastName"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "nickName"}
+                    }, {"kind": "Field", "name": {"kind": "Name", "value": "latitude"}}, {
+                        "kind": "Field",
+                        "name": {"kind": "Name", "value": "longitude"}
+                    }]
+                }
+            }]
+        }
+    }]
+} as unknown as DocumentNode<SpexareLocationsQuery, SpexareLocationsQueryVariables>;
 export const NewsPagedSummaryDocument = {
     "kind": "Document", "definitions": [{
         "kind": "OperationDefinition",

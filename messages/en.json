@@ -9,13 +9,42 @@
     "title": "About"
   },
   "Admin": {
-    "description": "Maintenance tasks for administrators.",
+    "description": "The scheduled maintenance jobs. Each runs by itself on its schedule, and you can also start it now.",
     "heading": "Administration",
-    "indexSpexare": "Rebuild spexare index",
-    "indexSpexareStarted": "Rebuilding the search index has started. It runs in the background.",
+    "jobAlreadyRunning": "{job} is already running.",
+    "jobStarted": "{job} has started. It runs in the background.",
+    "jobs": {
+      "SEARCH_INDEX": {
+        "title": "Search index",
+        "description": "Rebuilds the search index for spexare from the database. Use it if search results look wrong or incomplete."
+      },
+      "USER_SYNC": {
+        "title": "User sync",
+        "description": "Adds users who have been given a role in Keycloak, removes those deleted there and fills in missing names from linked spexare."
+      },
+      "NEWS_PUBLISHING": {
+        "title": "News publishing",
+        "description": "Publishes news whose visibility period has started and unpublishes news whose period has ended."
+      },
+      "JOB_CLEANUP": {
+        "title": "Import and export cleanup",
+        "description": "Removes old import and export jobs and their files."
+      },
+      "ADDRESS_GEOCODING": {
+        "title": "Map positions",
+        "description": "Looks up the map position of spexare whose address is new or has changed, a limited number per run."
+      }
+    },
+    "lastRun": "Latest run",
+    "lastRunFailed": "Failed, started {at}",
+    "lastRunStarted": "Started {at}",
+    "lastRunSucceeded": "Succeeded {at}",
     "maintenance": "Maintenance",
-    "searchIndexDescription": "Rebuilds the search index for spexare from the database. Use it if search results look wrong or incomplete.",
-    "searchIndexHeading": "Search index"
+    "neverRun": "Not since the server started",
+    "notScheduled": "Not scheduled",
+    "runNow": "Run now",
+    "running": "Running",
+    "schedule": "Schedule"
   },
   "Analytics": {
     "heading": "Analytics",
@@ -399,6 +428,15 @@
     "selectFormat": "Select format",
     "startedAt": "Started at",
     "status": "Status"
+  },
+  "Map": {
+    "heading": "Map",
+    "description": "Spexare at their home address, or another address when they have no home address. Click a marker to see the spexare. Positions are updated a few times a day, so a changed address can take a while to move.",
+    "filterPlaceholder": "Filter by name...",
+    "count": "{shown} of {total} spexare",
+    "attribution": "OpenStreetMap contributors",
+    "emptyTitle": "No spexare on the map yet",
+    "emptyDescription": "Positions are looked up from addresses by a scheduled job. Once it has run, the spexare show up here."
   },
   "Meta": {
     "description": "Address registry for Chalmersspexet's members",

@@ -211,6 +211,14 @@ const graphNodes = [
     graphNode("TAG", "1", "Hedersmedlem"),
 ];
 
+const maintenanceJobs = [
+    {job: "SEARCH_INDEX", schedule: "0 0 */4 * * ?", running: false, lastStartedAt: null, lastFinishedAt: null, lastSucceeded: null},
+    {job: "USER_SYNC", schedule: "0 */5 * * * ?", running: false, lastStartedAt: null, lastFinishedAt: null, lastSucceeded: null},
+    {job: "NEWS_PUBLISHING", schedule: "5 0 0 * * ?", running: false, lastStartedAt: null, lastFinishedAt: null, lastSucceeded: null},
+    {job: "JOB_CLEANUP", schedule: "0 0 3 * * ?", running: false, lastStartedAt: null, lastFinishedAt: null, lastSucceeded: null},
+    {job: "ADDRESS_GEOCODING", schedule: "0 20 * * * ?", running: true, lastStartedAt: "2026-11-01T10:20:00Z", lastFinishedAt: null, lastSucceeded: null},
+];
+
 const graphNodeById = Object.fromEntries(graphNodes.map((n) => [n.id, n]));
 
 const graphGroups = {
@@ -799,6 +807,26 @@ const resolvers = {
             id: String(v?.id ?? "export-job-1"), name: "spexareExport",
             status: "COMPLETED", exitStatus: "COMPLETED",
         },
+    }),
+
+    MaintenanceJobs: () => ({maintenanceJobs: maintenanceJobs}),
+    MaintenanceJobRun: (v) => {
+        const status = maintenanceJobs.find((job) => job.job === v?.job);
+
+        if (!status || status.running) {
+            return {maintenanceJobRun: false};
+        }
+        status.lastStartedAt = new Date().toISOString();
+        status.lastFinishedAt = status.lastStartedAt;
+        status.lastSucceeded = true;
+        return {maintenanceJobRun: true};
+    },
+
+    SpexareLocations: () => ({
+        spexareLocations: [
+            {id: "1", firstName: "Ada", lastName: "Lovelace", nickName: "Countess", latitude: 57.6893, longitude: 11.9776},
+            {id: "3", firstName: "Grace", lastName: "Hopper", nickName: "Amazing Grace", latitude: 59.3293, longitude: 18.0686},
+        ],
     }),
 
     GraphSearch: (v) => {

@@ -263,6 +263,23 @@ Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytic
 - `dataQuality.total` (the readable population, the denominator for the gap shares) is deliberately **not**
   `totals.spexareCount`, which counts published records only.
 
+## Maintenance jobs
+
+`/admin/maintenance` lists the server's scheduled jobs (`maintenanceJobs`) with their cron and latest run, and starts
+one with `maintenanceJobRun`, which returns false when it is already running. The server keeps the run state in memory
+(`MaintenanceJobTracker`), so it resets on restart, and the scheduled and the manual runs share it. Adding a job means a
+`MaintenanceJob` value on the server and an `Admin.jobs.<JOB>` title and description here. Revival, Spexflix and Spexify
+have the same query and mutation in their own `maintenance` packages.
+
+## Map
+
+`/spexare/map` shows `spexareLocations`: the spexare the caller may read, at coordinates the server's
+`geocode-addresses` job looked up with Nominatim (off unless `API_GEOCODING_ENABLED`). Each spexare is placed at their
+home address, else another, else work; only changed addresses are looked up again. Leaflet and
+`leaflet.markercluster` load in a `dynamic(..., {ssr: false})` component, and the plugin needs `window.L` set before it
+is imported. Tooltips are built as DOM text, never HTML strings, since names are user data. Tiles come from
+`tile.openstreetmap.org`, which `img-src https:` already allows.
+
 ## Visitor statistics
 
 Umami, self-hosted in `fgv-infra-deploy`, reached server-side at `UMAMI_URL` (`http://umami-server:3000` on the
