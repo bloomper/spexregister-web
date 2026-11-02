@@ -78,6 +78,8 @@ export default function LeafletMap({locations, onOpen, attribution}: LeafletMapP
             cancelled = true;
             clusterRef.current = null;
             mapRef.current = null;
+            fittedRef.current = false;
+            setReady(false);
             map.remove();
         };
     }, [attribution]);

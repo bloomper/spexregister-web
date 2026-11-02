@@ -18,6 +18,20 @@ test.describe("map", () => {
         await expect(dialog.getByText("Spexkarriär")).toBeVisible();
     });
 
+    test("shows the markers again after navigating away and back", async ({page}) => {
+        await page.goto("/spexare/map");
+        await expect(page.getByTitle("Ada \"Countess\" Lovelace")).toBeVisible();
+
+        await page.getByRole("link", {name: "Sök", exact: true}).click();
+        await expect(page).toHaveURL(/\/spexare\/search/);
+
+        await page.getByRole("link", {name: "Karta", exact: true}).click();
+        await expect(page).toHaveURL(/\/spexare\/map/);
+
+        await expect(page.getByTitle("Ada \"Countess\" Lovelace")).toBeVisible();
+        await expect(page.getByTitle("Grace \"Amazing Grace\" Hopper")).toBeVisible();
+    });
+
     test("filters the markers by name", async ({page}) => {
         await page.goto("/spexare/map");
 
