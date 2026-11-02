@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import {TagTable} from "@/components/tag/tag-table.client";
 import * as actions from "@/app/(app)/tags/actions.server";
 import type {Tag} from "@/gql/schema";
-import {audited, pageOf, renderWithQueue, router} from "../../../../test/table-harness";
+import {audited, pageOf, renderWithQueue, router} from "@/test/table-harness";
 
 vi.mock("next/navigation", () => ({
     useRouter: () => router,

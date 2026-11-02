@@ -5,7 +5,7 @@ import {ImpexTable} from "@/components/impex/impex-table.client";
 import * as actions from "@/app/(app)/impex/actions.server";
 import type {Job} from "@/gql/schema";
 import {toast} from "sonner";
-import {pageOf, router} from "../../../../test/table-harness";
+import {pageOf, router} from "@/test/table-harness";
 
 vi.mock("next/navigation", () => ({
     useRouter: () => router,

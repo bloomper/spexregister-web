@@ -5,7 +5,7 @@ import {PermissionGrants} from "@/components/admin/permission/permission-grants.
 import * as actions from "@/app/(app)/admin/permissions/actions.server";
 import type {PermissionGrant} from "@/lib/permission/permission.server";
 import {toast} from "sonner";
-import {audited, pageOf, router} from "../../../../../test/table-harness";
+import {audited, pageOf, router} from "@/test/table-harness";
 
 const refresh = vi.hoisted(() => vi.fn());
 

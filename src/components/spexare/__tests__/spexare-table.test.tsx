@@ -3,7 +3,7 @@ import {screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {SpexareTable} from "@/components/spexare/spexare-table.client";
 import * as actions from "@/app/(app)/spexare/actions.server";
-import {audited, pageOf, renderWithQueue, router} from "../../../../test/table-harness";
+import {audited, pageOf, renderWithQueue, router} from "@/test/table-harness";
 
 vi.mock("next/navigation", () => ({
     useRouter: () => router,
