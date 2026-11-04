@@ -13,7 +13,7 @@ const appEnv: Record<string, string> = {
     UMAMI_WEBSITE_ID: "",
     FGV_REVIVAL_WEB_URL: "https://revival.e2e.test",
     SPEXIFY_WEB_URL: "https://spexify.e2e.test",
-    SPEXFLIX_WEB_URL: "https://spexflix.e2e.test",
+    SPEXFLIX_WEB_URL: "",
 };
 
 export default defineConfig({
