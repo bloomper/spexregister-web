@@ -367,6 +367,13 @@
     "toggleLanguage": "Byt språk",
     "toggleTheme": "Byt tema"
   },
+  "AppSwitcher": {
+    "heading": "Byt applikation",
+    "spexregister": "Spexregister",
+    "revival": "Nyuppsättning",
+    "spexflix": "Spexflix",
+    "spexify": "Spexify"
+  },
   "Home": {
     "heading": "Hem",
     "latestNews": "Senaste nyheterna",

@@ -11,6 +11,9 @@ const appEnv: Record<string, string> = {
     BETTER_AUTH_URL: BASE_URL,
     UMAMI_URL: "",
     UMAMI_WEBSITE_ID: "",
+    FGV_REVIVAL_WEB_URL: "https://revival.e2e.test",
+    SPEXIFY_WEB_URL: "https://spexify.e2e.test",
+    SPEXFLIX_WEB_URL: "https://spexflix.e2e.test",
 };
 
 export default defineConfig({
