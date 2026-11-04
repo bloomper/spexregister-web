@@ -981,7 +981,11 @@ const accessToken = () =>
             ...E2E_USER,
             typ: "Bearer",
             azp: CLIENT_ID,
-            resource_access: {spexregister: {roles: userRoles}},
+            resource_access: {
+                spexregister: {roles: userRoles},
+                "fgv-spexify": {roles: ["USER"]},
+                "fgv-spexflix": {roles: ["USER"]},
+            },
         },
         {audience: "account"},
     );

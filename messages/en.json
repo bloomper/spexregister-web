@@ -367,6 +367,13 @@
     "toggleLanguage": "Toggle language",
     "toggleTheme": "Toggle theme"
   },
+  "AppSwitcher": {
+    "heading": "Switch application",
+    "spexregister": "Spexregister",
+    "revival": "Nyuppsättning",
+    "spexflix": "Spexflix",
+    "spexify": "Spexify"
+  },
   "Home": {
     "heading": "Home",
     "latestNews": "Latest news",

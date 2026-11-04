@@ -40,7 +40,12 @@ Spexregister Web is the second generation of the frontend responsible for servin
    KEYCLOAK_ISSUER=https://auth.fgv.local.nu:8443/auth/realms/fgv
    API_GRAPHQL_ENDPOINT=https://api.register.fgv.local.nu:8443/api/graphql
    API_REST_BASE_URL=https://api.register.fgv.local.nu:8443
+   FGV_REVIVAL_WEB_URL=http://localhost:3001
+   SPEXIFY_WEB_URL=http://localhost:3002
+   SPEXFLIX_WEB_URL=http://localhost:3003
    ```
+   `FGV_REVIVAL_WEB_URL`, `SPEXIFY_WEB_URL` and `SPEXFLIX_WEB_URL` are the other applications' addresses, for
+   the application switcher in the header; it lists only those that are set and that the user can open.
    For visitor statistics, run fgv-infra-deploy's `local/bin/configure-umami.sh` and put the ID it prints in
    `.env.local` as `UMAMI_WEBSITE_ID`, with `UMAMI_URL=https://analytics.fgv.local.nu:8443`.
    `npm run dev` and `docker compose` trust the root certificate of fgv-infra-deploy's local Caddy
@@ -91,7 +96,7 @@ already on Docker Hub.
 
 The image contains no environment-specific values. All configuration is read at runtime: `BETTER_AUTH_URL`,
 `AUTH_SECRET`, `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET`, `KEYCLOAK_ISSUER`, `API_GRAPHQL_ENDPOINT`,
-`API_REST_BASE_URL`, `SUPPORT_EMAIL`, `FEEDBACK_EMAIL`, `SUPPORTED_LOCALES`, `DEFAULT_LOCALE`, `UMAMI_URL` and
+`API_REST_BASE_URL`, `SUPPORT_EMAIL`, `FEEDBACK_EMAIL`, `SUPPORTED_LOCALES`, `DEFAULT_LOCALE`, `FGV_REVIVAL_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXFLIX_WEB_URL`, `UMAMI_URL` and
 `UMAMI_WEBSITE_ID`. Visitor statistics go to Umami only when both Umami variables are set.
 
 ## Building and Deployment
