@@ -17,6 +17,8 @@ const endpoint = (name: string) => `${issuer}/protocol/openid-connect/${name}`;
 export const auth = betterAuth({
     baseURL: appUrl,
     secret: process.env.AUTH_SECRET,
+    // The server reads Keycloak tokens via auth.api in-process; never hand them to browser JavaScript.
+    disabledPaths: ["/get-access-token", "/refresh-token", "/account-info"],
     onAPIError: {
         errorURL: "/api/auth/login-error",
     },
