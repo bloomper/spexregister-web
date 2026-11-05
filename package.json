@@ -22,7 +22,7 @@
   "dependencies": {
     "@base-ui/react": "^1.9.0",
     "@c15t/translations": "^3.2.2",
-    "@hookform/resolvers": "^6.0.0",
+    "@hookform/resolvers": "^7.0.1",
     "@tanstack/react-table": "^9.3.1",
     "@urql/core": "^6.0.3",
     "@urql/exchange-auth": "^3.0.0",
