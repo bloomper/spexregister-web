@@ -18,7 +18,8 @@ const PAGES = ["/", "/news", "/spex", "/spex/categories", "/spexare", "/spexare/
  */
 async function fits(page: Page, path: string) {
     await page.goto(path);
-    await page.getByRole("heading", {level: 1}).first().waitFor({state: "attached"});
+    // Some pages open a modal sheet on arrival (e.g. /spexare/create), which hides the heading from the accessibility tree
+    await page.getByRole("heading", {level: 1, includeHidden: true}).first().waitFor({state: "attached"});
 
     // Charts are drawn at a default size before they measure their frame, so give them a moment
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth),
