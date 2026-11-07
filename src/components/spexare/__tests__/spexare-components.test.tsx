@@ -60,7 +60,8 @@ describe("SpexareViewDialog", () => {
         render(<SpexareViewDialog open onClose={onClose} full={spexare} isLoading={false} countries={[]}
                                   isMe={false}/>);
         expect(screen.getByTestId("spexare-view")).toHaveTextContent("Ada");
-        await userEvent.click(screen.getByRole("button", {name: /Common.close/}));
+        // The footer's button; the corner's X, after it, has the same name
+        await userEvent.click(screen.getAllByRole("button", {name: /Common.close/})[0]);
         expect(onClose).toHaveBeenCalled();
     });
 

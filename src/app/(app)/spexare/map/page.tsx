@@ -16,7 +16,7 @@ export default async function MapPage() {
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <div className="flex flex-col gap-1">
-                    <h2 className="text-2xl font-bold tracking-tight">{t("Map.heading")}</h2>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("Map.heading")}</h1>
                     <p className="text-sm text-muted-foreground">{t("Map.description")}</p>
                 </div>
                 <SpexareMap locations={locations} countries={countries}/>

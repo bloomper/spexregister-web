@@ -117,7 +117,8 @@ test.describe("graph explorer", () => {
         // offered no way in.
         await page.getByRole("button", {name: "Visa detaljer för Hedersmedlem"}).click();
         await expect(dialog.getByText("Hedersmedlem")).toBeVisible();
-        await page.getByRole("button", {name: "Stäng"}).click();
+        // The footer's button; the corner's X, after it, is named the same
+        await dialog.getByRole("button", {name: "Stäng"}).first().click();
 
         await page.getByRole("button", {name: "Visa detaljer för Skådespelare"}).click();
         await expect(dialog.getByText("Ensemble")).toBeVisible();

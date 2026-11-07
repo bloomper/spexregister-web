@@ -18,7 +18,7 @@ export default function AppError({error, reset}: {
     }, [error]);
 
     return (
-        <div className="flex min-h-dvh flex-1 items-center justify-center p-6">
+        <div className="flex flex-1 items-center justify-center p-6">
             <div className="mx-auto max-w-md space-y-4 text-center">
                 <h1 className="text-2xl font-semibold tracking-tight">
                     {t("Common.errorOccurred")}

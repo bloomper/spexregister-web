@@ -103,7 +103,7 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
                     <TableBody>
                         {page.items.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={COLUMN_COUNT} className="h-24 text-center">
+                                <TableCell colSpan={COLUMN_COUNT} className="h-24 text-center" aria-live="polite">
                                     <DataEmpty/>
                                 </TableCell>
                             </TableRow>
@@ -192,9 +192,12 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
             </div>
 
             <div className="flex flex-col items-end gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm font-medium">
-                    {t("Audit.matchCount", {count: page.totalCount})}
-                </p>
+                {/* Only with entries: at zero the count ("Inga ändringar") would only repeat the empty state */}
+                {page.items.length > 0 && (
+                    <p className="text-sm font-medium" aria-live="polite">
+                        {t("Audit.matchCount", {count: page.totalCount})}
+                    </p>
+                )}
                 {page.pageInfo.hasNextPage && (
                     <Button
                         variant="outline"

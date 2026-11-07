@@ -1,7 +1,7 @@
 import {getMine, search} from "@/lib/spexare";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
-import {getLocale} from "next-intl/server";
+import {getLocale, getTranslations} from "next-intl/server";
 import {SpexareGrid} from "@/components/spexare";
 import {SavedSearchBar} from "@/components/spexare/saved-search-bar.client";
 import {getAll as getSavedSearches} from "@/lib/saved-search";
@@ -44,9 +44,11 @@ export default async function SpexareSearchPage({
         ]);
         const initialItems = page.edges.map((e) => e.node);
         const searchKey = `${q}::${toAggregationFilters(initialSelectedFacets).map((f) => `${f.name}=${f.value}`).join("&")}`;
+        const t = await getTranslations();
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
+                <h1 className="sr-only">{t("Common.search")}</h1>
                 <SavedSearchBar savedSearches={savedSearches}/>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <SpexareGrid

@@ -46,7 +46,8 @@ describe("TaskViewDialog", () => {
         render(<TaskViewDialog selected={task} onClose={onClose}/>);
         expect(screen.getByText("Lighting")).toBeInTheDocument();
         expect(screen.getByTestId("audit-trail")).toBeInTheDocument();
-        await userEvent.click(screen.getByRole("button", {name: /Common.close/}));
+        // The footer's button; the corner's X, after it, has the same name
+        await userEvent.click(screen.getAllByRole("button", {name: /Common.close/})[0]);
         expect(onClose).toHaveBeenCalled();
     });
 

@@ -73,7 +73,8 @@ test.describe("spexare activities", () => {
         const sheet = await openEditFromTable(page, "Ada");
         await addActivityWithSpexAndFunction(page, sheet);
 
-        await sheet.getByRole("button", {name: "Stäng"}).click();
+        // The footer's button; the corner's X, after it, is named the same
+        await sheet.getByRole("button", {name: "Stäng"}).first().click();
         await expect(sheet).toBeHidden();
 
         const reopened = await openEditFromTable(page, "Ada");

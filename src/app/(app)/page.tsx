@@ -30,6 +30,7 @@ export default async function HomePage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-4">
+            <h1 className="sr-only">{t("Home.heading")}</h1>
             {analytics?.totals && <AnalyticsTotals data={analytics.totals}/>}
             {analytics && (
                 <>

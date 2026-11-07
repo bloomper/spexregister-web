@@ -14,7 +14,7 @@ export default async function MaintenancePage() {
         return (
             <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
                 <div className="flex items-center justify-between gap-2">
-                    <h2 className="text-2xl font-bold tracking-tight">{t("Admin.maintenance")}</h2>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("Admin.maintenance")}</h1>
                 </div>
                 <p className="text-sm text-muted-foreground">{t("Admin.description")}</p>
                 <AdminTasks jobs={jobs}/>
