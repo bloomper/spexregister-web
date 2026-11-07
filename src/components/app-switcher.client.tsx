@@ -32,11 +32,11 @@ export function AppSwitcher({title, applications}: { title: string; applications
     const t = useTranslations();
 
     if (applications.length < 2) {
-        return <h1 className={titleClassName}>{title}</h1>;
+        return <p className={titleClassName}>{title}</p>;
     }
 
     return (
-        <h1 className="-ml-2 flex min-w-0">
+        <p className="-ml-2 flex min-w-0">
             <DropdownMenu>
                 <DropdownMenuTrigger
                     render={<Button variant="ghost" className="h-8 min-w-0 max-w-full gap-1 px-2"/>}>
@@ -69,6 +69,6 @@ export function AppSwitcher({title, applications}: { title: string; applications
                     </DropdownMenuGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
-        </h1>
+        </p>
     );
 }

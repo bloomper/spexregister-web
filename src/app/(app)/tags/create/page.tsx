@@ -20,7 +20,7 @@ export default async function TagCreatePage() {
         return (
             <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
                 <div className="flex items-center justify-between gap-2">
-                    <h2 className="text-2xl font-bold tracking-tight">{t("Tag.heading")}</h2>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("Tag.heading")}</h1>
                 </div>
                 <TagTable
                     initialData={initialData}

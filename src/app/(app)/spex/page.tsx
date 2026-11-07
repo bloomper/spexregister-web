@@ -1,4 +1,5 @@
 import {SpexGrid} from "@/components/spex";
+import {getTranslations} from "next-intl/server";
 import {getPaged} from "@/lib/spex";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
@@ -17,9 +18,11 @@ export default async function SpexPage() {
             Policies.spex.requireUpdate(),
         ]);
         const initialItems = page.items;
+        const t = await getTranslations();
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
+                <h1 className="sr-only">{t("Spex.heading")}</h1>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {initialItems.length > 0 ? (
                         <SpexGrid

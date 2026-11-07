@@ -27,7 +27,7 @@ export default async function ImpexManagePage() {
             <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
                 <div className="flex items-start justify-between gap-2">
                     <div className="flex flex-col gap-1">
-                        <h2 className="text-2xl font-bold tracking-tight">{t("Impex.heading")}</h2>
+                        <h1 className="text-2xl font-bold tracking-tight">{t("Impex.heading")}</h1>
                         <p className="text-sm text-muted-foreground">
                             {t("Impex.purgeHint")}
                         </p>

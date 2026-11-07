@@ -15,7 +15,7 @@ export default async function GraphPage() {
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <div className="flex flex-col gap-1">
-                    <h2 className="text-2xl font-bold tracking-tight">{t("Explore.heading")}</h2>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("Explore.heading")}</h1>
                     <p className="text-sm text-muted-foreground">{t("Explore.description")}</p>
                 </div>
                 <GraphExplorer countries={countries}/>

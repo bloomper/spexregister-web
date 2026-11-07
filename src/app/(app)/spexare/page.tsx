@@ -5,7 +5,7 @@ import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {UserRound} from "lucide-react";
 import {getCountries, getTypes} from "@/lib/settings";
-import {getLocale} from "next-intl/server";
+import {getLocale, getTranslations} from "next-intl/server";
 import {isAdminOrEditor} from "@/utils/auth";
 import {getAll as getAllTags} from "@/lib/tag";
 import {getAll as getAllTasks} from "@/lib/task";
@@ -33,9 +33,11 @@ export default async function SpexarePage() {
             getMine(),
         ]);
         const initialItems = page.items;
+        const t = await getTranslations();
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
+                <h1 className="sr-only">{t("Spexare.heading")}</h1>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {initialItems.length > 0 ? (
                         <SpexareGrid

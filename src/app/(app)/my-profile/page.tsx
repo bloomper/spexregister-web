@@ -45,7 +45,7 @@ export default async function MyProfilePage() {
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 md:p-8 max-w-6xl mx-auto w-full">
             <div className="flex flex-col gap-1 mb-4">
-                <h2 className="text-2xl font-bold tracking-tight">{t("Common.myProfile")}</h2>
+                <h1 className="text-2xl font-bold tracking-tight">{t("Common.myProfile")}</h1>
             </div>
             <div className="mb-8">
                 <SpexareCareer

@@ -2,6 +2,7 @@ import {defineConfig, devices} from "@playwright/test";
 import {APP_PORT, AUTH_SECRET, BASE_URL, MOCK_PORT, STORAGE_STATE} from "./e2e/constants";
 
 const appEnv: Record<string, string> = {
+    // Everything the app reads is set here, or a developer's .env.local (which points at the local stack) would win
     AUTH_SECRET,
     KEYCLOAK_CLIENT_ID: "e2e",
     KEYCLOAK_CLIENT_SECRET: "e2e",
@@ -9,8 +10,13 @@ const appEnv: Record<string, string> = {
     API_GRAPHQL_ENDPOINT: `http://localhost:${MOCK_PORT}/api/graphql`,
     API_REST_BASE_URL: `http://localhost:${MOCK_PORT}`,
     BETTER_AUTH_URL: BASE_URL,
+    SUPPORT_EMAIL: "support.register@example.org",
+    FEEDBACK_EMAIL: "feedback.register@example.org",
+    SUPPORTED_LOCALES: "sv,en",
+    DEFAULT_LOCALE: "sv",
     UMAMI_URL: "",
     UMAMI_WEBSITE_ID: "",
+    SPEXREGISTER_WEB_URL: "",
     FGV_REVIVAL_WEB_URL: "https://revival.e2e.test",
     SPEXIFY_WEB_URL: "https://spexify.e2e.test",
     SPEXFLIX_WEB_URL: "",
