@@ -160,3 +160,37 @@
     --viz-series-6: #008300;
     --viz-series-7: #9085e9;
 }
+
+/*
+ * Whole-row link: put `link-row` on a list row and `row-link` on the row's main link. The link's
+ * overlay covers the row, so the whole row is clickable and highlighted on hover while the title
+ * stays the one accessible link. Other buttons and links in the row are lifted above the overlay.
+ */
+@utility link-row {
+  position: relative;
+  transition: background-color 150ms;
+  @media (hover: hover) {
+    &:has(.row-link):hover {
+      background-color: var(--color-accent);
+    }
+  }
+  & :where(a, button, input, select, textarea, label, summary, [role="button"]):where(:not(.row-link)) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+@utility row-link {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  &:focus-visible {
+    outline: none;
+  }
+  &:focus-visible::after {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+}

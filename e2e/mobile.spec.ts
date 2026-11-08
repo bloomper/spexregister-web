@@ -33,7 +33,7 @@ async function fits(page: Page, path: string) {
 async function headerFits(page: Page) {
     const header = page.getByRole("banner");
     // The title opens the application switcher here, so it is the button's text that must not be cut short
-    const title = header.locator("p button > span:visible").first();
+    const title = header.locator("p button > span:visible").filter({hasText: "Spexregister"});
 
     await expect(title).toHaveText("Spexregister");
     expect(await title.evaluate(element => element.scrollWidth - element.clientWidth), "the title is cut short")
@@ -78,8 +78,15 @@ for (const screen of SCREENS) {
             await page.goto("/");
             await headerFits(page);
 
-            await page.getByRole("button", {name: "Visa eller dölj menyn"}).click();
+            if (screen.width < 768) {
+                await page.getByRole("button", {name: "Visa menyn"}).click();
+            }
             await expect(page.getByRole("link", {name: "Hem"}).first()).toBeVisible();
+
+            if (screen.width < 768) {
+                await page.getByRole("button", {name: "Dölj menyn"}).click();
+                await expect(page.getByRole("dialog")).toHaveCount(0);
+            }
         });
     });
 }

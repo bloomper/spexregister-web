@@ -187,7 +187,7 @@ export function AddressesSection({addresses, countries, spexareId, onRestored}: 
                                 {address?.emailAddress && (
                                     <div className="flex items-center gap-2">
                                         <Mail className="h-4 w-4 text-muted-foreground"/>
-                                        <a href={`mailto:${address.emailAddress}`} className="hover:underline">
+                                        <a href={`mailto:${address.emailAddress}`} className="hover:text-primary">
                                             {address.emailAddress}
                                         </a>
                                     </div>

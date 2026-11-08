@@ -129,7 +129,7 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
                                     {href && (
                                         <Link href={href}
                                               aria-label={`${auditTypeLabel(t, entity.type)}: ${t("Audit.openRecord")}`}
-                                              className="ml-auto inline-flex items-center gap-1 text-primary hover:underline">
+                                              className="ml-auto inline-flex items-center gap-1 text-primary hover:text-primary/80">
                                             {t("Audit.openRecord")}
                                             <ArrowUpRight className="h-3 w-3"/>
                                         </Link>

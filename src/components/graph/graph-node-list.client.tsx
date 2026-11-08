@@ -100,7 +100,7 @@ export function GraphNodeList({
                                       style={{backgroundColor: NODE_COLOR[node.type]}}/>
                                 <button
                                     type="button"
-                                    className="min-w-0 flex-1 truncate text-left text-sm hover:underline"
+                                    className="min-w-0 flex-1 truncate text-left text-sm hover:text-primary"
                                     aria-label={t("Explore.focusLabel", {name: node.label})}
                                     onClick={() => onFocus(node.id)}
                                 >

@@ -24,7 +24,23 @@ const icons: Record<ApplicationId, LucideIcon> = {
     archive: Library,
 };
 
-const titleClassName = "truncate text-base font-semibold whitespace-nowrap sm:text-lg";
+const titleClassName = "truncate text-base font-bold tracking-tight whitespace-nowrap sm:text-lg";
+
+/**
+ * The current application's icon on a tile in the brand colour. It is shown only from the width where the sidebar stays
+ * open beside the page and the menu button makes way for it.
+ */
+function AppIcon({applications}: { applications: Application[] }) {
+    const Icon = icons[applications.find(application => application.current)?.id ?? "spexregister"];
+
+    return (
+        <span
+            className="hidden size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground md:flex"
+            aria-hidden="true">
+            <Icon className="size-4"/>
+        </span>
+    );
+}
 
 /**
  * The application's name in the header. It opens a menu of the FGV applications the user can switch to, and is just
@@ -34,14 +50,20 @@ export function AppSwitcher({title, applications}: { title: string; applications
     const t = useTranslations();
 
     if (applications.length < 2) {
-        return <p className={titleClassName}>{title}</p>;
+        return (
+            <p className="flex min-w-0 items-center gap-2">
+                <AppIcon applications={applications}/>
+                <span className={titleClassName}>{title}</span>
+            </p>
+        );
     }
 
     return (
         <p className="-ml-2 flex min-w-0">
             <DropdownMenu>
                 <DropdownMenuTrigger
-                    render={<Button variant="ghost" className="h-8 min-w-0 max-w-full gap-1 px-2"/>}>
+                    render={<Button variant="ghost" className="h-9 min-w-0 max-w-full gap-2 px-2"/>}>
+                    <AppIcon applications={applications}/>
                     <span className={titleClassName}>{title}</span>
                     <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" aria-hidden="true"/>
                 </DropdownMenuTrigger>
