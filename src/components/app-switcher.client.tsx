@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {BookUser, Check, ChevronsUpDown, Clapperboard, Drama, type LucideIcon, Music} from "lucide-react";
+import {BookUser, Check, ChevronsUpDown, Clapperboard, Drama, Images, Library, type LucideIcon, Music} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {Button} from "@/components/ui/button";
 import {
@@ -20,6 +20,8 @@ const icons: Record<ApplicationId, LucideIcon> = {
     revival: Drama,
     spexflix: Clapperboard,
     spexify: Music,
+    spexgram: Images,
+    archive: Library,
 };
 
 const titleClassName = "truncate text-base font-semibold whitespace-nowrap sm:text-lg";

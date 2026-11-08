@@ -6,19 +6,22 @@ const env = {
     FGV_REVIVAL_WEB_URL: "https://revival.example.org/",
     SPEXFLIX_WEB_URL: "https://spexflix.example.org",
     SPEXIFY_WEB_URL: "https://spexify.example.org",
+    SPEXGRAM_WEB_URL: "https://spexgram.example.org",
+    ARCHIVE_WEB_URL: "https://archive.example.org",
 };
 
 const user = {roles: ["USER"]};
 
 describe("resolveApplications", () => {
     it("lists the current application first among the others the user can open, in a fixed order", () => {
-        const claims = {resource_access: {"fgv-spexify": user, "spexregister": user, "fgv-revival": user}};
+        const claims = {resource_access: {"fgv-spexify": user, "spexregister": user, "fgv-revival": user, "fgv-archive": user}};
 
         expect(resolveApplications("spexflix", claims, env)).toEqual([
             {id: "spexregister", url: "https://register.example.org", current: false},
             {id: "revival", url: "https://revival.example.org", current: false},
             {id: "spexflix", url: "/", current: true},
             {id: "spexify", url: "https://spexify.example.org", current: false},
+            {id: "archive", url: "https://archive.example.org", current: false},
         ]);
     });
 

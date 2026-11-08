@@ -304,13 +304,14 @@ and funnels pick events by name: `<entity>-create` / `-update` from its form and
 ## Application switcher
 
 The title in the header (`src/components/app-switcher.client.tsx`) opens a menu of the FGV applications: Spexregister,
-Nyuppsättning, Spexflix and Spexify. `getApplications()` (`src/utils/applications.server.ts`) lists the current one and
+Nyuppsättning, Spexflix, Spexify, Spexgram and Spexarkivet. `getApplications()` (`src/utils/applications.server.ts`) lists the current one and
 each other one whose `USER` role is in the access token and whose address is set (`SPEXREGISTER_WEB_URL`,
-`FGV_REVIVAL_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXIFY_WEB_URL`). The role is there because fgv-keycloak maps every web
+`FGV_REVIVAL_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXGRAM_WEB_URL`,
+`ARCHIVE_WEB_URL`). The role is there because fgv-keycloak maps every web
 client to the other web clients' `USER` role; a realm imported before that needs fgv-infra-deploy's
-`bin/configure-keycloak.sh`. With no other application to offer, the title is plain text. The four webs carry
-identical copies of `applications.ts`, the component and their tests, and differ only in the id passed in
-`applications.server.ts`, so change all four together.
+`bin/configure-keycloak.sh`. With no other application to offer, the title is plain text. The six webs (with fgv-spexgram-web and
+fgv-archive-web) carry identical copies of `applications.ts`, the component and their tests, and differ only in the id passed in
+`applications.server.ts`, so change all six together.
 
 ## Testing
 

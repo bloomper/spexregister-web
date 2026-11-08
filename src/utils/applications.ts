@@ -3,7 +3,7 @@ import type {AccessTokenClaims} from "@/types/auth";
 /**
  * The FGV applications that sign in through the same Keycloak realm and that the header can switch between.
  */
-export type ApplicationId = "spexregister" | "revival" | "spexflix" | "spexify";
+export type ApplicationId = "spexregister" | "revival" | "spexflix" | "spexify" | "spexgram" | "archive";
 
 /**
  * An application in the switcher. The current one links to its own start page, the others to their address.
@@ -19,6 +19,8 @@ const APPLICATIONS: ReadonlyArray<{ id: ApplicationId; clientId: string; urlVari
     {id: "revival", clientId: "fgv-revival", urlVariable: "FGV_REVIVAL_WEB_URL"},
     {id: "spexflix", clientId: "fgv-spexflix", urlVariable: "SPEXFLIX_WEB_URL"},
     {id: "spexify", clientId: "fgv-spexify", urlVariable: "SPEXIFY_WEB_URL"},
+    {id: "spexgram", clientId: "fgv-spexgram", urlVariable: "SPEXGRAM_WEB_URL"},
+    {id: "archive", clientId: "fgv-archive", urlVariable: "ARCHIVE_WEB_URL"},
 ];
 
 /**
