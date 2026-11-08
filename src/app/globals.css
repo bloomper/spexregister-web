@@ -194,3 +194,12 @@
     outline-offset: -2px;
   }
 }
+
+/* Print: only the page's own content, without the app's sidebar (the header carries print:hidden).
+   Unlayered, so it wins over the sidebar's Tailwind utilities. */
+@media print {
+    [data-slot="sidebar-gap"],
+    [data-slot="sidebar-container"] {
+        display: none;
+    }
+}
