@@ -108,15 +108,15 @@ describe("ChangeLogTable", () => {
         await userEvent.keyboard("{Escape}");
 
         await userEvent.click(screen.getByRole("button", {name: /^Audit.period/}));
-        // The calendar opens on this month: the 1st (from then until today), then the 5th, which closes it
+        // The calendar opens on this month: the 1st (from then until today), then the 1st again as the last day, which closes it
         const month = new Date().toISOString().slice(0, 7);
         const day = (text: string) => screen.getAllByRole("button").find(button => button.textContent === text && !button.closest("[data-outside]"))!;
         const settled = () => waitFor(() => expect(document.querySelector("div.transition-opacity.opacity-50")).toBeNull());
         await userEvent.click(day("1"));
         await waitFor(() => expect(vi.mocked(actions.getRevisionFeedPageAction).mock.lastCall?.[0]).toMatchObject({from: `${month}-01`, to: null}));
         await settled();
-        await userEvent.click(day("5"));
-        await waitFor(() => expect(vi.mocked(actions.getRevisionFeedPageAction).mock.lastCall?.[0]).toMatchObject({from: `${month}-01`, to: `${month}-05`}));
+        await userEvent.click(day("1"));
+        await waitFor(() => expect(vi.mocked(actions.getRevisionFeedPageAction).mock.lastCall?.[0]).toMatchObject({from: `${month}-01`, to: `${month}-01`}));
         await settled();
         await userEvent.click(screen.getByRole("button", {name: /^Audit.period/}));
         await userEvent.click(screen.getAllByRole("button", {name: "Common.reset"}).at(-1)!);

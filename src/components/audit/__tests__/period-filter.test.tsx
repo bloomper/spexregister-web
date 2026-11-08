@@ -37,11 +37,13 @@ describe("PeriodFilter", () => {
         expect(onChange).toHaveBeenLastCalledWith("2026-10-20", undefined);
         expect(screen.getByText("Audit.pickEnd")).toBeInTheDocument();
 
-        // A last day before the first swaps them
-        await user.click(day("12"));
-        expect(onChange).toHaveBeenLastCalledWith("2026-10-12", "2026-10-20");
+        // The last day cannot come before the first
+        expect(day("12")).toBeDisabled();
+        expect(day("20")).toBeEnabled();
+        await user.click(day("25"));
+        expect(onChange).toHaveBeenLastCalledWith("2026-10-20", "2026-10-25");
         expect(screen.queryByText("Audit.pickEnd")).not.toBeInTheDocument();
-        expect(screen.getByRole("button", { name: /Audit.period/ })).toHaveTextContent("2026-10-12 – 2026-10-20");
+        expect(screen.getByRole("button", { name: /Audit.period/ })).toHaveTextContent("2026-10-20 – 2026-10-25");
     });
 
     it("starts over with the first day when opened again, and clears", async () => {
@@ -55,6 +57,25 @@ describe("PeriodFilter", () => {
 
         await user.click(screen.getByRole("button", { name: "Common.reset" }));
         expect(onChange).toHaveBeenLastCalledWith(undefined, undefined);
+    });
+
+    it("offers no day after today", async () => {
+        const user = userEvent.setup();
+        const today = new Date();
+        const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+        render(<Host initial={{}} spy={vi.fn()} />);
+        await user.click(screen.getByRole("button", { name: /Audit.period/ }));
+
+        const cell = (date: Date) =>
+            screen.getAllByRole("button").find(button => button.getAttribute("data-day") === date.toLocaleDateString())!;
+
+        expect(cell(today)).toBeEnabled();
+        // Tomorrow is in this month's grid, or the next month's, which the calendar does not go to
+        if (tomorrow.getMonth() === today.getMonth()) {
+            expect(cell(tomorrow)).toBeDisabled();
+        }
+        expect(screen.getByRole("button", { name: /next month|nästa månad/i })).toHaveAttribute("aria-disabled", "true");
     });
 
     it("ignores a malformed day in the address", () => {

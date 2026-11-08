@@ -30,7 +30,8 @@ function fromIso(value: string | undefined): Date | undefined {
 /**
   * The change log's period, in a calendar in the application's language (not the browser's, as a native date field
   * would be). The first click picks the first day, and the log shows everything from it until now; the second picks
-  * the last day and closes the calendar. Days travel as yyyy-mm-dd.
+  * the last day (not before the first) and closes the calendar. Days after today cannot be picked. Days travel as
+  * yyyy-mm-dd.
   */
 export function PeriodFilter({
     from,
@@ -51,11 +52,12 @@ export function PeriodFilter({
     const selected: DateRange | undefined = start || end ? { from: start ?? end, to: end } : undefined;
     const hasPeriod = Boolean(from || to);
 
-    const pick = (day: Date) => {
-        if (pickingEnd && start) {
-            const [first, last] = day < start ? [day, start] : [start, day];
+    const today = new Date();
+    const choosingEnd = pickingEnd && start !== undefined;
 
-            onChange(toIso(first), toIso(last));
+    const pick = (day: Date) => {
+        if (choosingEnd) {
+            onChange(toIso(start), toIso(day));
             setPickingEnd(false);
             setOpen(false);
             return;
@@ -103,7 +105,7 @@ export function PeriodFilter({
                     className="w-0 min-w-full px-3 pt-3 text-xs text-muted-foreground"
                     aria-live="polite"
                 >
-                    {pickingEnd ? t("Audit.pickEnd") : t("Audit.pickStart")}
+                    {choosingEnd ? t("Audit.pickEnd") : t("Audit.pickStart")}
                 </p>
                 <Calendar
                     mode="range"
@@ -111,6 +113,9 @@ export function PeriodFilter({
                     weekStartsOn={1}
                     selected={selected}
                     defaultMonth={end ?? start}
+                    endMonth={today}
+                    // Nothing after today has changed yet, and the last day cannot come before the first
+                    disabled={choosingEnd ? [{ after: today }, { before: start }] : { after: today }}
                     // The clicks are handled here, so the first one leaves the period open-ended
                     onSelect={() => undefined}
                     onDayClick={pick}
