@@ -100,7 +100,7 @@ export function PeriodFilter({
                 align="start"
             >
                 <p
-                    className="px-3 pt-3 text-xs text-muted-foreground"
+                    className="w-0 min-w-full px-3 pt-3 text-xs text-muted-foreground"
                     aria-live="polite"
                 >
                     {pickingEnd ? t("Audit.pickEnd") : t("Audit.pickStart")}
