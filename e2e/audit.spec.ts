@@ -71,7 +71,13 @@ test("the change log filters by user, origin and date", async ({page}) => {
     await expect(page.getByRole("row")).toHaveCount(3);
 
     await page.getByRole("button", {name: /^Period/}).click();
-    await page.locator("#audit-from").fill("2026-09-18");
+    // The calendar opens on this month; the sample revisions are from September 2026
+    while (!(await page.getByRole("button", {name: /18 september 2026/i}).isVisible())) {
+        await page.getByRole("button", {name: /föregående månad|previous month/i}).click();
+    }
+    // The first day alone: from it until today
+    await page.getByRole("button", {name: /18 september 2026/i}).click();
+    await page.keyboard.press("Escape");
 
     await expect(page.getByRole("row")).toHaveCount(2);
     await expect(page.getByText("admin@example.com")).toBeHidden();

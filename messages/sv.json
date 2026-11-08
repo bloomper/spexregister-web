@@ -205,7 +205,10 @@
       "STATE": "Tillstånd",
       "TYPE": "Typ",
       "PERMISSION_GRANT": "Behörighet"
-    }
+    },
+    "untilNow": "i dag",
+    "pickStart": "Välj första dagen.",
+    "pickEnd": "Välj sista dagen, eller stäng för att se fram till i dag."
   },
   "Common": {
     "revisionTypes": {

@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {ChangeLogTable} from "@/components/audit/change-log-table.client";
 import * as actions from "@/app/(app)/admin/change-log/actions.server";
@@ -108,9 +108,17 @@ describe("ChangeLogTable", () => {
         await userEvent.keyboard("{Escape}");
 
         await userEvent.click(screen.getByRole("button", {name: /^Audit.period/}));
-        fireEvent.change(await screen.findByLabelText("Audit.from"), {target: {value: "2026-01-01"}});
-        fireEvent.change(screen.getByLabelText("Audit.to"), {target: {value: "2026-12-31"}});
-        await waitFor(() => expect(vi.mocked(actions.getRevisionFeedPageAction).mock.lastCall?.[0]).toMatchObject({from: "2026-01-01", to: "2026-12-31"}));
+        // The calendar opens on this month: the 1st (from then until today), then the 5th, which closes it
+        const month = new Date().toISOString().slice(0, 7);
+        const day = (text: string) => screen.getAllByRole("button").find(button => button.textContent === text && !button.closest("[data-outside]"))!;
+        const settled = () => waitFor(() => expect(document.querySelector("div.transition-opacity.opacity-50")).toBeNull());
+        await userEvent.click(day("1"));
+        await waitFor(() => expect(vi.mocked(actions.getRevisionFeedPageAction).mock.lastCall?.[0]).toMatchObject({from: `${month}-01`, to: null}));
+        await settled();
+        await userEvent.click(day("5"));
+        await waitFor(() => expect(vi.mocked(actions.getRevisionFeedPageAction).mock.lastCall?.[0]).toMatchObject({from: `${month}-01`, to: `${month}-05`}));
+        await settled();
+        await userEvent.click(screen.getByRole("button", {name: /^Audit.period/}));
         await userEvent.click(screen.getAllByRole("button", {name: "Common.reset"}).at(-1)!);
         await userEvent.keyboard("{Escape}");
 

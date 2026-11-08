@@ -205,7 +205,10 @@
       "STATE": "State",
       "TYPE": "Type",
       "PERMISSION_GRANT": "Permission grant"
-    }
+    },
+    "untilNow": "today",
+    "pickStart": "Pick the first day.",
+    "pickEnd": "Pick the last day, or close to see up to today."
   },
   "Common": {
     "revisionTypes": {
