@@ -375,7 +375,7 @@
     "spexflix": "Spexflix",
     "spexify": "Spexify",
     "spexgram": "Spexgram",
-    "archive": "Spexarkivet"
+    "archive": "Spexarkiv"
   },
   "Home": {
     "heading": "Hem",
@@ -450,7 +450,7 @@
   },
   "Meta": {
     "description": "Adressregister för medlemmar i Chalmersspexet",
-    "title": "Chalmersspexets Adressregister"
+    "title": "Spexregister"
   },
   "MyData": {
     "description": "Ladda ner allt registret har om dig, eller begär att bli borttagen.",

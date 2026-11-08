@@ -4,7 +4,7 @@ test("the header's title switches to the other applications the user can open", 
     await page.goto("/");
 
     const banner = page.getByRole("banner");
-    await banner.getByRole("button", {name: "Chalmersspexets Adressregister"}).click();
+    await banner.getByRole("button", {name: "Spexregister"}).click();
 
     const menu = page.getByRole("menu");
     await expect(menu.getByText("Byt applikation")).toBeVisible();

@@ -35,7 +35,7 @@ async function headerFits(page: Page) {
     // The title opens the application switcher here, so it is the button's text that must not be cut short
     const title = header.locator("p button > span:visible").first();
 
-    await expect(title).toHaveText("Chalmersspexets Adressregister");
+    await expect(title).toHaveText("Spexregister");
     expect(await title.evaluate(element => element.scrollWidth - element.clientWidth), "the title is cut short")
         .toBeLessThanOrEqual(0);
 
