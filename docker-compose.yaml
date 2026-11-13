@@ -22,7 +22,7 @@ services:
       - "analytics.fgv.local.nu:host-gateway"
     restart: always
     volumes:
-      - ${INFRA_DEPLOY:-../fgv-infra-deploy}/local/.docker/caddy/data/caddy/pki/authorities/local/root.crt:/usr/local/share/ca-certificates/caddy-root.crt:ro
+      - ${INFRA_DEPLOY:-../../fgv-infra-deploy}/local/.docker/caddy/data/caddy/pki/authorities/local/root.crt:/usr/local/share/ca-certificates/caddy-root.crt:ro
       - web_app_static:/app/.next/static
       - web_app_public:/app/public
     networks:
