@@ -1,15 +1,16 @@
 import {Policies} from "@/utils/policy.server";
 import {withPolicyPage} from "@/utils/route.server";
 import {getTranslations} from "next-intl/server";
-import {AdminTasks} from "@/components/admin";
-import {getMaintenanceJobs} from "@/lib/admin";
+import {AdminTasks, SyncSources} from "@/components/admin";
+import {getMaintenanceJobs, getSyncSources} from "@/lib/admin";
 
 /**
- * For administrators: the scheduled maintenance jobs, which can also be run by hand.
+ * For administrators: the scheduled maintenance jobs, which can also be run by hand, and the copy of Spexipedia's base
+ * data.
  */
 export default async function MaintenancePage() {
     return withPolicyPage(Policies.admin.requireAdmin, async () => {
-        const [t, jobs] = await Promise.all([getTranslations(), getMaintenanceJobs()]);
+        const [t, jobs, sources] = await Promise.all([getTranslations(), getMaintenanceJobs(), getSyncSources()]);
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
@@ -18,6 +19,8 @@ export default async function MaintenancePage() {
                 </div>
                 <p className="text-sm text-muted-foreground">{t("Admin.description")}</p>
                 <AdminTasks jobs={jobs}/>
+                <h2 className="mt-4 text-xl font-semibold tracking-tight">{t("Admin.sync.heading")}</h2>
+                <SyncSources sources={sources}/>
             </div>
         );
     });

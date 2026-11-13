@@ -1,5 +1,6 @@
 "use client";
 
+import {SpexipediaEditButton} from "@/components/spexipedia-edit-button.client";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {useInfiniteList} from "@/hooks/use-infinite-list.client";
@@ -8,16 +9,12 @@ import {SpexCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/spex/categories/actions.server";
 import {getProxiedImageUrl} from "@/utils/utils";
 import Image from "next/image";
-import {useRouter} from "next/navigation";
-import {Clapperboard, ImageIcon, Pencil} from "lucide-react";
+import {Clapperboard, ImageIcon} from "lucide-react";
 import {GridFilterHeader} from "@/components/grid-filter-header.client";
 import {DataEmpty} from "@/components/data-empty";
-import {Sheet} from "@/components/ui/sheet";
-import {SpexCategoryForm} from "@/components/spex/category/spex-category-form.client";
 import {SpexCategoryViewDialog} from "@/components/spex/category/spex-category-view-dialog.client";
 import {textFilter} from "@/utils/filter";
 
@@ -25,19 +22,17 @@ export function SpexCategoryGrid({
                                      initialItems = [],
                                      initialPageInfo,
                                      maxItems,
-                                     canUpdate = false,
+                                     spexipedia = null,
                                  }: {
     initialItems?: SpexCategory[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
-    canUpdate?: boolean;
+    spexipedia?: { url: string; canEdit: boolean } | null;
 }) {
     const t = useTranslations();
-    const router = useRouter();
     const [searchValue, setSearchValue] = useState("");
     const [filterQuery, setFilterQuery] = useState("");
     const [selected, setSelected] = useState<SpexCategory | null>(null);
-    const [editItem, setEditItem] = useState<SpexCategory | null>(null);
 
     const {
         items,
@@ -102,20 +97,8 @@ export function SpexCategoryGrid({
             {items.map((n, index) => (
                 <Card key={n.id}
                       className="group relative overflow-hidden flex flex-col p-0 transition-colors hover:bg-muted/50 cursor-pointer">
-                    {canUpdate && (
-                        <div className="absolute top-2 right-2 z-20">
-                            <Button
-                                variant="secondary"
-                                size="icon"
-                                className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditItem(n);
-                                }}
-                            >
-                                <Pencil className="h-4 w-4"/>
-                            </Button>
-                        </div>
+                    {spexipedia?.canEdit && (
+                        <SpexipediaEditButton href={`${spexipedia.url}/manage/spex-categories/${n.id}`}/>
                     )}
                     <div className="flex flex-col h-full" onClick={() => setSelected(n)}>
                         {n.logoUrl ? (
@@ -144,18 +127,6 @@ export function SpexCategoryGrid({
             ))}
 
             <SpexCategoryViewDialog selected={selected} onClose={() => setSelected(null)}/>
-
-            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                {editItem && (
-                    <SpexCategoryForm
-                        item={editItem}
-                        onSuccess={() => {
-                            setEditItem(null);
-                            router.refresh();
-                        }}
-                    />
-                )}
-            </Sheet>
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

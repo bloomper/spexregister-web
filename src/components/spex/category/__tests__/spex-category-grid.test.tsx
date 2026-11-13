@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {render, screen, waitFor} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {SpexCategoryGrid} from "@/components/spex/category/spex-category-grid.client";
 import {audited, router} from "@/test/table-harness";
@@ -46,13 +46,6 @@ describe("SpexCategoryGrid", () => {
         await userEvent.click(screen.getByText("Chalmersspexet"));
 
         expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    });
-
-    it("offers editing to those who may", async () => {
-        const {container} = render(<SpexCategoryGrid initialItems={rows} canUpdate/>);
-        const without = render(<SpexCategoryGrid initialItems={rows}/>).container;
-
-        await waitFor(() => expect(container.querySelectorAll("button").length).toBeGreaterThan(without.querySelectorAll("button").length));
     });
 
     it("shows an empty state", () => {

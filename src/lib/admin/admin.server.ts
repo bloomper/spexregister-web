@@ -50,3 +50,62 @@ export async function getMaintenanceJobs(): Promise<MaintenanceJobStatus[]> {
 export async function runMaintenanceJob(job: MaintenanceJob): Promise<boolean> {
     return Boolean(await runMutationField(MaintenanceJobRunMutation, {job}, "maintenanceJobRun"));
 }
+
+const SyncSourcesQuery = graphql(`
+    query SyncSources {
+        syncSources {
+            name
+            cursor
+            lastPulledAt
+            lastSuccess
+            lastError
+            applied
+            stale
+        }
+    }
+`);
+
+const SyncRunMutation = graphql(`
+    mutation SyncRun($full: Boolean) {
+        syncRun(full: $full) {
+            applied
+            missing
+            error
+        }
+    }
+`);
+
+/**
+ * A source Spexregister copies data from, today Spexipedia, and how far the copy has got.
+ */
+export type SyncSourceStatus = {
+    name: string;
+    cursor?: string | null;
+    lastPulledAt?: string | null;
+    lastSuccess?: string | null;
+    lastError?: string | null;
+    applied: number;
+    stale: boolean;
+};
+
+export type SyncRunResult = {
+    applied: number;
+    missing: string[];
+    error?: string | null;
+};
+
+/**
+ * Every source of copied data.
+ */
+export async function getSyncSources(): Promise<SyncSourceStatus[]> {
+    const data = await runQuery(SyncSourcesQuery, {});
+
+    return data?.syncSources ?? [];
+}
+
+/**
+ * Pulls from the sources now. A full pull reads the whole feed again and reports what is here but no longer there.
+ */
+export async function runSync(full: boolean): Promise<SyncRunResult | null> {
+    return (await runMutationField(SyncRunMutation, {full}, "syncRun")) ?? null;
+}

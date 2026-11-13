@@ -15,3 +15,21 @@ export async function getApplications(): Promise<Application[]> {
 
     return resolveApplications("spexregister", claims, process.env);
 }
+
+/**
+ * Spexipedia, where spex, revivals, categories and tasks are kept: its address, and whether the user may change base
+ * data there (EDITOR on fgv-spexipedia, which Spexregister's tokens carry). Null when Spexipedia's address is not set.
+ */
+export async function getSpexipedia(): Promise<{ url: string; canEdit: boolean } | null> {
+    const url = process.env.SPEXIPEDIA_WEB_URL?.trim().replace(/\/+$/, "");
+
+    if (!url) {
+        return null;
+    }
+
+    const {accessToken} = await getSessionContext();
+    const claims = accessToken ? jwtDecode<AccessTokenClaims>(accessToken) : {};
+    const roles = claims.resource_access?.["fgv-spexipedia"]?.roles ?? [];
+
+    return {url, canEdit: roles.includes("EDITOR") || roles.includes("ADMIN")};
+}

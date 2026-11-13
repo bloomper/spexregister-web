@@ -12,6 +12,7 @@ const actions = vi.hoisted(() => ({
     removeAuthoritiesAction: vi.fn(),
     removeSpexareAction: vi.fn(),
     searchSpexareAction: vi.fn(),
+    setSpexareAutoLinkAction: vi.fn(),
     setStateAction: vi.fn(),
     updateAction: vi.fn(),
 }));
@@ -34,6 +35,7 @@ const USER = {
     state: {id: "ACTIVE", label: "Aktiv"},
     authorities: [{id: "ROLE_EDITOR", label: "Redaktör"}],
     spexare: {id: "s1", firstName: "Anna", lastName: "Andersson"},
+    spexareAutoLink: true,
 } as unknown as User;
 
 /** Embedded, as in the edit queue: the page submits the form by its id. */
@@ -71,6 +73,7 @@ describe("UserForm", () => {
         expect(actions.setStateAction).not.toHaveBeenCalled();
         expect(actions.addSpexareAction).not.toHaveBeenCalled();
         expect(actions.removeSpexareAction).not.toHaveBeenCalled();
+        expect(actions.setSpexareAutoLinkAction).not.toHaveBeenCalled();
         expect(toast.success).toHaveBeenCalledWith("Common.updateSuccess");
     });
 
@@ -89,6 +92,16 @@ describe("UserForm", () => {
         await waitFor(() => expect(onSuccess).toHaveBeenCalled());
         expect(actions.updateAction).toHaveBeenCalledWith("7", expect.objectContaining({email: "anna.a@example.com", spexareId: null}));
         expect(actions.removeSpexareAction).toHaveBeenCalledWith("7");
+    });
+
+    it("turns the automatic link to a spexare off, and not when it is left alone", async () => {
+        const {submit, onSuccess} = show(USER);
+
+        await userEvent.click(screen.getByRole("switch", {name: "User.spexareAutoLink"}));
+        submit();
+
+        await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+        expect(actions.setSpexareAutoLinkAction).toHaveBeenCalledWith("7", false);
     });
 
     it("creates a user and then sets its roles, state and spexare", async () => {

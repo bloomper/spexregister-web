@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {render, screen, waitFor} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {TaskCategoryGrid} from "@/components/task/category/task-category-grid.client";
 import {audited, router} from "@/test/table-harness";
@@ -44,13 +44,6 @@ describe("TaskCategoryGrid", () => {
         await userEvent.click(screen.getByText("Teknik"));
 
         expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    });
-
-    it("offers editing to those who may", async () => {
-        const {container} = render(<TaskCategoryGrid initialItems={rows} canUpdate/>);
-        const without = render(<TaskCategoryGrid initialItems={rows}/>).container;
-
-        await waitFor(() => expect(container.querySelectorAll("button").length).toBeGreaterThan(without.querySelectorAll("button").length));
     });
 
     it("shows an empty state", () => {

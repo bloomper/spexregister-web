@@ -1,7 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {bulkDeleteAction, createAction, getPageAction, updateAction} from "@/app/(app)/tasks/actions.server";
-import {create, del, getPaged, update} from "@/lib/task";
-import {revalidateTag} from "next/cache";
+import {getPageAction} from "@/app/(app)/tasks/actions.server";
+import {getPaged} from "@/lib/task";
 
 vi.mock("@/utils/route.server", () => ({
     withPolicyAction: (_policy: unknown, cb: () => unknown) => cb(),
@@ -44,27 +43,3 @@ describe("task getPageAction", () => {
     });
 });
 
-describe("task create/update payload shaping", () => {
-    it("strips categoryId before create and revalidates", async () => {
-        await createAction({name: "X", categoryId: "c1"});
-
-        expect(create).toHaveBeenCalledWith({name: "X"});
-        expect(revalidateTag).toHaveBeenCalledWith("task", "max");
-    });
-
-    it("strips categoryId before update and revalidates", async () => {
-        await updateAction("id1", {name: "Y", categoryId: "c2"});
-
-        expect(update).toHaveBeenCalledWith("id1", {name: "Y"});
-        expect(revalidateTag).toHaveBeenCalledWith("task", "max");
-    });
-});
-
-describe("task bulkDeleteAction", () => {
-    it("deletes every id and revalidates once", async () => {
-        await bulkDeleteAction(["a", "b"]);
-
-        expect(del).toHaveBeenCalledTimes(2);
-        expect(revalidateTag).toHaveBeenCalledTimes(1);
-    });
-});

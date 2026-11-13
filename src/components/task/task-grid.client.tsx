@@ -2,7 +2,6 @@
 
 import {useState} from "react";
 import {useTranslations} from "next-intl";
-import {useRouter} from "next/navigation";
 import {Task, TaskCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
@@ -14,23 +13,21 @@ import {DataEmpty} from "@/components/data-empty";
 import {useTaskSearch} from "@/components/task/use-task-search.client";
 import {TaskCard} from "@/components/task/task-card.client";
 import {TaskViewDialog} from "@/components/task/task-view-dialog.client";
-import {TaskEditSheet} from "@/components/task/task-edit-sheet.client";
 
 export function TaskGrid({
                              initialItems = [],
                              initialPageInfo,
                              maxItems,
                              categories = [],
-                             canUpdate = false,
+                             spexipedia = null,
                          }: {
     initialItems?: Task[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
     categories?: TaskCategory[];
-    canUpdate?: boolean;
+    spexipedia?: { url: string; canEdit: boolean } | null;
 }) {
     const t = useTranslations();
-    const router = useRouter();
 
     const {
         items,
@@ -39,7 +36,6 @@ export function TaskGrid({
         hasNextPage,
         sentinelRef,
         loadMore,
-        reset,
         isInfiniteMode,
         searchValue,
         setSearchValue,
@@ -52,7 +48,6 @@ export function TaskGrid({
     } = useTaskSearch({categories, initialItems, initialPageInfo, maxItems});
 
     const [selected, setSelected] = useState<Task | null>(null);
-    const [editItem, setEditItem] = useState<Task | null>(null);
 
     return (
         <>
@@ -125,25 +120,13 @@ export function TaskGrid({
                     <TaskCard
                         key={n.id}
                         task={n}
-                        canUpdate={canUpdate}
+                        editUrl={spexipedia?.canEdit ? `${spexipedia.url}/manage/tasks/${n.id}` : null}
                         onSelect={() => setSelected(n)}
-                        onEdit={() => setEditItem(n)}
                     />
                 ))
             )}
 
             <TaskViewDialog selected={selected} onClose={() => setSelected(null)}/>
-
-            <TaskEditSheet
-                item={editItem}
-                categories={categories}
-                onClose={() => setEditItem(null)}
-                onSuccess={() => {
-                    setEditItem(null);
-                    reset();
-                    router.refresh();
-                }}
-            />
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

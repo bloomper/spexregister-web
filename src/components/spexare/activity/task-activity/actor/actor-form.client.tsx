@@ -12,7 +12,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
 import {translateError} from "@/utils/utils";
-import {Actor, Type} from "@/gql/schema";
+import {Actor, SpexCharacter, Type} from "@/gql/schema";
 import {useRefresh} from "@/hooks/use-refresh.client";
 import {Plus} from "lucide-react";
 
@@ -22,10 +22,16 @@ interface ActorFormProps {
     taskActivityId: string;
     item?: Actor;
     vocals: Type[];
+    /**
+     * The characters of the activity's spex, from Spexipedia. The free-text role is for the rare actor without one.
+     */
+    characters?: SpexCharacter[];
     onSuccess?: () => void;
 }
 
-export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, onSuccess}: ActorFormProps) {
+const NO_CHARACTER = "none";
+
+export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, characters = [], onSuccess}: ActorFormProps) {
     const t = useTranslations();
     const refresh = useRefresh();
     const [isPending, startTransition] = useTransition();
@@ -40,6 +46,7 @@ export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, 
         defaultValues: {
             role: item?.role ?? "",
             vocalId: item?.vocal?.id ?? "",
+            characterId: item?.character?.id ?? null,
         },
     });
 
@@ -64,6 +71,40 @@ export function ActorForm({spexareId, activityId, taskActivityId, item, vocals, 
     return (
         <form onSubmit={onSubmit} className="space-y-4 p-4 border rounded-md bg-muted/20">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {characters.length > 0 && (
+                    <Field className="sm:col-span-2">
+                        <FieldLabel>{t("Spexare.Activity.TaskActivity.Actor.character")}</FieldLabel>
+                        <FieldContent>
+                            <Controller
+                                control={control}
+                                name="characterId"
+                                render={({field}) => {
+                                    const options = [
+                                        {value: NO_CHARACTER, label: t("Spexare.Activity.TaskActivity.Actor.noCharacter")},
+                                        ...characters.filter(c => !c.retired || c.id === field.value).map(c => ({value: c.id, label: c.name})),
+                                    ];
+
+                                    return (
+                                        <Select
+                                            onValueChange={(value) => field.onChange(value === NO_CHARACTER ? null : value)}
+                                            value={field.value ?? NO_CHARACTER}
+                                            items={options}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {options.map((o) => (
+                                                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    );
+                                }}
+                            />
+                        </FieldContent>
+                    </Field>
+                )}
                 <Field data-invalid={!!errors.role}>
                     <FieldLabel>{t("Spexare.Activity.TaskActivity.Actor.role")}</FieldLabel>
                     <FieldContent>

@@ -2,24 +2,10 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {deleteEach} from "@/utils/utils.server";
-import {
-    addCategory,
-    create,
-    del,
-    exp,
-    get,
-    getAll as getAllTasks,
-    getPaged,
-    imp,
-    removeCategory,
-    revisions,
-    taskFormSchema,
-    update
-} from "@/lib/task";
-import {getRestorePreview, restore} from "@/lib/audit/audit.server";
-import {revalidateTag} from "next/cache";
-import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
+
+import {exp, get, getAll as getAllTasks, getPaged, revisions} from "@/lib/task";
+
+import {ImpexType, SortDirection} from "@/gql/schema";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
 
 export async function getPageAction(args: {
@@ -52,57 +38,9 @@ export async function getAction(id: string) {
     });
 }
 
-export async function createAction(data: unknown) {
-    return withPolicyAction(Policies.task.requireCreate, async () => {
-        const validated = taskFormSchema.parse(data);
-        const {categoryId, ...createInput} = validated;
-        void categoryId;
-        const result = await create(createInput);
-        revalidate();
-        return result;
-    });
-}
-
-export async function updateAction(id: string, data: unknown) {
-    return withPolicyAction(Policies.task.requireUpdate, async () => {
-        const validated = taskFormSchema.parse(data);
-        const {categoryId, ...updateInput} = validated;
-        void categoryId;
-        const result = await update(id, updateInput);
-        revalidate();
-        return result;
-    });
-}
-
-export async function deleteAction(id: string) {
-    return withPolicyAction(Policies.task.requireDelete, async () => {
-        const result = await del(id);
-        revalidate();
-        return result;
-    });
-}
-
-export async function bulkDeleteAction(ids: string[]) {
-    await withPolicyAction(Policies.task.requireDelete, async () => {
-        try {
-            await deleteEach(ids, del);
-        } finally {
-            revalidate();
-        }
-    });
-}
-
 export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
     return withPolicyAction(Policies.task.requireExport, async () => {
         return await exp(ids, filter, type);
-    });
-}
-
-export async function importAction(type: ImpexType, file: File) {
-    return withPolicyAction(Policies.task.requireImport, async () => {
-        const result = await imp(type, file);
-        revalidate();
-        return result;
     });
 }
 
@@ -112,42 +50,8 @@ export async function getAllCategoriesAction() {
     });
 }
 
-export async function addCategoryAction(id: string, categoryId: string) {
-    return withPolicyAction(Policies.task.requireCreate, async () => {
-        const result = await addCategory(id, categoryId);
-        revalidate();
-        return result;
-    });
-}
-
-export async function removeCategoryAction(id: string) {
-    return withPolicyAction(Policies.task.requireCreate, async () => {
-        const result = await removeCategory(id);
-        revalidate();
-        return result;
-    });
-}
-
 export async function getRevisionsAction(id: string) {
     return withPolicyAction(Policies.task.requireRead, async () => {
         return revisions(id);
     });
-}
-
-export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        return getRestorePreview(type, id, revision, cascade);
-    });
-}
-
-export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean, reason?: string) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        const result = await restore(type, id, revision, cascade, reason);
-        revalidate();
-        return result;
-    });
-}
-
-function revalidate() {
-    revalidateTag("task", "max");
 }

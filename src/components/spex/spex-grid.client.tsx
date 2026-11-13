@@ -2,7 +2,6 @@
 
 import {useState} from "react";
 import {useTranslations} from "next-intl";
-import {useRouter} from "next/navigation";
 import {Spex, SpexCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
@@ -14,23 +13,24 @@ import {DataEmpty} from "@/components/data-empty";
 import {useSpexSearch} from "@/components/spex/use-spex-search.client";
 import {SpexCard} from "@/components/spex/spex-card.client";
 import {SpexViewDialog} from "@/components/spex/spex-view-dialog.client";
-import {SpexEditSheet} from "@/components/spex/spex-edit-sheet.client";
 
 export function SpexGrid({
                              initialItems = [],
                              initialPageInfo,
                              maxItems,
                              categories = [],
-                             canUpdate = false,
+                             spexipedia = null,
                          }: {
     initialItems?: Spex[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
     categories?: SpexCategory[];
-    canUpdate?: boolean;
+    /**
+     * Spexipedia's address, and whether the user may change spex there.
+     */
+    spexipedia?: { url: string; canEdit: boolean } | null;
 }) {
     const t = useTranslations();
-    const router = useRouter();
 
     const {
         items,
@@ -39,7 +39,6 @@ export function SpexGrid({
         hasNextPage,
         sentinelRef,
         loadMore,
-        reset,
         isInfiniteMode,
         searchValue,
         setSearchValue,
@@ -51,7 +50,6 @@ export function SpexGrid({
     } = useSpexSearch({categories, initialItems, initialPageInfo, maxItems});
 
     const [selected, setSelected] = useState<Spex | null>(null);
-    const [editItem, setEditItem] = useState<Spex | null>(null);
 
     return (
         <>
@@ -122,25 +120,13 @@ export function SpexGrid({
                         key={n.id}
                         spex={n}
                         index={index}
-                        canUpdate={canUpdate || Boolean(n.permissions?.write)}
+                        editUrl={spexipedia?.canEdit ? `${spexipedia.url}/manage/spex/${n.id}` : null}
                         onSelect={() => setSelected(n)}
-                        onEdit={() => setEditItem(n)}
                     />
                 ))
             )}
 
-            <SpexViewDialog selected={selected} onClose={() => setSelected(null)}/>
-
-            <SpexEditSheet
-                item={editItem}
-                categories={categories}
-                onClose={() => setEditItem(null)}
-                onSuccess={() => {
-                    setEditItem(null);
-                    reset();
-                    router.refresh();
-                }}
-            />
+            <SpexViewDialog selected={selected} spexipediaUrl={spexipedia?.url ?? null} onClose={() => setSelected(null)}/>
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

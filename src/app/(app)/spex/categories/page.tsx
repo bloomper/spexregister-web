@@ -3,15 +3,16 @@ import {getTranslations} from "next-intl/server";
 import {getPaged} from "@/lib/spex/category";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {getSpexipedia} from "@/utils/applications.server";
 
 /**
  * The spex categories as cards.
  */
 export default async function SpexCategoryPage() {
     return withPolicyPage(Policies.spexCategory.requireRead, async () => {
-        const [page, canUpdate] = await Promise.all([
+        const [page, spexipedia] = await Promise.all([
             getPaged({first: 24}),
-            Policies.spexCategory.requireUpdate(),
+            getSpexipedia(),
         ]);
         const initialItems = page.items;
         const t = await getTranslations();
@@ -23,7 +24,7 @@ export default async function SpexCategoryPage() {
                     <SpexCategoryGrid
                         initialItems={initialItems}
                         initialPageInfo={page.pageInfo}
-                        canUpdate={canUpdate.ok}
+                        spexipedia={spexipedia}
                     />
                 </div>
             </div>

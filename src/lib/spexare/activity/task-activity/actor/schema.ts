@@ -7,6 +7,10 @@ export const actorFormSchema = z.object({
     role: z
         .string()
         .optional(),
+    characterId: z
+        .string()
+        .optional()
+        .nullable(),
 });
 
 export type ActorFormInput = z.input<typeof actorFormSchema>;

@@ -1,5 +1,6 @@
 "use client";
 
+import {SpexipediaEditButton} from "@/components/spexipedia-edit-button.client";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {useTranslations} from "next-intl";
@@ -8,14 +9,10 @@ import {TaskCategory} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
 import {getPageAction} from "@/app/(app)/tasks/categories/actions.server";
-import {useRouter} from "next/navigation";
-import {Pencil, Shapes} from "lucide-react";
+import {Shapes} from "lucide-react";
 import {GridFilterHeader} from "@/components/grid-filter-header.client";
 import {DataEmpty} from "@/components/data-empty";
-import {Sheet} from "@/components/ui/sheet";
-import {TaskCategoryForm} from "@/components/task/category/task-category-form.client";
 import {TaskCategoryViewDialog} from "@/components/task/category/task-category-view-dialog.client";
 import {textFilter} from "@/utils/filter";
 
@@ -23,19 +20,17 @@ export function TaskCategoryGrid({
                                      initialItems = [],
                                      initialPageInfo,
                                      maxItems,
-                                     canUpdate = false,
+                                     spexipedia = null,
                                  }: {
     initialItems?: TaskCategory[];
     initialPageInfo?: CursorPageInfo;
     maxItems?: number;
-    canUpdate?: boolean;
+    spexipedia?: { url: string; canEdit: boolean } | null;
 }) {
     const t = useTranslations();
-    const router = useRouter();
     const [searchValue, setSearchValue] = useState("");
     const [filterQuery, setFilterQuery] = useState("");
     const [selected, setSelected] = useState<TaskCategory | null>(null);
-    const [editItem, setEditItem] = useState<TaskCategory | null>(null);
 
     const {
         items,
@@ -102,20 +97,8 @@ export function TaskCategoryGrid({
                     key={n.id}
                     className="group relative h-full overflow-hidden transition-all hover:bg-muted/50 cursor-pointer p-0 gap-0"
                 >
-                    {canUpdate && (
-                        <div className="absolute top-2 right-2 z-20">
-                            <Button
-                                variant="secondary"
-                                size="icon"
-                                className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditItem(n);
-                                }}
-                            >
-                                <Pencil className="h-4 w-4"/>
-                            </Button>
-                        </div>
+                    {spexipedia?.canEdit && (
+                        <SpexipediaEditButton href={`${spexipedia.url}/manage/task-categories/${n.id}`}/>
                     )}
                     <div className="flex flex-col h-full" onClick={() => setSelected(n)}>
                         <CardHeader className="p-4">
@@ -128,18 +111,6 @@ export function TaskCategoryGrid({
             ))}
 
             <TaskCategoryViewDialog selected={selected} onClose={() => setSelected(null)}/>
-
-            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                {editItem && (
-                    <TaskCategoryForm
-                        item={editItem}
-                        onSuccess={() => {
-                            setEditItem(null);
-                            router.refresh();
-                        }}
-                    />
-                )}
-            </Sheet>
 
             {isInfiniteMode && (
                 <InfiniteScrollFooter

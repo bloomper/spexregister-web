@@ -12,12 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {AuditTrail} from "@/components/data-audit-trail.client";
-import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/tasks/actions.server";
-
-const restoreActions = {
-    preview: getRestorePreviewAction,
-    restore: restoreRevisionAction,
-};
+import {getRevisionsAction} from "@/app/(app)/tasks/actions.server";
 
 export function TaskViewDialog({selected, onClose}: { selected: Task | null; onClose: () => void }) {
     const t = useTranslations();
@@ -42,8 +37,7 @@ export function TaskViewDialog({selected, onClose}: { selected: Task | null; onC
                         </div>
                         {selected && (
                             <div className="space-y-4">
-                                <AuditTrail id={selected.id} fetchAction={getRevisionsAction}
-                                            restoreActions={restoreActions} onRestored={onClose}/>
+                                <AuditTrail id={selected.id} fetchAction={getRevisionsAction}/>
                             </div>
                         )}
                     </div>

@@ -3,27 +3,23 @@
 import {useTranslations} from "next-intl";
 import Image from "next/image";
 import {Spex} from "@/gql/schema";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {ImageIcon} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {AuditTrail} from "@/components/data-audit-trail.client";
-import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/spex/actions.server";
+import {getRevisionsAction} from "@/app/(app)/spex/actions.server";
 
-const restoreActions = {
-    preview: getRestorePreviewAction,
-    restore: restoreRevisionAction,
-};
-
-export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onClose: () => void }) {
+/**
+ * A spex as Spexregister's copy has it, with its history (not restorable: Spexipedia keeps spex) and a link to its page
+ * in Spexipedia.
+ */
+export function SpexViewDialog({selected, spexipediaUrl = null, onClose}: {
+    selected: Spex | null;
+    spexipediaUrl?: string | null;
+    onClose: () => void
+}) {
     const t = useTranslations();
 
     return (
@@ -50,6 +46,7 @@ export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onC
                             {selected?.year}
                         </div>
                         <DialogTitle className="text-2xl">{selected?.title}</DialogTitle>
+                        {selected?.retired && <Badge variant="outline" className="w-fit">{t("Spex.retired")}</Badge>}
                         <DialogDescription className="sr-only">
                             {t("Common.details")}
                         </DialogDescription>
@@ -85,13 +82,18 @@ export function SpexViewDialog({selected, onClose}: { selected: Spex | null; onC
 
                         {selected && (
                             <div className="space-y-4">
-                                <AuditTrail id={selected.id} fetchAction={getRevisionsAction}
-                                            restoreActions={restoreActions} onRestored={onClose}/>
+                                <AuditTrail id={selected.id} fetchAction={getRevisionsAction}/>
                             </div>
                         )}
                     </div>
                 </div>
                 <DialogFooter className="p-6 pt-0">
+                    {selected && spexipediaUrl && (
+                        <Button variant="outline"
+                                render={<a href={`${spexipediaUrl}/spex/${selected.id}`} target="_blank" rel="noopener noreferrer"/>}>
+                            {t("Spex.showInSpexipedia")}
+                        </Button>
+                    )}
                     <Button variant="outline" onClick={onClose}>
                         {t("Common.close")}
                     </Button>

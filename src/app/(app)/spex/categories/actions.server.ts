@@ -2,23 +2,10 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {deleteEach} from "@/utils/utils.server";
-import {
-    create,
-    del,
-    deleteLogo,
-    exp,
-    get,
-    getPaged,
-    imp,
-    revisions,
-    spexCategoryFormSchema,
-    update,
-    uploadLogo
-} from "@/lib/spex/category";
-import {getRestorePreview, restore} from "@/lib/audit/audit.server";
-import {revalidateTag} from "next/cache";
-import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
+
+import {exp, get, getPaged, revisions} from "@/lib/spex/category";
+
+import {ImpexType, SortDirection} from "@/gql/schema";
 
 export async function getPageAction(args: {
     first?: number;
@@ -44,74 +31,9 @@ export async function getAction(id: string) {
     });
 }
 
-export async function createAction(data: unknown) {
-    return withPolicyAction(Policies.spexCategory.requireCreate, async () => {
-        const validated = spexCategoryFormSchema.parse(data);
-        const result = await create(validated);
-        revalidate();
-        return result;
-    });
-}
-
-export async function updateAction(id: string, data: unknown) {
-    return withPolicyAction(Policies.spexCategory.requireUpdate, async () => {
-        const validated = spexCategoryFormSchema.parse(data);
-        const result = await update(id, validated);
-        revalidate();
-        return result;
-    });
-}
-
-export async function deleteAction(id: string) {
-    return withPolicyAction(Policies.spexCategory.requireDelete, async () => {
-        const result = await del(id);
-        revalidate();
-        return result;
-    });
-}
-
-export async function bulkDeleteAction(ids: string[]) {
-    await withPolicyAction(Policies.spexCategory.requireDelete, async () => {
-        try {
-            await deleteEach(ids, del);
-        } finally {
-            revalidate();
-        }
-    });
-}
-
 export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
     return withPolicyAction(Policies.spexCategory.requireExport, async () => {
         return await exp(ids, filter, type);
-    });
-}
-
-export async function importAction(type: ImpexType, file: File) {
-    return withPolicyAction(Policies.spexCategory.requireImport, async () => {
-        const result = await imp(type, file);
-        revalidate();
-        return result;
-    });
-}
-
-export async function uploadLogoAction(id: string, formData: FormData) {
-    return withPolicyAction(Policies.spexCategory.requireUpdate, async () => {
-        const file = formData.get("file") as File;
-        const result = await uploadLogo(id, file);
-
-        revalidate();
-        return result;
-    });
-}
-
-export async function deleteLogoAction(id: string) {
-    return withPolicyAction(Policies.spexCategory.requireUpdate, async () => {
-        await deleteLogo(id);
-
-        revalidate();
-        return {
-            success: true
-        };
     });
 }
 
@@ -119,22 +41,4 @@ export async function getRevisionsAction(id: string) {
     return withPolicyAction(Policies.spexCategory.requireRead, async () => {
         return revisions(id);
     });
-}
-
-export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        return getRestorePreview(type, id, revision, cascade);
-    });
-}
-
-export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean, reason?: string) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        const result = await restore(type, id, revision, cascade, reason);
-        revalidate();
-        return result;
-    });
-}
-
-function revalidate() {
-    revalidateTag("spex-category", "max");
 }

@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {addCategory, getPaged, removeCategory} from "@/lib/task/task.server";
+import {getPaged} from "@/lib/task/task.server";
 import {SortDirection} from "@/gql/schema";
 
 const toPromise = vi.fn();
@@ -28,20 +28,3 @@ describe("task.server (factory config binding)", () => {
     });
 });
 
-describe("task category mutations", () => {
-    it("addCategory forwards ids and returns the payload", async () => {
-        toPromise.mockResolvedValue({data: {taskCategoryAdd: true}});
-        await expect(addCategory("1", "c9")).resolves.toBe(true);
-        expect(mutation.mock.calls[0][1]).toEqual({id: "1", categoryId: "c9"});
-    });
-
-    it("removeCategory returns the payload", async () => {
-        toPromise.mockResolvedValue({data: {taskCategoryRemove: true}});
-        await expect(removeCategory("1")).resolves.toBe(true);
-    });
-
-    it("propagates mutation errors", async () => {
-        toPromise.mockResolvedValue({error: new Error("denied")});
-        await expect(removeCategory("1")).rejects.toThrow("denied");
-    });
-});

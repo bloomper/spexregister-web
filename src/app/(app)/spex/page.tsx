@@ -4,6 +4,7 @@ import {getPaged} from "@/lib/spex";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {getSpexipedia} from "@/utils/applications.server";
 import {getAll as getAllCategories} from "@/lib/spex/category";
 import {Clapperboard} from "lucide-react";
 
@@ -12,10 +13,10 @@ import {Clapperboard} from "lucide-react";
  */
 export default async function SpexPage() {
     return withPolicyPage(Policies.spex.requireRead, async () => {
-        const [page, categories, canUpdate] = await Promise.all([
+        const [page, categories, spexipedia] = await Promise.all([
             getPaged({first: 24, after: null}),
             getAllCategories(),
-            Policies.spex.requireUpdate(),
+            getSpexipedia(),
         ]);
         const initialItems = page.items;
         const t = await getTranslations();
@@ -29,7 +30,7 @@ export default async function SpexPage() {
                             initialItems={initialItems}
                             initialPageInfo={page.pageInfo}
                             categories={categories}
-                            canUpdate={canUpdate.ok}
+                            spexipedia={spexipedia}
                         />
                     ) : (
                         <DataEmpty icon={Clapperboard}/>

@@ -142,13 +142,21 @@ describe("spexare actor vocalId asymmetry (intended)", () => {
     it("create uses the positional vocalId and drops the form vocalId", async () => {
         await actions.createActorAction("s1", "a1", "ta1", "POS", {vocalId: "FORM", role: "lead"});
 
-        expect(createActor).toHaveBeenCalledWith("s1", "a1", "ta1", "POS", {role: "lead"});
+        expect(createActor).toHaveBeenCalledWith("s1", "a1", "ta1", "POS", {role: "lead"}, undefined);
     });
 
     it("update uses the form vocalId and ignores the positional arg", async () => {
         await actions.updateActorAction("s1", "a1", "ta1", "POS", "id1", {vocalId: "FORM", role: "lead"});
 
-        expect(updateActor).toHaveBeenCalledWith("s1", "a1", "ta1", "FORM", "id1", {role: "lead"});
+        expect(updateActor).toHaveBeenCalledWith("s1", "a1", "ta1", "FORM", "id1", {role: "lead"}, null);
+    });
+
+    it("passes the character on, and clears it on update when there is none", async () => {
+        await actions.createActorAction("s1", "a1", "ta1", "POS", {vocalId: "FORM", characterId: "c1"});
+        await actions.updateActorAction("s1", "a1", "ta1", "POS", "id1", {vocalId: "FORM", characterId: "c2"});
+
+        expect(createActor).toHaveBeenCalledWith("s1", "a1", "ta1", "POS", {}, "c1");
+        expect(updateActor).toHaveBeenCalledWith("s1", "a1", "ta1", "FORM", "id1", {}, "c2");
     });
 });
 

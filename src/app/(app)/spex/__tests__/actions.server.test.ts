@@ -1,7 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {bulkDeleteAction, createAction, getPageAction, updateAction} from "@/app/(app)/spex/actions.server";
-import {create, del, getPaged, update} from "@/lib/spex";
-import {revalidateTag} from "next/cache";
+import {getPageAction} from "@/app/(app)/spex/actions.server";
+import {getPaged} from "@/lib/spex";
 
 vi.mock("@/utils/route.server", () => ({
     withPolicyAction: (_policy: unknown, cb: () => unknown) => cb(),
@@ -48,29 +47,3 @@ describe("spex getPageAction", () => {
     });
 });
 
-describe("spex create/update payload shaping", () => {
-    it("strips categoryId and revivalYears before create and revalidates", async () => {
-        await createAction({title: "X", year: "2024", categoryId: "c1", revivalYears: ["2000"]});
-
-        expect(create).toHaveBeenCalledWith({title: "X", year: "2024"});
-        expect(revalidateTag).toHaveBeenCalledWith("spex", "max");
-    });
-
-    it("strips categoryId and revivalYears before update and revalidates", async () => {
-        await updateAction("id1", {title: "Y", year: "2025", categoryId: "c2", revivalYears: ["2001"]});
-
-        expect(update).toHaveBeenCalledWith("id1", {title: "Y", year: "2025"});
-        expect(revalidateTag).toHaveBeenCalledWith("spex", "max");
-    });
-});
-
-describe("spex bulkDeleteAction", () => {
-    it("deletes every id and revalidates once", async () => {
-        await bulkDeleteAction(["a", "b", "c"]);
-
-        expect(del).toHaveBeenCalledTimes(3);
-        expect(del).toHaveBeenCalledWith("a");
-        expect(del).toHaveBeenCalledWith("c");
-        expect(revalidateTag).toHaveBeenCalledTimes(1);
-    });
-});

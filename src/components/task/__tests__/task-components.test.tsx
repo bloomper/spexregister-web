@@ -3,7 +3,7 @@ import {render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {TaskCard} from "@/components/task/task-card.client";
 import {TaskViewDialog} from "@/components/task/task-view-dialog.client";
-import {TaskEditSheet} from "@/components/task/task-edit-sheet.client";
+
 import type {Task} from "@/gql/schema";
 
 vi.mock("@/components/data-audit-trail.client", () => ({AuditTrail: () => <div data-testid="audit-trail"/>}));
@@ -19,25 +19,16 @@ const uncategorised = {id: "t2", name: "Misc", category: null} as unknown as Tas
 
 describe("TaskCard", () => {
     it("renders the name and category", () => {
-        render(<TaskCard task={task} canUpdate={false} onSelect={vi.fn()} onEdit={vi.fn()}/>);
+        render(<TaskCard task={task} onSelect={vi.fn()}/>);
         expect(screen.getByText("Lighting")).toBeInTheDocument();
         expect(screen.getByText("Technical")).toBeInTheDocument();
     });
 
     it('falls back to the "none" label for an uncategorised task', () => {
-        render(<TaskCard task={uncategorised} canUpdate={false} onSelect={vi.fn()} onEdit={vi.fn()}/>);
+        render(<TaskCard task={uncategorised} onSelect={vi.fn()}/>);
         expect(screen.getByText("Common.none")).toBeInTheDocument();
     });
 
-    it("fires onEdit and onSelect", async () => {
-        const onEdit = vi.fn();
-        const onSelect = vi.fn();
-        render(<TaskCard task={task} canUpdate onSelect={onSelect} onEdit={onEdit}/>);
-        await userEvent.click(screen.getByRole("button"));
-        expect(onEdit).toHaveBeenCalledTimes(1);
-        await userEvent.click(screen.getByText("Lighting"));
-        expect(onSelect).toHaveBeenCalled();
-    });
 });
 
 describe("TaskViewDialog", () => {
@@ -57,14 +48,3 @@ describe("TaskViewDialog", () => {
     });
 });
 
-describe("TaskEditSheet", () => {
-    it("renders the form when an item is set", () => {
-        render(<TaskEditSheet item={task} categories={[]} onClose={vi.fn()} onSuccess={vi.fn()}/>);
-        expect(screen.getByTestId("task-form")).toBeInTheDocument();
-    });
-
-    it("renders nothing when closed", () => {
-        render(<TaskEditSheet item={null} categories={[]} onClose={vi.fn()} onSuccess={vi.fn()}/>);
-        expect(screen.queryByTestId("task-form")).not.toBeInTheDocument();
-    });
-});

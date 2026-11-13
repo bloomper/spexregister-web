@@ -23,6 +23,7 @@ export const UserSummary = graphql(`
             lastName
             nickName
         }
+        spexareAutoLink
     }
 `);
 
@@ -136,6 +137,12 @@ const SpexareRemoveMutation = graphql(`
     }
 `);
 
+const SpexareAutoLinkSetMutation = graphql(`
+    mutation UserSpexareAutoLinkSet($userId: ID!, $enabled: Boolean!) {
+        userSpexareAutoLinkSet(userId: $userId, enabled: $enabled)
+    }
+`);
+
 const UserSearchQuery = graphql(`
     query UserSearch($query: String!, $first: Int!) {
         userSearch(query: $query, first: $first) { ...UserSummary }
@@ -217,4 +224,11 @@ export async function addSpexare(userId: string, id: string) {
  */
 export async function removeSpexare(userId: string) {
     return runMutationField(SpexareRemoveMutation, {userId}, "userSpexareRemove");
+}
+
+/**
+ * Whether the user is linked to their spexare by email when they have none: on until an admin removes a link by hand.
+ */
+export async function setSpexareAutoLink(userId: string, enabled: boolean) {
+    return runMutationField(SpexareAutoLinkSetMutation, {userId, enabled}, "userSpexareAutoLinkSet");
 }

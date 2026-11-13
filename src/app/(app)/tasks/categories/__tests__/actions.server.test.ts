@@ -1,7 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {bulkDeleteAction, getPageAction} from "@/app/(app)/tasks/categories/actions.server";
-import {del, getPaged} from "@/lib/task/category";
-import {revalidateTag} from "next/cache";
+import {getPageAction} from "@/app/(app)/tasks/categories/actions.server";
+import {getPaged} from "@/lib/task/category";
 
 vi.mock("@/utils/route.server", () => ({
     withPolicyAction: (_policy: unknown, cb: () => unknown) => cb(),
@@ -40,10 +39,3 @@ describe("task-category getPageAction", () => {
     });
 });
 
-describe("task-category bulkDeleteAction", () => {
-    it("deletes every id and revalidates once", async () => {
-        await bulkDeleteAction(["a", "b"]);
-        expect(del).toHaveBeenCalledTimes(2);
-        expect(revalidateTag).toHaveBeenCalledTimes(1);
-    });
-});

@@ -1,13 +1,14 @@
 import "server-only";
 
-import {AuditedType, SortDirection, Task, TaskCreate, TaskEdge, TaskUpdate} from "@/gql/schema";
+import {AuditedType, SortDirection, Task, TaskEdge} from "@/gql/schema";
 import {graphql} from "@/gql";
-import {createResourceClient, runMutationField} from "@/lib/graphql.server";
+import {createResourceClient} from "@/lib/graphql.server";
 
 export const TaskSummary = graphql(`
     fragment TaskSummary on Task {
         id
         name
+        retired
         category {
             id
             name
@@ -52,38 +53,17 @@ const TaskGetQuery = graphql(`
     }
 `);
 
-const TaskCreateMutation = graphql(`
-    mutation TaskCreate($input: TaskCreate!) {
-        taskCreate(input: $input) { ...TaskFull }
-    }
-`);
-
-const TaskUpdateMutation = graphql(`
-    mutation TaskUpdate($input: TaskUpdate!) {
-        taskUpdate(input: $input) { ...TaskFull }
-    }
-`);
-
-const TaskDeleteMutation = graphql(`
-    mutation TaskDelete($id: ID!) {
-        taskDelete(id: $id)
-    }
-`);
-
 const TaskExportQuery = graphql(`
     query TaskExport($ids: [ID], $filter: String, $type: ImpexType!) {
         taskExport(ids: $ids, filter: $filter, type: $type) { id }
     }
 `);
 
-const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
+const client = createResourceClient<Task, TaskEdge, never, {id?: unknown}>({
     singular: "task",
     pagedSummaryQuery: TaskPagedSummary,
     pagedFullQuery: TaskPagedFull,
     getQuery: TaskGetQuery,
-    createMutation: TaskCreateMutation,
-    updateMutation: TaskUpdateMutation,
-    deleteMutation: TaskDeleteMutation,
     exportQuery: TaskExportQuery,
     auditedType: AuditedType.Task,
     cacheTag: "task",
@@ -93,30 +73,6 @@ const client = createResourceClient<Task, TaskEdge, TaskCreate, TaskUpdate>({
     defaultFilter: "",
 });
 
-export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;
+// Read only: Spexipedia keeps base data
+export const {getPaged, get, getAll, exp, revisions} = client;
 
-const TaskCategoryAddMutation = graphql(`
-    mutation TaskCategoryAdd($id: ID!, $categoryId: ID!) {
-        taskCategoryAdd(taskId: $id, id: $categoryId)
-    }
-`);
-
-const TaskCategoryRemoveMutation = graphql(`
-    mutation TaskCategoryRemove($id: ID!) {
-        taskCategoryRemove(taskId: $id)
-    }
-`);
-
-/**
- * Puts the task in the category.
- */
-export async function addCategory(id: string, categoryId: string) {
-    return runMutationField(TaskCategoryAddMutation, {id, categoryId}, "taskCategoryAdd");
-}
-
-/**
- * Takes the task out of its category.
- */
-export async function removeCategory(id: string) {
-    return runMutationField(TaskCategoryRemoveMutation, {id}, "taskCategoryRemove");
-}

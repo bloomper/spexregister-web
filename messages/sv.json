@@ -44,7 +44,23 @@
     "notScheduled": "Inte schemalagt",
     "runNow": "Kör nu",
     "running": "Körs",
-    "schedule": "Schema"
+    "schedule": "Schema",
+    "sync": {
+      "heading": "Basdata från andra applikationer",
+      "title": "Från {source}",
+      "description": "Spex, uppsättningar, kategorier, uppgifter och roller underhålls i Spexipedia. Spexregistret håller en kopia som hämtar ändringarna när Spexipedia meddelar dem och var femte minut.",
+      "stale": "Ej nådd på en timme",
+      "lastPulled": "Senast hämtat",
+      "lastSuccess": "Senast lyckat",
+      "never": "Aldrig",
+      "appliedTotal": "Tillämpade ändringar",
+      "cursor": "Position",
+      "pullChanges": "Hämta ändringar",
+      "pullAll": "Hämta allt igen",
+      "applied": "{count, plural, =0 {Inga nya ändringar} one {# ändring tillämpad} other {# ändringar tillämpade}}",
+      "failed": "Hämtningen misslyckades: {error}",
+      "missing": "{count, plural, one {# post finns här men inte längre i källan} other {# poster finns här men inte längre i källan}}"
+    }
   },
   "Analytics": {
     "heading": "Analys",
@@ -378,7 +394,8 @@
     "spexflix": "Spexflix",
     "spexify": "Spexify",
     "spexgram": "Spexgram",
-    "archive": "Spexarkiv"
+    "archive": "Spexarkiv",
+    "spexipedia": "Spexipedia"
   },
   "Home": {
     "heading": "Hem",
@@ -589,7 +606,11 @@
     "selectYear": "Välj år",
     "selectYearFirst": "Välj ett ursprungsår i fliken 'Allmänt' för att kunna lägga till nyuppsättningar.",
     "title": "Titel",
-    "year": "År"
+    "year": "År",
+    "retired": "Pensionerad",
+    "editInSpexipedia": "Ändra i Spexipedia",
+    "showInSpexipedia": "Visa i Spexipedia",
+    "keptInSpexipedia": "Spex, nyuppsättningar, kategorier och poster ändras i Spexipedia."
   },
   "Spexare": {
     "Activity": {
@@ -603,8 +624,10 @@
       "TaskActivity": {
         "Actor": {
           "vocal": "Stämma",
-          "role": "Roll",
-          "noRolesAvailable": "Inga roller tillgängliga för denna funktion"
+          "role": "Annan roll",
+          "noRolesAvailable": "Inga roller tillgängliga för denna funktion",
+          "character": "Roll",
+          "noCharacter": "Ingen roll i Spexipedia"
         },
         "category": "Kategori",
         "selectCategory": "Välj funktionskategori",
@@ -771,7 +794,8 @@
     "filterPlaceholder": "Filtrera på namn...",
     "heading": "Funktioner",
     "name": "Namn",
-    "selectCategory": "Välj kategori"
+    "selectCategory": "Välj kategori",
+    "retired": "Pensionerad"
   },
   "User": {
     "authorities": "Rättigheter",
@@ -785,6 +809,8 @@
     "spexare": "Spexare?",
     "spexareHeading": "Spexare",
     "spexareSearchPlaceholder": "Sök efter spexare att koppla...",
+    "spexareAutoLink": "Koppla automatiskt via e-post",
+    "spexareAutoLinkDescription": "Saknar användaren spexare kopplas den till den enda spexare som har samma verifierade e-postadress. Stängs av när en koppling tas bort för hand.",
     "state": "Status"
   }
 }

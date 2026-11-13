@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {deleteLogo, getPaged, uploadLogo} from "@/lib/spex/category/spex-category.server";
+import {getPaged} from "@/lib/spex/category/spex-category.server";
 import {SortDirection} from "@/gql/schema";
 
 const toPromise = vi.fn();
@@ -37,27 +37,3 @@ describe("spex-category.server (factory config binding)", () => {
     });
 });
 
-describe("spex-category logo upload/delete (REST)", () => {
-    it("uploadLogo PUTs the file bytes to the logo endpoint", async () => {
-        vi.stubEnv("API_REST_BASE_URL", "https://api.test");
-        axiosPut.mockResolvedValue({data: {logoUrl: "u"}});
-        const file = new File(["x"], "l.png", {type: "image/png"});
-
-        await expect(uploadLogo("7", file)).resolves.toEqual({logoUrl: "u"});
-        expect(axiosPut).toHaveBeenCalledWith(
-            "https://api.test/api/spex/categories/7/logo",
-            expect.anything(),
-            {headers: {"Content-Type": "image/png"}},
-        );
-        vi.unstubAllEnvs();
-    });
-
-    it("deleteLogo DELETEs the logo endpoint and reports success", async () => {
-        vi.stubEnv("API_REST_BASE_URL", "https://api.test");
-        axiosDelete.mockResolvedValue({});
-
-        await expect(deleteLogo("7")).resolves.toEqual({success: true});
-        expect(axiosDelete).toHaveBeenCalledWith("https://api.test/api/spex/categories/7/logo");
-        vi.unstubAllEnvs();
-    });
-});

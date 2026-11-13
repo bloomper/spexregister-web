@@ -2,28 +2,10 @@
 
 import {Policies} from "@/utils/policy.server";
 import {withPolicyAction} from "@/utils/route.server";
-import {deleteEach} from "@/utils/utils.server";
-import {
-    addCategory,
-    create,
-    createRevival,
-    del,
-    deletePoster,
-    deleteRevival,
-    exp,
-    get,
-    getAll as getAllSpex,
-    getPaged,
-    imp,
-    removeCategory,
-    revisions,
-    spexFormSchema,
-    update,
-    uploadPoster
-} from "@/lib/spex";
-import {getRestorePreview, restore} from "@/lib/audit/audit.server";
-import {revalidateTag} from "next/cache";
-import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
+
+import {exp, get, getAll as getAllSpex, getPaged, revisions} from "@/lib/spex";
+
+import {ImpexType, SortDirection} from "@/gql/schema";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
 
 export async function getPageAction(args: {
@@ -56,59 +38,9 @@ export async function getAction(id: string) {
     });
 }
 
-export async function createAction(data: unknown) {
-    return withPolicyAction(Policies.spex.requireCreate, async () => {
-        const validated = spexFormSchema.parse(data);
-        const {categoryId, revivalYears, ...createInput} = validated;
-        void categoryId;
-        void revivalYears;
-        const result = await create(createInput);
-        revalidate();
-        return result;
-    });
-}
-
-export async function updateAction(id: string, data: unknown) {
-    return withPolicyAction(Policies.spex.requireUpdate, async () => {
-        const validated = spexFormSchema.parse(data);
-        const {categoryId, revivalYears, ...updateInput} = validated;
-        void categoryId;
-        void revivalYears;
-        const result = await update(id, updateInput);
-        revalidate();
-        return result;
-    });
-}
-
-export async function deleteAction(id: string) {
-    return withPolicyAction(Policies.spex.requireDelete, async () => {
-        const result = await del(id);
-        revalidate();
-        return result;
-    });
-}
-
-export async function bulkDeleteAction(ids: string[]) {
-    await withPolicyAction(Policies.spex.requireDelete, async () => {
-        try {
-            await deleteEach(ids, del);
-        } finally {
-            revalidate();
-        }
-    });
-}
-
 export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
     return withPolicyAction(Policies.spex.requireExport, async () => {
         return await exp(ids, filter, type);
-    });
-}
-
-export async function importAction(type: ImpexType, file: File) {
-    return withPolicyAction(Policies.spex.requireImport, async () => {
-        const result = await imp(type, file);
-        revalidate();
-        return result;
     });
 }
 
@@ -118,79 +50,8 @@ export async function getAllCategoriesAction() {
     });
 }
 
-export async function addCategoryAction(id: string, categoryId: string) {
-    return withPolicyAction(Policies.spex.requireCreate, async () => {
-        const result = await addCategory(id, categoryId);
-        revalidate();
-        return result;
-    });
-}
-
-export async function removeCategoryAction(id: string) {
-    return withPolicyAction(Policies.spex.requireCreate, async () => {
-        const result = await removeCategory(id);
-        revalidate();
-        return result;
-    });
-}
-
-export async function createRevivalAction(spexId: string, year: string) {
-    return withPolicyAction(Policies.spex.requireUpdate, async () => {
-        const result = await createRevival(spexId, year);
-        revalidate();
-        return result;
-    });
-}
-
-export async function deleteRevivalAction(spexId: string, id: string) {
-    return withPolicyAction(Policies.spex.requireUpdate, async () => {
-        const result = await deleteRevival(spexId, id);
-        revalidate();
-        return result;
-    });
-}
-
-export async function uploadPosterAction(id: string, formData: FormData) {
-    return withPolicyAction(Policies.spex.requireUpdate, async () => {
-        const file = formData.get("file") as File;
-        const result = await uploadPoster(id, file);
-
-        revalidate();
-        return result;
-    });
-}
-
-export async function deletePosterAction(id: string) {
-    return withPolicyAction(Policies.spex.requireUpdate, async () => {
-        await deletePoster(id);
-
-        revalidate();
-        return {
-            success: true
-        };
-    });
-}
-
 export async function getRevisionsAction(id: string) {
     return withPolicyAction(Policies.spex.requireRead, async () => {
         return revisions(id);
     });
-}
-
-export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        return getRestorePreview(type, id, revision, cascade);
-    });
-}
-
-export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean, reason?: string) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        const result = await restore(type, id, revision, cascade, reason);
-        revalidate();
-        return result;
-    });
-}
-
-function revalidate() {
-    revalidateTag("spex", "max");
 }

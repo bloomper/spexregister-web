@@ -103,15 +103,15 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                                                         {actors.map((actor) => (
                                                             <div key={actor.id}
                                                                  className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs sm:text-[11px] py-0.5 border-l-2 border-primary/20 pl-2">
-                                                                {actor.role && (
+                                                                {(actor.character?.name || actor.role) && (
                                                                     <div className="flex items-center gap-1.5">
                                                                     <span
                                                                         className="text-[11px] sm:text-[9px] uppercase font-bold text-muted-foreground/70">
-                                                                        {t("Spexare.Activity.TaskActivity.Actor.role")}:
+                                                                        {t(actor.character ? "Spexare.Activity.TaskActivity.Actor.character" : "Spexare.Activity.TaskActivity.Actor.role")}:
                                                                     </span>
                                                                         <span
                                                                             className="font-semibold text-foreground/90 leading-tight">
-                                                                        {actor.role}
+                                                                        {actor.character?.name ?? actor.role}
                                                                     </span>
                                                                     </div>
                                                                 )}

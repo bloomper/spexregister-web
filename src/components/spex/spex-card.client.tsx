@@ -2,7 +2,7 @@
 
 import {useTranslations} from "next-intl";
 import Image from "next/image";
-import {ImageIcon, Pencil} from "lucide-react";
+import {ExternalLink, ImageIcon} from "lucide-react";
 import {Spex} from "@/gql/schema";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
@@ -12,12 +12,14 @@ import {getProxiedImageUrl} from "@/utils/utils";
 type SpexCardProps = {
     spex: Spex;
     index: number;
-    canUpdate: boolean;
+    /**
+     * Where to change the spex: its page in Spexipedia, for Spexipedia's editors. Spexregister keeps a copy only.
+     */
+    editUrl?: string | null;
     onSelect: () => void;
-    onEdit: () => void;
 };
 
-export function SpexCard({spex, index, canUpdate, onSelect, onEdit}: SpexCardProps) {
+export function SpexCard({spex, index, editUrl, onSelect}: SpexCardProps) {
     const t = useTranslations();
 
     return (
@@ -25,18 +27,18 @@ export function SpexCard({spex, index, canUpdate, onSelect, onEdit}: SpexCardPro
             className="group h-full transition-colors hover:bg-muted/50 cursor-pointer overflow-hidden flex flex-col p-0 relative"
         >
             <div className="relative aspect-video w-full bg-muted border-b overflow-hidden">
-                {canUpdate && (
+                {editUrl && (
                     <div className="absolute top-2 right-2 z-20">
                         <Button
                             variant="secondary"
                             size="icon"
-                            className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onEdit();
-                            }}
+                            className="h-8 w-8 rounded-full shadow-md opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity backdrop-blur-sm bg-background/80 hover:bg-background"
+                            render={<a href={editUrl} target="_blank" rel="noopener noreferrer"/>}
+                            aria-label={t("Spex.editInSpexipedia")}
+                            title={t("Spex.editInSpexipedia")}
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <Pencil className="h-4 w-4"/>
+                            <ExternalLink className="h-4 w-4"/>
                         </Button>
                     </div>
                 )}
@@ -81,6 +83,9 @@ export function SpexCard({spex, index, canUpdate, onSelect, onEdit}: SpexCardPro
                 </div>
                 <CardTitle
                     className="line-clamp-1 text-sm font-bold leading-tight">{spex.title}</CardTitle>
+                {spex.retired && (
+                    <Badge variant="outline" className="w-fit text-[11px] sm:text-[9px]">{t("Spex.retired")}</Badge>
+                )}
             </CardHeader>
             {spex.category && (
                 <CardContent className="px-4 pb-4 pt-0">

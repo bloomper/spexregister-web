@@ -4,6 +4,7 @@ import {getPaged} from "@/lib/task/category";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {getSpexipedia} from "@/utils/applications.server";
 import {Shapes} from "lucide-react";
 
 /**
@@ -11,9 +12,9 @@ import {Shapes} from "lucide-react";
  */
 export default async function TaskCategoryPage() {
     return withPolicyPage(Policies.taskCategory.requireRead, async () => {
-        const [page, canUpdate] = await Promise.all([
+        const [page, spexipedia] = await Promise.all([
             getPaged({first: 24, after: null}),
-            Policies.taskCategory.requireUpdate(),
+            getSpexipedia(),
         ]);
         const initialItems = page.items;
         const t = await getTranslations();
@@ -26,7 +27,7 @@ export default async function TaskCategoryPage() {
                         <TaskCategoryGrid
                             initialItems={initialItems}
                             initialPageInfo={page.pageInfo}
-                            canUpdate={canUpdate.ok}
+                            spexipedia={spexipedia}
                         />
                     ) : (
                         <DataEmpty icon={Shapes}/>

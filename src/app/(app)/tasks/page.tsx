@@ -4,6 +4,7 @@ import {getPaged} from "@/lib/task";
 import {DataEmpty} from "@/components/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
+import {getSpexipedia} from "@/utils/applications.server";
 import {getAll as getAllCategories} from "@/lib/task/category";
 import {ClipboardList} from "lucide-react";
 
@@ -12,10 +13,10 @@ import {ClipboardList} from "lucide-react";
  */
 export default async function TaskPage() {
     return withPolicyPage(Policies.task.requireRead, async () => {
-        const [page, categories, canUpdate] = await Promise.all([
+        const [page, categories, spexipedia] = await Promise.all([
             getPaged({first: 24, after: null}),
             getAllCategories(),
-            Policies.task.requireUpdate(),
+            getSpexipedia(),
         ]);
 
         const initialItems = page.items;
@@ -30,7 +31,7 @@ export default async function TaskPage() {
                             initialItems={initialItems}
                             initialPageInfo={page.pageInfo}
                             categories={categories}
-                            canUpdate={canUpdate.ok}
+                            spexipedia={spexipedia}
                         />
                     ) : (
                         <DataEmpty icon={ClipboardList}/>
