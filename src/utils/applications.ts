@@ -16,7 +16,7 @@ export type Application = {
 
 const APPLICATIONS: ReadonlyArray<{ id: ApplicationId; clientId: string; urlVariable: string }> = [
     {id: "spexregister", clientId: "spexregister", urlVariable: "SPEXREGISTER_WEB_URL"},
-    {id: "revival", clientId: "fgv-revival", urlVariable: "FGV_REVIVAL_WEB_URL"},
+    {id: "revival", clientId: "fgv-revival", urlVariable: "REVIVAL_WEB_URL"},
     {id: "spexflix", clientId: "fgv-spexflix", urlVariable: "SPEXFLIX_WEB_URL"},
     {id: "spexify", clientId: "fgv-spexify", urlVariable: "SPEXIFY_WEB_URL"},
     {id: "spexgram", clientId: "fgv-spexgram", urlVariable: "SPEXGRAM_WEB_URL"},
