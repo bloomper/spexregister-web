@@ -91,7 +91,7 @@ changing routing or data fetching; this area differs sharply from older Next.
 - **`getSessionContext()` in `src/utils/auth.server.ts` is the single entry point for server-side
   auth.** It resolves the session, then the Keycloak access token from the account cookie (refreshing when near expiry),
   then decodes the roles out of that token's
-  `resource_access.spexregister.roles`. It is wrapped in React `cache()` — the layout, urql, axios
+  `resource_access["fgv-spexregister"].roles`. It is wrapped in React `cache()` — the layout, urql, axios
   and every policy check call it within one render. `requireUser()` and `getAccessToken()` are thin
   wrappers over it; a token that cannot be refreshed reads as logged out.
 - `src/proxy.ts` (Next 16's middleware file) refreshes the account cookie and forwards the

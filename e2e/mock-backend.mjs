@@ -982,7 +982,7 @@ const accessToken = () =>
             typ: "Bearer",
             azp: CLIENT_ID,
             resource_access: {
-                spexregister: {roles: userRoles},
+                "fgv-spexregister": {roles: userRoles},
                 "fgv-spexify": {roles: ["USER"]},
                 "fgv-spexflix": {roles: ["USER"]},
             },

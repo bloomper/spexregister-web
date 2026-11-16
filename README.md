@@ -35,8 +35,8 @@ Spexregister Web is the second generation of the frontend responsible for servin
    ```
    BETTER_AUTH_URL=http://localhost:3000
    AUTH_SECRET=<random string of at least 32 characters>
-   KEYCLOAK_CLIENT_ID=spexregister
-   KEYCLOAK_CLIENT_SECRET=<secret of the spexregister client>
+   KEYCLOAK_CLIENT_ID=fgv-spexregister
+   KEYCLOAK_CLIENT_SECRET=<secret of the fgv-spexregister client>
    KEYCLOAK_ISSUER=https://auth.fgv.local.nu:8443/auth/realms/fgv
    API_GRAPHQL_ENDPOINT=https://api.register.fgv.local.nu:8443/api/graphql
    API_REST_BASE_URL=https://api.register.fgv.local.nu:8443

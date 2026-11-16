@@ -14,7 +14,7 @@ const user = {roles: ["USER"]};
 
 describe("resolveApplications", () => {
     it("lists the current application first among the others the user can open, in a fixed order", () => {
-        const claims = {resource_access: {"fgv-spexify": user, "spexregister": user, "fgv-revival": user, "fgv-archive": user}};
+        const claims = {resource_access: {"fgv-spexify": user, "fgv-spexregister": user, "fgv-revival": user, "fgv-archive": user}};
 
         expect(resolveApplications("spexflix", claims, env)).toEqual([
             {id: "spexregister", url: "https://register.example.org", current: false},

@@ -30,14 +30,14 @@ describe("role predicates", () => {
 
 describe("extractRolesFromClaims", () => {
     const claimsWith = (roles?: string[]): AccessTokenClaims => ({
-        resource_access: {spexregister: {roles}},
+        resource_access: {"fgv-spexregister": {roles}},
     });
 
     it("returns [] when resource_access is missing", () => {
         expect(extractRolesFromClaims({})).toEqual([]);
     });
 
-    it("returns [] when the spexregister client is missing", () => {
+    it("returns [] when the fgv-spexregister client is missing", () => {
         expect(extractRolesFromClaims({resource_access: {}})).toEqual([]);
     });
 
