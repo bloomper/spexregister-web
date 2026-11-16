@@ -12,10 +12,6 @@ export const SpexSummary = graphql(`
         posterUrl
         revival
         retired
-        permissions {
-            write
-            delete
-        }
         revivals {
             id
             year
@@ -63,18 +59,12 @@ const SpexGetQuery = graphql(`
     }
 `);
 
-const SpexExportQuery = graphql(`
-    query SpexExport($ids: [ID], $filter: String, $type: ImpexType!) {
-        spexExport(ids: $ids, filter: $filter, type: $type) { id }
-    }
-`);
 
 const client = createResourceClient<Spex, SpexEdge, never, {id?: unknown}>({
     singular: "spex",
     pagedSummaryQuery: SpexPagedSummary,
     pagedFullQuery: SpexPagedFull,
     getQuery: SpexGetQuery,
-    exportQuery: SpexExportQuery,
     auditedType: AuditedType.Spex,
     cacheTag: "spex",
     restPath: "spex",
@@ -84,5 +74,5 @@ const client = createResourceClient<Spex, SpexEdge, never, {id?: unknown}>({
 });
 
 // Read only: Spexipedia keeps spex and revivals
-export const {getPaged, get, getAll, exp, revisions} = client;
+export const {getPaged, get, getAll} = client;
 

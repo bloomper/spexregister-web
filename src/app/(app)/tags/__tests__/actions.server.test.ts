@@ -20,7 +20,6 @@ vi.mock("@/lib/tag", () => ({
     del: vi.fn(),
     exp: vi.fn(),
     imp: vi.fn(),
-    events: vi.fn(),
     tagFormSchema: {parse: (d: unknown) => d},
 }));
 

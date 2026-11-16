@@ -81,7 +81,7 @@ function scopeOf(t: Translate, grant: PermissionGrant) {
         return t("scopes.SPEXARE_ONE", {name: `${grant.spexare?.firstName ?? ""} ${grant.spexare?.lastName ?? ""}`.trim()});
     }
 
-    return t(grant.scope === "SPEX" ? "scopes.SPEX_ONE" : "scopes.SPEX_PARTICIPANTS_ONE", {
+    return t("scopes.SPEX_PARTICIPANTS_ONE", {
         name: grant.spex ? `${grant.spex.title} (${grant.spex.year})` : "",
     });
 }
@@ -102,7 +102,7 @@ function valuesFilter(field: string, chosen: Set<string>, all: readonly string[]
 
 /**
  * The permission grants as a table, with adding, changing and removing them. A grant is to a user or a role, on a
- * spexare, a spex's participants or a spex, and may end on a date.
+ * spexare or a spex's participants, and may end on a date.
  */
 export function PermissionGrants({initialData, spex, roles}: PermissionGrantsProps) {
     const t = useTranslations("PermissionGrant");

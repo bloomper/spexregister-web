@@ -19,7 +19,6 @@ vi.mock("@/lib/news", () => ({
     del: vi.fn(),
     exp: vi.fn(),
     imp: vi.fn(),
-    events: vi.fn(),
     newsFormSchema: {parse: (d: unknown) => d},
 }));
 

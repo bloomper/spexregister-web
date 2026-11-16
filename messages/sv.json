@@ -548,10 +548,8 @@
     "scopes": {
       "SPEXARE": "En spexare",
       "SPEX_PARTICIPANTS": "Alla i ett spex",
-      "SPEX": "Ett spex",
       "SPEXARE_ONE": "Spexare {name}",
-      "SPEX_PARTICIPANTS_ONE": "Alla i {name}",
-      "SPEX_ONE": "Spex {name}"
+      "SPEX_PARTICIPANTS_ONE": "Alla i {name}"
     },
     "validation": {
       "userRequired": "Välj en användare",

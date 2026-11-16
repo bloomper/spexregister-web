@@ -68,44 +68,16 @@ export const Policies = {
             return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
         },
     },
+    // Read only: Spexipedia keeps spex; Spexregister holds a synced copy
     spex: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
         },
-        async requireCreate(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireUpdate(): Promise<AuthzResult> {
-            return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
-        },
-        async requireDelete(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireExport(): Promise<AuthzResult> {
-            return requireAnyRole(["EDITOR", "ADMIN"]);
-        },
-        async requireImport(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
     },
+    // Read only: Spexipedia keeps spex categories; Spexregister holds a synced copy
     spexCategory: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
-        },
-        async requireCreate(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireUpdate(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireDelete(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireExport(): Promise<AuthzResult> {
-            return requireAnyRole(["EDITOR", "ADMIN"]);
-        },
-        async requireImport(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
         },
     },
     spexare: {
@@ -151,44 +123,16 @@ export const Policies = {
             return requireAnyRole(["EDITOR", "ADMIN"]);
         },
     },
+    // Read only: Spexipedia keeps tasks; Spexregister holds a synced copy
     task: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
         },
-        async requireCreate(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireUpdate(): Promise<AuthzResult> {
-            return requireAnyRole(["EDITOR", "ADMIN"]);
-        },
-        async requireDelete(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireExport(): Promise<AuthzResult> {
-            return requireAnyRole(["EDITOR", "ADMIN"]);
-        },
-        async requireImport(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
     },
+    // Read only: Spexipedia keeps task categories; Spexregister holds a synced copy
     taskCategory: {
         async requireRead(): Promise<AuthzResult> {
             return requireAnyRole(["USER", "EDITOR", "ADMIN"]);
-        },
-        async requireCreate(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireUpdate(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireDelete(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
-        },
-        async requireExport(): Promise<AuthzResult> {
-            return requireAnyRole(["EDITOR", "ADMIN"]);
-        },
-        async requireImport(): Promise<AuthzResult> {
-            return requireAnyRole(["ADMIN"]);
         },
     },
     user: {

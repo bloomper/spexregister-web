@@ -181,7 +181,11 @@ export enum AuditSource {
   Web = 'WEB'
 }
 
-/** The entity types that have an audit history. */
+/**
+ * The entity types that have an audit history. SPEX, SPEX_DETAILS, SPEX_CATEGORY, TASK and TASK_CATEGORY are base data:
+ * Spexipedia keeps it and has its history, so it is recorded here only for what spexare's activities pointed at, and
+ * left out of the change log.
+ */
 export enum AuditedType {
   Activity = 'ACTIVITY',
   Actor = 'ACTOR',
@@ -644,8 +648,8 @@ export type Mutation = {
   /** ADMIN or EDITOR. Omitted values are left unchanged; published follows the visibility period. */
   newsUpdate?: Maybe<News>;
   /**
-   * ADMIN. Names exactly one of userId and role (USER, EDITOR or ADMIN). A SPEXARE grant names spexareId; the other
-   * scopes name spexId. validUntil may not be in the past.
+   * ADMIN. Names exactly one of userId and role (USER, EDITOR or ADMIN). A SPEXARE grant names spexareId; a
+   * SPEX_PARTICIPANTS grant names spexId. validUntil may not be in the past.
    */
   permissionGrantCreate?: Maybe<PermissionGrant>;
   /** ADMIN. */
@@ -653,8 +657,8 @@ export type Mutation = {
   /** ADMIN. Changes the permission and validUntil; who and what the grant applies to are fixed. */
   permissionGrantUpdate?: Maybe<PermissionGrant>;
   /**
-   * ADMIN, with WRITE on the entity. Puts its audited fields, and those of what it points at, back as they were in the
-   * revision. With cascade, the records that belong to it are restored too: changed ones are put back, ones added since
+   * ADMIN, with WRITE on the entity. Puts its audited fields back as they were in the revision. Not for base data. With
+   * cascade, the records that belong to it are restored too: changed ones are put back, ones added since
    * are removed and ones removed since are re-created under new ids. The entity must still exist. The reason given in
    * the X-Audit-Reason header is kept with the new revision.
    */
@@ -1249,9 +1253,8 @@ export type PermissionGrantEdge = {
   node: PermissionGrant;
 };
 
-/** What a grant applies to: one spexare, everyone with a spex activity in a spex, or a spex. */
+/** What a grant applies to: one spexare, or everyone with a spex activity in a spex. */
 export enum PermissionGrantScope {
-  Spex = 'SPEX',
   Spexare = 'SPEXARE',
   SpexParticipants = 'SPEX_PARTICIPANTS'
 }
@@ -1329,26 +1332,24 @@ export type Query = {
   permissionGrantPaged?: Maybe<PermissionGrantConnection>;
   /**
    * ADMIN, EDITOR or USER who may read the entity. The revisions of the records of relatedType that belong to it, and of
-   * those that belong to them in turn, newest first; for example the activities of a spexare.
+   * those that belong to them in turn, newest first; for example the activities of a spexare. Not for base data.
    */
   relatedRevisions?: Maybe<Array<Maybe<Revision>>>;
-  /** ADMIN. What restore would change, without changing anything. */
+  /** ADMIN. What restore would change, without changing anything. Not for base data. */
   restorePreview?: Maybe<RestorePreview>;
-  /** ADMIN, EDITOR or USER who may read the entity. One of its revisions, as revisions gives it. */
+  /** ADMIN, EDITOR or USER who may read the entity. One of its revisions, as revisions gives it. Not for base data. */
   revision?: Maybe<Revision>;
-  /** ADMIN. Everyone who has made a revision, by name. */
+  /** ADMIN. Everyone who has made a revision in the feed, by name. */
   revisionAuthors: Array<Scalars['String']['output']>;
-  /** ADMIN. Everything changed in a revision, at most limitPerType entities of each type. */
+  /** ADMIN. Everything changed in a revision but base data, at most limitPerType entities of each type. */
   revisionDetail?: Maybe<RevisionDetail>;
   /**
    * ADMIN. All revisions, newest first, narrowed by the entity type that changed, the authors, the sources and a period
-   * from and to, both inclusive. Without from, the period starts sinceInDays days before to, or today.
+   * from and to, both inclusive. Without from, the period starts sinceInDays days before to, or today. Revisions that
+   * changed nothing but base data are left out, and type may not be base data.
    */
   revisionFeedPaged?: Maybe<RevisionFeedConnection>;
-  /**
-   * ADMIN, EDITOR or USER who may read the entity. Its revisions with those of what it points at, such as a spex's
-   * details, newest first.
-   */
+  /** ADMIN, EDITOR or USER who may read the entity. Its revisions, newest first. Not for base data (see AuditedType). */
   revisions?: Maybe<Array<Maybe<Revision>>>;
   /** ADMIN, EDITOR or USER. One of the caller's saved searches. */
   savedSearch?: Maybe<SavedSearch>;
@@ -1358,21 +1359,12 @@ export type Query = {
   spex?: Maybe<Spex>;
   /** ADMIN, EDITOR or USER. */
   spexCategory?: Maybe<SpexCategory>;
-  /** ADMIN or EDITOR. */
-  spexCategoryExport?: Maybe<JobReference>;
   /** ADMIN, EDITOR or USER. */
   spexCategoryPaged?: Maybe<SpexCategoryConnection>;
   /** Every role but MEDIA. The characters an actor of the spex may play: its own and, for a revival, its parent's. */
   spexCharacters: Array<SpexCharacter>;
-  /**
-   * ADMIN or EDITOR. Starts an export of the given spex, or of the original spex matching the filter, with their
-   * revivals.
-   */
-  spexExport?: Maybe<JobReference>;
   /** Every role. Only original spex by default; filter on parent!NULL for the revivals. */
   spexPaged?: Maybe<SpexConnection>;
-  /** Every role. A revival of another spex is not found. */
-  spexRevival?: Maybe<Spex>;
   /** Every role. */
   spexare?: Maybe<Spexare>;
   /** ADMIN, EDITOR or USER. What spexareBulkApply would do, without changing anything. */
@@ -1429,12 +1421,8 @@ export type Query = {
   task?: Maybe<Task>;
   /** Every role. */
   taskCategory?: Maybe<TaskCategory>;
-  /** ADMIN or EDITOR. */
-  taskCategoryExport?: Maybe<JobReference>;
   /** Every role. */
   taskCategoryPaged?: Maybe<TaskCategoryConnection>;
-  /** ADMIN or EDITOR. */
-  taskExport?: Maybe<JobReference>;
   /** Every role. */
   taskPaged?: Maybe<TaskConnection>;
   /** Open to everyone. */
@@ -1830,22 +1818,6 @@ export type QuerySpexCategoryArgs = {
  *
  * Lists only ever contain what the caller may read.
  */
-export type QuerySpexCategoryExportArgs = {
-  filter?: InputMaybe<Scalars['String']['input']>;
-  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
-  type: ImpexType;
-};
-
-
-/**
- * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
- * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
- * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
- * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
- * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
- *
- * Lists only ever contain what the caller may read.
- */
 export type QuerySpexCategoryPagedArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -1880,22 +1852,6 @@ export type QuerySpexCharactersArgs = {
  *
  * Lists only ever contain what the caller may read.
  */
-export type QuerySpexExportArgs = {
-  filter?: InputMaybe<Scalars['String']['input']>;
-  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
-  type: ImpexType;
-};
-
-
-/**
- * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
- * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
- * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
- * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
- * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
- *
- * Lists only ever contain what the caller may read.
- */
 export type QuerySpexPagedArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -1904,21 +1860,6 @@ export type QuerySpexPagedArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   sort?: Array<InputMaybe<Scalars['String']['input']>>;
-};
-
-
-/**
- * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
- * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
- * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
- * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
- * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
- *
- * Lists only ever contain what the caller may read.
- */
-export type QuerySpexRevivalArgs = {
-  id: Scalars['ID']['input'];
-  spexId: Scalars['ID']['input'];
 };
 
 
@@ -2211,22 +2152,6 @@ export type QueryTaskCategoryArgs = {
  *
  * Lists only ever contain what the caller may read.
  */
-export type QueryTaskCategoryExportArgs = {
-  filter?: InputMaybe<Scalars['String']['input']>;
-  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
-  type: ImpexType;
-};
-
-
-/**
- * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
- * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
- * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
- * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
- * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
- *
- * Lists only ever contain what the caller may read.
- */
 export type QueryTaskCategoryPagedArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -2235,22 +2160,6 @@ export type QueryTaskCategoryPagedArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   sort?: Array<InputMaybe<Scalars['String']['input']>>;
-};
-
-
-/**
- * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
- * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
- * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
- * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
- * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
- *
- * Lists only ever contain what the caller may read.
- */
-export type QueryTaskExportArgs = {
-  filter?: InputMaybe<Scalars['String']['input']>;
-  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
-  type: ImpexType;
 };
 
 
@@ -2549,8 +2458,6 @@ export type Spex = {
   lastModifiedBy?: Maybe<Scalars['String']['output']>;
   /** The original, for a revival. Not for the REVIVAL role. */
   parent?: Maybe<SpexParent>;
-  /** What the caller may do with the spex. */
-  permissions: Permissions;
   /** Spexipedia's public address of the poster, when there is one: its own, else its original's for a revival. */
   posterUrl?: Maybe<Scalars['String']['output']>;
   /** Retired in Spexipedia: kept on activities, not offered for new ones. */
@@ -2559,23 +2466,8 @@ export type Spex = {
   revival?: Maybe<Scalars['Boolean']['output']>;
   /** By year. */
   revivals?: Maybe<Array<Maybe<SpexRevival>>>;
-  revivalsPaged?: Maybe<SpexRevivalConnection>;
   title: Scalars['String']['output'];
   year: Scalars['Year']['output'];
-};
-
-
-/**
- * A spex in a year: an original production, or a revival of one when parent is set. Title, poster and category are shared
- * by an original and its revivals.
- */
-export type SpexRevivalsPagedArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  direction?: InputMaybe<SortDirection>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  sort?: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
 /** The spex of an activity. */
@@ -2663,19 +2555,6 @@ export type SpexRevival = {
   lastModifiedAt?: Maybe<Scalars['Instant']['output']>;
   lastModifiedBy?: Maybe<Scalars['String']['output']>;
   year: Scalars['Year']['output'];
-};
-
-export type SpexRevivalConnection = {
-  __typename?: 'SpexRevivalConnection';
-  edges: Array<Maybe<SpexRevivalEdge>>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type SpexRevivalEdge = {
-  __typename?: 'SpexRevivalEdge';
-  cursor: Scalars['String']['output'];
-  node: SpexRevival;
 };
 
 /**

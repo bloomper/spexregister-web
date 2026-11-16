@@ -12,11 +12,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {AuditTrail} from "@/components/data-audit-trail.client";
 import {getProxiedImageUrl} from "@/utils/utils";
-import {
-    getRevisionsAction
-} from "@/app/(app)/spex/categories/actions.server";
 
 export function SpexCategoryViewDialog({selected, onClose}: { selected: SpexCategory | null; onClose: () => void }) {
     const t = useTranslations();
@@ -44,11 +40,6 @@ export function SpexCategoryViewDialog({selected, onClose}: { selected: SpexCate
                                 unoptimized
                                 className="object-contain p-6"
                             />
-                        </div>
-                    )}
-                    {selected && (
-                        <div className="space-y-4">
-                            <AuditTrail id={selected.id} fetchAction={getRevisionsAction}/>
                         </div>
                     )}
                 </div>

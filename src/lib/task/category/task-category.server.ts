@@ -50,18 +50,12 @@ const TaskCategoryGetQuery = graphql(`
     }
 `);
 
-const TaskCategoryExportQuery = graphql(`
-    query TaskCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {
-        taskCategoryExport(ids: $ids, filter: $filter, type: $type) { id }
-    }
-`);
 
 const client = createResourceClient<TaskCategory, TaskCategoryEdge, never, {id?: unknown}>({
     singular: "taskCategory",
     pagedSummaryQuery: TaskCategoryPagedSummary,
     pagedFullQuery: TaskCategoryPagedFull,
     getQuery: TaskCategoryGetQuery,
-    exportQuery: TaskCategoryExportQuery,
     auditedType: AuditedType.TaskCategory,
     cacheTag: "task-category",
     restPath: "tasks/categories",
@@ -71,4 +65,4 @@ const client = createResourceClient<TaskCategory, TaskCategoryEdge, never, {id?:
 });
 
 // Read only: Spexipedia keeps base data
-export const {getPaged, get, getAll, exp, revisions} = client;
+export const {getPaged, get, getAll} = client;

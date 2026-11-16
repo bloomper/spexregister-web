@@ -37,6 +37,18 @@ const ROUTES: Partial<Record<AuditedType, string>> = {
 };
 
 /**
+ * The base data Spexregister copies from Spexipedia. Its history belongs to Spexipedia, so the change log neither lists
+ * nor filters on it; a revision of Spexregister's own data may still show it, as what an activity refers to.
+ */
+export const SPEXIPEDIA_TYPES: ReadonlySet<AuditedType> = new Set([
+    AuditedType.Spex,
+    AuditedType.SpexDetails,
+    AuditedType.SpexCategory,
+    AuditedType.Task,
+    AuditedType.TaskCategory,
+]);
+
+/**
  * Spexipedia's pages for the base data Spexregister only copies. Spex have a page anyone may read; the rest only its
  * editors' management pages.
  */

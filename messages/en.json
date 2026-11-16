@@ -548,10 +548,8 @@
     "scopes": {
       "SPEXARE": "One spexare",
       "SPEX_PARTICIPANTS": "Everyone in a spex",
-      "SPEX": "One spex",
       "SPEXARE_ONE": "Spexare {name}",
-      "SPEX_PARTICIPANTS_ONE": "Everyone in {name}",
-      "SPEX_ONE": "Spex {name}"
+      "SPEX_PARTICIPANTS_ONE": "Everyone in {name}"
     },
     "validation": {
       "userRequired": "Choose a user",

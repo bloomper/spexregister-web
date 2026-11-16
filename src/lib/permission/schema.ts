@@ -1,7 +1,7 @@
 import {z} from "zod";
 
 export const PERMISSIONS = ["READ", "WRITE", "DELETE", "ADMINISTRATION"] as const;
-export const SCOPES = ["SPEXARE", "SPEX_PARTICIPANTS", "SPEX"] as const;
+export const SCOPES = ["SPEXARE", "SPEX_PARTICIPANTS"] as const;
 export const GRANTABLE_ROLES = ["USER", "EDITOR", "ADMIN"] as const;
 
 export const permissionGrantFormSchema = z

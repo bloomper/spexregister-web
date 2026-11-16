@@ -28,7 +28,7 @@ beforeEach(() => {
     axiosDelete.mockReset();
 });
 
-// Generic CRUD/impex/events mechanics live in graphql.server.test.ts. Here we
+// Generic CRUD/impex mechanics live in graphql.server.test.ts. Here we
 // verify spex's own config binding and its bespoke (non-factory) operations.
 describe("spex.server (factory config binding)", () => {
     it("applies spex-specific defaults and maps the connection into a page", async () => {

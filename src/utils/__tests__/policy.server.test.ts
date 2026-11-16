@@ -16,14 +16,12 @@ async function rolesFor(policy: () => Promise<unknown>): Promise<Role[]> {
 }
 
 describe("Policies role matrix", () => {
-    it("spex: read and update are open to all roles (a grant decides on the server), create and delete are admin-only", async () => {
-        expect(await rolesFor(Policies.spex.requireRead)).toEqual(["USER", "EDITOR", "ADMIN"]);
-        requireAnyRole.mockClear();
-        expect(await rolesFor(Policies.spex.requireCreate)).toEqual(["ADMIN"]);
-        requireAnyRole.mockClear();
-        expect(await rolesFor(Policies.spex.requireUpdate)).toEqual(["USER", "EDITOR", "ADMIN"]);
-        requireAnyRole.mockClear();
-        expect(await rolesFor(Policies.spex.requireDelete)).toEqual(["ADMIN"]);
+    it("base data copied from Spexipedia: read for every role, and nothing else", async () => {
+        for (const policy of [Policies.spex, Policies.spexCategory, Policies.task, Policies.taskCategory]) {
+            requireAnyRole.mockClear();
+            expect(await rolesFor(policy.requireRead)).toEqual(["USER", "EDITOR", "ADMIN"]);
+            expect(Object.keys(policy)).toEqual(["requireRead"]);
+        }
     });
 
     it("user: admin controls everything", async () => {
@@ -48,12 +46,6 @@ describe("Policies role matrix", () => {
         expect(await rolesFor(Policies.impex.requireRead)).toEqual(["EDITOR", "ADMIN"]);
         requireAnyRole.mockClear();
         expect(await rolesFor(Policies.impex.requireDelete)).toEqual(["EDITOR", "ADMIN"]);
-    });
-
-    it("taskCategory: read broad, create admin-only", async () => {
-        expect(await rolesFor(Policies.taskCategory.requireRead)).toEqual(["USER", "EDITOR", "ADMIN"]);
-        requireAnyRole.mockClear();
-        expect(await rolesFor(Policies.taskCategory.requireCreate)).toEqual(["ADMIN"]);
     });
 
     it("forwards the AuthzResult from requireAnyRole unchanged", async () => {

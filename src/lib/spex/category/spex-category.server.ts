@@ -50,18 +50,12 @@ const SpexCategoryGetQuery = graphql(`
     }
 `);
 
-const SpexCategoryExportQuery = graphql(`
-    query SpexCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {
-        spexCategoryExport(ids: $ids, filter: $filter, type: $type) { id }
-    }
-`);
 
 const client = createResourceClient<SpexCategory, SpexCategoryEdge, never, {id?: unknown}>({
     singular: "spexCategory",
     pagedSummaryQuery: SpexCategoryPagedSummary,
     pagedFullQuery: SpexCategoryPagedFull,
     getQuery: SpexCategoryGetQuery,
-    exportQuery: SpexCategoryExportQuery,
     auditedType: AuditedType.SpexCategory,
     cacheTag: "spex-category",
     restPath: "spex/categories",
@@ -71,5 +65,5 @@ const client = createResourceClient<SpexCategory, SpexCategoryEdge, never, {id?:
 });
 
 // Read only: Spexipedia keeps base data
-export const {getPaged, get, getAll, exp, revisions} = client;
+export const {getPaged, get, getAll} = client;
 

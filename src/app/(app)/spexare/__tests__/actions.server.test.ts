@@ -31,7 +31,6 @@ vi.mock("@/lib/spexare", () => ({
     removePartner: vi.fn(),
     uploadImage: vi.fn(),
     deleteImage: vi.fn(),
-    events: vi.fn(),
     spexareFormSchema: {parse: (d: unknown) => d},
 }));
 vi.mock("@/lib/spexare/address", () => ({

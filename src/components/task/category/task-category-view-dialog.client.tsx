@@ -11,10 +11,6 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {AuditTrail} from "@/components/data-audit-trail.client";
-import {
-    getRevisionsAction
-} from "@/app/(app)/tasks/categories/actions.server";
 
 export function TaskCategoryViewDialog({selected, onClose}: { selected: TaskCategory | null; onClose: () => void }) {
     const t = useTranslations();
@@ -35,11 +31,6 @@ export function TaskCategoryViewDialog({selected, onClose}: { selected: TaskCate
                             {selected?.actorPresent ? t("Common.yes") : t("Common.no")}
                         </p>
                     </div>
-                    {selected && (
-                        <div className="space-y-4">
-                            <AuditTrail id={selected.id} fetchAction={getRevisionsAction}/>
-                        </div>
-                    )}
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>

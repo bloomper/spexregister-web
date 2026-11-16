@@ -8,12 +8,9 @@ import {Button} from "@/components/ui/button";
 import {ImageIcon} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {getProxiedImageUrl} from "@/utils/utils";
-import {AuditTrail} from "@/components/data-audit-trail.client";
-import {getRevisionsAction} from "@/app/(app)/spex/actions.server";
 
 /**
- * A spex as Spexregister's copy has it, with its history (not restorable: Spexipedia keeps spex) and a link to its page
- * in Spexipedia.
+ * A spex as Spexregister's copy has it, with a link to its page in Spexipedia, which keeps spex and their history.
  */
 export function SpexViewDialog({selected, spexipediaUrl = null, onClose}: {
     selected: Spex | null;
@@ -80,11 +77,6 @@ export function SpexViewDialog({selected, spexipediaUrl = null, onClose}: {
                             </div>
                         )}
 
-                        {selected && (
-                            <div className="space-y-4">
-                                <AuditTrail id={selected.id} fetchAction={getRevisionsAction}/>
-                            </div>
-                        )}
                     </div>
                 </div>
                 <DialogFooter className="p-6 pt-0">
