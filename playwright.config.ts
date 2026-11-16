@@ -17,7 +17,7 @@ const appEnv: Record<string, string> = {
     UMAMI_URL: "",
     UMAMI_WEBSITE_ID: "",
     SPEXREGISTER_WEB_URL: "",
-    FGV_REVIVAL_WEB_URL: "https://revival.e2e.test",
+    REVIVAL_WEB_URL: "https://revival.e2e.test",
     SPEXIFY_WEB_URL: "https://spexify.e2e.test",
     SPEXFLIX_WEB_URL: "",
     SPEXGRAM_WEB_URL: "",

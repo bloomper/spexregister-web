@@ -1,7 +1,7 @@
 import {expect, test} from "./fixtures";
 
 test("the analytics page renders the role-appropriate sections", async ({page}) => {
-    await page.goto("/analytics");
+    await page.goto("/spexare/analytics");
 
     await expect(page.getByRole("heading", {name: "Analys"})).toBeVisible();
 
@@ -14,7 +14,7 @@ test("the analytics page renders the role-appropriate sections", async ({page}) 
 });
 
 test("a chart bar opens the matching filtered search", async ({page}) => {
-    await page.goto("/analytics");
+    await page.goto("/spexare/analytics");
 
     await page.getByRole("tab", {name: "Demografi"}).click();
 
@@ -25,7 +25,7 @@ test("a chart bar opens the matching filtered search", async ({page}) => {
 });
 
 test("a data-quality row opens the records carrying that gap", async ({page}) => {
-    await page.goto("/analytics");
+    await page.goto("/spexare/analytics");
 
     await page.getByRole("tab", {name: "Datakvalitet"}).click();
     await page.getByRole("link", {name: /Saknar bild/}).click();

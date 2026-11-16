@@ -1,13 +1,13 @@
 "use client";
 
 import {useTranslations} from "next-intl";
-import {useState, useTransition} from "react";
+import {useEffect, useState, useTransition} from "react";
 import {toast} from "sonner";
 import {Edit2, Trash2, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {deleteActorAction, deleteTaskActivityAction} from "@/app/(app)/spexare/actions.server";
+import {deleteActorAction, deleteTaskActivityAction, getSpexCharactersAction} from "@/app/(app)/spexare/actions.server";
 import {Badge} from "@/components/ui/badge";
-import {Actor, Task, TaskActivity, TaskCategory, Type, TypeType} from "@/gql/schema";
+import {Actor, SpexCharacter, Task, TaskActivity, TaskCategory, Type, TypeType} from "@/gql/schema";
 import {ActorForm} from "@/components/spexare/activity/task-activity/actor/actor-form.client";
 import {TaskActivityForm} from "@/components/spexare/activity/task-activity/task-activity-form.client";
 import {cn} from "@/utils/utils";
@@ -28,6 +28,10 @@ import {useRefresh} from "@/hooks/use-refresh.client";
 interface TaskActivityManagerProps {
     spexareId: string;
     activityId: string;
+    /**
+     * The activity's spex, whose characters an actor may play.
+     */
+    spexId?: string | null;
     types: Type[];
     tasks: Task[];
     taskCategories: TaskCategory[];
@@ -37,6 +41,7 @@ interface TaskActivityManagerProps {
 export function TaskActivityManager({
                                         spexareId,
                                         activityId,
+                                        spexId,
                                         types,
                                         tasks,
                                         taskCategories,
@@ -49,6 +54,22 @@ export function TaskActivityManager({
     const [editingTaskActivityId, setEditingTaskActivityId] = useState<string | null>(null);
 
     const vocals = types.filter(t => t.type === TypeType.Vocal);
+    const needsCharacters = !!spexId && initialTaskActivities.some(ta => ta.task?.category?.actorPresent);
+    const [characters, setCharacters] = useState<SpexCharacter[]>([]);
+
+    useEffect(() => {
+        if (!needsCharacters || !spexId) {
+            return;
+        }
+        let current = true;
+
+        getSpexCharactersAction(spexId)
+            .then(result => current && setCharacters(result))
+            .catch(() => undefined);
+        return () => {
+            current = false;
+        };
+    }, [needsCharacters, spexId]);
 
     const handleDeleteTaskActivity = (id: string) => {
         startTransition(async () => {
@@ -97,7 +118,16 @@ export function TaskActivityManager({
                                         {actors.map((actor) => (
                                             <div key={actor.id}
                                                  className="text-xs sm:text-[11px] text-muted-foreground font-medium italic bg-muted/50 pl-2 pr-1 py-0.5 rounded-sm inline-flex items-center gap-1.5 border border-border/40">
-                                                {actor.role && (
+                                                {actor.character?.name && (
+                                                    <span>
+                                                        <span
+                                                            className="not-italic font-bold uppercase text-[11px] sm:text-[9px] opacity-60 mr-1">
+                                                            {t("Spexare.Activity.TaskActivity.Actor.character")}:
+                                                        </span>
+                                                        {actor.character.name}
+                                                    </span>
+                                                )}
+                                                {actor.role && !actor.character && (
                                                     <span>
                                                         <span
                                                             className="not-italic font-bold uppercase text-[11px] sm:text-[9px] opacity-60 mr-1">
@@ -230,6 +260,7 @@ export function TaskActivityManager({
                                             activityId={activityId}
                                             taskActivityId={taskActivity.id}
                                             vocals={vocals}
+                                            characters={characters}
                                             item={actors.find((actor) => actor.id === editingActorId)}
                                             onSuccess={() => setEditingActorId(null)}
                                         />

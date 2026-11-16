@@ -75,8 +75,22 @@ describe("auditTypeLabel", () => {
 describe("auditEntityHref", () => {
     it("links an aggregate root to the page that lists it", () => {
         expect(auditEntityHref({type: AuditedType.News, id: 7})).toBe("/news/manage?open=7");
-        expect(auditEntityHref({type: AuditedType.Task, id: "14"})).toBe("/tasks/manage?open=14");
         expect(auditEntityHref({type: AuditedType.Spexare, id: 88})).toBe("/spexare?open=88");
+    });
+
+    it("links base data copied from Spexipedia to Spexipedia, editors' pages only for its editors", () => {
+        const reader = {url: "https://spexipedia.example", canEdit: false};
+        const editor = {url: "https://spexipedia.example", canEdit: true};
+
+        expect(auditEntityHref({type: AuditedType.Spex, id: 5}, undefined, reader)).toBe("https://spexipedia.example/spex/5");
+        expect(auditEntityHref({type: AuditedType.Task, id: "14"}, undefined, reader)).toBeNull();
+        expect(auditEntityHref({type: AuditedType.Task, id: "14"}, undefined, editor))
+            .toBe("https://spexipedia.example/manage/tasks/14");
+        expect(auditEntityHref({type: AuditedType.SpexCategory, id: 2}, undefined, editor))
+            .toBe("https://spexipedia.example/manage/spex-categories/2");
+        expect(auditEntityHref({type: AuditedType.TaskCategory, id: 3}, undefined, editor))
+            .toBe("https://spexipedia.example/manage/task-categories/3");
+        expect(auditEntityHref({type: AuditedType.Spex, id: 5})).toBeNull();
     });
 
     it("lands on the tab holding whatever changed inside a spexare", () => {

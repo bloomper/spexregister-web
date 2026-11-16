@@ -9,10 +9,6 @@ import {createContext, useCallback, useContext, useMemo, useState} from "react";
 export type EntityType =
     | "spexare"
     | "news"
-    | "spex"
-    | "spexCategory"
-    | "task"
-    | "taskCategory"
     | "tag"
     | "user";
 

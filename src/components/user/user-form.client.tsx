@@ -13,14 +13,16 @@ import {
     createAction,
     removeAuthoritiesAction,
     removeSpexareAction,
+    setSpexareAutoLinkAction,
     searchSpexareAction,
     setStateAction,
     updateAction
 } from "@/app/(app)/users/actions.server";
 import {Button} from "@/components/ui/button";
+import {Switch} from "@/components/ui/switch";
 import {Input} from "@/components/ui/input";
 import {SheetClose, SheetFooter} from "@/components/ui/sheet";
-import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
+import {Field, FieldContent, FieldDescription, FieldError, FieldLabel} from "@/components/ui/field";
 import {cn, translateError} from "@/utils/utils";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
@@ -61,10 +63,12 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
             stateId: item?.state?.id ?? "",
             authorityIds: item?.authorities?.map(a => a?.id).filter((id): id is string => !!id) ?? [],
             spexareId: item?.spexare?.id ?? null,
+            spexareAutoLink: item?.spexareAutoLink ?? true,
         },
     });
 
     const selectedSpexareId = useWatch({control, name: "spexareId"});
+    const spexareAutoLink = useWatch({control, name: "spexareAutoLink"});
 
     const handleSpexareSearch = async (query: string) => {
         if (query.length < 2) {
@@ -124,6 +128,11 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
                 }
 
                 await Promise.all(tasks);
+
+                // After the link, as removing a link by hand turns the automatic link off
+                if (item && data.spexareAutoLink !== undefined && data.spexareAutoLink !== (item.spexareAutoLink ?? true)) {
+                    await setSpexareAutoLinkAction(userId, data.spexareAutoLink);
+                }
 
                 toast.success(item ? t("Common.updateSuccess") : t("Common.createSuccess"));
                 const updated = item ? {...item, ...data} : undefined;
@@ -280,6 +289,18 @@ export function UserForm({item, authorities, states, onSuccess, onError, embedde
                                 <FieldError errors={[translateError(t, errors.spexareId)]}/>
                             </FieldContent>
                         </Field>
+
+                        {item && (
+                            <Field orientation="horizontal">
+                                <Switch id="spexareAutoLink" checked={spexareAutoLink ?? true}
+                                        onCheckedChange={(checked) => setValue("spexareAutoLink", checked, {shouldDirty: true})}
+                                        disabled={isPending}/>
+                                <FieldContent>
+                                    <FieldLabel htmlFor="spexareAutoLink">{t("User.spexareAutoLink")}</FieldLabel>
+                                    <FieldDescription>{t("User.spexareAutoLinkDescription")}</FieldDescription>
+                                </FieldContent>
+                            </Field>
+                        )}
                     </div>
                 </ScrollArea>
 

@@ -3,16 +3,12 @@
 import * as React from "react";
 import {useMemo} from "react";
 import {
-    ChartNoAxesCombined,
-    Clapperboard,
-    ClipboardList,
     Drama,
     House,
     ListTodo,
     type LucideIcon,
     Newspaper,
     Settings,
-    Shapes,
     Tag,
     UserRound,
     Users,
@@ -84,12 +80,6 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                 isActive: pathname === "/",
             },
             {
-                title: t("Analytics.heading"),
-                url: "/analytics",
-                icon: ChartNoAxesCombined,
-                isActive: pathname.startsWith("/analytics"),
-            },
-            {
                 title: t("News.heading"),
                 url: "/news",
                 icon: Newspaper,
@@ -108,64 +98,11 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                     {title: t("Common.search"), url: "/spexare/search"},
                     {title: t("Explore.heading"), url: "/spexare/explore"},
                     {title: t("Map.heading"), url: "/spexare/map"},
+                    {title: t("Analytics.heading"), url: "/spexare/analytics"},
                     ...(isCurrentUserAdminOrEditor ? [
                         {title: t("Common.manage"), url: "/spexare/manage"},
                         {title: t("Common.create"), url: "/spexare/create"},
                     ] : []),
-                ],
-            },
-            {
-                title: t("Spex.heading"),
-                url: "/spex",
-                icon: Clapperboard,
-                isActive: pathname === "/spex" || pathname.startsWith("/spex/"),
-                items: isCurrentUserAdmin ? [
-                    {title: t("Common.manage"), url: "/spex/manage"},
-                    {title: t("Common.create"), url: "/spex/create"},
-                    {
-                        title: t("Spex.Category.heading"),
-                        url: "/spex/categories",
-                        icon: Shapes,
-                        isActive: pathname.startsWith("/spex/categories"),
-                        items: [
-                            {title: t("Common.manage"), url: "/spex/categories/manage"},
-                            {title: t("Common.create"), url: "/spex/categories/create"},
-                        ]
-                    },
-                ] : [
-                    {
-                        title: t("Spex.Category.heading"),
-                        url: "/spex/categories",
-                        icon: Shapes,
-                        isActive: pathname.startsWith("/spex/categories"),
-                    }
-                ],
-            },
-            {
-                title: t("Task.heading"),
-                url: "/tasks",
-                icon: ClipboardList,
-                isActive: pathname.startsWith("/tasks"),
-                items: isCurrentUserAdmin ? [
-                    {title: t("Common.manage"), url: "/tasks/manage"},
-                    {title: t("Common.create"), url: "/tasks/create"},
-                    {
-                        title: t("Task.Category.heading"),
-                        url: "/tasks/categories",
-                        icon: Shapes,
-                        isActive: pathname.startsWith("/tasks/categories"),
-                        items: [
-                            {title: t("Common.manage"), url: "/tasks/categories/manage"},
-                            {title: t("Common.create"), url: "/tasks/categories/create"},
-                        ]
-                    },
-                ] : [
-                    {
-                        title: t("Task.Category.heading"),
-                        url: "/tasks/categories",
-                        icon: Shapes,
-                        isActive: pathname.startsWith("/tasks/categories"),
-                    }
                 ],
             },
             {

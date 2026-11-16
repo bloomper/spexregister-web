@@ -1,13 +1,6 @@
 import "server-only";
 
-import {
-    AuditedType,
-    SortDirection,
-    TaskCategory,
-    TaskCategoryCreate,
-    TaskCategoryEdge,
-    TaskCategoryUpdate
-} from "@/gql/schema";
+import {AuditedType, SortDirection, TaskCategory, TaskCategoryEdge} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient} from "@/lib/graphql.server";
 
@@ -16,6 +9,8 @@ export const TaskCategorySummary = graphql(`
         id
         name
         actorPresent
+        board
+        retired
     }
 `);
 
@@ -55,39 +50,12 @@ const TaskCategoryGetQuery = graphql(`
     }
 `);
 
-const TaskCategoryCreateMutation = graphql(`
-    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {
-        taskCategoryCreate(input: $input) { ...TaskCategoryFull }
-    }
-`);
 
-const TaskCategoryUpdateMutation = graphql(`
-    mutation TaskCategoryUpdate($input: TaskCategoryUpdate!) {
-        taskCategoryUpdate(input: $input) { ...TaskCategoryFull }
-    }
-`);
-
-const TaskCategoryDeleteMutation = graphql(`
-    mutation TaskCategoryDelete($id: ID!) {
-        taskCategoryDelete(id: $id)
-    }
-`);
-
-const TaskCategoryExportQuery = graphql(`
-    query TaskCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {
-        taskCategoryExport(ids: $ids, filter: $filter, type: $type) { id }
-    }
-`);
-
-const client = createResourceClient<TaskCategory, TaskCategoryEdge, TaskCategoryCreate, TaskCategoryUpdate>({
+const client = createResourceClient<TaskCategory, TaskCategoryEdge, never, {id?: unknown}>({
     singular: "taskCategory",
     pagedSummaryQuery: TaskCategoryPagedSummary,
     pagedFullQuery: TaskCategoryPagedFull,
     getQuery: TaskCategoryGetQuery,
-    createMutation: TaskCategoryCreateMutation,
-    updateMutation: TaskCategoryUpdateMutation,
-    deleteMutation: TaskCategoryDeleteMutation,
-    exportQuery: TaskCategoryExportQuery,
     auditedType: AuditedType.TaskCategory,
     cacheTag: "task-category",
     restPath: "tasks/categories",
@@ -96,4 +64,5 @@ const client = createResourceClient<TaskCategory, TaskCategoryEdge, TaskCategory
     defaultFilter: "",
 });
 
-export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;
+// Read only: Spexipedia keeps base data
+export const {getPaged, get, getAll} = client;

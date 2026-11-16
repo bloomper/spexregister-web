@@ -3,6 +3,7 @@ import {GraphExplorer} from "@/components/graph/graph-explorer.client";
 import {getCountries} from "@/lib/settings";
 import {Policies} from "@/utils/policy.server";
 import {withPolicyPage} from "@/utils/route.server";
+import {getSpexipedia} from "@/utils/applications.server";
 
 /**
  * The register as a graph to explore from a spexare, spex, task or tag.
@@ -10,7 +11,7 @@ import {withPolicyPage} from "@/utils/route.server";
 export default async function GraphPage() {
     return withPolicyPage(Policies.spexare.requireRead, async () => {
         const locale = await getLocale();
-        const [countries, t] = await Promise.all([getCountries(locale), getTranslations()]);
+        const [countries, spexipedia, t] = await Promise.all([getCountries(locale), getSpexipedia(), getTranslations()]);
 
         return (
             <div className="flex flex-1 flex-col gap-4 p-4">
@@ -18,7 +19,7 @@ export default async function GraphPage() {
                     <h1 className="text-2xl font-bold tracking-tight">{t("Explore.heading")}</h1>
                     <p className="text-sm text-muted-foreground">{t("Explore.description")}</p>
                 </div>
-                <GraphExplorer countries={countries}/>
+                <GraphExplorer countries={countries} spexipediaUrl={spexipedia?.url ?? null}/>
             </div>
         );
     });

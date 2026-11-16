@@ -197,6 +197,12 @@
 
 /* Print: only the page's own content, without the app's sidebar (the header carries print:hidden).
    Unlayered, so it wins over the sidebar's Tailwind utilities. */
+/* The header's buttons are 32px; on touch screens they answer taps 44px tall without changing the layout */
+@media (pointer: coarse) {
+    [data-site-header] :is(button, a[href]) { position: relative; }
+    [data-site-header] :is(button, a[href])::after { content: ""; position: absolute; inset: -6px 0; }
+}
+
 @media print {
     [data-slot="sidebar-gap"],
     [data-slot="sidebar-container"] {

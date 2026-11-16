@@ -14,10 +14,10 @@ function normalizeRole(value: string): Role | null {
 }
 
 /**
- * The Spexregister roles in an access token, from the `spexregister` client's roles, once each.
+ * The Spexregister roles in an access token, from the `fgv-spexregister` client's roles, once each.
  */
 export function extractRolesFromClaims(claims: AccessTokenClaims): Role[] {
-    const rawRoles = claims.resource_access?.spexregister?.roles ?? [];
+    const rawRoles = claims.resource_access?.["fgv-spexregister"]?.roles ?? [];
     const roles = rawRoles
         .map(normalizeRole)
         .filter((r): r is Role => r !== null);

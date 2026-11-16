@@ -64,6 +64,7 @@ import {
     actorFormSchema,
     create as createActor,
     del as delActor,
+    getCharacters,
     update as updateActor
 } from "@/lib/spexare/activity/task-activity/actor";
 
@@ -440,9 +441,9 @@ export async function deleteTaskActivityAction(spexareId: string, activityId: st
 export async function createActorAction(spexareId: string, activityId: string, taskActivityId: string, _vocalId: string, data: unknown) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = actorFormSchema.parse(data);
-        const {vocalId, ...createInput} = validated;
+        const {vocalId, characterId, ...createInput} = validated;
         void vocalId;
-        const result = await createActor(spexareId, activityId, taskActivityId, _vocalId, createInput);
+        const result = await createActor(spexareId, activityId, taskActivityId, _vocalId, createInput, characterId);
         revalidate();
         return result;
     });
@@ -451,11 +452,18 @@ export async function createActorAction(spexareId: string, activityId: string, t
 export async function updateActorAction(spexareId: string, activityId: string, taskActivityId: string, _vocalId: string, id: string, data: unknown) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
         const validated = actorFormSchema.parse(data);
-        const {vocalId, ...updateInput} = validated;
-        const result = await updateActor(spexareId, activityId, taskActivityId, vocalId, id, updateInput);
+        const {vocalId, characterId, ...updateInput} = validated;
+        const result = await updateActor(spexareId, activityId, taskActivityId, vocalId, id, updateInput, characterId ?? null);
         revalidate();
         return result;
     });
+}
+
+/**
+ * The characters an actor of the spex may play.
+ */
+export async function getSpexCharactersAction(spexId: string) {
+    return withPolicyAction(Policies.spexare.requireRead, async () => getCharacters(spexId));
 }
 
 export async function deleteActorAction(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string) {

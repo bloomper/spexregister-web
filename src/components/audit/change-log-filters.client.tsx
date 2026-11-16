@@ -6,7 +6,7 @@ import {AuditedType, AuditSource} from "@/gql/schema";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {DataFilter} from "@/components/data-filter";
 import {Button} from "@/components/ui/button";
-import {auditTypeLabel} from "@/utils/audit";
+import {auditTypeLabel, SPEXIPEDIA_TYPES} from "@/utils/audit";
 import {PeriodFilter} from "@/components/audit/period-filter.client";
 
 export const ALL_TYPES = "ALL";
@@ -47,7 +47,9 @@ export function ChangeLogFilters({filter, authors, onChange}: {
 
     const typeItems = [
         {value: ALL_TYPES, label: t("Audit.allTypes")},
-        ...Object.values(AuditedType).map((value) => ({value, label: auditTypeLabel(t, value)})),
+        ...Object.values(AuditedType)
+            .filter((value) => !SPEXIPEDIA_TYPES.has(value))
+            .map((value) => ({value, label: auditTypeLabel(t, value)})),
     ];
 
     return (

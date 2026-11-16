@@ -186,6 +186,7 @@ export function ActivityManager({
                                             <TaskActivityManager
                                                 spexareId={spexareId}
                                                 activityId={activity.id}
+                                                spexId={activity.spexActivity?.spex?.id}
                                                 types={types}
                                                 tasks={tasks}
                                                 taskCategories={taskCategories}

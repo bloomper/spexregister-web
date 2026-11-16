@@ -32,13 +32,37 @@ const ALIASES: Record<string, string> = {
 const ROUTES: Partial<Record<AuditedType, string>> = {
     [AuditedType.Spexare]: "/spexare",
     [AuditedType.News]: "/news/manage",
-    [AuditedType.Spex]: "/spex/manage",
-    [AuditedType.SpexCategory]: "/spex/categories/manage",
-    [AuditedType.Task]: "/tasks/manage",
-    [AuditedType.TaskCategory]: "/tasks/categories/manage",
     [AuditedType.Tag]: "/tags/manage",
     [AuditedType.User]: "/users/manage",
 };
+
+/**
+ * The base data Spexregister copies from Spexipedia. Its history belongs to Spexipedia, so the change log neither lists
+ * nor filters on it; a revision of Spexregister's own data may still show it, as what an activity refers to.
+ */
+export const SPEXIPEDIA_TYPES: ReadonlySet<AuditedType> = new Set([
+    AuditedType.Spex,
+    AuditedType.SpexDetails,
+    AuditedType.SpexCategory,
+    AuditedType.Task,
+    AuditedType.TaskCategory,
+]);
+
+/**
+ * Spexipedia's pages for the base data Spexregister only copies. Spex have a page anyone may read; the rest only its
+ * editors' management pages.
+ */
+const SPEXIPEDIA_ROUTES: Partial<Record<AuditedType, { path: string; editorsOnly: boolean }>> = {
+    [AuditedType.Spex]: {path: "/spex", editorsOnly: false},
+    [AuditedType.SpexCategory]: {path: "/manage/spex-categories", editorsOnly: true},
+    [AuditedType.Task]: {path: "/manage/tasks", editorsOnly: true},
+    [AuditedType.TaskCategory]: {path: "/manage/task-categories", editorsOnly: true},
+};
+
+/**
+ * Where Spexipedia is, and whether the viewer may edit there.
+ */
+export type SpexipediaLink = { url: string; canEdit: boolean } | null | undefined;
 
 const SPEXARE_TABS: Partial<Record<AuditedType, string>> = {
     [AuditedType.Spexare]: "general",
@@ -62,13 +86,23 @@ export const AUDIT_OPEN_PARAM = "open";
 export const AUDIT_TAB_PARAM = "tab";
 
 /**
- * The page that shows a changed record: its list page opening it, and for a spexare the tab of what changed. Null for
- * types without a page of their own.
+ * The page that shows a changed record: its list page opening it, and for a spexare the tab of what changed. Base data
+ * copied from Spexipedia links there instead, as an absolute URL. Null for types without a page of their own, or one
+ * the viewer can't open.
  */
 export function auditEntityHref(
     target: { type: AuditedType; id: string | number } | null | undefined,
     changedType?: AuditedType,
+    spexipedia?: SpexipediaLink,
 ): string | null {
+    const external = target ? SPEXIPEDIA_ROUTES[target.type] : undefined;
+
+    if (target && external) {
+        return spexipedia && (spexipedia.canEdit || !external.editorsOnly)
+            ? `${spexipedia.url}${external.path}/${encodeURIComponent(String(target.id))}`
+            : null;
+    }
+
     const route = target ? ROUTES[target.type] : undefined;
 
     if (!target || !route) {

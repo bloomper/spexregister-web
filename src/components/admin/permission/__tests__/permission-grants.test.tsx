@@ -91,18 +91,18 @@ describe("PermissionGrants", () => {
         await waitFor(() => expect(screen.queryByRole("button", {name: /reset/})).not.toBeInTheDocument());
     });
 
-    it("grants a role on a spex", async () => {
+    it("grants a role on a spex's participants", async () => {
         show();
 
         await userEvent.click(screen.getByRole("button", {name: "create"}));
         await choose("granteeType", "granteeTypes.ROLE");
         await choose("role", "Redaktör");
-        await choose("scope", "scopes.SPEX");
+        await choose("scope", "scopes.SPEX_PARTICIPANTS");
         await choose("spex", "Bacchus (2015)");
         await userEvent.click(screen.getByRole("button", {name: "save"}));
 
         await waitFor(() => expect(actions.createGrantAction).toHaveBeenCalledWith(expect.objectContaining({
-            granteeType: "ROLE", role: "EDITOR", scope: "SPEX", spexId: "s1", permission: "WRITE",
+            granteeType: "ROLE", role: "EDITOR", scope: "SPEX_PARTICIPANTS", spexId: "s1", permission: "WRITE",
         })));
         expect(toast.success).toHaveBeenCalledWith("created");
         expect(refresh).toHaveBeenCalled();

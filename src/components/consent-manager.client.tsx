@@ -33,7 +33,9 @@ const messages = {
     },
 };
 
+// Only strictly necessary cookies and a notice, so there is no consent to keep records of
 const mode = offline({
+    acknowledgeNoRecords: true,
     policyRules: [{
         id: "necessary_only",
         match: {isDefault: true, fallback: true},

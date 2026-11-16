@@ -2,10 +2,6 @@ import {expect, test} from "./fixtures";
 
 const browsePages = [
     {name: "news", url: "/news", item: "Premiär 2026"},
-    {name: "spex", url: "/spex", item: "Nobel"},
-    {name: "spex categories", url: "/spex/categories", item: "Veraspexet"},
-    {name: "tasks", url: "/tasks", item: "Scenmästare"},
-    {name: "task categories", url: "/tasks/categories", item: "Kommitté"},
     {name: "tags", url: "/tags", item: "Hedersmedlem"},
 ];
 

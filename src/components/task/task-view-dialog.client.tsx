@@ -11,13 +11,6 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {AuditTrail} from "@/components/data-audit-trail.client";
-import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/tasks/actions.server";
-
-const restoreActions = {
-    preview: getRestorePreviewAction,
-    restore: restoreRevisionAction,
-};
 
 export function TaskViewDialog({selected, onClose}: { selected: Task | null; onClose: () => void }) {
     const t = useTranslations();
@@ -40,12 +33,6 @@ export function TaskViewDialog({selected, onClose}: { selected: Task | null; onC
                             </div>
                             <div className="text-base">{selected?.category?.name ?? t("Common.none")}</div>
                         </div>
-                        {selected && (
-                            <div className="space-y-4">
-                                <AuditTrail id={selected.id} fetchAction={getRevisionsAction}
-                                            restoreActions={restoreActions} onRestored={onClose}/>
-                            </div>
-                        )}
                     </div>
                 </div>
                 <DialogFooter className="p-6 pt-0">

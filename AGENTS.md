@@ -62,7 +62,7 @@ changing routing or data fetching; this area differs sharply from older Next.
   `export const instant = true` to a segment to check it on demand.
 - **A new route that fetches data at the top of the page needs a `loading.tsx` beside it**, or it
   can't prerender a shell. Reuse `DataTableSkeleton` / `DataGridSkeleton`; see
-  `src/app/(app)/tasks/manage/loading.tsx` and `src/app/(app)/news/loading.tsx`.
+  `src/app/(app)/news/manage/loading.tsx` and `src/app/(app)/news/loading.tsx`.
 - The root layout's metadata must stay a **static** `export const metadata`. `/_not-found` inherits
   it, so a `generateMetadata()` that reads cookies (e.g. `getTranslations()`) blocks metadata on
   every route. The locale-correct title is applied client-side in `src/app/provider.client.tsx`.
@@ -91,7 +91,7 @@ changing routing or data fetching; this area differs sharply from older Next.
 - **`getSessionContext()` in `src/utils/auth.server.ts` is the single entry point for server-side
   auth.** It resolves the session, then the Keycloak access token from the account cookie (refreshing when near expiry),
   then decodes the roles out of that token's
-  `resource_access.spexregister.roles`. It is wrapped in React `cache()` — the layout, urql, axios
+  `resource_access["fgv-spexregister"].roles`. It is wrapped in React `cache()` — the layout, urql, axios
   and every policy check call it within one render. `requireUser()` and `getAccessToken()` are thin
   wrappers over it; a token that cannot be refreshed reads as logged out.
 - `src/proxy.ts` (Next 16's middleware file) refreshes the account cookie and forwards the
@@ -183,6 +183,14 @@ previously hit in this codebase:
 
 Forms use `react-hook-form` + `zodResolver`.
 
+## Base data from Spexipedia
+
+Spex, spex categories, tasks and task categories are maintained in Spexipedia; Spexregister keeps a synced copy (see
+`/admin/maintenance`) for activities, search, analytics and the change log. It has **no pages of its own** for them:
+the view dialogs in `src/components/spex/` and `src/components/task/` remain only for the graph explorer, and the
+change log links these types to Spexipedia (`SPEXIPEDIA_ROUTES` in `src/utils/audit.ts`; category and task pages there
+are editors-only, so others get no link).
+
 ## Edit queue
 
 Global bulk-edit drawer (`src/components/edit-queue/`) that reuses each entity's own form. Adding
@@ -223,7 +231,7 @@ which walks records one at a time.
 
 **One query, `analytics`, covers the whole dashboard** — the former `statistics` query, package,
 REST endpoint and `Statistics` message namespace are gone, folded in as the `totals` section.
-Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytics/`,
+Rendered on `/spexare/analytics`, with a headline slice on `/` (`src/components/analytics/`,
 `src/lib/analytics/`).
 
 - `totals` is the old statistics payload verbatim (counts + 3-year `createdAt` trends, the four
@@ -306,7 +314,7 @@ and funnels pick events by name: `<entity>-create` / `-update` from its form and
 The title in the header (`src/components/app-switcher.client.tsx`) opens a menu of the FGV applications: Spexregister,
 Nyuppsättning, Spexflix, Spexify, Spexgram and Spexarkiv. `getApplications()` (`src/utils/applications.server.ts`) lists the current one and
 each other one whose `USER` role is in the access token and whose address is set (`SPEXREGISTER_WEB_URL`,
-`FGV_REVIVAL_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXGRAM_WEB_URL`,
+`REVIVAL_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXGRAM_WEB_URL`,
 `ARCHIVE_WEB_URL`). The role is there because fgv-keycloak maps every web
 client to the other web clients' `USER` role; a realm imported before that needs fgv-infra-deploy's
 `bin/configure-keycloak.sh`. With no other application to offer, the title is plain text. The six webs (with fgv-spexgram-web and

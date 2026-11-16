@@ -44,7 +44,26 @@
     "notScheduled": "Not scheduled",
     "runNow": "Run now",
     "running": "Running",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "sync": {
+      "heading": "Base data from other applications",
+      "title": "From {source}",
+      "sources": {
+        "spexipedia": "Spexipedia"
+      },
+      "description": "Spex, revivals, categories, tasks and characters are maintained in Spexipedia. Spexregister keeps a copy that picks up the changes when Spexipedia announces them and every five minutes.",
+      "stale": "Not reached for an hour",
+      "lastPulled": "Last pulled",
+      "lastSuccess": "Last success",
+      "never": "Never",
+      "appliedTotal": "Changes applied",
+      "cursor": "Position",
+      "pullChanges": "Pull changes",
+      "pullAll": "Pull everything again",
+      "applied": "{count, plural, =0 {No new changes} one {# change applied} other {# changes applied}}",
+      "failed": "The pull failed: {error}",
+      "missing": "{count, plural, one {# record is here but no longer in the source} other {# records are here but no longer in the source}}"
+    }
   },
   "Analytics": {
     "heading": "Analytics",
@@ -378,7 +397,8 @@
     "spexflix": "Spexflix",
     "spexify": "Spexify",
     "spexgram": "Spexgram",
-    "archive": "Spexarkiv"
+    "archive": "Spexarkiv",
+    "spexipedia": "Spexipedia"
   },
   "Home": {
     "heading": "Home",
@@ -528,10 +548,8 @@
     "scopes": {
       "SPEXARE": "One spexare",
       "SPEX_PARTICIPANTS": "Everyone in a spex",
-      "SPEX": "One spex",
       "SPEXARE_ONE": "Spexare {name}",
-      "SPEX_PARTICIPANTS_ONE": "Everyone in {name}",
-      "SPEX_ONE": "Spex {name}"
+      "SPEX_PARTICIPANTS_ONE": "Everyone in {name}"
     },
     "validation": {
       "userRequired": "Choose a user",
@@ -589,7 +607,11 @@
     "selectYear": "Select year",
     "selectYearFirst": "Please select a production year in the 'General' tab to manage revivals.",
     "title": "Title",
-    "year": "Year"
+    "year": "Year",
+    "retired": "Retired",
+    "editInSpexipedia": "Edit in Spexipedia",
+    "showInSpexipedia": "Show in Spexipedia",
+    "keptInSpexipedia": "Spex, revivals, categories and tasks are changed in Spexipedia."
   },
   "Spexare": {
     "Activity": {
@@ -603,8 +625,10 @@
       "TaskActivity": {
         "Actor": {
           "vocal": "Vocal",
-          "role": "Role",
-          "noRolesAvailable": "No roles available for this task"
+          "role": "Other role",
+          "noRolesAvailable": "No roles available for this task",
+          "character": "Character",
+          "noCharacter": "No character in Spexipedia"
         },
         "category": "Category",
         "selectCategory": "Select task category",
@@ -771,7 +795,8 @@
     "filterPlaceholder": "Filter by name...",
     "heading": "Tasks",
     "name": "Name",
-    "selectCategory": "Select category"
+    "selectCategory": "Select category",
+    "retired": "Retired"
   },
   "User": {
     "authorities": "Authorities",
@@ -785,6 +810,8 @@
     "spexare": "Spexare?",
     "spexareHeading": "Spexare",
     "spexareSearchPlaceholder": "Search for a spexare to link...",
+    "spexareAutoLink": "Link automatically by email",
+    "spexareAutoLinkDescription": "Without a spexare, the user is linked to the only spexare with the same verified email address. Turned off when a link is removed by hand.",
     "state": "State"
   }
 }

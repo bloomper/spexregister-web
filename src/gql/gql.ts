@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as types from './graphql';
-import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/core';
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 
 /**
  * Map of all GraphQL operations in the project.
@@ -16,6 +16,8 @@ import {TypedDocumentNode as DocumentNode} from '@graphql-typed-document-node/co
 type Documents = {
     "\n    query MaintenanceJobs {\n        maintenanceJobs {\n            job\n            schedule\n            running\n            lastStartedAt\n            lastFinishedAt\n            lastSucceeded\n        }\n    }\n": typeof types.MaintenanceJobsDocument,
     "\n    mutation MaintenanceJobRun($job: MaintenanceJob!) {\n        maintenanceJobRun(job: $job)\n    }\n": typeof types.MaintenanceJobRunDocument,
+    "\n    query SyncSources {\n        syncSources {\n            name\n            cursor\n            lastPulledAt\n            lastSuccess\n            lastError\n            applied\n            stale\n        }\n    }\n": typeof types.SyncSourcesDocument,
+    "\n    mutation SyncRun($full: Boolean) {\n        syncRun(full: $full) {\n            applied\n            missing\n            error\n        }\n    }\n": typeof types.SyncRunDocument,
     "\n    fragment BucketFields on Bucket {\n        key\n        label\n        count\n        facet\n    }\n": typeof types.BucketFieldsFragmentDoc,
     "\n    fragment TotalsFields on Totals {\n        spexareCount\n        spexareCountHistory { label count }\n        userCount\n        userCountHistory { label count }\n        spexCount\n        spexCountHistory { label count }\n        spexRevivalCount\n        spexRevivalCountHistory { label count }\n        taskCount\n        taskCountByCategory { ...BucketFields }\n    }\n": typeof types.TotalsFieldsFragmentDoc,
     "\n    fragment AnalyticsFields on Analytics {\n        totals { ...TotalsFields }\n        participation {\n            bySpexYear { ...BucketFields }\n            bySpexCategory { ...BucketFields }\n            topSpex { ...BucketFields }\n            byTaskCategory { ...BucketFields }\n            topTask { ...BucketFields }\n            byVocal { ...BucketFields }\n        }\n        demographics {\n            byCountry { ...BucketFields }\n            byAddressType { ...BucketFields }\n            byMembership { ...BucketFields }\n            byTag { ...BucketFields }\n            byToggle { ...BucketFields }\n            byStatus { ...BucketFields }\n            consentCompletion {\n                key\n                label\n                granted\n                denied\n                missing\n            }\n        }\n        lifecycle {\n            newcomersByYear { ...BucketFields }\n            lastActiveByYear { ...BucketFields }\n            byEngagement { ...BucketFields }\n            byDormancy { ...BucketFields }\n            oneTimers\n            returning\n            veterans\n            neverActive\n        }\n        dataQuality {\n            total\n            issues { ...BucketFields }\n            complete\n        }\n        operations {\n            usersByState { ...BucketFields }\n            usersWithoutSpexare\n            spexareWithoutUser\n            revisionsByMonth { ...BucketFields }\n            revisionsBySource { ...BucketFields }\n            topEditors { ...BucketFields }\n        }\n    }\n": typeof types.AnalyticsFieldsFragmentDoc,
@@ -61,28 +63,16 @@ type Documents = {
     "\n    mutation SavedSearchDelete($id: ID!) {\n        savedSearchDelete(id: $id)\n    }\n": typeof types.SavedSearchDeleteDocument,
     "\n    query Countries {\n        countries {\n            isoCode\n            label\n        }\n    }\n": typeof types.CountriesDocument,
     "\n    query Types {\n        types {\n            id\n            label\n            type\n        }\n    }\n": typeof types.TypesDocument,
-    "\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n    }\n": typeof types.SpexCategorySummaryFragmentDoc,
+    "\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n        retired\n    }\n": typeof types.SpexCategorySummaryFragmentDoc,
     "\n    fragment SpexCategoryFull on SpexCategory {\n        ...SpexCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.SpexCategoryFullFragmentDoc,
     "\n    query SpexCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.SpexCategoryPagedSummaryDocument,
     "\n    query SpexCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.SpexCategoryPagedFullDocument,
     "\n    query SpexCategoryGet($id: ID!) {\n        spexCategory(id: $id) { ...SpexCategoryFull }\n    }\n": typeof types.SpexCategoryGetDocument,
-    "\n    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {\n        spexCategoryCreate(input: $input) { ...SpexCategoryFull }\n    }\n": typeof types.SpexCategoryCreateDocument,
-    "\n    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {\n        spexCategoryUpdate(input: $input) { ...SpexCategoryFull }\n    }\n": typeof types.SpexCategoryUpdateDocument,
-    "\n    mutation SpexCategoryDelete($id: ID!) {\n        spexCategoryDelete(id: $id)\n    }\n": typeof types.SpexCategoryDeleteDocument,
-    "\n    query SpexCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        spexCategoryExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": typeof types.SpexCategoryExportDocument,
-    "\n    fragment SpexSummary on Spex {\n        id\n        year\n        title\n        posterUrl\n        revival\n        permissions {\n            write\n            delete\n        }\n        revivals {\n            id\n            year\n        }\n        category {\n            id\n            name\n        }\n    }\n": typeof types.SpexSummaryFragmentDoc,
+    "\n    fragment SpexSummary on Spex {\n        id\n        year\n        title\n        posterUrl\n        revival\n        retired\n        revivals {\n            id\n            year\n        }\n        category {\n            id\n            name\n        }\n    }\n": typeof types.SpexSummaryFragmentDoc,
     "\n    fragment SpexFull on Spex {\n        ...SpexSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.SpexFullFragmentDoc,
     "\n    query SpexPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.SpexPagedSummaryDocument,
     "\n    query SpexPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.SpexPagedFullDocument,
     "\n    query SpexGet($id: ID!) {\n        spex(id: $id) { ...SpexFull }\n    }\n": typeof types.SpexGetDocument,
-    "\n    mutation SpexCreate($input: SpexCreate!) {\n        spexCreate(input: $input) { ...SpexFull }\n    }\n": typeof types.SpexCreateDocument,
-    "\n    mutation SpexUpdate($input: SpexUpdate!) {\n        spexUpdate(input: $input) { ...SpexFull }\n    }\n": typeof types.SpexUpdateDocument,
-    "\n    mutation SpexDelete($id: ID!) {\n        spexDelete(id: $id)\n    }\n": typeof types.SpexDeleteDocument,
-    "\n    query SpexExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        spexExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": typeof types.SpexExportDocument,
-    "\n    mutation SpexCategoryAdd($id: ID!, $categoryId: ID!) {\n        spexCategoryAdd(spexId: $id, id: $categoryId)\n    }\n": typeof types.SpexCategoryAddDocument,
-    "\n    mutation SpexCategoryRemove($id: ID!) {\n        spexCategoryRemove(spexId: $id)\n    }\n": typeof types.SpexCategoryRemoveDocument,
-    "\n    mutation SpexRevivalCreate($spexId: ID!, $year: Year!) {\n        spexRevivalCreate(spexId: $spexId, year: $year) {\n            id\n            year\n        }\n    }\n": typeof types.SpexRevivalCreateDocument,
-    "\n    mutation SpexRevivalDelete($id: ID!, $spexId: ID!) {\n        spexRevivalDelete(spexId: $spexId, id: $id)\n    }\n": typeof types.SpexRevivalDeleteDocument,
     "\n    fragment ActivityBase on Activity {\n        id\n    }\n": typeof types.ActivityBaseFragmentDoc,
     "\n    fragment ActivitySummary on Activity {\n        ...ActivityBase\n        spexActivity {\n            ...SpexActivitySummary\n        }\n        taskActivities {\n            ...TaskActivitySummary\n        }\n    }\n": typeof types.ActivitySummaryFragmentDoc,
     "\n    fragment ActivityFull on Activity {\n        ...ActivityBase\n        spexActivity {\n            ...SpexActivityFull\n        }\n        taskActivities {\n            ...TaskActivityFull\n        }\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.ActivityFullFragmentDoc,
@@ -94,10 +84,11 @@ type Documents = {
     "\n    mutation SpexActivityCreate($spexareId: ID!, $activityId: ID!, $spexId: ID!) {\n        spexActivityCreate(spexareId: $spexareId, activityId: $activityId, spexId: $spexId) {\n            ...SpexActivityFull\n        }\n    }\n": typeof types.SpexActivityCreateDocument,
     "\n    mutation SpexActivityUpdate($spexareId: ID!, $activityId: ID!, $spexId: ID!, $id: ID!) {\n        spexActivityUpdate(spexareId: $spexareId, activityId: $activityId, spexId: $spexId, id: $id) {\n            ...SpexActivityFull\n        }\n    }\n": typeof types.SpexActivityUpdateDocument,
     "\n    mutation SpexActivityDelete($spexareId: ID!, $activityId: ID!, $id: ID!) {\n        spexActivityDelete(spexareId: $spexareId, activityId: $activityId, id: $id)\n    }\n": typeof types.SpexActivityDeleteDocument,
-    "\n    fragment ActorSummary on Actor {\n        id\n        role\n        vocal {\n            id\n            label\n        }\n    }\n": typeof types.ActorSummaryFragmentDoc,
+    "\n    fragment ActorSummary on Actor {\n        id\n        role\n        vocal {\n            id\n            label\n        }\n        character {\n            id\n            name\n        }\n    }\n": typeof types.ActorSummaryFragmentDoc,
     "\n    fragment ActorFull on Actor {\n        ...ActorSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.ActorFullFragmentDoc,
-    "\n    mutation ActorCreate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorCreate!) {\n        actorCreate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input) {\n            ...ActorFull\n        }\n    }\n": typeof types.ActorCreateDocument,
-    "\n    mutation ActorUpdate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorUpdate!) {\n        actorUpdate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input) {\n            ...ActorFull\n        }\n    }\n": typeof types.ActorUpdateDocument,
+    "\n    mutation ActorCreate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorCreate!, $characterId: ID) {\n        actorCreate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input, characterId: $characterId) {\n            ...ActorFull\n        }\n    }\n": typeof types.ActorCreateDocument,
+    "\n    mutation ActorUpdate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorUpdate!, $characterId: ID) {\n        actorUpdate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input, characterId: $characterId) {\n            ...ActorFull\n        }\n    }\n": typeof types.ActorUpdateDocument,
+    "\n    query SpexCharacters($spexId: ID!) {\n        spexCharacters(spexId: $spexId) {\n            id\n            name\n            position\n            retired\n            spexId\n        }\n    }\n": typeof types.SpexCharactersDocument,
     "\n    mutation ActorDelete($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $id: ID!) {\n        actorDelete(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, id: $id)\n    }\n": typeof types.ActorDeleteDocument,
     "\n    fragment TaskActivityBase on TaskActivity {\n        id\n        task {\n            id\n            name\n            category {\n                name\n                actorPresent\n            }\n        }\n    }\n": typeof types.TaskActivityBaseFragmentDoc,
     "\n    fragment TaskActivitySummary on TaskActivity {\n        ...TaskActivityBase\n        actors {\n            ...ActorSummary\n        }\n    }\n": typeof types.TaskActivitySummaryFragmentDoc,
@@ -158,27 +149,17 @@ type Documents = {
     "\n    mutation TagUpdate($input: TagUpdate!) {\n        tagUpdate(input: $input) { ...TagFull }\n    }\n": typeof types.TagUpdateDocument,
     "\n    mutation TagDelete($id: ID!) {\n        tagDelete(id: $id)\n    }\n": typeof types.TagDeleteDocument,
     "\n    query TagExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        tagExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": typeof types.TagExportDocument,
-    "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n    }\n": typeof types.TaskCategorySummaryFragmentDoc,
+    "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        board\n        retired\n    }\n": typeof types.TaskCategorySummaryFragmentDoc,
     "\n    fragment TaskCategoryFull on TaskCategory {\n        ...TaskCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.TaskCategoryFullFragmentDoc,
     "\n    query TaskCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.TaskCategoryPagedSummaryDocument,
     "\n    query TaskCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.TaskCategoryPagedFullDocument,
     "\n    query TaskCategoryGet($id: ID!) {\n        taskCategory(id: $id) { ...TaskCategoryFull }\n    }\n": typeof types.TaskCategoryGetDocument,
-    "\n    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {\n        taskCategoryCreate(input: $input) { ...TaskCategoryFull }\n    }\n": typeof types.TaskCategoryCreateDocument,
-    "\n    mutation TaskCategoryUpdate($input: TaskCategoryUpdate!) {\n        taskCategoryUpdate(input: $input) { ...TaskCategoryFull }\n    }\n": typeof types.TaskCategoryUpdateDocument,
-    "\n    mutation TaskCategoryDelete($id: ID!) {\n        taskCategoryDelete(id: $id)\n    }\n": typeof types.TaskCategoryDeleteDocument,
-    "\n    query TaskCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        taskCategoryExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": typeof types.TaskCategoryExportDocument,
-    "\n    fragment TaskSummary on Task {\n        id\n        name\n        category {\n            id\n            name\n            actorPresent\n        }\n    }\n": typeof types.TaskSummaryFragmentDoc,
+    "\n    fragment TaskSummary on Task {\n        id\n        name\n        retired\n        category {\n            id\n            name\n            actorPresent\n        }\n    }\n": typeof types.TaskSummaryFragmentDoc,
     "\n    fragment TaskFull on Task {\n        ...TaskSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.TaskFullFragmentDoc,
     "\n    query TaskPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.TaskPagedSummaryDocument,
     "\n    query TaskPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.TaskPagedFullDocument,
     "\n    query TaskGet($id: ID!) {\n        task(id: $id) { ...TaskFull }\n    }\n": typeof types.TaskGetDocument,
-    "\n    mutation TaskCreate($input: TaskCreate!) {\n        taskCreate(input: $input) { ...TaskFull }\n    }\n": typeof types.TaskCreateDocument,
-    "\n    mutation TaskUpdate($input: TaskUpdate!) {\n        taskUpdate(input: $input) { ...TaskFull }\n    }\n": typeof types.TaskUpdateDocument,
-    "\n    mutation TaskDelete($id: ID!) {\n        taskDelete(id: $id)\n    }\n": typeof types.TaskDeleteDocument,
-    "\n    query TaskExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        taskExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": typeof types.TaskExportDocument,
-    "\n    mutation TaskCategoryAdd($id: ID!, $categoryId: ID!) {\n        taskCategoryAdd(taskId: $id, id: $categoryId)\n    }\n": typeof types.TaskCategoryAddDocument,
-    "\n    mutation TaskCategoryRemove($id: ID!) {\n        taskCategoryRemove(taskId: $id)\n    }\n": typeof types.TaskCategoryRemoveDocument,
-    "\n    fragment UserSummary on User {\n        id\n        externalId\n        email\n        authorities {\n            id\n            label\n        }\n        state {\n            id\n            label\n        }\n        spexare {\n            id\n            firstName\n            lastName\n            nickName\n        }\n    }\n": typeof types.UserSummaryFragmentDoc,
+    "\n    fragment UserSummary on User {\n        id\n        externalId\n        email\n        authorities {\n            id\n            label\n        }\n        state {\n            id\n            label\n        }\n        spexare {\n            id\n            firstName\n            lastName\n            nickName\n        }\n        spexareAutoLink\n    }\n": typeof types.UserSummaryFragmentDoc,
     "\n    fragment UserFull on User {\n        ...UserSummary\n        temporaryPassword\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.UserFullFragmentDoc,
     "\n    query UserPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.UserPagedSummaryDocument,
     "\n    query UserPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.UserPagedFullDocument,
@@ -192,6 +173,7 @@ type Documents = {
     "\n    mutation UserStateSet($userId: ID!, $id: ID!) {\n        userStateSet(userId: $userId, id: $id)\n    }\n": typeof types.UserStateSetDocument,
     "\n    mutation UserSpexareAdd($userId: ID!, $id: ID!) {\n        userSpexareAdd(userId: $userId, id: $id)\n    }\n": typeof types.UserSpexareAddDocument,
     "\n    mutation UserSpexareRemove($userId: ID!) {\n        userSpexareRemove(userId: $userId)\n    }\n": typeof types.UserSpexareRemoveDocument,
+    "\n    mutation UserSpexareAutoLinkSet($userId: ID!, $enabled: Boolean!) {\n        userSpexareAutoLinkSet(userId: $userId, enabled: $enabled)\n    }\n": typeof types.UserSpexareAutoLinkSetDocument,
     "\n    query UserSearch($query: String!, $first: Int!) {\n        userSearch(query: $query, first: $first) { ...UserSummary }\n    }\n": typeof types.UserSearchDocument,
     "\n    query Authorities {\n        authorities {\n            id\n            label\n        }\n    }\n": typeof types.AuthoritiesDocument,
     "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n": typeof types.StatesDocument,
@@ -199,6 +181,8 @@ type Documents = {
 const documents: Documents = {
     "\n    query MaintenanceJobs {\n        maintenanceJobs {\n            job\n            schedule\n            running\n            lastStartedAt\n            lastFinishedAt\n            lastSucceeded\n        }\n    }\n": types.MaintenanceJobsDocument,
     "\n    mutation MaintenanceJobRun($job: MaintenanceJob!) {\n        maintenanceJobRun(job: $job)\n    }\n": types.MaintenanceJobRunDocument,
+    "\n    query SyncSources {\n        syncSources {\n            name\n            cursor\n            lastPulledAt\n            lastSuccess\n            lastError\n            applied\n            stale\n        }\n    }\n": types.SyncSourcesDocument,
+    "\n    mutation SyncRun($full: Boolean) {\n        syncRun(full: $full) {\n            applied\n            missing\n            error\n        }\n    }\n": types.SyncRunDocument,
     "\n    fragment BucketFields on Bucket {\n        key\n        label\n        count\n        facet\n    }\n": types.BucketFieldsFragmentDoc,
     "\n    fragment TotalsFields on Totals {\n        spexareCount\n        spexareCountHistory { label count }\n        userCount\n        userCountHistory { label count }\n        spexCount\n        spexCountHistory { label count }\n        spexRevivalCount\n        spexRevivalCountHistory { label count }\n        taskCount\n        taskCountByCategory { ...BucketFields }\n    }\n": types.TotalsFieldsFragmentDoc,
     "\n    fragment AnalyticsFields on Analytics {\n        totals { ...TotalsFields }\n        participation {\n            bySpexYear { ...BucketFields }\n            bySpexCategory { ...BucketFields }\n            topSpex { ...BucketFields }\n            byTaskCategory { ...BucketFields }\n            topTask { ...BucketFields }\n            byVocal { ...BucketFields }\n        }\n        demographics {\n            byCountry { ...BucketFields }\n            byAddressType { ...BucketFields }\n            byMembership { ...BucketFields }\n            byTag { ...BucketFields }\n            byToggle { ...BucketFields }\n            byStatus { ...BucketFields }\n            consentCompletion {\n                key\n                label\n                granted\n                denied\n                missing\n            }\n        }\n        lifecycle {\n            newcomersByYear { ...BucketFields }\n            lastActiveByYear { ...BucketFields }\n            byEngagement { ...BucketFields }\n            byDormancy { ...BucketFields }\n            oneTimers\n            returning\n            veterans\n            neverActive\n        }\n        dataQuality {\n            total\n            issues { ...BucketFields }\n            complete\n        }\n        operations {\n            usersByState { ...BucketFields }\n            usersWithoutSpexare\n            spexareWithoutUser\n            revisionsByMonth { ...BucketFields }\n            revisionsBySource { ...BucketFields }\n            topEditors { ...BucketFields }\n        }\n    }\n": types.AnalyticsFieldsFragmentDoc,
@@ -244,28 +228,16 @@ const documents: Documents = {
     "\n    mutation SavedSearchDelete($id: ID!) {\n        savedSearchDelete(id: $id)\n    }\n": types.SavedSearchDeleteDocument,
     "\n    query Countries {\n        countries {\n            isoCode\n            label\n        }\n    }\n": types.CountriesDocument,
     "\n    query Types {\n        types {\n            id\n            label\n            type\n        }\n    }\n": types.TypesDocument,
-    "\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n    }\n": types.SpexCategorySummaryFragmentDoc,
+    "\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n        retired\n    }\n": types.SpexCategorySummaryFragmentDoc,
     "\n    fragment SpexCategoryFull on SpexCategory {\n        ...SpexCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.SpexCategoryFullFragmentDoc,
     "\n    query SpexCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.SpexCategoryPagedSummaryDocument,
     "\n    query SpexCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.SpexCategoryPagedFullDocument,
     "\n    query SpexCategoryGet($id: ID!) {\n        spexCategory(id: $id) { ...SpexCategoryFull }\n    }\n": types.SpexCategoryGetDocument,
-    "\n    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {\n        spexCategoryCreate(input: $input) { ...SpexCategoryFull }\n    }\n": types.SpexCategoryCreateDocument,
-    "\n    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {\n        spexCategoryUpdate(input: $input) { ...SpexCategoryFull }\n    }\n": types.SpexCategoryUpdateDocument,
-    "\n    mutation SpexCategoryDelete($id: ID!) {\n        spexCategoryDelete(id: $id)\n    }\n": types.SpexCategoryDeleteDocument,
-    "\n    query SpexCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        spexCategoryExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": types.SpexCategoryExportDocument,
-    "\n    fragment SpexSummary on Spex {\n        id\n        year\n        title\n        posterUrl\n        revival\n        permissions {\n            write\n            delete\n        }\n        revivals {\n            id\n            year\n        }\n        category {\n            id\n            name\n        }\n    }\n": types.SpexSummaryFragmentDoc,
+    "\n    fragment SpexSummary on Spex {\n        id\n        year\n        title\n        posterUrl\n        revival\n        retired\n        revivals {\n            id\n            year\n        }\n        category {\n            id\n            name\n        }\n    }\n": types.SpexSummaryFragmentDoc,
     "\n    fragment SpexFull on Spex {\n        ...SpexSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.SpexFullFragmentDoc,
     "\n    query SpexPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.SpexPagedSummaryDocument,
     "\n    query SpexPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        spexPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...SpexFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.SpexPagedFullDocument,
     "\n    query SpexGet($id: ID!) {\n        spex(id: $id) { ...SpexFull }\n    }\n": types.SpexGetDocument,
-    "\n    mutation SpexCreate($input: SpexCreate!) {\n        spexCreate(input: $input) { ...SpexFull }\n    }\n": types.SpexCreateDocument,
-    "\n    mutation SpexUpdate($input: SpexUpdate!) {\n        spexUpdate(input: $input) { ...SpexFull }\n    }\n": types.SpexUpdateDocument,
-    "\n    mutation SpexDelete($id: ID!) {\n        spexDelete(id: $id)\n    }\n": types.SpexDeleteDocument,
-    "\n    query SpexExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        spexExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": types.SpexExportDocument,
-    "\n    mutation SpexCategoryAdd($id: ID!, $categoryId: ID!) {\n        spexCategoryAdd(spexId: $id, id: $categoryId)\n    }\n": types.SpexCategoryAddDocument,
-    "\n    mutation SpexCategoryRemove($id: ID!) {\n        spexCategoryRemove(spexId: $id)\n    }\n": types.SpexCategoryRemoveDocument,
-    "\n    mutation SpexRevivalCreate($spexId: ID!, $year: Year!) {\n        spexRevivalCreate(spexId: $spexId, year: $year) {\n            id\n            year\n        }\n    }\n": types.SpexRevivalCreateDocument,
-    "\n    mutation SpexRevivalDelete($id: ID!, $spexId: ID!) {\n        spexRevivalDelete(spexId: $spexId, id: $id)\n    }\n": types.SpexRevivalDeleteDocument,
     "\n    fragment ActivityBase on Activity {\n        id\n    }\n": types.ActivityBaseFragmentDoc,
     "\n    fragment ActivitySummary on Activity {\n        ...ActivityBase\n        spexActivity {\n            ...SpexActivitySummary\n        }\n        taskActivities {\n            ...TaskActivitySummary\n        }\n    }\n": types.ActivitySummaryFragmentDoc,
     "\n    fragment ActivityFull on Activity {\n        ...ActivityBase\n        spexActivity {\n            ...SpexActivityFull\n        }\n        taskActivities {\n            ...TaskActivityFull\n        }\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.ActivityFullFragmentDoc,
@@ -277,10 +249,11 @@ const documents: Documents = {
     "\n    mutation SpexActivityCreate($spexareId: ID!, $activityId: ID!, $spexId: ID!) {\n        spexActivityCreate(spexareId: $spexareId, activityId: $activityId, spexId: $spexId) {\n            ...SpexActivityFull\n        }\n    }\n": types.SpexActivityCreateDocument,
     "\n    mutation SpexActivityUpdate($spexareId: ID!, $activityId: ID!, $spexId: ID!, $id: ID!) {\n        spexActivityUpdate(spexareId: $spexareId, activityId: $activityId, spexId: $spexId, id: $id) {\n            ...SpexActivityFull\n        }\n    }\n": types.SpexActivityUpdateDocument,
     "\n    mutation SpexActivityDelete($spexareId: ID!, $activityId: ID!, $id: ID!) {\n        spexActivityDelete(spexareId: $spexareId, activityId: $activityId, id: $id)\n    }\n": types.SpexActivityDeleteDocument,
-    "\n    fragment ActorSummary on Actor {\n        id\n        role\n        vocal {\n            id\n            label\n        }\n    }\n": types.ActorSummaryFragmentDoc,
+    "\n    fragment ActorSummary on Actor {\n        id\n        role\n        vocal {\n            id\n            label\n        }\n        character {\n            id\n            name\n        }\n    }\n": types.ActorSummaryFragmentDoc,
     "\n    fragment ActorFull on Actor {\n        ...ActorSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.ActorFullFragmentDoc,
-    "\n    mutation ActorCreate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorCreate!) {\n        actorCreate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input) {\n            ...ActorFull\n        }\n    }\n": types.ActorCreateDocument,
-    "\n    mutation ActorUpdate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorUpdate!) {\n        actorUpdate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input) {\n            ...ActorFull\n        }\n    }\n": types.ActorUpdateDocument,
+    "\n    mutation ActorCreate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorCreate!, $characterId: ID) {\n        actorCreate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input, characterId: $characterId) {\n            ...ActorFull\n        }\n    }\n": types.ActorCreateDocument,
+    "\n    mutation ActorUpdate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorUpdate!, $characterId: ID) {\n        actorUpdate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input, characterId: $characterId) {\n            ...ActorFull\n        }\n    }\n": types.ActorUpdateDocument,
+    "\n    query SpexCharacters($spexId: ID!) {\n        spexCharacters(spexId: $spexId) {\n            id\n            name\n            position\n            retired\n            spexId\n        }\n    }\n": types.SpexCharactersDocument,
     "\n    mutation ActorDelete($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $id: ID!) {\n        actorDelete(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, id: $id)\n    }\n": types.ActorDeleteDocument,
     "\n    fragment TaskActivityBase on TaskActivity {\n        id\n        task {\n            id\n            name\n            category {\n                name\n                actorPresent\n            }\n        }\n    }\n": types.TaskActivityBaseFragmentDoc,
     "\n    fragment TaskActivitySummary on TaskActivity {\n        ...TaskActivityBase\n        actors {\n            ...ActorSummary\n        }\n    }\n": types.TaskActivitySummaryFragmentDoc,
@@ -341,27 +314,17 @@ const documents: Documents = {
     "\n    mutation TagUpdate($input: TagUpdate!) {\n        tagUpdate(input: $input) { ...TagFull }\n    }\n": types.TagUpdateDocument,
     "\n    mutation TagDelete($id: ID!) {\n        tagDelete(id: $id)\n    }\n": types.TagDeleteDocument,
     "\n    query TagExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        tagExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": types.TagExportDocument,
-    "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n    }\n": types.TaskCategorySummaryFragmentDoc,
+    "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        board\n        retired\n    }\n": types.TaskCategorySummaryFragmentDoc,
     "\n    fragment TaskCategoryFull on TaskCategory {\n        ...TaskCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.TaskCategoryFullFragmentDoc,
     "\n    query TaskCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.TaskCategoryPagedSummaryDocument,
     "\n    query TaskCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.TaskCategoryPagedFullDocument,
     "\n    query TaskCategoryGet($id: ID!) {\n        taskCategory(id: $id) { ...TaskCategoryFull }\n    }\n": types.TaskCategoryGetDocument,
-    "\n    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {\n        taskCategoryCreate(input: $input) { ...TaskCategoryFull }\n    }\n": types.TaskCategoryCreateDocument,
-    "\n    mutation TaskCategoryUpdate($input: TaskCategoryUpdate!) {\n        taskCategoryUpdate(input: $input) { ...TaskCategoryFull }\n    }\n": types.TaskCategoryUpdateDocument,
-    "\n    mutation TaskCategoryDelete($id: ID!) {\n        taskCategoryDelete(id: $id)\n    }\n": types.TaskCategoryDeleteDocument,
-    "\n    query TaskCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        taskCategoryExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": types.TaskCategoryExportDocument,
-    "\n    fragment TaskSummary on Task {\n        id\n        name\n        category {\n            id\n            name\n            actorPresent\n        }\n    }\n": types.TaskSummaryFragmentDoc,
+    "\n    fragment TaskSummary on Task {\n        id\n        name\n        retired\n        category {\n            id\n            name\n            actorPresent\n        }\n    }\n": types.TaskSummaryFragmentDoc,
     "\n    fragment TaskFull on Task {\n        ...TaskSummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.TaskFullFragmentDoc,
     "\n    query TaskPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.TaskPagedSummaryDocument,
     "\n    query TaskPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.TaskPagedFullDocument,
     "\n    query TaskGet($id: ID!) {\n        task(id: $id) { ...TaskFull }\n    }\n": types.TaskGetDocument,
-    "\n    mutation TaskCreate($input: TaskCreate!) {\n        taskCreate(input: $input) { ...TaskFull }\n    }\n": types.TaskCreateDocument,
-    "\n    mutation TaskUpdate($input: TaskUpdate!) {\n        taskUpdate(input: $input) { ...TaskFull }\n    }\n": types.TaskUpdateDocument,
-    "\n    mutation TaskDelete($id: ID!) {\n        taskDelete(id: $id)\n    }\n": types.TaskDeleteDocument,
-    "\n    query TaskExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        taskExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": types.TaskExportDocument,
-    "\n    mutation TaskCategoryAdd($id: ID!, $categoryId: ID!) {\n        taskCategoryAdd(taskId: $id, id: $categoryId)\n    }\n": types.TaskCategoryAddDocument,
-    "\n    mutation TaskCategoryRemove($id: ID!) {\n        taskCategoryRemove(taskId: $id)\n    }\n": types.TaskCategoryRemoveDocument,
-    "\n    fragment UserSummary on User {\n        id\n        externalId\n        email\n        authorities {\n            id\n            label\n        }\n        state {\n            id\n            label\n        }\n        spexare {\n            id\n            firstName\n            lastName\n            nickName\n        }\n    }\n": types.UserSummaryFragmentDoc,
+    "\n    fragment UserSummary on User {\n        id\n        externalId\n        email\n        authorities {\n            id\n            label\n        }\n        state {\n            id\n            label\n        }\n        spexare {\n            id\n            firstName\n            lastName\n            nickName\n        }\n        spexareAutoLink\n    }\n": types.UserSummaryFragmentDoc,
     "\n    fragment UserFull on User {\n        ...UserSummary\n        temporaryPassword\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.UserFullFragmentDoc,
     "\n    query UserPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserSummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.UserPagedSummaryDocument,
     "\n    query UserPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        userPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...UserFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.UserPagedFullDocument,
@@ -375,6 +338,7 @@ const documents: Documents = {
     "\n    mutation UserStateSet($userId: ID!, $id: ID!) {\n        userStateSet(userId: $userId, id: $id)\n    }\n": types.UserStateSetDocument,
     "\n    mutation UserSpexareAdd($userId: ID!, $id: ID!) {\n        userSpexareAdd(userId: $userId, id: $id)\n    }\n": types.UserSpexareAddDocument,
     "\n    mutation UserSpexareRemove($userId: ID!) {\n        userSpexareRemove(userId: $userId)\n    }\n": types.UserSpexareRemoveDocument,
+    "\n    mutation UserSpexareAutoLinkSet($userId: ID!, $enabled: Boolean!) {\n        userSpexareAutoLinkSet(userId: $userId, enabled: $enabled)\n    }\n": types.UserSpexareAutoLinkSetDocument,
     "\n    query UserSearch($query: String!, $first: Int!) {\n        userSearch(query: $query, first: $first) { ...UserSummary }\n    }\n": types.UserSearchDocument,
     "\n    query Authorities {\n        authorities {\n            id\n            label\n        }\n    }\n": types.AuthoritiesDocument,
     "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n": types.StatesDocument,
@@ -402,6 +366,14 @@ export function graphql(source: "\n    query MaintenanceJobs {\n        maintena
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation MaintenanceJobRun($job: MaintenanceJob!) {\n        maintenanceJobRun(job: $job)\n    }\n"): (typeof documents)["\n    mutation MaintenanceJobRun($job: MaintenanceJob!) {\n        maintenanceJobRun(job: $job)\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SyncSources {\n        syncSources {\n            name\n            cursor\n            lastPulledAt\n            lastSuccess\n            lastError\n            applied\n            stale\n        }\n    }\n"): (typeof documents)["\n    query SyncSources {\n        syncSources {\n            name\n            cursor\n            lastPulledAt\n            lastSuccess\n            lastError\n            applied\n            stale\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation SyncRun($full: Boolean) {\n        syncRun(full: $full) {\n            applied\n            missing\n            error\n        }\n    }\n"): (typeof documents)["\n    mutation SyncRun($full: Boolean) {\n        syncRun(full: $full) {\n            applied\n            missing\n            error\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -585,7 +557,7 @@ export function graphql(source: "\n    query Types {\n        types {\n         
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n    }\n"): (typeof documents)["\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n    }\n"];
+export function graphql(source: "\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n        retired\n    }\n"): (typeof documents)["\n    fragment SpexCategorySummary on SpexCategory {\n        id\n        name\n        logoUrl\n        firstYear\n        retired\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -605,23 +577,7 @@ export function graphql(source: "\n    query SpexCategoryGet($id: ID!) {\n      
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {\n        spexCategoryCreate(input: $input) { ...SpexCategoryFull }\n    }\n"): (typeof documents)["\n    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {\n        spexCategoryCreate(input: $input) { ...SpexCategoryFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {\n        spexCategoryUpdate(input: $input) { ...SpexCategoryFull }\n    }\n"): (typeof documents)["\n    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {\n        spexCategoryUpdate(input: $input) { ...SpexCategoryFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexCategoryDelete($id: ID!) {\n        spexCategoryDelete(id: $id)\n    }\n"): (typeof documents)["\n    mutation SpexCategoryDelete($id: ID!) {\n        spexCategoryDelete(id: $id)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    query SpexCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        spexCategoryExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"): (typeof documents)["\n    query SpexCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        spexCategoryExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    fragment SpexSummary on Spex {\n        id\n        year\n        title\n        posterUrl\n        revival\n        permissions {\n            write\n            delete\n        }\n        revivals {\n            id\n            year\n        }\n        category {\n            id\n            name\n        }\n    }\n"): (typeof documents)["\n    fragment SpexSummary on Spex {\n        id\n        year\n        title\n        posterUrl\n        revival\n        permissions {\n            write\n            delete\n        }\n        revivals {\n            id\n            year\n        }\n        category {\n            id\n            name\n        }\n    }\n"];
+export function graphql(source: "\n    fragment SpexSummary on Spex {\n        id\n        year\n        title\n        posterUrl\n        revival\n        retired\n        revivals {\n            id\n            year\n        }\n        category {\n            id\n            name\n        }\n    }\n"): (typeof documents)["\n    fragment SpexSummary on Spex {\n        id\n        year\n        title\n        posterUrl\n        revival\n        retired\n        revivals {\n            id\n            year\n        }\n        category {\n            id\n            name\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -638,38 +594,6 @@ export function graphql(source: "\n    query SpexPagedFull($first: Int, $last: I
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query SpexGet($id: ID!) {\n        spex(id: $id) { ...SpexFull }\n    }\n"): (typeof documents)["\n    query SpexGet($id: ID!) {\n        spex(id: $id) { ...SpexFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexCreate($input: SpexCreate!) {\n        spexCreate(input: $input) { ...SpexFull }\n    }\n"): (typeof documents)["\n    mutation SpexCreate($input: SpexCreate!) {\n        spexCreate(input: $input) { ...SpexFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexUpdate($input: SpexUpdate!) {\n        spexUpdate(input: $input) { ...SpexFull }\n    }\n"): (typeof documents)["\n    mutation SpexUpdate($input: SpexUpdate!) {\n        spexUpdate(input: $input) { ...SpexFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexDelete($id: ID!) {\n        spexDelete(id: $id)\n    }\n"): (typeof documents)["\n    mutation SpexDelete($id: ID!) {\n        spexDelete(id: $id)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    query SpexExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        spexExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"): (typeof documents)["\n    query SpexExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        spexExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexCategoryAdd($id: ID!, $categoryId: ID!) {\n        spexCategoryAdd(spexId: $id, id: $categoryId)\n    }\n"): (typeof documents)["\n    mutation SpexCategoryAdd($id: ID!, $categoryId: ID!) {\n        spexCategoryAdd(spexId: $id, id: $categoryId)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexCategoryRemove($id: ID!) {\n        spexCategoryRemove(spexId: $id)\n    }\n"): (typeof documents)["\n    mutation SpexCategoryRemove($id: ID!) {\n        spexCategoryRemove(spexId: $id)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexRevivalCreate($spexId: ID!, $year: Year!) {\n        spexRevivalCreate(spexId: $spexId, year: $year) {\n            id\n            year\n        }\n    }\n"): (typeof documents)["\n    mutation SpexRevivalCreate($spexId: ID!, $year: Year!) {\n        spexRevivalCreate(spexId: $spexId, year: $year) {\n            id\n            year\n        }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation SpexRevivalDelete($id: ID!, $spexId: ID!) {\n        spexRevivalDelete(spexId: $spexId, id: $id)\n    }\n"): (typeof documents)["\n    mutation SpexRevivalDelete($id: ID!, $spexId: ID!) {\n        spexRevivalDelete(spexId: $spexId, id: $id)\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -717,7 +641,7 @@ export function graphql(source: "\n    mutation SpexActivityDelete($spexareId: I
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    fragment ActorSummary on Actor {\n        id\n        role\n        vocal {\n            id\n            label\n        }\n    }\n"): (typeof documents)["\n    fragment ActorSummary on Actor {\n        id\n        role\n        vocal {\n            id\n            label\n        }\n    }\n"];
+export function graphql(source: "\n    fragment ActorSummary on Actor {\n        id\n        role\n        vocal {\n            id\n            label\n        }\n        character {\n            id\n            name\n        }\n    }\n"): (typeof documents)["\n    fragment ActorSummary on Actor {\n        id\n        role\n        vocal {\n            id\n            label\n        }\n        character {\n            id\n            name\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -725,11 +649,15 @@ export function graphql(source: "\n    fragment ActorFull on Actor {\n        ..
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation ActorCreate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorCreate!) {\n        actorCreate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input) {\n            ...ActorFull\n        }\n    }\n"): (typeof documents)["\n    mutation ActorCreate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorCreate!) {\n        actorCreate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input) {\n            ...ActorFull\n        }\n    }\n"];
+export function graphql(source: "\n    mutation ActorCreate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorCreate!, $characterId: ID) {\n        actorCreate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input, characterId: $characterId) {\n            ...ActorFull\n        }\n    }\n"): (typeof documents)["\n    mutation ActorCreate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorCreate!, $characterId: ID) {\n        actorCreate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input, characterId: $characterId) {\n            ...ActorFull\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation ActorUpdate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorUpdate!) {\n        actorUpdate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input) {\n            ...ActorFull\n        }\n    }\n"): (typeof documents)["\n    mutation ActorUpdate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorUpdate!) {\n        actorUpdate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input) {\n            ...ActorFull\n        }\n    }\n"];
+export function graphql(source: "\n    mutation ActorUpdate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorUpdate!, $characterId: ID) {\n        actorUpdate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input, characterId: $characterId) {\n            ...ActorFull\n        }\n    }\n"): (typeof documents)["\n    mutation ActorUpdate($spexareId: ID!, $activityId: ID!, $taskActivityId: ID!, $vocalId: ID!, $input: ActorUpdate!, $characterId: ID) {\n        actorUpdate(spexareId: $spexareId, activityId: $activityId, taskActivityId: $taskActivityId, vocalId: $vocalId, input: $input, characterId: $characterId) {\n            ...ActorFull\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SpexCharacters($spexId: ID!) {\n        spexCharacters(spexId: $spexId) {\n            id\n            name\n            position\n            retired\n            spexId\n        }\n    }\n"): (typeof documents)["\n    query SpexCharacters($spexId: ID!) {\n        spexCharacters(spexId: $spexId) {\n            id\n            name\n            position\n            retired\n            spexId\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -973,7 +901,7 @@ export function graphql(source: "\n    query TagExport($ids: [ID], $filter: Stri
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n    }\n"): (typeof documents)["\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n    }\n"];
+export function graphql(source: "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        board\n        retired\n    }\n"): (typeof documents)["\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        board\n        retired\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -993,23 +921,7 @@ export function graphql(source: "\n    query TaskCategoryGet($id: ID!) {\n      
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {\n        taskCategoryCreate(input: $input) { ...TaskCategoryFull }\n    }\n"): (typeof documents)["\n    mutation TaskCategoryCreate($input: TaskCategoryCreate!) {\n        taskCategoryCreate(input: $input) { ...TaskCategoryFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation TaskCategoryUpdate($input: TaskCategoryUpdate!) {\n        taskCategoryUpdate(input: $input) { ...TaskCategoryFull }\n    }\n"): (typeof documents)["\n    mutation TaskCategoryUpdate($input: TaskCategoryUpdate!) {\n        taskCategoryUpdate(input: $input) { ...TaskCategoryFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation TaskCategoryDelete($id: ID!) {\n        taskCategoryDelete(id: $id)\n    }\n"): (typeof documents)["\n    mutation TaskCategoryDelete($id: ID!) {\n        taskCategoryDelete(id: $id)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    query TaskCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        taskCategoryExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"): (typeof documents)["\n    query TaskCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        taskCategoryExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    fragment TaskSummary on Task {\n        id\n        name\n        category {\n            id\n            name\n            actorPresent\n        }\n    }\n"): (typeof documents)["\n    fragment TaskSummary on Task {\n        id\n        name\n        category {\n            id\n            name\n            actorPresent\n        }\n    }\n"];
+export function graphql(source: "\n    fragment TaskSummary on Task {\n        id\n        name\n        retired\n        category {\n            id\n            name\n            actorPresent\n        }\n    }\n"): (typeof documents)["\n    fragment TaskSummary on Task {\n        id\n        name\n        retired\n        category {\n            id\n            name\n            actorPresent\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -1029,31 +941,7 @@ export function graphql(source: "\n    query TaskGet($id: ID!) {\n        task(i
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation TaskCreate($input: TaskCreate!) {\n        taskCreate(input: $input) { ...TaskFull }\n    }\n"): (typeof documents)["\n    mutation TaskCreate($input: TaskCreate!) {\n        taskCreate(input: $input) { ...TaskFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation TaskUpdate($input: TaskUpdate!) {\n        taskUpdate(input: $input) { ...TaskFull }\n    }\n"): (typeof documents)["\n    mutation TaskUpdate($input: TaskUpdate!) {\n        taskUpdate(input: $input) { ...TaskFull }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation TaskDelete($id: ID!) {\n        taskDelete(id: $id)\n    }\n"): (typeof documents)["\n    mutation TaskDelete($id: ID!) {\n        taskDelete(id: $id)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    query TaskExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        taskExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"): (typeof documents)["\n    query TaskExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        taskExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation TaskCategoryAdd($id: ID!, $categoryId: ID!) {\n        taskCategoryAdd(taskId: $id, id: $categoryId)\n    }\n"): (typeof documents)["\n    mutation TaskCategoryAdd($id: ID!, $categoryId: ID!) {\n        taskCategoryAdd(taskId: $id, id: $categoryId)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation TaskCategoryRemove($id: ID!) {\n        taskCategoryRemove(taskId: $id)\n    }\n"): (typeof documents)["\n    mutation TaskCategoryRemove($id: ID!) {\n        taskCategoryRemove(taskId: $id)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    fragment UserSummary on User {\n        id\n        externalId\n        email\n        authorities {\n            id\n            label\n        }\n        state {\n            id\n            label\n        }\n        spexare {\n            id\n            firstName\n            lastName\n            nickName\n        }\n    }\n"): (typeof documents)["\n    fragment UserSummary on User {\n        id\n        externalId\n        email\n        authorities {\n            id\n            label\n        }\n        state {\n            id\n            label\n        }\n        spexare {\n            id\n            firstName\n            lastName\n            nickName\n        }\n    }\n"];
+export function graphql(source: "\n    fragment UserSummary on User {\n        id\n        externalId\n        email\n        authorities {\n            id\n            label\n        }\n        state {\n            id\n            label\n        }\n        spexare {\n            id\n            firstName\n            lastName\n            nickName\n        }\n        spexareAutoLink\n    }\n"): (typeof documents)["\n    fragment UserSummary on User {\n        id\n        externalId\n        email\n        authorities {\n            id\n            label\n        }\n        state {\n            id\n            label\n        }\n        spexare {\n            id\n            firstName\n            lastName\n            nickName\n        }\n        spexareAutoLink\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -1109,6 +997,10 @@ export function graphql(source: "\n    mutation UserSpexareRemove($userId: ID!) 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    mutation UserSpexareAutoLinkSet($userId: ID!, $enabled: Boolean!) {\n        userSpexareAutoLinkSet(userId: $userId, enabled: $enabled)\n    }\n"): (typeof documents)["\n    mutation UserSpexareAutoLinkSet($userId: ID!, $enabled: Boolean!) {\n        userSpexareAutoLinkSet(userId: $userId, enabled: $enabled)\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    query UserSearch($query: String!, $first: Int!) {\n        userSearch(query: $query, first: $first) { ...UserSummary }\n    }\n"): (typeof documents)["\n    query UserSearch($query: String!, $first: Int!) {\n        userSearch(query: $query, first: $first) { ...UserSummary }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -1120,7 +1012,7 @@ export function graphql(source: "\n    query Authorities {\n        authorities 
 export function graphql(source: "\n    query States {\n        states {\n            id\n            label\n        }\n    }\n"): (typeof documents)["\n    query States {\n        states {\n            id\n            label\n        }\n    }\n"];
 
 export function graphql(source: string) {
-    return (documents as any)[source] ?? {};
+  return (documents as any)[source] ?? {};
 }
 
-export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<infer TType, any> ? TType : never;
+export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;

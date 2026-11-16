@@ -3,7 +3,7 @@ import {resolveApplications} from "@/utils/applications";
 
 const env = {
     SPEXREGISTER_WEB_URL: "https://register.example.org",
-    FGV_REVIVAL_WEB_URL: "https://revival.example.org/",
+    REVIVAL_WEB_URL: "https://revival.example.org/",
     SPEXFLIX_WEB_URL: "https://spexflix.example.org",
     SPEXIFY_WEB_URL: "https://spexify.example.org",
     SPEXGRAM_WEB_URL: "https://spexgram.example.org",
@@ -14,7 +14,7 @@ const user = {roles: ["USER"]};
 
 describe("resolveApplications", () => {
     it("lists the current application first among the others the user can open, in a fixed order", () => {
-        const claims = {resource_access: {"fgv-spexify": user, "spexregister": user, "fgv-revival": user, "fgv-archive": user}};
+        const claims = {resource_access: {"fgv-spexify": user, "fgv-spexregister": user, "fgv-revival": user, "fgv-archive": user}};
 
         expect(resolveApplications("spexflix", claims, env)).toEqual([
             {id: "spexregister", url: "https://register.example.org", current: false},
@@ -34,7 +34,7 @@ describe("resolveApplications", () => {
     it("leaves out an application without an address", () => {
         const claims = {resource_access: {"fgv-revival": user, "fgv-spexflix": user}};
 
-        expect(resolveApplications("spexregister", claims, {...env, FGV_REVIVAL_WEB_URL: " "}).map(a => a.id))
+        expect(resolveApplications("spexregister", claims, {...env, REVIVAL_WEB_URL: " "}).map(a => a.id))
             .toEqual(["spexregister", "spexflix"]);
     });
 

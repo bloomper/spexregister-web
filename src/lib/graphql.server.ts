@@ -203,9 +203,10 @@ export type ResourceClientConfig<TCreateInput, TUpdateInput> = {
     pagedSummaryQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
     pagedFullQuery: TypedDocumentNode<Record<string, ConnectionShape<unknown> | null | undefined>, PagedQueryVariables>;
     getQuery?: TypedDocumentNode<Record<string, unknown>, { id: string }>;
-    createMutation: TypedDocumentNode<Record<string, unknown>, { input: TCreateInput }>;
-    updateMutation: TypedDocumentNode<Record<string, unknown>, { input: TUpdateInput }>;
-    deleteMutation: TypedDocumentNode<Record<string, unknown>, { id: string }>;
+    // Left out for a read-only resource, such as Spexregister's copy of Spexipedia's base data
+    createMutation?: TypedDocumentNode<Record<string, unknown>, { input: TCreateInput }>;
+    updateMutation?: TypedDocumentNode<Record<string, unknown>, { input: TUpdateInput }>;
+    deleteMutation?: TypedDocumentNode<Record<string, unknown>, { id: string }>;
     exportQuery?: TypedDocumentNode<Record<string, unknown>, ExportQueryVariables>;
     auditedType: AuditedType;
     cacheTag: string;
@@ -268,14 +269,21 @@ export function createResourceClient<
         );
     }
 
+    function writable<T>(mutation: T | undefined): T {
+        if (!mutation) {
+            throw new Error(`Resource '${singular}' is read only`);
+        }
+        return mutation;
+    }
+
     async function create(input: TCreateInput): Promise<TNode> {
-        const value = await mutateForData(config.createMutation, {input}, createField, "No data created");
+        const value = await mutateForData(writable(config.createMutation), {input}, createField, "No data created");
         return value as TNode;
     }
 
     async function update(id: string, input: Omit<TUpdateInput, "id">): Promise<TNode> {
         const value = await mutateForData(
-            config.updateMutation,
+            writable(config.updateMutation),
             {input: {...input, id} as TUpdateInput},
             updateField,
             "No data updated",
@@ -284,7 +292,7 @@ export function createResourceClient<
     }
 
     async function del(id: string): Promise<boolean | undefined> {
-        return runMutationField(config.deleteMutation, {id}, deleteField) as Promise<boolean | undefined>;
+        return runMutationField(writable(config.deleteMutation), {id}, deleteField) as Promise<boolean | undefined>;
     }
 
     async function exp(ids: string[] | null, filter: string | null, type: ImpexType): Promise<JobReference> {

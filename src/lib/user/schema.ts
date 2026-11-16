@@ -15,6 +15,9 @@ export const userFormSchema = z.object({
         .string()
         .optional()
         .nullable(),
+    spexareAutoLink: z
+        .boolean()
+        .optional(),
 });
 
 export type UserFormInput = z.input<typeof userFormSchema>;

@@ -18,8 +18,8 @@ export function SiteHeader({applications}: { applications: Application[] }) {
     const t = useTranslations();
 
     return (
-        <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b print:hidden">
-            <div className="flex min-h-(--header-height) w-full items-center gap-2 px-4">
+        <header data-site-header className="bg-background sticky top-0 z-50 flex w-full items-center border-b print:hidden">
+            <div className="flex min-h-(--header-height) w-full items-center gap-2 px-4 max-[359px]:gap-1 max-[359px]:px-2">
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                     <MenuToggle/>
                     <AppSwitcher title={t("Meta.title")} applications={applications}/>

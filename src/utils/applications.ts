@@ -3,7 +3,7 @@ import type {AccessTokenClaims} from "@/types/auth";
 /**
  * The FGV applications that sign in through the same Keycloak realm and that the header can switch between.
  */
-export type ApplicationId = "spexregister" | "revival" | "spexflix" | "spexify" | "spexgram" | "archive";
+export type ApplicationId = "spexregister" | "revival" | "spexflix" | "spexify" | "spexgram" | "archive" | "spexipedia";
 
 /**
  * An application in the switcher. The current one links to its own start page, the others to their address.
@@ -15,12 +15,13 @@ export type Application = {
 };
 
 const APPLICATIONS: ReadonlyArray<{ id: ApplicationId; clientId: string; urlVariable: string }> = [
-    {id: "spexregister", clientId: "spexregister", urlVariable: "SPEXREGISTER_WEB_URL"},
-    {id: "revival", clientId: "fgv-revival", urlVariable: "FGV_REVIVAL_WEB_URL"},
+    {id: "spexregister", clientId: "fgv-spexregister", urlVariable: "SPEXREGISTER_WEB_URL"},
+    {id: "revival", clientId: "fgv-revival", urlVariable: "REVIVAL_WEB_URL"},
     {id: "spexflix", clientId: "fgv-spexflix", urlVariable: "SPEXFLIX_WEB_URL"},
     {id: "spexify", clientId: "fgv-spexify", urlVariable: "SPEXIFY_WEB_URL"},
     {id: "spexgram", clientId: "fgv-spexgram", urlVariable: "SPEXGRAM_WEB_URL"},
     {id: "archive", clientId: "fgv-archive", urlVariable: "ARCHIVE_WEB_URL"},
+    {id: "spexipedia", clientId: "fgv-spexipedia", urlVariable: "SPEXIPEDIA_WEB_URL"},
 ];
 
 /**

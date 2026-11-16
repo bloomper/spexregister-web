@@ -22,7 +22,7 @@ export function AnalyticsHighlights({data}: { data: Analytics }) {
         <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-2">
                 <h2 className="text-lg font-semibold tracking-tight">{t("heading")}</h2>
-                <Link href="/analytics" className={buttonVariants({variant: "outline", size: "sm"})}>
+                <Link href="/spexare/analytics" className={buttonVariants({variant: "outline", size: "sm"})}>
                     {t("showAll")}
                     <ArrowRight className="size-3.5"/>
                 </Link>

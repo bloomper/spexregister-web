@@ -27,7 +27,6 @@ vi.mock("@/lib/user", () => ({
     del: vi.fn(),
     exp: vi.fn(),
     imp: vi.fn(),
-    events: vi.fn(),
     getAuthorities: vi.fn(),
     addAuthorities: vi.fn(),
     removeAuthorities: vi.fn(),

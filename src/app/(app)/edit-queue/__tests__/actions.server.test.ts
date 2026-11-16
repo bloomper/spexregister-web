@@ -51,8 +51,6 @@ describe("getEditQueueOptions", () => {
     });
 
     it.each([
-        ["spex", Policies.spex.requireUpdate, {spexCategories: ["spexCategory"]}],
-        ["task", Policies.task.requireUpdate, {taskCategories: ["taskCategory"]}],
         ["user", Policies.user.requireUpdate, {authorities: ["authority"], states: ["state"]}],
     ] as const)("loads only what the %s form needs, under its own policy", async (entityType, policy, expected) => {
         const options = await getEditQueueOptions(entityType);

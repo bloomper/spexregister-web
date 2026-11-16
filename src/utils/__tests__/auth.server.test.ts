@@ -21,7 +21,7 @@ const session = {user: {id: "u1", email: "ada@example.com"}, session: {id: "s1"}
 const signedInAs = (roles: string[]) => {
     getSessionMock.mockResolvedValue(session);
     getAccessTokenMock.mockResolvedValue({accessToken: "kc-token"});
-    jwtDecodeMock.mockReturnValue({resource_access: {spexregister: {roles}}});
+    jwtDecodeMock.mockReturnValue({resource_access: {"fgv-spexregister": {roles}}});
 };
 
 beforeEach(() => {

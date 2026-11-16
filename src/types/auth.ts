@@ -15,7 +15,7 @@ export type AuthzResult = AuthzOk | AuthzFail;
  */
 export type AccessTokenClaims = {
     resource_access?: {
-        spexregister?: {
+        "fgv-spexregister"?: {
             roles?: string[];
         };
         [resource: string]:

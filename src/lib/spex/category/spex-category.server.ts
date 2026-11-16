@@ -1,16 +1,8 @@
 import "server-only";
 
-import {
-    AuditedType,
-    SortDirection,
-    SpexCategory,
-    SpexCategoryCreate,
-    SpexCategoryEdge,
-    SpexCategoryUpdate
-} from "@/gql/schema";
+import {AuditedType, SortDirection, SpexCategory, SpexCategoryEdge} from "@/gql/schema";
 import {graphql} from "@/gql";
 import {createResourceClient} from "@/lib/graphql.server";
-import axios from "@/lib/axios.server";
 
 export const SpexCategorySummary = graphql(`
     fragment SpexCategorySummary on SpexCategory {
@@ -18,6 +10,7 @@ export const SpexCategorySummary = graphql(`
         name
         logoUrl
         firstYear
+        retired
     }
 `);
 
@@ -57,39 +50,12 @@ const SpexCategoryGetQuery = graphql(`
     }
 `);
 
-const SpexCategoryCreateMutation = graphql(`
-    mutation SpexCategoryCreate($input: SpexCategoryCreate!) {
-        spexCategoryCreate(input: $input) { ...SpexCategoryFull }
-    }
-`);
 
-const SpexCategoryUpdateMutation = graphql(`
-    mutation SpexCategoryUpdate($input: SpexCategoryUpdate!) {
-        spexCategoryUpdate(input: $input) { ...SpexCategoryFull }
-    }
-`);
-
-const SpexCategoryDeleteMutation = graphql(`
-    mutation SpexCategoryDelete($id: ID!) {
-        spexCategoryDelete(id: $id)
-    }
-`);
-
-const SpexCategoryExportQuery = graphql(`
-    query SpexCategoryExport($ids: [ID], $filter: String, $type: ImpexType!) {
-        spexCategoryExport(ids: $ids, filter: $filter, type: $type) { id }
-    }
-`);
-
-const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategoryCreate, SpexCategoryUpdate>({
+const client = createResourceClient<SpexCategory, SpexCategoryEdge, never, {id?: unknown}>({
     singular: "spexCategory",
     pagedSummaryQuery: SpexCategoryPagedSummary,
     pagedFullQuery: SpexCategoryPagedFull,
     getQuery: SpexCategoryGetQuery,
-    createMutation: SpexCategoryCreateMutation,
-    updateMutation: SpexCategoryUpdateMutation,
-    deleteMutation: SpexCategoryDeleteMutation,
-    exportQuery: SpexCategoryExportQuery,
     auditedType: AuditedType.SpexCategory,
     cacheTag: "spex-category",
     restPath: "spex/categories",
@@ -98,25 +64,6 @@ const client = createResourceClient<SpexCategory, SpexCategoryEdge, SpexCategory
     defaultFilter: "",
 });
 
-export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;
+// Read only: Spexipedia keeps base data
+export const {getPaged, get, getAll} = client;
 
-/**
- * Replaces the category's logo through the REST API.
- */
-export async function uploadLogo(id: string, file: File) {
-    const arrayBuffer = await file.arrayBuffer();
-    const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spex/categories/${id}/logo`, arrayBuffer, {
-        headers: {
-            "Content-Type": file.type,
-        }
-    });
-    return response.data;
-}
-
-/**
- * Removes the category's logo.
- */
-export async function deleteLogo(id: string) {
-    await axios.delete(`${process.env.API_REST_BASE_URL}/api/spex/categories/${id}/logo`);
-    return {success: true};
-}

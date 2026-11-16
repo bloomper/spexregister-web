@@ -501,7 +501,7 @@ function createPermissionGrant(input) {
 
 const resolvers = {
     PermissionGrantsPaged: (v) => {
-        // Only the equality terms the permissions table sends, e.g. "(permission:READ OR permission:WRITE) AND scope:SPEX"
+        // Only the equality terms the permissions table sends, e.g. "(permission:READ OR permission:WRITE) AND scope:SPEX_PARTICIPANTS"
         const filter = String(v?.filter ?? "");
         const allowed = (field) => {
             const values = [...filter.matchAll(new RegExp(`${field}:([A-Z_]+)`, "g"))].map((m) => m[1]);
@@ -982,7 +982,7 @@ const accessToken = () =>
             typ: "Bearer",
             azp: CLIENT_ID,
             resource_access: {
-                spexregister: {roles: userRoles},
+                "fgv-spexregister": {roles: userRoles},
                 "fgv-spexify": {roles: ["USER"]},
                 "fgv-spexflix": {roles: ["USER"]},
             },
