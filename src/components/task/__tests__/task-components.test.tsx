@@ -1,7 +1,6 @@
 import {describe, expect, it, vi} from "vitest";
 import {render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {TaskCard} from "@/components/task/task-card.client";
 import {TaskViewDialog} from "@/components/task/task-view-dialog.client";
 
 import type {Task} from "@/gql/schema";
@@ -15,21 +14,6 @@ vi.mock("@/app/(app)/tasks/actions.server", () => ({
 vi.mock("@/components/task/task-form.client", () => ({TaskForm: () => <div data-testid="task-form"/>}));
 
 const task = {id: "t1", name: "Lighting", category: {id: "c1", name: "Technical"}} as unknown as Task;
-const uncategorised = {id: "t2", name: "Misc", category: null} as unknown as Task;
-
-describe("TaskCard", () => {
-    it("renders the name and category", () => {
-        render(<TaskCard task={task} onSelect={vi.fn()}/>);
-        expect(screen.getByText("Lighting")).toBeInTheDocument();
-        expect(screen.getByText("Technical")).toBeInTheDocument();
-    });
-
-    it('falls back to the "none" label for an uncategorised task', () => {
-        render(<TaskCard task={uncategorised} onSelect={vi.fn()}/>);
-        expect(screen.getByText("Common.none")).toBeInTheDocument();
-    });
-
-});
 
 describe("TaskViewDialog", () => {
     it("renders the task detail and closes", async () => {

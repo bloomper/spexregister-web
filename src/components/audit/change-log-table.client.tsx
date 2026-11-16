@@ -13,6 +13,7 @@ import {formatDateTime} from "@/utils/utils";
 import {auditTypeLabel} from "@/utils/audit";
 import {getRevisionDetailAction, getRevisionFeedPageAction} from "@/app/(app)/admin/change-log/actions.server";
 import {RevisionDetailPanel} from "@/components/audit/revision-detail.client";
+import type {SpexipediaLink} from "@/utils/audit";
 import {DataEmpty} from "@/components/data-empty";
 import {
     ALL_TYPES,
@@ -27,7 +28,11 @@ const COLUMN_COUNT = 5;
 /**
  * The change log: every revision, newest first, filtered and paged, each opening to what it changed.
  */
-export function ChangeLogTable({initialData, authors}: { initialData: RevisionFeedPage; authors: string[] }) {
+export function ChangeLogTable({initialData, authors, spexipedia}: {
+    initialData: RevisionFeedPage;
+    authors: string[];
+    spexipedia?: SpexipediaLink;
+}) {
     const t = useTranslations();
     const [page, setPage] = useState(initialData);
     const [filter, setFilter] = useState<ChangeLogFilter>(EMPTY_FILTER);
@@ -173,7 +178,7 @@ export function ChangeLogTable({initialData, authors}: { initialData: RevisionFe
                                         <TableRow className="hover:bg-transparent">
                                             <TableCell colSpan={COLUMN_COUNT} className="whitespace-normal p-3">
                                                 {detail
-                                                    ? <RevisionDetailPanel detail={detail}/>
+                                                    ? <RevisionDetailPanel detail={detail} spexipedia={spexipedia}/>
                                                     : (
                                                         <div
                                                             className="flex items-center gap-2 text-xs text-muted-foreground">

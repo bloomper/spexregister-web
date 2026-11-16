@@ -8,9 +8,9 @@ const SCREENS = [
     {width: 768, height: 1024},
 ];
 
-const PAGES = ["/", "/news", "/spex", "/spex/categories", "/spexare", "/spexare/search?q=ada", "/spexare/explore",
-    "/spexare/map", "/tasks", "/tasks/categories", "/tags", "/analytics", "/my-profile", "/spexare/manage",
-    "/spexare/create", "/news/manage", "/spex/manage", "/tags/manage", "/users/manage", "/admin/change-log",
+const PAGES = ["/", "/news", "/spexare", "/spexare/search?q=ada", "/spexare/explore",
+    "/spexare/map", "/spexare/analytics", "/tags", "/my-profile", "/spexare/manage",
+    "/spexare/create", "/news/manage", "/tags/manage", "/users/manage", "/admin/change-log",
     "/admin/permissions", "/admin/maintenance", "/impex/manage", "/about", "/support"];
 
 /**

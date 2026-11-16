@@ -3,10 +3,6 @@ import {expect, test} from "./fixtures";
 
 const managePages = [
     {name: "news", url: "/news/manage", heading: "Nyheter", row: "Premiär 2026"},
-    {name: "spex", url: "/spex/manage", heading: "Spex", row: "Nobel"},
-    {name: "spex categories", url: "/spex/categories/manage", heading: "Spexkategorier", row: "Chalmersspexet"},
-    {name: "tasks", url: "/tasks/manage", heading: "Funktioner", row: "Ensemblist"},
-    {name: "task categories", url: "/tasks/categories/manage", heading: "Funktionskategorier", row: "Kommitté"},
     {name: "tags", url: "/tags/manage", heading: "Taggar", row: "Hedersmedlem"},
     {name: "users", url: "/users/manage", heading: "Användare", row: "admin@example.com"},
 ];
@@ -64,7 +60,6 @@ test("editing a tag from the manage table updates its row", async ({page}) => {
 
 const deletions = [
     {name: "tag", url: "/tags/manage", row: "Grundare", other: "Hedersmedlem"},
-    {name: "task", url: "/tasks/manage", row: "Scenmästare", other: "Ensemblist"},
     {name: "news item", url: "/news/manage", row: "Nya lokaler", other: "Premiär 2026"},
 ];
 
@@ -82,17 +77,3 @@ for (const {name, url, row, other} of deletions) {
     });
 }
 
-test("renaming a task from the manage table updates its row", async ({page}) => {
-    await page.goto("/tasks/manage");
-
-    await rowActions(page, "Scenmästare", "Ändra");
-
-    const sheet = page.locator('[data-slot="sheet-content"]');
-    const name = sheet.getByRole("textbox").first();
-    await expect(name).toHaveValue("Scenmästare");
-    await name.fill("Inspicient");
-    await sheet.getByRole("button", {name: "Spara", exact: true}).click();
-
-    await expect(page.getByText("Uppdateringen lyckades").first()).toBeVisible();
-    await expect(page.locator("tbody").getByText("Inspicient")).toBeVisible();
-});

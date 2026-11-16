@@ -6,7 +6,7 @@ import {ArrowUpRight, Pencil, PlusCircle, Trash2} from "lucide-react";
 import {AuditSource, RevisionDetail, RevisionEntityChange, RevisionType} from "@/gql/schema";
 import {Badge} from "@/components/ui/badge";
 import {AuditDiff} from "@/components/audit/audit-diff.client";
-import {auditEntityHref, auditTypeLabel} from "@/utils/audit";
+import {auditEntityHref, auditTypeLabel, type SpexipediaLink} from "@/utils/audit";
 
 const REVISION_ICONS = {
     [RevisionType.Add]: PlusCircle,
@@ -45,7 +45,7 @@ function groupByTarget(entities: RevisionEntityChange[]) {
  * Everything changed in a revision, grouped by the record it belongs to, noting when a type has more changes than
  * shown.
  */
-export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
+export function RevisionDetailPanel({detail, spexipedia}: { detail: RevisionDetail; spexipedia?: SpexipediaLink }) {
     const t = useTranslations();
     const groups = groupByTarget(detail.entities);
     const summary = detail.summary ?? [];
@@ -109,7 +109,8 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
 
                     {group.entities.map((entity, entityIndex) => {
                         const Icon = REVISION_ICONS[entity.revisionType];
-                        const href = auditEntityHref(group.target, entity.type);
+                        const href = auditEntityHref(group.target, entity.type, spexipedia);
+                        const external = href !== null && /^https?:\/\//.test(href);
 
                         return (
                             <div key={`${entity.type}-${entity.entityId}-${entityIndex}`}
@@ -128,6 +129,7 @@ export function RevisionDetailPanel({detail}: { detail: RevisionDetail }) {
                                     </Badge>
                                     {href && (
                                         <Link href={href}
+                                              {...(external ? {target: "_blank", rel: "noopener noreferrer"} : {})}
                                               aria-label={`${auditTypeLabel(t, entity.type)}: ${t("Audit.openRecord")}`}
                                               className="ml-auto inline-flex items-center gap-1 text-primary hover:text-primary/80">
                                             {t("Audit.openRecord")}

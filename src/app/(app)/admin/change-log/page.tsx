@@ -3,6 +3,7 @@ import {withPolicyPage} from "@/utils/route.server";
 import {getTranslations} from "next-intl/server";
 import {getRevisionAuthors, getRevisionFeedPaged} from "@/lib/audit/audit.server";
 import {ChangeLogTable} from "@/components/audit/change-log-table.client";
+import {getSpexipedia} from "@/utils/applications.server";
 
 /**
  * For administrators: every change in the register, newest first, filtered by type, author, source and period.
@@ -10,9 +11,10 @@ import {ChangeLogTable} from "@/components/audit/change-log-table.client";
 export default async function ChangeLogPage() {
     return withPolicyPage(Policies.audit.requireRestore, async () => {
         const defaultPageSize = 15;
-        const [initialData, authors, t] = await Promise.all([
+        const [initialData, authors, spexipedia, t] = await Promise.all([
             getRevisionFeedPaged({first: defaultPageSize}),
             getRevisionAuthors(),
+            getSpexipedia(),
             getTranslations(),
         ]);
 
@@ -22,7 +24,7 @@ export default async function ChangeLogPage() {
                     <h1 className="text-2xl font-bold tracking-tight">{t("Audit.title")}</h1>
                 </div>
                 <p className="text-sm text-muted-foreground">{t("Audit.feedDescription")}</p>
-                <ChangeLogTable initialData={initialData} authors={authors}/>
+                <ChangeLogTable initialData={initialData} authors={authors} spexipedia={spexipedia}/>
             </div>
         );
     });

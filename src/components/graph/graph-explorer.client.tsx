@@ -35,7 +35,7 @@ const EXPAND_LIMIT = 25;
  * Explores the register as a graph: search for a starting node, expand and fold nodes, load the rest of a group, dim
  * nodes that do not match a filter and open a node's record. A blank search with one result starts there at once.
  */
-export function GraphExplorer({countries}: { countries: Country[] }) {
+export function GraphExplorer({countries, spexipediaUrl = null}: { countries: Country[]; spexipediaUrl?: string | null }) {
     const t = useTranslations();
     const isTouch = useMediaQuery("(pointer: coarse)");
     const {state, byId, absorb, absorbNodes, collapseNode, reset} = useGraphState();
@@ -295,6 +295,7 @@ export function GraphExplorer({countries}: { countries: Country[] }) {
             />
             <SpexViewDialog
                 selected={open?.type === GraphNodeType.Spex ? (spexFull as Spex | null) : null}
+                spexipediaUrl={spexipediaUrl}
                 onClose={() => setOpenId(null)}
             />
             <SpexCategoryViewDialog

@@ -89,7 +89,7 @@ export function SpexViewDialog({selected, spexipediaUrl = null, onClose}: {
                 </div>
                 <DialogFooter className="p-6 pt-0">
                     {selected && spexipediaUrl && (
-                        <Button variant="outline"
+                        <Button variant="outline" nativeButton={false}
                                 render={<a href={`${spexipediaUrl}/spex/${selected.id}`} target="_blank" rel="noopener noreferrer"/>}>
                             {t("Spex.showInSpexipedia")}
                         </Button>

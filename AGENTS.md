@@ -62,7 +62,7 @@ changing routing or data fetching; this area differs sharply from older Next.
   `export const instant = true` to a segment to check it on demand.
 - **A new route that fetches data at the top of the page needs a `loading.tsx` beside it**, or it
   can't prerender a shell. Reuse `DataTableSkeleton` / `DataGridSkeleton`; see
-  `src/app/(app)/tasks/manage/loading.tsx` and `src/app/(app)/news/loading.tsx`.
+  `src/app/(app)/news/manage/loading.tsx` and `src/app/(app)/news/loading.tsx`.
 - The root layout's metadata must stay a **static** `export const metadata`. `/_not-found` inherits
   it, so a `generateMetadata()` that reads cookies (e.g. `getTranslations()`) blocks metadata on
   every route. The locale-correct title is applied client-side in `src/app/provider.client.tsx`.
@@ -183,6 +183,14 @@ previously hit in this codebase:
 
 Forms use `react-hook-form` + `zodResolver`.
 
+## Base data from Spexipedia
+
+Spex, spex categories, tasks and task categories are maintained in Spexipedia; Spexregister keeps a synced copy (see
+`/admin/maintenance`) for activities, search, analytics and the change log. It has **no pages of its own** for them:
+the view dialogs in `src/components/spex/` and `src/components/task/` remain only for the graph explorer, and the
+change log links these types to Spexipedia (`SPEXIPEDIA_ROUTES` in `src/utils/audit.ts`; category and task pages there
+are editors-only, so others get no link).
+
 ## Edit queue
 
 Global bulk-edit drawer (`src/components/edit-queue/`) that reuses each entity's own form. Adding
@@ -223,7 +231,7 @@ which walks records one at a time.
 
 **One query, `analytics`, covers the whole dashboard** — the former `statistics` query, package,
 REST endpoint and `Statistics` message namespace are gone, folded in as the `totals` section.
-Rendered on `/analytics`, with a headline slice on `/` (`src/components/analytics/`,
+Rendered on `/spexare/analytics`, with a headline slice on `/` (`src/components/analytics/`,
 `src/lib/analytics/`).
 
 - `totals` is the old statistics payload verbatim (counts + 3-year `createdAt` trends, the four

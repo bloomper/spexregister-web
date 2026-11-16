@@ -5,8 +5,6 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {
-    Clapperboard,
-    ClipboardList,
     Command as CommandIcon,
     History,
     House,
@@ -15,7 +13,6 @@ import {
     Newspaper,
     Plus,
     Settings,
-    Shapes,
     Tag,
     UserRound,
     Users
@@ -90,10 +87,6 @@ export function CommandPalette() {
             {id: "home", label: t("Home.heading"), href: "/", icon: House},
             {id: "news", label: t("News.heading"), href: "/news", icon: Newspaper},
             {id: "spexare", label: t("Spexare.heading"), href: "/spexare", icon: UserRound},
-            {id: "spex", label: t("Spex.heading"), href: "/spex", icon: Clapperboard},
-            {id: "spex-categories", label: t("Spex.Category.heading"), href: "/spex/categories", icon: Shapes},
-            {id: "tasks", label: t("Task.heading"), href: "/tasks", icon: ClipboardList},
-            {id: "task-categories", label: t("Task.Category.heading"), href: "/tasks/categories", icon: Shapes},
             {id: "tags", label: t("Tag.heading"), href: "/tags", icon: Tag},
         ];
 
@@ -121,8 +114,6 @@ export function CommandPalette() {
 
         if (isCurrentUserAdmin) {
             actionEntries.push(
-                {id: "create-spex", label: t("Spex.createHeading"), href: "/spex/create", icon: Plus},
-                {id: "create-task", label: t("Task.createHeading"), href: "/tasks/create", icon: Plus},
                 {id: "create-user", label: t("User.createHeading"), href: "/users/create", icon: Plus},
             );
         }

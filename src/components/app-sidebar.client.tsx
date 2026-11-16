@@ -3,16 +3,12 @@
 import * as React from "react";
 import {useMemo} from "react";
 import {
-    ChartNoAxesCombined,
-    Clapperboard,
-    ClipboardList,
     Drama,
     House,
     ListTodo,
     type LucideIcon,
     Newspaper,
     Settings,
-    Shapes,
     Tag,
     UserRound,
     Users,
@@ -84,12 +80,6 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                 isActive: pathname === "/",
             },
             {
-                title: t("Analytics.heading"),
-                url: "/analytics",
-                icon: ChartNoAxesCombined,
-                isActive: pathname.startsWith("/analytics"),
-            },
-            {
                 title: t("News.heading"),
                 url: "/news",
                 icon: Newspaper,
@@ -108,40 +98,11 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                     {title: t("Common.search"), url: "/spexare/search"},
                     {title: t("Explore.heading"), url: "/spexare/explore"},
                     {title: t("Map.heading"), url: "/spexare/map"},
+                    {title: t("Analytics.heading"), url: "/spexare/analytics"},
                     ...(isCurrentUserAdminOrEditor ? [
                         {title: t("Common.manage"), url: "/spexare/manage"},
                         {title: t("Common.create"), url: "/spexare/create"},
                     ] : []),
-                ],
-            },
-            {
-                title: t("Spex.heading"),
-                url: "/spex",
-                icon: Clapperboard,
-                isActive: pathname === "/spex" || pathname.startsWith("/spex/"),
-                // Spex and their categories are kept in Spexipedia; Spexregister shows its copy
-                items: [
-                    {
-                        title: t("Spex.Category.heading"),
-                        url: "/spex/categories",
-                        icon: Shapes,
-                        isActive: pathname.startsWith("/spex/categories"),
-                    }
-                ],
-            },
-            {
-                title: t("Task.heading"),
-                url: "/tasks",
-                icon: ClipboardList,
-                isActive: pathname.startsWith("/tasks"),
-                // Tasks and their categories are kept in Spexipedia; Spexregister shows its copy
-                items: [
-                    {
-                        title: t("Task.Category.heading"),
-                        url: "/tasks/categories",
-                        icon: Shapes,
-                        isActive: pathname.startsWith("/tasks/categories"),
-                    }
                 ],
             },
             {
