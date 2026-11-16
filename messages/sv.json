@@ -48,6 +48,9 @@
     "sync": {
       "heading": "Basdata från andra applikationer",
       "title": "Från {source}",
+      "sources": {
+        "spexipedia": "Spexipedia"
+      },
       "description": "Spex, uppsättningar, kategorier, uppgifter och roller underhålls i Spexipedia. Spexregistret håller en kopia som hämtar ändringarna när Spexipedia meddelar dem och var femte minut.",
       "stale": "Ej nådd på en timme",
       "lastPulled": "Senast hämtat",

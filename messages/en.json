@@ -48,6 +48,9 @@
     "sync": {
       "heading": "Base data from other applications",
       "title": "From {source}",
+      "sources": {
+        "spexipedia": "Spexipedia"
+      },
       "description": "Spex, revivals, categories, tasks and characters are maintained in Spexipedia. Spexregister keeps a copy that picks up the changes when Spexipedia announces them and every five minutes.",
       "stale": "Not reached for an hour",
       "lastPulled": "Last pulled",

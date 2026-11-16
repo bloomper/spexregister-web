@@ -51,7 +51,7 @@ export function SyncSources({sources: initialSources}: { sources: SyncSourceStat
                 <Card key={source.name}>
                     <CardHeader>
                         <div className="flex items-start justify-between gap-2">
-                            <CardTitle>{t("title", {source: source.name})}</CardTitle>
+                            <CardTitle>{t("title", {source: t.has(`sources.${source.name}`) ? t(`sources.${source.name}`) : source.name})}</CardTitle>
                             {source.stale && <Badge variant="destructive">{t("stale")}</Badge>}
                         </div>
                         <CardDescription>{t("description")}</CardDescription>
