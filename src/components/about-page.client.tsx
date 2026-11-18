@@ -34,21 +34,6 @@ const contributorData = [
         image: "https://fgv.nu/wp-content/uploads/2019/09/Faxe.jpg",
     },
     {
-        name: "Emil Kultje",
-        nickName: "Kakel",
-        image: robohashFromSeed("Emil Kultje|Kakel"),
-    },
-    {
-        name: "Andreas Johansson",
-        nickName: "Klabbe",
-        image: "https://lh3.googleusercontent.com/a-/ALV-UjWNsyzotq9BIQ0GfN3x_f8px3o7flu4VSrfBEiBCC1J-hilJLg=s480-p-k-rw-no",
-    },
-    {
-        name: "Fritiof Hedman",
-        nickName: "Listan",
-        image: "https://lh3.googleusercontent.com/a-/ALV-UjUeRHeAx1WTgYYqn1yOg-lCuzMoKStiwTOSRBlzA0vjZOM9JjAq=s480-p-k-rw-no",
-    },
-    {
         name: "Alexander Nilsson",
         nickName: "Minnet",
         image: "https://lh3.googleusercontent.com/a-/ALV-UjValcmsFsvTq4pj9PtCJ2xgSmmo0Cg58_47JeygCwq84CzEiGg=s480-p-k-rw-no",
