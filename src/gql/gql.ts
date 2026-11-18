@@ -149,7 +149,7 @@ type Documents = {
     "\n    mutation TagUpdate($input: TagUpdate!) {\n        tagUpdate(input: $input) { ...TagFull }\n    }\n": typeof types.TagUpdateDocument,
     "\n    mutation TagDelete($id: ID!) {\n        tagDelete(id: $id)\n    }\n": typeof types.TagDeleteDocument,
     "\n    query TagExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        tagExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": typeof types.TagExportDocument,
-    "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        board\n        retired\n    }\n": typeof types.TaskCategorySummaryFragmentDoc,
+    "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        retired\n    }\n": typeof types.TaskCategorySummaryFragmentDoc,
     "\n    fragment TaskCategoryFull on TaskCategory {\n        ...TaskCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": typeof types.TaskCategoryFullFragmentDoc,
     "\n    query TaskCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.TaskCategoryPagedSummaryDocument,
     "\n    query TaskCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": typeof types.TaskCategoryPagedFullDocument,
@@ -314,7 +314,7 @@ const documents: Documents = {
     "\n    mutation TagUpdate($input: TagUpdate!) {\n        tagUpdate(input: $input) { ...TagFull }\n    }\n": types.TagUpdateDocument,
     "\n    mutation TagDelete($id: ID!) {\n        tagDelete(id: $id)\n    }\n": types.TagDeleteDocument,
     "\n    query TagExport($ids: [ID], $filter: String, $type: ImpexType!) {\n        tagExport(ids: $ids, filter: $filter, type: $type) { id }\n    }\n": types.TagExportDocument,
-    "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        board\n        retired\n    }\n": types.TaskCategorySummaryFragmentDoc,
+    "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        retired\n    }\n": types.TaskCategorySummaryFragmentDoc,
     "\n    fragment TaskCategoryFull on TaskCategory {\n        ...TaskCategorySummary\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n    }\n": types.TaskCategoryFullFragmentDoc,
     "\n    query TaskCategoryPagedSummary($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategorySummary } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.TaskCategoryPagedSummaryDocument,
     "\n    query TaskCategoryPagedFull($first: Int, $last: Int, $after: String, $before: String, $sort: [String], $direction: SortDirection, $filter: String) {\n        taskCategoryPaged(first: $first, last: $last, after: $after, before: $before, sort: $sort, direction: $direction, filter: $filter) {\n            edges { cursor node { ...TaskCategoryFull } }\n            pageInfo { hasNextPage hasPreviousPage startCursor endCursor }\n            totalCount\n        }\n    }\n": types.TaskCategoryPagedFullDocument,
@@ -901,7 +901,7 @@ export function graphql(source: "\n    query TagExport($ids: [ID], $filter: Stri
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        board\n        retired\n    }\n"): (typeof documents)["\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        board\n        retired\n    }\n"];
+export function graphql(source: "\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        retired\n    }\n"): (typeof documents)["\n    fragment TaskCategorySummary on TaskCategory {\n        id\n        name\n        actorPresent\n        retired\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

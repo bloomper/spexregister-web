@@ -2912,6 +2912,8 @@ export type TagUpdate = {
 /** A role a spexare can have in a spex, such as director or musician. */
 export type Task = {
   __typename?: 'Task';
+  /** Whether Spexipedia shows it as a task of the board (the direktion) of a spex. */
+  board: Scalars['Boolean']['output'];
   category?: Maybe<TaskCategory>;
   createdAt: Scalars['Instant']['output'];
   createdBy: Scalars['String']['output'];
@@ -2967,8 +2969,6 @@ export type TaskCategory = {
   __typename?: 'TaskCategory';
   /** Whether the tasks are performed on stage as an actor. */
   actorPresent: Scalars['Boolean']['output'];
-  /** Whether Spexipedia shows its tasks as the board of a spex. */
-  board: Scalars['Boolean']['output'];
   createdAt: Scalars['Instant']['output'];
   createdBy: Scalars['String']['output'];
   id: Scalars['ID']['output'];
