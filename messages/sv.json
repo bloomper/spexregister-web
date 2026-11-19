@@ -51,7 +51,7 @@
       "sources": {
         "spexipedia": "Spexipedia"
       },
-      "description": "Spex, uppsättningar, kategorier, uppgifter och roller underhålls i Spexipedia. Spexregistret håller en kopia som hämtar ändringarna när Spexipedia meddelar dem och var femte minut.",
+      "description": "Spex, uppsättningar, kategorier, funktioner och roller underhålls i Spexipedia. Spexregistret håller en kopia som hämtar ändringarna när Spexipedia meddelar dem och var femte minut.",
       "stale": "Ej nådd på en timme",
       "lastPulled": "Senast hämtat",
       "lastSuccess": "Senast lyckat",

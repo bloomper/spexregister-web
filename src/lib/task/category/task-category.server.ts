@@ -9,7 +9,6 @@ export const TaskCategorySummary = graphql(`
         id
         name
         actorPresent
-        board
         retired
     }
 `);
