@@ -96,24 +96,3 @@ export async function requireAnyRole(required: Role[]): Promise<AuthzResult> {
         roles
     };
 }
-
-/**
- * Allowed when the user has all the roles: 401 when signed out, 403 without them.
- */
-export async function requireAllRoles(required: Role[]): Promise<AuthzResult> {
-    const {session, roles} = await requireUser();
-
-    if (!session) {
-        return notAuthenticated();
-    }
-
-    const allowed = required.every((r) => roles.includes(r));
-    if (!allowed) {
-        return notAuthorized();
-    }
-
-    return {
-        ok: true,
-        roles
-    };
-}
