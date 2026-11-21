@@ -175,6 +175,8 @@
     },
     "warnings": {
       "ID_REASSIGNED": "Återskapade poster får ett nytt id",
+      "PARTNER_LINKED": "Partnern länkas tillbaka från sin sida",
+      "PARTNER_UNLINKED": "En annan spexare förlorar sin partner",
       "REFERENCE_MISSING": "En refererad post finns inte längre"
     },
     "title": "Ändringslogg",

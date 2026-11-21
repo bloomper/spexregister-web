@@ -175,6 +175,8 @@
     },
     "warnings": {
       "ID_REASSIGNED": "Re-created records get a new id",
+      "PARTNER_LINKED": "The partner is linked back from their side",
+      "PARTNER_UNLINKED": "Another spexare loses their partner",
       "REFERENCE_MISSING": "A referenced record no longer exists"
     },
     "title": "Change log",
