@@ -124,3 +124,13 @@ export function toAggregationFilters(selectedFacets: Record<string, Set<string>>
         .sort()
         .flatMap((name) => [...selectedFacets[name]].sort().map((value) => ({name, value})));
 }
+
+const TODAY = new Intl.DateTimeFormat("sv-SE", {year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Europe/Stockholm"});
+
+/**
+ * Today's date as yyyy-mm-dd in Swedish time. An ISO instant cut at the date is the day in UTC, which is yesterday
+ * during the first hour or two after midnight here.
+ */
+export function today(now: Date = new Date()): string {
+    return TODAY.format(now);
+}

@@ -7,6 +7,7 @@ import {
     getProxiedImageUrl,
     parseFacetParams,
     toAggregationFilters,
+    today,
     translateError
 } from "@/utils/utils";
 
@@ -152,5 +153,13 @@ describe("facet params round-trip", () => {
         const selected = {tags: new Set(["Grundare", "Hedersmedlem"]), deceased: new Set(["true"])};
         const params = appendFacetParams(new URLSearchParams(), selected);
         expect(parseFacetParams(params)).toEqual(selected);
+    });
+});
+
+describe("today", () => {
+    it("gives today's date in Swedish time, not in UTC", () => {
+        expect(today(new Date("2026-06-30T22:30:00Z"))).toBe("2026-07-01");
+        expect(today(new Date("2026-12-31T23:30:00Z"))).toBe("2027-01-01");
+        expect(today(new Date("2026-11-21T12:00:00Z"))).toBe("2026-11-21");
     });
 });

@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {today} from "@/utils/utils";
 
 export const PERMISSIONS = ["READ", "WRITE", "DELETE", "ADMINISTRATION"] as const;
 export const SCOPES = ["SPEXARE", "SPEX_PARTICIPANTS"] as const;
@@ -28,7 +29,7 @@ export const permissionGrantFormSchema = z
         if (value.scope !== "SPEXARE" && !value.spexId) {
             ctx.addIssue({code: "custom", path: ["spexId"], message: "PermissionGrant.validation.spexRequired"});
         }
-        if (value.validUntil && value.validUntil < new Date().toISOString().slice(0, 10)) {
+        if (value.validUntil && value.validUntil < today()) {
             ctx.addIssue({code: "custom", path: ["validUntil"], message: "PermissionGrant.validation.validUntilPast"});
         }
     });
@@ -42,7 +43,7 @@ export const permissionGrantUpdateFormSchema = z
         validUntil: z.string().optional(),
     })
     .superRefine((value, ctx) => {
-        if (value.validUntil && value.validUntil < new Date().toISOString().slice(0, 10)) {
+        if (value.validUntil && value.validUntil < today()) {
             ctx.addIssue({code: "custom", path: ["validUntil"], message: "PermissionGrant.validation.validUntilPast"});
         }
     });
