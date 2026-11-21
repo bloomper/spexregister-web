@@ -657,7 +657,8 @@ export type Mutation = {
   /** ADMIN. Changes the permission and validUntil; who and what the grant applies to are fixed. */
   permissionGrantUpdate?: Maybe<PermissionGrant>;
   /**
-   * ADMIN, with WRITE on the entity. Puts its audited fields back as they were in the revision. Not for base data. With
+   * ADMIN, with WRITE on the entity. Puts its audited fields back as they were in the revision, a spexare's tags among
+   * them; a tag that no longer exists is left out with a warning. Not for base data. With
    * cascade, the records that belong to it are restored too: changed ones are put back, ones added since
    * are removed and ones removed since are re-created under new ids. The entity must still exist. The reason given in
    * the X-Audit-Reason header is kept with the new revision.
@@ -1307,9 +1308,9 @@ export type Query = {
    * or a random one.
    */
   graphSearch: Array<GraphNode>;
-  /** ADMIN or EDITOR. One of the caller's own jobs, with an import's result. */
+  /** ADMIN, EDITOR or USER. One of the caller's own jobs, with an import's result. */
   job?: Maybe<Job>;
-  /** ADMIN or EDITOR. One of the caller's own jobs. */
+  /** ADMIN, EDITOR or USER. One of the caller's own jobs; a member has the export of their own data. */
   jobStatus?: Maybe<JobStatus>;
   /** ADMIN or EDITOR. The caller's own jobs, newest first. */
   jobs?: Maybe<Array<Maybe<Job>>>;
@@ -2843,7 +2844,7 @@ export type State = {
 /** Subscriptions run over the GraphQL WebSocket, authenticated with the same token as the queries. */
 export type Subscription = {
   __typename?: 'Subscription';
-  /** ADMIN or EDITOR. The status of one of the caller's own jobs as it starts and ends, the latest one first. */
+  /** ADMIN, EDITOR or USER. The status of one of the caller's own jobs as it starts and ends, the latest one first. */
   jobProgress?: Maybe<JobStatus>;
 };
 

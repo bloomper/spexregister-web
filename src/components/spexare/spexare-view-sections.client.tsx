@@ -12,6 +12,7 @@ import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {PartnerAuditTrail} from "@/components/audit/partner-audit-trail.client";
+import {TagsAuditTrail} from "@/components/audit/tags-audit-trail.client";
 import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/spexare/actions.server";
 
 const restoreActions = {
@@ -305,22 +306,32 @@ export function MembershipsSection({memberships, spexareId, onRestored}: {
     );
 }
 
-export function TaggingsSection({taggings}: { taggings: Spexare["taggings"] }) {
+export function TaggingsSection({taggings, spexareId, onRestored}: {
+    taggings: Spexare["taggings"];
+    spexareId: string;
+    onRestored?: () => void
+}) {
     if (!taggings || taggings.length === 0) {
         return (
-            <div className="py-6">
-                <DataEmpty icon={Tag}/>
+            <div className="space-y-4">
+                <div className="py-6">
+                    <DataEmpty icon={Tag}/>
+                </div>
+                <TagsAuditTrail spexareId={spexareId} onRestored={onRestored}/>
             </div>
         );
     }
     return (
-        <div className="flex flex-wrap gap-2">
-            {taggings.map((tagging) => (
-                <Badge key={tagging?.id} variant="secondary" className="px-3 py-1 text-sm font-normal">
-                    <Tag className="mr-2 h-3 w-3"/>
-                    {tagging?.name}
-                </Badge>
-            ))}
+        <div className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+                {taggings.map((tagging) => (
+                    <Badge key={tagging?.id} variant="secondary" className="px-3 py-1 text-sm font-normal">
+                        <Tag className="mr-2 h-3 w-3"/>
+                        {tagging?.name}
+                    </Badge>
+                ))}
+            </div>
+            <TagsAuditTrail spexareId={spexareId} onRestored={onRestored}/>
         </div>
     );
 }

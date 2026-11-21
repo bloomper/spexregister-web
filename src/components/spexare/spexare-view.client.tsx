@@ -140,7 +140,7 @@ export function SpexareView({spexare, countries, showAudit, isMe, onRestored, in
                     </TabsContent>
 
                     <TabsContent value="taggings" className="pt-4 space-y-4">
-                        <TaggingsSection taggings={spexare.taggings}/>
+                        <TaggingsSection taggings={spexare.taggings} spexareId={spexare.id} onRestored={onRestored}/>
                     </TabsContent>
 
                     <TabsContent value="toggles" className="pt-4 space-y-4">
