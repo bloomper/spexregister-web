@@ -2861,6 +2861,24 @@ export type SyncResult = {
   missing: Array<Scalars['String']['output']>;
 };
 
+/**
+ * A change from a source that failed five pulls in a row and was left out, so that the changes after it are not held up.
+ * The copy lacks it until the record is changed again in the source, or the whole feed is pulled again.
+ */
+export type SyncSkipped = {
+  __typename?: 'SyncSkipped';
+  /** UPSERT, RETIRE or MERGE. */
+  change: Scalars['String']['output'];
+  error: Scalars['String']['output'];
+  /** The record's id in the source. */
+  id: Scalars['ID']['output'];
+  /** SPEX_CATEGORY, SPEX, TASK_CATEGORY, TASK or CHARACTER. */
+  kind: Scalars['String']['output'];
+  /** Its place in the feed. */
+  sequence: Scalars['String']['output'];
+  skippedAt: Scalars['Instant']['output'];
+};
+
 /** A source of copied data: today Spexipedia, for spex, revivals, categories, tasks and characters. */
 export type SyncSource = {
   __typename?: 'SyncSource';
@@ -2872,6 +2890,8 @@ export type SyncSource = {
   lastPulledAt?: Maybe<Scalars['Instant']['output']>;
   lastSuccess?: Maybe<Scalars['Instant']['output']>;
   name: Scalars['String']['output'];
+  /** The latest changes that could not be applied and were left out, newest first, at most 50. */
+  skipped: Array<SyncSkipped>;
   /** Whether the source has not been reached for an hour. */
   stale: Scalars['Boolean']['output'];
 };

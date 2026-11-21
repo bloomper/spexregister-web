@@ -62,7 +62,10 @@
       "pullAll": "Pull everything again",
       "applied": "{count, plural, =0 {No new changes} one {# change applied} other {# changes applied}}",
       "failed": "The pull failed: {error}",
-      "missing": "{count, plural, one {# record is here but no longer in the source} other {# records are here but no longer in the source}}"
+      "missing": "{count, plural, one {# record is here but no longer in the source} other {# records are here but no longer in the source}}",
+      "skipped": "{count, plural, one {# change has been skipped} other {# changes have been skipped}}",
+      "skippedText": "A change that fails five pulls in a row is skipped, so that the ones after it are not held up. The copy lacks it until the record is changed again in the source, or everything is pulled again.",
+      "skippedChange": "{change} of {kind}, skipped {at}"
     }
   },
   "Analytics": {
