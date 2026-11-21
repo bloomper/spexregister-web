@@ -94,8 +94,14 @@ describe("TogglesSection", () => {
 describe("TaggingsSection", () => {
     it("renders tag names", () => {
         const taggings = [{id: "x1", name: "alumni"}] as unknown as Slice<"taggings">;
-        render(<TaggingsSection taggings={taggings}/>);
+        render(<TaggingsSection taggings={taggings} spexareId="1"/>);
         expect(screen.getByText("alumni")).toBeInTheDocument();
+    });
+
+    it("shows the history of the tags, also without any", () => {
+        render(<TaggingsSection taggings={[]} spexareId="1"/>);
+        expect(screen.getByText("Common.noDataHeading")).toBeInTheDocument();
+        expect(screen.getByTestId("audit-trail")).toBeInTheDocument();
     });
 });
 
