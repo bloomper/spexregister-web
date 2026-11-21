@@ -1,15 +1,26 @@
 import {type NextRequest, NextResponse} from "next/server";
 import {auth} from "@/auth";
+import {contentSecurityPolicy} from "@/utils/csp";
 
 const AUTH_BASE_PATH = "/api/auth";
 const ACCOUNT_COOKIE = "account_data";
 
 /**
  * Refreshes the Keycloak access token before the page renders when it has expired, so that server components and
- * actions use a valid one and the browser gets the new cookies. Requests to Better Auth itself, prefetches and requests
- * without an account cookie pass through untouched.
+ * actions use a valid one and the browser gets the new cookies, and gives every page its Content Security Policy.
+ * Requests to Better Auth itself, prefetches and requests without an account cookie are not refreshed.
  */
 export async function proxy(request: NextRequest) {
+    const result = await refresh(request);
+
+    // The API routes answer with files and JSON, and set a policy of their own where they need one
+    if (!request.nextUrl.pathname.startsWith("/api/")) {
+        result.headers.set("Content-Security-Policy", contentSecurityPolicy(process.env.NODE_ENV === "development"));
+    }
+    return result;
+}
+
+async function refresh(request: NextRequest): Promise<NextResponse> {
     const response = NextResponse.next();
 
     const {pathname} = request.nextUrl;

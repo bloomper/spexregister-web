@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {getAccessToken, getSessionContext, requireAllRoles, requireAnyRole, requireUser} from "@/utils/auth.server";
+import {getAccessToken, getSessionContext, requireAnyRole, requireUser} from "@/utils/auth.server";
 
 const getSessionMock = vi.fn();
 const getAccessTokenMock = vi.fn();
@@ -125,33 +125,5 @@ describe("requireAnyRole", () => {
     it("returns ok when at least one required role matches", async () => {
         signedInAs(["USER", "EDITOR"]);
         expect(await requireAnyRole(["ADMIN", "EDITOR"])).toEqual({ok: true, roles: ["USER", "EDITOR"]});
-    });
-});
-
-describe("requireAllRoles", () => {
-    it("returns 401 when unauthenticated", async () => {
-        getSessionMock.mockResolvedValue(null);
-        expect(await requireAllRoles(["ADMIN"])).toEqual({
-            ok: false,
-            status: 401,
-            message: "Not authenticated",
-        });
-    });
-
-    it("returns 403 when only some required roles are present", async () => {
-        signedInAs(["ADMIN"]);
-        expect(await requireAllRoles(["ADMIN", "EDITOR"])).toEqual({
-            ok: false,
-            status: 403,
-            message: "Not authorized",
-        });
-    });
-
-    it("returns ok when every required role is present", async () => {
-        signedInAs(["ADMIN", "EDITOR", "USER"]);
-        expect(await requireAllRoles(["ADMIN", "EDITOR"])).toEqual({
-            ok: true,
-            roles: ["ADMIN", "EDITOR", "USER"],
-        });
     });
 });

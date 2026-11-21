@@ -14,7 +14,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {SheetClose, SheetFooter} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
-import {translateError} from "@/utils/utils";
+import {today, translateError} from "@/utils/utils";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
 import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
@@ -41,7 +41,7 @@ export function NewsForm({item, onSuccess, onError, embedded, formId}: NewsFormP
         defaultValues: {
             subject: item?.subject ?? "",
             text: item?.text ?? "",
-            visibleFrom: item?.visibleFrom ?? new Date().toISOString().split("T")[0],
+            visibleFrom: item?.visibleFrom ?? today(),
             visibleTo: item?.visibleTo ?? "",
         },
     });

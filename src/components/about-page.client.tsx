@@ -17,11 +17,6 @@ function fnv1a32(input: string): number {
     return hash >>> 0;
 }
 
-function robohashFromSeed(seedInput: string, size = 200): string {
-    const seed = fnv1a32(seedInput).toString(16);
-    return `https://robohash.org/${seed}.png?size=${size}x${size}&set=set2`;
-}
-
 const contributorData = [
     {
         name: "Anders Jacobsson",

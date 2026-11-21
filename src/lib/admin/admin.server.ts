@@ -61,6 +61,14 @@ const SyncSourcesQuery = graphql(`
             lastError
             applied
             stale
+            skipped {
+                sequence
+                kind
+                id
+                change
+                error
+                skippedAt
+            }
         }
     }
 `);
@@ -86,6 +94,19 @@ export type SyncSourceStatus = {
     lastError?: string | null;
     applied: number;
     stale: boolean;
+    skipped: SyncSkippedChange[];
+};
+
+/**
+ * A change that failed five pulls in a row and was left out, so that the ones after it are not held up.
+ */
+export type SyncSkippedChange = {
+    sequence: string;
+    kind: string;
+    id: string;
+    change: string;
+    error: string;
+    skippedAt: string;
 };
 
 export type SyncRunResult = {

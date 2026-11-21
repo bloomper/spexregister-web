@@ -62,7 +62,10 @@
       "pullAll": "Hämta allt igen",
       "applied": "{count, plural, =0 {Inga nya ändringar} one {# ändring tillämpad} other {# ändringar tillämpade}}",
       "failed": "Hämtningen misslyckades: {error}",
-      "missing": "{count, plural, one {# post finns här men inte längre i källan} other {# poster finns här men inte längre i källan}}"
+      "missing": "{count, plural, one {# post finns här men inte längre i källan} other {# poster finns här men inte längre i källan}}",
+      "skipped": "{count, plural, one {# ändring har hoppats över} other {# ändringar har hoppats över}}",
+      "skippedText": "En ändring som misslyckas fem hämtningar i rad hoppas över, så att de som kommer efter inte fastnar. Kopian saknar den tills posten ändras igen i källan eller allt hämtas igen.",
+      "skippedChange": "{change} av {kind}, överhoppad {at}"
     }
   },
   "Analytics": {
@@ -172,6 +175,8 @@
     },
     "warnings": {
       "ID_REASSIGNED": "Återskapade poster får ett nytt id",
+      "PARTNER_LINKED": "Partnern länkas tillbaka från sin sida",
+      "PARTNER_UNLINKED": "En annan spexare förlorar sin partner",
       "REFERENCE_MISSING": "En refererad post finns inte längre"
     },
     "title": "Ändringslogg",

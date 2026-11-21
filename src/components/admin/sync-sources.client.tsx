@@ -88,6 +88,21 @@ export function SyncSources({sources: initialSources}: { sources: SyncSourceStat
                                 {t("pullAll")}
                             </Button>
                         </div>
+                        {source.skipped.length > 0 && (
+                            <div className="text-sm">
+                                <div className="font-medium text-destructive">{t("skipped", {count: source.skipped.length})}</div>
+                                <p className="mt-1 text-muted-foreground">{t("skippedText")}</p>
+                                <ul className="mt-2 flex flex-col gap-2">
+                                    {source.skipped.map(change => (
+                                        <li key={change.sequence} className="rounded-md border p-2">
+                                            <div>{t("skippedChange", {change: change.change, kind: change.kind, at: formatDateTime(change.skippedAt)})}</div>
+                                            <code className="break-all text-xs">{change.id}</code>
+                                            <div className="break-words text-muted-foreground">{change.error}</div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                         {missing.length > 0 && (
                             <div className="text-sm">
                                 <div className="font-medium">{t("missing", {count: missing.length})}</div>
