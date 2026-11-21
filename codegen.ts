@@ -16,8 +16,12 @@ const enumValues = {
     TypeType: "./schema#TypeType",
 };
 
+// Introspection is off on the server, so the schema is read from a sibling spexregister-server checkout. The output in
+// src/gql/ is committed, so CI needs no sibling. Run `npm run gql-codegen` after every schema change.
+const schema = process.env.GRAPHQL_SCHEMA ?? "../spexregister-server/src/main/resources/graphql/*.graphqls";
+
 const config: CodegenConfig = {
-    schema: process.env.API_GRAPHQL_ENDPOINT || "",
+    schema,
     documents: ["src/**/*.{ts,tsx}", "!src/gql/**"],
     ignoreNoDocuments: true,
     generates: {

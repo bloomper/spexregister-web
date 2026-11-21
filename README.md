@@ -55,7 +55,8 @@ Spexregister Web is the second generation of the frontend responsible for servin
    `INFRA_DEPLOY` if it is checked out elsewhere.
 
 3. **Generate GraphQL types:**
-   If you change GraphQL queries or the schema, regenerate types:
+   If you change GraphQL queries or the schema, regenerate types. The schema is read from the files of a
+   `spexregister-server` checkout next to this one (`GRAPHQL_SCHEMA` overrides the path), so no server needs to run:
    ```bash
    npm run gql-codegen
    ```

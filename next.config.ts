@@ -1,22 +1,6 @@
 import type {NextConfig} from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
-const isDev = process.env.NODE_ENV === "development";
-
-const contentSecurityPolicy = [
-    "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' blob: data: https:",
-    "font-src 'self'",
-    "connect-src 'self'",
-    "worker-src 'self' blob:",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-].join("; ");
-
 const nextConfig: NextConfig = {
     poweredByHeader: false,
     async headers() {
@@ -24,24 +8,11 @@ const nextConfig: NextConfig = {
             {
                 source: "/(.*)",
                 headers: [
-                    {key: "Content-Security-Policy", value: contentSecurityPolicy},
                     {key: "X-Content-Type-Options", value: "nosniff"},
                     {key: "X-Frame-Options", value: "DENY"},
                     {key: "Referrer-Policy", value: "strict-origin-when-cross-origin"},
                     {key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()"},
                 ],
-            },
-            // The page policy above would otherwise replace the routes' own sandbox, since the last matching header wins
-            {
-                source: "/api/image-download-proxy",
-                headers: [{
-                    key: "Content-Security-Policy",
-                    value: "default-src 'none'; style-src 'unsafe-inline'; sandbox"
-                }],
-            },
-            {
-                source: "/api/impex-result-download-proxy",
-                headers: [{key: "Content-Security-Policy", value: "default-src 'none'; sandbox"}],
             },
         ];
     },

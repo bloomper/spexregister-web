@@ -86,6 +86,12 @@ describe("proxy", () => {
         expect(getAccessTokenMock).not.toHaveBeenCalled();
     });
 
+    it("gives pages their Content Security Policy, and leaves the API routes to set their own", async () => {
+        expect((await proxy(request("/news"))).headers.get("Content-Security-Policy")).toContain("default-src 'self'");
+        expect((await proxy(request("/news", {cookie: ""}))).headers.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+        expect((await proxy(request("/api/image-download-proxy"))).headers.get("Content-Security-Policy")).toBeNull();
+    });
+
     it("never blocks the request when the refresh fails", async () => {
         getAccessTokenMock.mockRejectedValue(new Error("FAILED_TO_GET_ACCESS_TOKEN"));
 

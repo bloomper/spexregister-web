@@ -23,7 +23,7 @@ separate GraphQL/REST API. Stack and setup: `README.md`. PR process: `CONTRIBUTI
 - `npm run lint` (ESLint), `npm run typecheck` (tsc) — note typecheck only covers `src/**`, so
   `next.config.ts`, `codegen.ts` and `eslint.config.mts` are *not* type-checked by it.
 - `npm run test` (Vitest), `npm run test:e2e` (Playwright)
-- `npm run gql-codegen` — regenerate `src/gql/` from the live schema (`API_GRAPHQL_ENDPOINT` in `.env.local`)
+- `npm run gql-codegen` — regenerate `src/gql/` from the schema files of a sibling `spexregister-server` checkout (`GRAPHQL_SCHEMA` overrides the path)
 
 CI (`.github/workflows/build.yml`): lint → typecheck → test:coverage → build, then E2E as a
 separate job. Node version comes from `.nvmrc`.
