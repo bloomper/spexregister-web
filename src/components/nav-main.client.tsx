@@ -12,17 +12,23 @@ import {
     SidebarMenuItem,
     SidebarMenuSub,
     SidebarMenuSubButton,
-    SidebarMenuSubItem
+    SidebarMenuSubItem,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import {usePathname} from "next/navigation";
 import {useTranslations} from "next-intl";
 
-interface NavItem {
+interface NavLink {
     title: string;
     url: string;
     icon?: LucideIcon;
     isActive?: boolean;
-    items?: NavItem[];
+    items?: NavLink[];
+}
+
+interface NavItem extends Omit<NavLink, "url"> {
+    /** A group without an address only opens and closes its entries. */
+    url?: string;
 }
 
 export function NavMain({items}: { items: NavItem[] }) {
@@ -41,10 +47,12 @@ export function NavMain({items}: { items: NavItem[] }) {
 
 function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
     const t = useTranslations();
-    const isInternal = item.url.startsWith("/");
+    const { state, isMobile, setOpen: setSidebarOpen } = useSidebar();
+    const isInternal = item.url?.startsWith("/") ?? false;
     const hasSubItems = !!item.items?.length;
     const LinkComponent = isInternal ? Link : "a";
-    const linkProps = {href: item.url};
+    // Only rendered for an item with an address
+    const linkProps = { href: item.url ?? "" };
 
     const isActive = Boolean(item.isActive || item.items?.some(sub => pathname === sub.url || sub.items?.some(inner => pathname === inner.url)));
 
@@ -60,7 +68,25 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
 
     return (
         <Collapsible open={open} onOpenChange={setOpen} className="group/menu-item" render={<SidebarMenuItem/>}>
-            {hasSubItems ? (
+            {hasSubItems && !item.url ? (
+                <CollapsibleTrigger
+                    render={
+                        <SidebarMenuButton tooltip={item.title} isActive={isActive}
+                                           onClick={() => {
+                                             // The collapsed sidebar shows no entries: widen it to show them
+                                             if (state === "collapsed" && !isMobile) {
+                                               setSidebarOpen(true);
+                                               setOpen(true);
+                                             }
+                                           }} />
+                    }
+                >
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                    <ChevronRight
+                        className="ml-auto size-4 transition-transform duration-200 group-data-open/menu-item:rotate-90" />
+                </CollapsibleTrigger>
+            ) : hasSubItems ? (
                 <div
                     className={`flex items-center rounded-md transition-colors hover:bg-sidebar-accent ${isActive ? "bg-sidebar-accent" : ""}`}>
                     <SidebarMenuButton tooltip={item.title} isActive={isActive}
@@ -101,7 +127,7 @@ function NavMainItem({item, pathname}: { item: NavItem; pathname: string }) {
     );
 }
 
-function NavSubItem({item, pathname}: { item: NavItem; pathname: string }) {
+function NavSubItem({item, pathname}: { item: NavLink; pathname: string }) {
     const t = useTranslations();
     const hasInnerItems = !!item.items?.length;
     const isSubActive = Boolean(pathname === item.url || item.items?.some(inner => pathname === inner.url));
