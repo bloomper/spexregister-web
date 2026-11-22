@@ -14,7 +14,7 @@ test.describe("impex", () => {
     test("exporting from the manage table starts a job and polls it to completion", async ({page}) => {
         await page.goto("/spexare/manage");
 
-        await page.getByRole("button", {name: "Exportera"}).click();
+        await page.getByRole("button", {name: "Exportera", exact: true}).click();
         await page.getByRole("menuitem", {name: "Excel", exact: true}).click();
 
         await expect(page.getByText("Export slutförd")).toBeVisible();

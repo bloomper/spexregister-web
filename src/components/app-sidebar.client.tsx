@@ -38,15 +38,20 @@ import {useTranslations} from "next-intl";
 import {Spexare} from "@/gql/schema";
 import {useIsClient} from "@/hooks/use-is-client.client";
 
-interface NavItem {
+interface NavLink {
     title: string;
     url: string;
     icon?: LucideIcon;
     isActive?: boolean;
-    items?: NavItem[];
+    items?: NavLink[];
 }
 
-interface NavSecondaryItem extends Omit<NavItem, "icon"> {
+/** A group without an address only opens and closes its entries. */
+interface NavItem extends Omit<NavLink, "url"> {
+    url?: string;
+}
+
+interface NavSecondaryItem extends Omit<NavLink, "icon"> {
     icon: LucideIcon;
 }
 
@@ -120,7 +125,6 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
         if (isCurrentUserAdmin) {
             mainItems.push({
                 title: t("User.heading"),
-                url: "/users/manage",
                 icon: Users,
                 isActive: pathname.startsWith("/users"),
                 items: [
@@ -133,7 +137,6 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
         if (isCurrentUserAdminOrEditor) {
             mainItems.push({
                 title: t("Impex.heading"),
-                url: "/impex/manage",
                 icon: ListTodo,
                 isActive: pathname.startsWith("/impex"),
                 items: [
@@ -145,7 +148,6 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
         if (isCurrentUserAdmin) {
             mainItems.push({
                 title: t("Admin.heading"),
-                url: "/admin/maintenance",
                 icon: Settings,
                 isActive: pathname.startsWith("/admin"),
                 items: [
