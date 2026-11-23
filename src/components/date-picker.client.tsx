@@ -14,6 +14,14 @@ import {cn} from "@/utils/utils";
 /** The date-fns locale for the app's language; the browser's language is never used. */
 export const dateLocale = (locale: string) => (locale.startsWith("sv") ? sv : enUS);
 
+/**
+ * Month names in a calendar's month dropdown from the calendar's `locale`. The shadcn Calendar's default uses
+ * `toLocaleString("default")`, which is the browser's language; pass these to every Calendar with dropdowns.
+ */
+export const calendarFormatters: React.ComponentProps<typeof Calendar>["formatters"] = {
+    formatMonthDropdown: (month, dateLib) => (dateLib ? dateLib.format(month, "LLL") : format(month, "LLL")),
+};
+
 const parse = (value: string | undefined) => {
     if (!value) {
         return undefined;
@@ -105,7 +113,7 @@ export function DatePicker({
                     {selected ? format(selected, displayFormat, {locale: dateLib}) : (placeholder ?? t("chooseDate"))}
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" locale={dateLib} selected={selected} defaultMonth={selected ?? latest ?? earliest}
+                    <Calendar mode="single" locale={dateLib} formatters={calendarFormatters} selected={selected} defaultMonth={selected ?? latest ?? earliest}
                               captionLayout="dropdown" startMonth={earliest} endMonth={latest}
                               disabled={[...(earliest ? [{before: earliest}] : []), ...(latest ? [{after: latest}] : [])]}
                               onSelect={date => {

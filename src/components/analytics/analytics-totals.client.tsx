@@ -3,7 +3,8 @@
 import * as React from "react"
 import {Bar, BarChart, XAxis, YAxis} from "recharts"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
-import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
+import {ChartContainer, ChartTooltip} from "@/components/ui/chart"
+import {LocalizedChartTooltipContent} from "@/components/analytics/chart-tooltip-content.client"
 import {Bucket, History, Totals} from "@/gql/schema"
 import {useLocale, useTranslations} from "next-intl"
 import {TrendingUp} from "lucide-react"
@@ -156,7 +157,8 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                         <YAxis hide domain={[0, "auto"]}/>
                                         <ChartTooltip
                                             content={
-                                                <ChartTooltipContent
+                                                <LocalizedChartTooltipContent
+                                                    config={chartConfig}
                                                     labelFormatter={(label, payload) => {
                                                         const point = payload?.[0]?.payload as YearPoint | undefined
 

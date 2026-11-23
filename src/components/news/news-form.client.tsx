@@ -11,7 +11,7 @@ import {toast} from "sonner";
 import {createAction, updateAction} from "@/app/(app)/news/actions.server";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {DatePicker} from "@/components/ui/date-picker.client";
+import {DatePicker} from "@/components/date-picker.client";
 import {Textarea} from "@/components/ui/textarea";
 import {SheetClose, SheetFooter} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";

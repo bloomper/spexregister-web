@@ -2,7 +2,7 @@ import {describe, expect, it} from "vitest";
 import {fireEvent, render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {FormValidation} from "@/components/form-validation.client";
-import {DatePicker} from "@/components/ui/date-picker.client";
+import {DatePicker} from "@/components/date-picker.client";
 
 describe("FormValidation", () => {
     const form = () => render(
@@ -58,6 +58,14 @@ describe("DatePicker", () => {
         render(<DatePicker defaultValue="1975-02-14" displayFormat="yyyy-MM-dd"/>);
 
         expect(screen.getByRole("button", {name: /1975-02-14/})).toBeInTheDocument();
+    });
+
+    it("names the months in the calendar's dropdown in the app's language", async () => {
+        render(<DatePicker defaultValue="1975-02-14"/>);
+        await userEvent.click(screen.getByRole("button", {name: /14 februari 1975/}));
+
+        expect(await screen.findByRole("option", {name: "feb."})).toBeInTheDocument();
+        expect(screen.queryByRole("option", {name: "Feb"})).not.toBeInTheDocument();
     });
 
     it("blocks an empty required date and goes back to the default on reset", async () => {
