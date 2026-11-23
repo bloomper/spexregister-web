@@ -54,8 +54,11 @@ export function TaskActivityManager({
     const [editingTaskActivityId, setEditingTaskActivityId] = useState<string | null>(null);
 
     const vocals = types.filter(t => t.type === TypeType.Vocal);
-    const needsCharacters = !!spexId && initialTaskActivities.some(ta => ta.task?.category?.actorPresent);
-    const [characters, setCharacters] = useState<SpexCharacter[]>([]);
+    // Loaded up front, since an actor can be added together with a new task.
+    const needsCharacters = !!spexId && taskCategories.some(category => category.actorPresent);
+    const [loaded, setLoaded] = useState<{spexId: string; characters: SpexCharacter[]} | null>(null);
+    // Undefined while loading, so the role field doesn't flash a free-text input before the characters arrive.
+    const characters = !spexId ? [] : loaded?.spexId === spexId ? loaded.characters : undefined;
 
     useEffect(() => {
         if (!needsCharacters || !spexId) {
@@ -64,8 +67,8 @@ export function TaskActivityManager({
         let current = true;
 
         getSpexCharactersAction(spexId)
-            .then(result => current && setCharacters(result))
-            .catch(() => undefined);
+            .then(result => current && setLoaded({spexId, characters: result}))
+            .catch(() => current && setLoaded({spexId, characters: []}));
         return () => {
             current = false;
         };
@@ -283,6 +286,8 @@ export function TaskActivityManager({
                     tasks={tasks}
                     taskCategories={taskCategories}
                     existingTaskIds={initialTaskActivities.map(ta => ta.task?.id).filter((id): id is string => Boolean(id))}
+                    vocals={vocals}
+                    characters={characters}
                 />
             </div>
         </div>

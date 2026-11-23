@@ -414,10 +414,22 @@ export async function deleteSpexActivityAction(spexareId: string, activityId: st
     });
 }
 
-export async function createTaskActivityAction(spexareId: string, activityId: string, taskId: string) {
+/**
+ * Adds the task to the activity and, when given, its actor in the same step.
+ */
+export async function createTaskActivityAction(spexareId: string, activityId: string, taskId: string, actor?: unknown) {
     return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+        const validatedActor = actor === undefined ? undefined : actorFormSchema.parse(actor);
         const result = await createTaskActivity(spexareId, activityId, taskId);
-        revalidate();
+        try {
+            if (validatedActor) {
+                const {vocalId, characterId, ...createInput} = validatedActor;
+                await createActor(spexareId, activityId, result.id, vocalId, createInput, characterId);
+            }
+        } finally {
+            // The task activity is kept even when its actor fails, so the page must show it either way.
+            revalidate();
+        }
         return result;
     });
 }

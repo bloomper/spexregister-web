@@ -41,7 +41,7 @@ async function pickOption(page: Page, trigger: Locator, option: string) {
     await page.getByRole("option", {name: option, exact: true}).click();
 }
 
-async function addActivityWithSpexAndFunction(page: Page, sheet: Locator) {
+async function addActivityWithSpex(page: Page, sheet: Locator, category: string, year: string, title: string) {
     await sheet.getByRole("tab", {name: "Aktiviteter"}).click();
     await expect(activityBlock(sheet, "Bacchus")).toBeVisible();
 
@@ -51,14 +51,19 @@ async function addActivityWithSpexAndFunction(page: Page, sheet: Locator) {
     await expect(added).toBeVisible();
     await expect(sheet.getByRole("tab", {name: "Aktiviteter"})).toHaveAttribute("aria-selected", "true");
 
-    await pickOption(page, added.getByRole("combobox").filter({hasText: "Välj spexkategori"}), "Chalmersspexet");
-    await pickOption(page, added.getByRole("combobox").filter({hasText: "Välj år"}), "1996 - Nobel");
+    await pickOption(page, added.getByRole("combobox").filter({hasText: "Välj spexkategori"}), category);
+    await pickOption(page, added.getByRole("combobox").filter({hasText: "Välj år"}), `${year} - ${title}`);
     await added.getByRole("button", {name: "Lägg till", exact: true}).click();
 
-    const nobel = activityBlock(sheet, "Nobel");
-    await expect(nobel).toBeVisible();
+    const activity = activityBlock(sheet, title);
+    await expect(activity).toBeVisible();
     await expect(activityBlock(sheet, "Ny aktivitet")).toHaveCount(0);
-    await expect(nobel.getByText("Välj funktionskategori")).toBeVisible();
+    await expect(activity.getByText("Välj funktionskategori")).toBeVisible();
+    return activity;
+}
+
+async function addActivityWithSpexAndFunction(page: Page, sheet: Locator) {
+    const nobel = await addActivityWithSpex(page, sheet, "Chalmersspexet", "1996", "Nobel");
 
     await pickOption(page, nobel.getByRole("combobox").filter({hasText: "Välj funktionskategori"}), "Kommitté");
     await pickOption(page, nobel.getByRole("combobox").filter({hasText: "Välj funktion"}), "Scenmästare");
@@ -90,6 +95,50 @@ test.describe("spexare activities", () => {
     test("adding an activity shows it at once in the edit queue", async ({page}) => {
         const drawer = await openEditFromQueue(page, "Ada");
         await addActivityWithSpexAndFunction(page, drawer);
+    });
+
+    test("a function with roles takes its role from the spex's characters in the same step", async ({page}) => {
+        const sheet = await openEditFromTable(page, "Ada");
+        const nobel = await addActivityWithSpex(page, sheet, "Chalmersspexet", "1996", "Nobel");
+
+        await pickOption(page, nobel.getByRole("combobox").filter({hasText: "Välj funktionskategori"}), "Ensemble");
+        await pickOption(page, nobel.getByRole("combobox").filter({hasText: "Välj funktion"}), "Ensemblist");
+
+        // The spex has characters, so the role is picked among them and can't be typed in.
+        const role = nobel.getByRole("combobox").filter({hasText: "Ingen roll"});
+        await role.click();
+        await expect(page.getByRole("option", {name: "Struken roll"})).toHaveCount(0);
+        await page.getByRole("option", {name: "Alfred Nobel", exact: true}).click();
+        await expect(nobel.getByRole("textbox")).toHaveCount(0);
+
+        // A role needs a vocal.
+        await nobel.getByRole("button", {name: "Lägg till", exact: true}).click();
+        await expect(nobel.getByText("Fältet är obligatoriskt")).toBeVisible();
+
+        await pickOption(page, nobel.getByRole("combobox").filter({hasText: "Välj"}).last(), "Sopran");
+        await nobel.getByRole("button", {name: "Lägg till", exact: true}).click();
+
+        const actor = nobel.locator("div.italic").filter({hasText: "Alfred Nobel"});
+        await expect(actor).toBeVisible();
+        await expect(actor).toContainText("Sopran");
+        await expect(nobel.getByText("Ensemblist", {exact: true})).toBeVisible();
+    });
+
+    test("a function with roles takes a typed role when the spex has no characters", async ({page}) => {
+        const sheet = await openEditFromTable(page, "Ada");
+        const ada = await addActivityWithSpex(page, sheet, "Veraspexet", "2018", "Ada Lovelace");
+
+        await pickOption(page, ada.getByRole("combobox").filter({hasText: "Välj funktionskategori"}), "Ensemble");
+        await pickOption(page, ada.getByRole("combobox").filter({hasText: "Välj funktion"}), "Ensemblist");
+
+        await expect(ada.getByRole("combobox").filter({hasText: "Ingen roll"})).toHaveCount(0);
+        await ada.getByRole("textbox").fill("Grevinnan");
+        await pickOption(page, ada.getByRole("combobox").filter({hasText: "Välj"}).last(), "Sopran");
+        await ada.getByRole("button", {name: "Lägg till", exact: true}).click();
+
+        const actor = ada.locator("div.italic").filter({hasText: "Grevinnan"});
+        await expect(actor).toBeVisible();
+        await expect(actor).toContainText("Sopran");
     });
 
     test("deleting an activity removes it at once", async ({page}) => {

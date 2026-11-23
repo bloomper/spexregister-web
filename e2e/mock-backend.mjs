@@ -307,6 +307,12 @@ const spexList = [
         category: {id: "2", name: "Veraspexet"}
     },
 ];
+// Nobel has characters in Spexipedia, one of them retired; Ada Lovelace has none, so its roles are typed in.
+const characterList = [
+    {id: "char-1", name: "Alfred Nobel", position: 1, retired: false, spexId: "1"},
+    {id: "char-2", name: "Bertha von Suttner", position: 2, retired: false, spexId: "1"},
+    {id: "char-3", name: "Struken roll", position: 3, retired: true, spexId: "1"},
+];
 const taskCategoryList = [
     {id: "1", name: "Ensemble", actorPresent: true},
     {id: "2", name: "Kommitté", actorPresent: false},
@@ -665,6 +671,23 @@ const resolvers = {
         const taskActivity = withAudit({id: newId("taskact"), task: taskShape(task), actors: []});
         activity.taskActivities.push(taskActivity);
         return {taskActivityCreate: taskActivity};
+    },
+    SpexCharacters: (v) => ({spexCharacters: characterList.filter((c) => c.spexId === String(v?.spexId))}),
+    ActorCreate: (v) => {
+        const taskActivity = activityOf(v?.spexareId, v?.activityId)?.taskActivities.find((ta) => ta.id === v?.taskActivityId);
+        const vocal = typeList.find((t) => t.id === String(v?.vocalId) && t.type === "VOCAL");
+        const character = characterList.find((c) => c.id === String(v?.characterId));
+        if (!taskActivity || !vocal) {
+            return {actorCreate: null};
+        }
+        const actor = withAudit({
+            id: newId("actor"),
+            role: v?.input?.role || null,
+            vocal: {id: vocal.id, label: vocal.label},
+            character: character ? {id: character.id, name: character.name} : null,
+        });
+        taskActivity.actors.push(actor);
+        return {actorCreate: actor};
     },
     TaskActivityDelete: (v) => {
         const activity = activityOf(v?.spexareId, v?.activityId);
