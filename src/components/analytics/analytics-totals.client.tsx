@@ -5,7 +5,7 @@ import {Bar, BarChart, XAxis, YAxis} from "recharts"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
 import {Bucket, History, Totals} from "@/gql/schema"
-import {useTranslations} from "next-intl"
+import {useLocale, useTranslations} from "next-intl"
 import {TrendingUp} from "lucide-react"
 import {useMediaQuery} from "@/hooks/use-media-query.client"
 
@@ -65,6 +65,7 @@ function topCategories(buckets: Bucket[], otherLabel: string) {
 
 export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
     const t = useTranslations("Analytics")
+    const locale = useLocale()
     const showCharts = useMediaQuery("(min-width: 40rem)")
 
     const range = (points: YearPoint[]) => ({from: points[0]?.label ?? "", to: points[points.length - 1]?.label ?? ""})
@@ -129,7 +130,7 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                         {chart.title}
                                     </CardDescription>
                                     <CardTitle className="text-2xl font-bold tabular-nums sm:text-4xl">
-                                        {chart.count?.toLocaleString()}
+                                        {chart.count?.toLocaleString(locale)}
                                     </CardTitle>
                                 </div>
                                 {chart.secondaryTitle && chart.secondaryCount !== undefined && (
@@ -140,7 +141,7 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                             {chart.secondaryTitle}
                                         </CardDescription>
                                         <CardTitle className="text-2xl font-bold tabular-nums sm:text-4xl">
-                                            {chart.secondaryCount?.toLocaleString()}
+                                            {chart.secondaryCount?.toLocaleString(locale)}
                                         </CardTitle>
                                     </div>
                                 )}
@@ -164,8 +165,8 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                                                 <div>{point?.label ?? label}</div>
                                                                 {point && (
                                                                     <div className="font-normal text-muted-foreground">
-                                                                        {t("accumulatedCount")}: {point.accumulated.toLocaleString()}
-                                                                        {chart.secondaryTitle && ` + ${point.secondaryAccumulated.toLocaleString()}`}
+                                                                        {t("accumulatedCount")}: {point.accumulated.toLocaleString(locale)}
+                                                                        {chart.secondaryTitle && ` + ${point.secondaryAccumulated.toLocaleString(locale)}`}
                                                                     </div>
                                                                 )}
                                                             </>
@@ -186,7 +187,7 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                 <ul className="flex h-[100px] flex-col justify-end gap-1 px-6 text-xs sm:text-[11px] leading-none">
                                     {chart.categories.map(category => (
                                         <li key={category.key} className="flex items-center gap-2"
-                                            title={`${category.label}: ${category.count.toLocaleString()}`}>
+                                            title={`${category.label}: ${category.count.toLocaleString(locale)}`}>
                                             <span className="w-20 shrink-0 truncate text-muted-foreground">
                                                 {category.label}
                                             </span>
@@ -198,7 +199,7 @@ export function AnalyticsTotals({data}: AnalyticsTotalsProps) {
                                                       }}/>
                                             </span>
                                             <span className="w-6 shrink-0 text-right tabular-nums">
-                                                {category.count.toLocaleString()}
+                                                {category.count.toLocaleString(locale)}
                                             </span>
                                         </li>
                                     ))}

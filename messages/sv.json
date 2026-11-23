@@ -321,7 +321,25 @@
     "uploadSuccess": "Uppladdning lyckades",
     "yes": "Ja",
     "deletePurge": "Radera även all historik",
-    "deletePurgeDescription": "Tar bort alla tidigare versioner från ändringsloggen så att inget om personen finns kvar. Detta kan inte ångras."
+    "deletePurgeDescription": "Tar bort alla tidigare versioner från ändringsloggen så att inget om personen finns kvar. Detta kan inte ångras.",
+    "chooseDate": "Välj datum",
+    "clearDate": "Rensa datum",
+    "validation": {
+      "valueMissing": "Fyll i det här fältet.",
+      "selectMissing": "Välj ett alternativ.",
+      "checkboxMissing": "Kryssa i den här rutan för att fortsätta.",
+      "fileMissing": "Välj en fil.",
+      "email": "Ange en giltig e-postadress.",
+      "url": "Ange en giltig webbadress.",
+      "number": "Ange ett tal.",
+      "format": "Ange ett värde i rätt format.",
+      "patternWithHint": "Ange ett värde i rätt format: {hint}",
+      "tooShort": "Ange minst {min} tecken.",
+      "tooLong": "Ange högst {max} tecken.",
+      "rangeUnderflow": "Värdet måste vara minst {min}.",
+      "rangeOverflow": "Värdet får vara högst {max}.",
+      "step": "Ange ett giltigt värde."
+    }
   },
   "CommandPalette": {
     "title": "Kommandopalett",

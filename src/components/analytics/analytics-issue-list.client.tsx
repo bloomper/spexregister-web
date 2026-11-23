@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import {ChevronRight} from "lucide-react";
 import {Bucket} from "@/gql/schema";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
@@ -10,6 +10,7 @@ import {bucketHref} from "@/utils/analytics";
 
 export function AnalyticsIssueList({issues, total}: { issues: Bucket[]; total: number }) {
     const t = useTranslations("Analytics");
+    const locale = useLocale();
 
     return (
         <Card className="flex flex-col">
@@ -34,7 +35,7 @@ export function AnalyticsIssueList({issues, total}: { issues: Bucket[]; total: n
                                 />
                                 <span className="relative truncate text-sm" title={issue.label}>{issue.label}</span>
                                 <span className="relative flex items-center gap-2 shrink-0">
-                                    <span className="text-sm font-semibold tabular-nums">{count.toLocaleString()}</span>
+                                    <span className="text-sm font-semibold tabular-nums">{count.toLocaleString(locale)}</span>
                                     <span className="text-xs text-muted-foreground tabular-nums w-10 text-right">
                                         {share}%
                                     </span>

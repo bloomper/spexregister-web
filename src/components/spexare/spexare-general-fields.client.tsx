@@ -1,23 +1,18 @@
 "use client";
 
 import type {FormEventHandler} from "react";
-import type {Locale} from "date-fns";
-import {format, parse} from "date-fns";
 import type {Control, FieldErrors, UseFormRegister} from "react-hook-form";
 import {Controller} from "react-hook-form";
 import {useTranslations} from "next-intl";
-import {CalendarIcon} from "lucide-react";
 import {SpexareFormInput, SpexareFormOutput} from "@/lib/spexare/schema";
 import {Spexare} from "@/gql/schema";
-import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
-import {cn, translateError} from "@/utils/utils";
+import {cn, today, translateError} from "@/utils/utils";
 import {Checkbox} from "@/components/ui/checkbox";
 import {ImageUpload} from "@/components/image-upload.client";
 import {Textarea} from "@/components/ui/textarea";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Calendar} from "@/components/ui/calendar";
+import {DatePicker} from "@/components/ui/date-picker.client";
 
 type SpexareGeneralFieldsProps = {
     onSubmit: FormEventHandler<HTMLFormElement>;
@@ -26,8 +21,6 @@ type SpexareGeneralFieldsProps = {
     errors: FieldErrors<SpexareFormInput>;
     item?: Spexare;
     isSheet: boolean;
-    isMobile: boolean;
-    locale: Locale;
     onFileSelect: (file: File | null) => void;
     onFileDelete: () => void;
 };
@@ -39,8 +32,6 @@ export function SpexareGeneralFields({
                                          errors,
                                          item,
                                          isSheet,
-                                         isMobile,
-                                         locale,
                                          onFileSelect,
                                          onFileDelete,
                                      }: SpexareGeneralFieldsProps) {
@@ -153,56 +144,23 @@ export function SpexareGeneralFields({
             <div
                 className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4", !isSheet && "md:col-span-2 md:grid-cols-4")}>
                 <Field data-invalid={!!errors.birthDate}>
-                    <FieldLabel>{t("Spexare.birthDate")}</FieldLabel>
+                    <FieldLabel htmlFor="spexare-birth-date">{t("Spexare.birthDate")}</FieldLabel>
                     <FieldContent>
                         <Controller
                             control={control}
                             name="birthDate"
-                            render={({field}) => isMobile ? (
-                                <Input
-                                    type="date"
+                            render={({field}) => (
+                                // The form keeps the birth date as yyyyMMdd; the picker works in ISO dates
+                                <DatePicker
+                                    id="spexare-birth-date"
                                     className="w-full"
                                     value={field.value ? `${field.value.slice(0, 4)}-${field.value.slice(4, 6)}-${field.value.slice(6, 8)}` : ""}
-                                    onChange={(e) => field.onChange(e.target.value.replace(/-/g, ""))}
+                                    onChange={(value) => field.onChange(value.replace(/-/g, ""))}
+                                    displayFormat="yyyy-MM-dd"
+                                    min="1900-01-01"
+                                    max={today()}
+                                    aria-invalid={!!errors.birthDate}
                                 />
-                            ) : (
-                                <Popover>
-                                    <PopoverTrigger
-                                        render={
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full justify-start text-left font-normal",
-                                                    !field.value && "text-muted-foreground"
-                                                )}
-                                            />
-                                        }
-                                    >
-                                        <CalendarIcon className="mr-2 h-4 w-4"/>
-                                        {field.value ? (
-                                            format(parse(field.value, "yyyyMMdd", new Date(0)), "yyyy-MM-dd")
-                                        ) : (
-                                            <span>{t("Common.selectDate")}</span>
-                                        )}
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar
-                                            mode="single"
-                                            locale={locale}
-                                            captionLayout="dropdown"
-                                            startMonth={new Date(1900, 0)}
-                                            endMonth={new Date()}
-                                            defaultMonth={field.value ? parse(field.value, "yyyyMMdd", new Date(0)) : undefined}
-                                            formatters={{
-                                                formatMonthDropdown: (date) =>
-                                                    format(date, "MMM", {locale}),
-                                            }}
-                                            selected={field.value ? parse(field.value, "yyyyMMdd", new Date(0)) : undefined}
-                                            onSelect={(date) => field.onChange(date ? format(date, "yyyyMMdd") : "")}
-                                            disabled={(date) => date > new Date()}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
                             )}
                         />
                         <FieldError errors={[translateError(t, errors.birthDate)]}/>

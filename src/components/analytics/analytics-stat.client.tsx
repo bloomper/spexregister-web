@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {LucideIcon} from "lucide-react";
+import {useLocale} from "next-intl";
 import {Card, CardContent} from "@/components/ui/card";
 import {cn} from "@/utils/utils";
 
@@ -15,6 +16,7 @@ interface AnalyticsStatProps {
 }
 
 export function AnalyticsStat({label, value, hint, icon: Icon, href, className}: AnalyticsStatProps) {
+    const locale = useLocale();
     const body = (
         <Card className={cn("h-full py-0 transition-colors sm:py-6", href && "hover:bg-accent/50", className)}>
             <CardContent className="flex items-start justify-between gap-3 p-4">
@@ -22,7 +24,7 @@ export function AnalyticsStat({label, value, hint, icon: Icon, href, className}:
                     <span className="text-xs text-muted-foreground wrap-break-word sm:truncate"
                           title={label}>{label}</span>
                     <span className="text-3xl font-bold tabular-nums leading-tight">
-                        {typeof value === "number" ? value.toLocaleString() : value}
+                        {typeof value === "number" ? value.toLocaleString(locale) : value}
                     </span>
                     {hint && <span className="text-xs sm:text-[11px] text-muted-foreground wrap-break-word sm:truncate"
                                    title={hint}>{hint}</span>}
