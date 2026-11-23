@@ -6,7 +6,8 @@ import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {Bucket} from "@/gql/schema";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
+import {ChartContainer, ChartTooltip} from "@/components/ui/chart";
+import {LocalizedChartTooltipContent} from "@/components/analytics/chart-tooltip-content.client";
 import {DataEmpty} from "@/components/data-empty";
 import {bucketHref} from "@/utils/analytics";
 import {cn} from "@/utils/utils";
@@ -114,7 +115,7 @@ export function AnalyticsBarChart({
                                     />
                                 </>
                             )}
-                            <ChartTooltip content={<ChartTooltipContent indicator="dot"/>}/>
+                            <ChartTooltip content={<LocalizedChartTooltipContent config={config}/>}/>
                             <Bar
                                 dataKey="count"
                                 radius={isRanked ? [0, 4, 4, 0] : [4, 4, 0, 0]}

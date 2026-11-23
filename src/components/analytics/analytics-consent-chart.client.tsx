@@ -10,9 +10,9 @@ import {
     ChartContainer,
     ChartLegend,
     ChartLegendContent,
-    ChartTooltip,
-    ChartTooltipContent
+    ChartTooltip
 } from "@/components/ui/chart";
+import {LocalizedChartTooltipContent} from "@/components/analytics/chart-tooltip-content.client";
 import {DataEmpty} from "@/components/data-empty";
 import {bucketHref} from "@/utils/analytics";
 
@@ -61,7 +61,7 @@ export function AnalyticsConsentChart({completion}: { completion: ConsentComplet
                             <XAxis type="number" hide/>
                             <YAxis type="category" dataKey="label" width={150} tickLine={false} axisLine={false}
                                    tickMargin={6} className="text-xs"/>
-                            <ChartTooltip content={<ChartTooltipContent indicator="dot"/>}/>
+                            <ChartTooltip content={<LocalizedChartTooltipContent config={config}/>}/>
                             <ChartLegend content={<ChartLegendContent/>}/>
                             <Bar dataKey="granted" stackId="consent" fill="var(--color-granted)" cursor="pointer"
                                  maxBarSize={MAX_BAR} stroke="var(--card)" strokeWidth={2}

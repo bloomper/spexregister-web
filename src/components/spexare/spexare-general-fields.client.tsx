@@ -12,7 +12,7 @@ import {cn, today, translateError} from "@/utils/utils";
 import {Checkbox} from "@/components/ui/checkbox";
 import {ImageUpload} from "@/components/image-upload.client";
 import {Textarea} from "@/components/ui/textarea";
-import {DatePicker} from "@/components/ui/date-picker.client";
+import {DatePicker} from "@/components/date-picker.client";
 
 type SpexareGeneralFieldsProps = {
     onSubmit: FormEventHandler<HTMLFormElement>;
