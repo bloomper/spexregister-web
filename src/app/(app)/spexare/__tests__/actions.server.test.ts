@@ -6,6 +6,7 @@ import {create as createConsent} from "@/lib/spexare/consent";
 import {create as createMembership} from "@/lib/spexare/membership";
 import {create as createToggle} from "@/lib/spexare/toggle";
 import {create as createActor, update as updateActor} from "@/lib/spexare/activity/task-activity/actor";
+import {create as createTaskActivity} from "@/lib/spexare/activity/task-activity";
 import {revalidateTag} from "next/cache";
 
 vi.mock("@/utils/route.server", () => ({
@@ -156,6 +157,34 @@ describe("spexare actor vocalId asymmetry (intended)", () => {
 
         expect(createActor).toHaveBeenCalledWith("s1", "a1", "ta1", "POS", {}, "c1");
         expect(updateActor).toHaveBeenCalledWith("s1", "a1", "ta1", "FORM", "id1", {}, "c2");
+    });
+});
+
+describe("spexare createTaskActivityAction", () => {
+    it("adds only the task when no actor is given", async () => {
+        vi.mocked(createTaskActivity).mockResolvedValue({id: "ta1"} as never);
+
+        await actions.createTaskActivityAction("s1", "a1", "t1");
+
+        expect(createTaskActivity).toHaveBeenCalledWith("s1", "a1", "t1");
+        expect(createActor).not.toHaveBeenCalled();
+        expect(revalidateTag).toHaveBeenCalled();
+    });
+
+    it("adds the actor to the new task activity in the same step", async () => {
+        vi.mocked(createTaskActivity).mockResolvedValue({id: "ta1"} as never);
+
+        await actions.createTaskActivityAction("s1", "a1", "t1", {vocalId: "v1", role: "Greve", characterId: "c1"});
+
+        expect(createActor).toHaveBeenCalledWith("s1", "a1", "ta1", "v1", {role: "Greve"}, "c1");
+    });
+
+    it("keeps and shows the task activity when its actor fails", async () => {
+        vi.mocked(createTaskActivity).mockResolvedValue({id: "ta1"} as never);
+        vi.mocked(createActor).mockRejectedValueOnce(new Error("boom"));
+
+        await expect(actions.createTaskActivityAction("s1", "a1", "t1", {vocalId: "v1"})).rejects.toThrow("boom");
+        expect(revalidateTag).toHaveBeenCalled();
     });
 });
 

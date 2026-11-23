@@ -649,10 +649,10 @@
       "TaskActivity": {
         "Actor": {
           "vocal": "Stämma",
-          "role": "Annan roll",
+          "role": "Roll",
           "noRolesAvailable": "Inga roller tillgängliga för denna funktion",
           "character": "Roll",
-          "noCharacter": "Ingen roll i Spexipedia"
+          "noCharacter": "Ingen roll"
         },
         "category": "Kategori",
         "selectCategory": "Välj funktionskategori",

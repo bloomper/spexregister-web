@@ -649,10 +649,10 @@
       "TaskActivity": {
         "Actor": {
           "vocal": "Vocal",
-          "role": "Other role",
+          "role": "Role",
           "noRolesAvailable": "No roles available for this task",
           "character": "Character",
-          "noCharacter": "No character in Spexipedia"
+          "noCharacter": "No character"
         },
         "category": "Category",
         "selectCategory": "Select task category",
