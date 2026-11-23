@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {Toaster} from "@/components/ui/sonner.client";
 import type {AbstractIntlMessages} from "use-intl/core";
 import {EditQueueDrawer, EditQueueProvider} from "@/components/edit-queue";
+import {FormValidation} from "@/components/form-validation.client";
 
 export default function Provider({
                                      children,
@@ -58,6 +59,7 @@ export default function Provider({
                             <EditQueueDrawer/>
                         </EditQueueProvider>
                         <Toaster/>
+                        <FormValidation/>
                     </ConsentManager>
                 </ThemeProvider>
             </LocaleContext.Provider>

@@ -4,7 +4,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SpexareFormInput, SpexareFormOutput, spexareFormSchema} from "@/lib/spexare/schema";
 import {Country, Spex, Spexare, SpexCategory, Tag, Task, TaskCategory, Type} from "@/gql/schema";
-import {useLocale, useTranslations} from "next-intl";
+import {useTranslations} from "next-intl";
 import {useState, useTransition} from "react";
 import {toast} from "sonner";
 import {createAction, deleteImageAction, updateAction, uploadImageAction} from "@/app/(app)/spexare/actions.server";
@@ -12,8 +12,6 @@ import {Button} from "@/components/ui/button";
 import {SheetClose, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import {cn} from "@/utils/utils";
 import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
-import {enUS, sv} from "react-day-picker/locale";
-import {useIsMobile} from "@/hooks/use-mobile";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {SpexareGeneralFields} from "@/components/spexare/spexare-general-fields.client";
@@ -49,9 +47,6 @@ export function SpexareForm({
                                 embedded = false
                             }: SpexareFormProps) {
     const t = useTranslations();
-    const currentLocale = useLocale();
-    const locale = currentLocale === "sv" ? sv : enUS;
-    const isMobile = useIsMobile();
     const [isPending, startTransition] = useTransition();
     const [activeTab, setActiveTab] = useState("general");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -179,8 +174,6 @@ export function SpexareForm({
                                 errors={errors}
                                 item={item}
                                 isSheet={isSheet}
-                                isMobile={isMobile}
-                                locale={locale}
                                 onFileSelect={(file) => {
                                     setSelectedFile(file);
                                     setShouldDeleteImage(false);

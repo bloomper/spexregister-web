@@ -321,7 +321,25 @@
     "uploadSuccess": "Upload successful",
     "yes": "Yes",
     "deletePurge": "Also delete all history",
-    "deletePurgeDescription": "Removes every earlier version from the change log so that nothing about the person remains. This cannot be undone."
+    "deletePurgeDescription": "Removes every earlier version from the change log so that nothing about the person remains. This cannot be undone.",
+    "chooseDate": "Pick a date",
+    "clearDate": "Clear date",
+    "validation": {
+      "valueMissing": "Please fill in this field.",
+      "selectMissing": "Please select an option.",
+      "checkboxMissing": "Please tick this box to continue.",
+      "fileMissing": "Please choose a file.",
+      "email": "Please enter a valid email address.",
+      "url": "Please enter a valid web address.",
+      "number": "Please enter a number.",
+      "format": "Please enter a value in the right format.",
+      "patternWithHint": "Please enter a value in the right format: {hint}",
+      "tooShort": "Please enter at least {min} characters.",
+      "tooLong": "Please enter at most {max} characters.",
+      "rangeUnderflow": "The value must be at least {min}.",
+      "rangeOverflow": "The value must be at most {max}.",
+      "step": "Please enter a valid value."
+    }
   },
   "CommandPalette": {
     "title": "Command palette",

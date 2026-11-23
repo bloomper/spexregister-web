@@ -1,6 +1,6 @@
 "use client";
 
-import {useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {NewsFormInput, NewsFormOutput, newsFormSchema} from "@/lib/news/schema";
 import {News} from "@/gql/schema";
@@ -11,6 +11,7 @@ import {toast} from "sonner";
 import {createAction, updateAction} from "@/app/(app)/news/actions.server";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {DatePicker} from "@/components/ui/date-picker.client";
 import {Textarea} from "@/components/ui/textarea";
 import {SheetClose, SheetFooter} from "@/components/ui/sheet";
 import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
@@ -34,6 +35,7 @@ export function NewsForm({item, onSuccess, onError, embedded, formId}: NewsFormP
 
     const {
         register,
+        control,
         handleSubmit,
         formState: {errors, isDirty},
     } = useForm<NewsFormInput, unknown, NewsFormOutput>({
@@ -91,17 +93,23 @@ export function NewsForm({item, onSuccess, onError, embedded, formId}: NewsFormP
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Field data-invalid={!!errors.visibleFrom}>
-                                <FieldLabel>{t("News.visibleFrom")}</FieldLabel>
+                                <FieldLabel htmlFor="news-visible-from">{t("News.visibleFrom")}</FieldLabel>
                                 <FieldContent>
-                                    <Input type="date" {...register("visibleFrom")} />
+                                    <Controller control={control} name="visibleFrom" render={({field}) => (
+                                        <DatePicker id="news-visible-from" value={field.value ?? ""} onChange={field.onChange}
+                                                    aria-invalid={!!errors.visibleFrom} className="w-full"/>
+                                    )}/>
                                     <FieldError errors={[translateError(t, errors.visibleFrom)]}/>
                                 </FieldContent>
                             </Field>
 
                             <Field data-invalid={!!errors.visibleTo}>
-                                <FieldLabel>{t("News.visibleTo")}</FieldLabel>
+                                <FieldLabel htmlFor="news-visible-to">{t("News.visibleTo")}</FieldLabel>
                                 <FieldContent>
-                                    <Input type="date" {...register("visibleTo")} />
+                                    <Controller control={control} name="visibleTo" render={({field}) => (
+                                        <DatePicker id="news-visible-to" value={field.value ?? ""} onChange={field.onChange}
+                                                    aria-invalid={!!errors.visibleTo} className="w-full"/>
+                                    )}/>
                                     <FieldError errors={[translateError(t, errors.visibleTo)]}/>
                                 </FieldContent>
                             </Field>
