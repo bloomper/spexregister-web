@@ -1024,6 +1024,18 @@ function handleAuthorize(url, res) {
         return;
     }
 
+    // The mock keeps no Keycloak session, so a silent login (prompt=none), as the one a visitor gets on arrival,
+    // finds nobody logged in, as Keycloak says it
+    if (url.searchParams.get("prompt") === "none") {
+        const back = new URL(redirectUri);
+        back.searchParams.set("error", "login_required");
+        if (url.searchParams.get("state")) {
+            back.searchParams.set("state", url.searchParams.get("state"));
+        }
+        res.writeHead(302, {location: back.toString()}).end();
+        return;
+    }
+
     const code = randomUUID();
     pendingCodes.set(code, url.searchParams.get("nonce"));
 
