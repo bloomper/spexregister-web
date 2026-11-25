@@ -1,5 +1,10 @@
 import {AccessTokenClaims, type Role} from "@/types/auth";
 
+/**
+ * Set for a minute when the app has asked Keycloak whether the user is already logged in to another FGV application.
+ */
+export const SSO_CHECKED_COOKIE = "sso_checked";
+
 export const isAdmin = (roles: Role[]) => roles.includes("ADMIN");
 export const isEditor = (roles: Role[]) => roles.includes("EDITOR");
 export const isUser = (roles: Role[]) => roles.includes("USER");
