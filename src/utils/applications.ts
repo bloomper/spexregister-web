@@ -25,6 +25,12 @@ const APPLICATIONS: ReadonlyArray<{ id: ApplicationId; clientId: string; urlVari
 ];
 
 /**
+ * Spexipedia and Spexgram are open to visitors and never ask Keycloak on their own whether someone is logged in, so the
+ * switcher opens them through a silent login that comes back to their start page either way.
+ */
+const SILENT_LOGIN: ReadonlySet<ApplicationId> = new Set(["spexipedia", "spexgram"]);
+
+/**
  * The applications the user can switch to, always in the same order: the current one, and every other one that has
  * an address and whose `USER` role is in the access token. Keycloak maps each web client to the other web clients'
  * `USER` role, so the token carries it exactly for the users who can open that application.
@@ -42,6 +48,10 @@ export function resolveApplications(
         const url = env[urlVariable]?.trim().replace(/\/+$/, "");
         const roles = claims.resource_access?.[clientId]?.roles ?? [];
 
-        return url && roles.includes("USER") ? [{id, url, current: false}] : [];
+        if (!url || !roles.includes("USER")) {
+            return [];
+        }
+
+        return [{id, url: SILENT_LOGIN.has(id) ? `${url}/api/auth/login?silent=1` : url, current: false}];
     });
 }

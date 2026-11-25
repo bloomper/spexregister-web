@@ -41,4 +41,11 @@ describe("resolveApplications", () => {
     it("lists only the current application without claims", () => {
         expect(resolveApplications("revival", {}, env)).toEqual([{id: "revival", url: "/", current: true}]);
     });
+
+    it("opens Spexipedia and Spexgram through a silent login, since they never ask Keycloak on their own", () => {
+        const claims = {resource_access: {"fgv-spexipedia": {roles: ["USER"]}}};
+
+        expect(resolveApplications("spexregister", claims, {SPEXIPEDIA_WEB_URL: "https://spexipedia.example.org/"}))
+            .toContainEqual({id: "spexipedia", url: "https://spexipedia.example.org/api/auth/login?silent=1", current: false});
+    });
 });
