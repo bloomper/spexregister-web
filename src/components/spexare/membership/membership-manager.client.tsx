@@ -1,9 +1,9 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {AuditedType, Membership, Type, TypeType} from "@/gql/schema";
+import {AuditedType, Membership, MembershipKind, Type, TypeType} from "@/gql/schema";
 import {Button} from "@/components/ui/button";
-import {IdCard, Plus, Trash2} from "lucide-react";
+import {ExternalLink, IdCard, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {MembershipForm} from "./membership-form.client";
@@ -13,6 +13,7 @@ import {toast} from "sonner";
 import {MembershipFormOutput} from "@/lib/spexare/membership/schema";
 import {useRefresh} from "@/hooks/use-refresh.client";
 import {Badge} from "@/components/ui/badge";
+import {useMedlemskap} from "@/components/medlemskap-provider.client";
 
 export function MembershipManager({
                                       spexareId,
@@ -28,7 +29,12 @@ export function MembershipManager({
     const [isPending, startTransition] = useTransition();
     const [isAdding, setIsAdding] = useState(false);
 
-    const allMembershipTypes = types.filter(t => t.type === TypeType.Membership);
+    const medlemskap = useMedlemskap();
+    const membershipTypes = types.filter(t => t.type === TypeType.Membership);
+    // Internal types (FGV) are Medlemskap's: shown here, changed there
+    const internalTypeIds = new Set(membershipTypes.filter(t => t.membershipKind === MembershipKind.Internal).map(t => t.id));
+    const allMembershipTypes = membershipTypes.filter(t => !internalTypeIds.has(t.id));
+    const isInternal = (membership: Membership) => internalTypeIds.has(membership.type.id);
     const simplifiedMemberships = initialMemberships.map(m => ({
         typeId: m.type.id,
         year: m.year,
@@ -65,7 +71,7 @@ export function MembershipManager({
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                {!isAdding && (
+                {!isAdding && allMembershipTypes.length > 0 && (
                     <Button size="sm" onClick={() => setIsAdding(true)} disabled={isPending}>
                         <Plus className="h-4 w-4 mr-2"/>
                         {t("Common.add")}
@@ -83,6 +89,10 @@ export function MembershipManager({
                 />
             )}
 
+            {internalTypeIds.size > 0 && (
+                <p className="text-sm text-muted-foreground">{t("Medlemskap.kept")}</p>
+            )}
+
             <div className="grid gap-3">
                 {initialMemberships.length > 0 ? (
                     initialMemberships.sort((a, b) => Number(b.year) - Number(a.year)).map((membership) => (
@@ -95,17 +105,28 @@ export function MembershipManager({
                                         <span
                                             className="text-sm font-medium leading-none mb-1">{membership.type.label}</span>
                                         <Badge variant="outline" className="w-fit text-xs sm:text-[10px] py-0 h-4">
-                                            {membership.year}
+                                            {membership.lifetime ? t("Medlemskap.lifetimeFrom", {year: membership.year}) : membership.year}
                                         </Badge>
                                     </div>
                                 </div>
-                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive"
-                                            onClick={() => handleDelete(membership.id, membership.type.id)}
-                                            disabled={isPending}>
-                                        <Trash2 className="h-4 w-4"/>
-                                    </Button>
-                                </div>
+                                {isInternal(membership) ? (
+                                    medlemskap?.canManage && (
+                                        <Button size="sm" variant="ghost" nativeButton={false}
+                                                render={<a href={`${medlemskap.url}/members/${spexareId}`} target="_blank"
+                                                           rel="noopener noreferrer"/>}>
+                                            <ExternalLink className="h-4 w-4 mr-2"/>
+                                            {t("Medlemskap.edit")}
+                                        </Button>
+                                    )
+                                ) : (
+                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive"
+                                                onClick={() => handleDelete(membership.id, membership.type.id)}
+                                                disabled={isPending}>
+                                            <Trash2 className="h-4 w-4"/>
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))

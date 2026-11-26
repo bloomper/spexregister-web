@@ -74,8 +74,8 @@ const SyncSourcesQuery = graphql(`
 `);
 
 const SyncRunMutation = graphql(`
-    mutation SyncRun($full: Boolean) {
-        syncRun(full: $full) {
+    mutation SyncRun($source: String, $full: Boolean) {
+        syncRun(source: $source, full: $full) {
             applied
             missing
             error
@@ -84,7 +84,7 @@ const SyncRunMutation = graphql(`
 `);
 
 /**
- * A source Spexregister copies data from, today Spexipedia, and how far the copy has got.
+ * A source Spexregister copies data from, Spexipedia or Medlemskap, and how far the copy has got.
  */
 export type SyncSourceStatus = {
     name: string;
@@ -127,6 +127,6 @@ export async function getSyncSources(): Promise<SyncSourceStatus[]> {
 /**
  * Pulls from the sources now. A full pull reads the whole feed again and reports what is here but no longer there.
  */
-export async function runSync(full: boolean): Promise<SyncRunResult | null> {
-    return (await runMutationField(SyncRunMutation, {full}, "syncRun")) ?? null;
+export async function runSync(source: string, full: boolean): Promise<SyncRunResult | null> {
+    return (await runMutationField(SyncRunMutation, {source, full}, "syncRun")) ?? null;
 }

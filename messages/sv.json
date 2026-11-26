@@ -49,9 +49,13 @@
       "heading": "Basdata från andra applikationer",
       "title": "Från {source}",
       "sources": {
-        "spexipedia": "Spexipedia"
+        "spexipedia": "Spexipedia",
+        "medlemskap": "Medlemskap"
       },
-      "description": "Spex, uppsättningar, kategorier, funktioner och roller underhålls i Spexipedia. Spexregistret håller en kopia som hämtar ändringarna när Spexipedia meddelar dem och var femte minut.",
+      "description": {
+        "spexipedia": "Spex, uppsättningar, kategorier, funktioner och roller underhålls i Spexipedia. Spexregistret håller en kopia som hämtar ändringarna när Spexipedia meddelar dem och var femte minut.",
+        "medlemskap": "FGV-medlemskap hanteras i Medlemskap. Spexregistret håller en kopia som hämtar ändringarna när Medlemskap meddelar dem och var femte minut."
+      },
       "stale": "Ej nådd på en timme",
       "lastPulled": "Senast hämtat",
       "lastSuccess": "Senast lyckat",
@@ -422,7 +426,8 @@
     "spexify": "Spexify",
     "spexgram": "Spexgram",
     "archive": "Spexarkiv",
-    "spexipedia": "Spexipedia"
+    "spexipedia": "Spexipedia",
+    "membership": "Medlemskap"
   },
   "Home": {
     "heading": "Hem",
@@ -837,5 +842,11 @@
     "spexareAutoLink": "Koppla automatiskt via e-post",
     "spexareAutoLinkDescription": "Saknar användaren spexare kopplas den till den enda spexare som har samma verifierade e-postadress. Stängs av när en koppling tas bort för hand.",
     "state": "Status"
+  },
+  "Medlemskap": {
+    "lifetimeFrom": "Livstid från {year}",
+    "edit": "Ändra i Medlemskap",
+    "show": "Visa i Medlemskap",
+    "kept": "FGV-medlemskap hanteras i Medlemskap och kan inte ändras här."
   }
 }

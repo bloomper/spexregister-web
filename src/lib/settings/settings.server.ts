@@ -20,6 +20,7 @@ const TypesQuery = graphql(`
             id
             label
             type
+            membershipKind
         }
     }
 `);

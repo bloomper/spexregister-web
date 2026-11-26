@@ -12,22 +12,22 @@ import {getSyncSourcesAction, runSyncAction} from "@/app/(app)/admin/maintenance
 import {formatDateTime} from "@/utils/utils";
 
 /**
- * The sources Spexregister copies base data from (Spexipedia), how far each copy has got, and buttons to pull now: the
+ * The sources Spexregister copies data from (Spexipedia for base data, Medlemskap for FGV memberships), how far each copy has got, and buttons to pull now: the
  * changes since last time, or the whole feed again to find what is here but no longer there.
  */
 export function SyncSources({sources: initialSources}: { sources: SyncSourceStatus[] }) {
     const t = useTranslations("Admin.sync");
     const tc = useTranslations("Common");
     const [sources, setSources] = useState(initialSources);
-    const [running, setRunning] = useState<"changes" | "full" | null>(null);
+    const [running, setRunning] = useState<string | null>(null);
     const [missing, setMissing] = useState<string[]>([]);
     const [, startTransition] = useTransition();
 
-    const handleRun = (full: boolean) => {
-        setRunning(full ? "full" : "changes");
+    const handleRun = (source: string, full: boolean) => {
+        setRunning(`${source}:${full ? "full" : "changes"}`);
         startTransition(async () => {
             try {
-                const result = await runSyncAction(full);
+                const result = await runSyncAction(source, full);
 
                 if (result?.error) {
                     toast.error(t("failed", {error: result.error}));
@@ -54,7 +54,7 @@ export function SyncSources({sources: initialSources}: { sources: SyncSourceStat
                             <CardTitle>{t("title", {source: t.has(`sources.${source.name}`) ? t(`sources.${source.name}`) : source.name})}</CardTitle>
                             {source.stale && <Badge variant="destructive">{t("stale")}</Badge>}
                         </div>
-                        <CardDescription>{t("description")}</CardDescription>
+                        <CardDescription>{t.has(`description.${source.name}`) ? t(`description.${source.name}`) : null}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-3">
                         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
@@ -78,13 +78,13 @@ export function SyncSources({sources: initialSources}: { sources: SyncSourceStat
                             <dd><code className="text-xs">{source.cursor ?? "–"}</code></dd>
                         </dl>
                         <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" onClick={() => handleRun(false)} disabled={running !== null}>
-                                {running === "changes" ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> :
+                            <Button variant="outline" onClick={() => handleRun(source.name, false)} disabled={running !== null}>
+                                {running === `${source.name}:changes` ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> :
                                     <RefreshCw className="mr-2 h-4 w-4"/>}
                                 {t("pullChanges")}
                             </Button>
-                            <Button variant="ghost" onClick={() => handleRun(true)} disabled={running !== null}>
-                                {running === "full" && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                            <Button variant="ghost" onClick={() => handleRun(source.name, true)} disabled={running !== null}>
+                                {running === `${source.name}:full` && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
                                 {t("pullAll")}
                             </Button>
                         </div>

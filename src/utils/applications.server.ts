@@ -33,3 +33,21 @@ export async function getSpexipedia(): Promise<{ url: string; canEdit: boolean }
 
     return {url, canEdit: roles.includes("EDITOR") || roles.includes("ADMIN")};
 }
+
+/**
+ * Medlemskap, where FGV memberships are kept: its address, and whether the user may manage members there (BOARD on
+ * fgv-membership, which Spexregister's tokens carry). Null when Medlemskap's address is not set.
+ */
+export async function getMedlemskap(): Promise<{ url: string; canManage: boolean } | null> {
+    const url = process.env.MEMBERSHIP_WEB_URL?.trim().replace(/\/+$/, "");
+
+    if (!url) {
+        return null;
+    }
+
+    const {accessToken} = await getSessionContext();
+    const claims = accessToken ? jwtDecode<AccessTokenClaims>(accessToken) : {};
+    const roles = claims.resource_access?.["fgv-membership"]?.roles ?? [];
+
+    return {url, canManage: roles.includes("BOARD") || roles.includes("TREASURER") || roles.includes("ADMIN")};
+}
