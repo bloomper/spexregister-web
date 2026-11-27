@@ -1,8 +1,8 @@
 import "server-only";
 
-import {AuditedType, SortDirection, Spex, SpexEdge} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {createResourceClient} from "@/lib/graphql.server";
+import { AuditedType, SortDirection, Spex, SpexEdge } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { createResourceClient } from "@/lib/graphql.server";
 
 export const SpexSummary = graphql(`
     fragment SpexSummary on Spex {
@@ -59,20 +59,18 @@ const SpexGetQuery = graphql(`
     }
 `);
 
-
-const client = createResourceClient<Spex, SpexEdge, never, {id?: unknown}>({
-    singular: "spex",
-    pagedSummaryQuery: SpexPagedSummary,
-    pagedFullQuery: SpexPagedFull,
-    getQuery: SpexGetQuery,
-    auditedType: AuditedType.Spex,
-    cacheTag: "spex",
-    restPath: "spex",
-    defaultSort: ["year"],
-    defaultDirection: SortDirection.Desc,
-    defaultFilter: "parent:NULL",
+const client = createResourceClient<Spex, SpexEdge, never, { id?: unknown }>({
+  singular: "spex",
+  pagedSummaryQuery: SpexPagedSummary,
+  pagedFullQuery: SpexPagedFull,
+  getQuery: SpexGetQuery,
+  auditedType: AuditedType.Spex,
+  cacheTag: "spex",
+  restPath: "spex",
+  defaultSort: ["year"],
+  defaultDirection: SortDirection.Desc,
+  defaultFilter: "parent:NULL",
 });
 
 // Read only: Spexipedia keeps spex and revivals
-export const {getPaged, get, getAll} = client;
-
+export const { getPaged, get, getAll } = client;

@@ -14,14 +14,14 @@ export type AuthzResult = AuthzOk | AuthzFail;
  * The claims of a Keycloak access token that carry the client roles.
  */
 export type AccessTokenClaims = {
-    resource_access?: {
-        "fgv-spexregister"?: {
-            roles?: string[];
-        };
-        [resource: string]:
-            | {
-            roles?: string[];
-        }
-            | undefined;
+  resource_access?: {
+    "fgv-spexregister"?: {
+      roles?: string[];
     };
+    [resource: string]:
+      | {
+          roles?: string[];
+        }
+      | undefined;
+  };
 };

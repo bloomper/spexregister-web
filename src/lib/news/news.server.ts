@@ -1,8 +1,8 @@
 import "server-only";
 
-import {AuditedType, News, NewsCreate, NewsEdge, NewsUpdate, SortDirection} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {createResourceClient} from "@/lib/graphql.server";
+import { AuditedType, News, NewsCreate, NewsEdge, NewsUpdate, SortDirection } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { createResourceClient } from "@/lib/graphql.server";
 
 export const NewsSummary = graphql(`
     fragment NewsSummary on News {
@@ -80,20 +80,20 @@ const NewsExportQuery = graphql(`
 `);
 
 const client = createResourceClient<News, NewsEdge, NewsCreate, NewsUpdate>({
-    singular: "news",
-    pagedSummaryQuery: NewsPagedSummary,
-    pagedFullQuery: NewsPagedFull,
-    getQuery: NewsGetQuery,
-    createMutation: NewsCreateMutation,
-    updateMutation: NewsUpdateMutation,
-    deleteMutation: NewsDeleteMutation,
-    exportQuery: NewsExportQuery,
-    auditedType: AuditedType.News,
-    cacheTag: "news",
-    restPath: "news",
-    defaultSort: ["visibleFrom"],
-    defaultDirection: SortDirection.Desc,
-    defaultFilter: "published:TRUE",
+  singular: "news",
+  pagedSummaryQuery: NewsPagedSummary,
+  pagedFullQuery: NewsPagedFull,
+  getQuery: NewsGetQuery,
+  createMutation: NewsCreateMutation,
+  updateMutation: NewsUpdateMutation,
+  deleteMutation: NewsDeleteMutation,
+  exportQuery: NewsExportQuery,
+  auditedType: AuditedType.News,
+  cacheTag: "news",
+  restPath: "news",
+  defaultSort: ["visibleFrom"],
+  defaultDirection: SortDirection.Desc,
+  defaultFilter: "published:TRUE",
 });
 
-export const {getPaged, get, create, update, del, exp, imp, revisions} = client;
+export const { getPaged, get, create, update, del, exp, imp, revisions } = client;

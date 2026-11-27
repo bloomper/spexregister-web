@@ -1,17 +1,20 @@
-import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
-import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
+import { Skeleton } from "@bloomper/fgv-web-ui/ui/skeleton";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 export default function AnalyticsLoading() {
-    return (
-        <Page>
-            <Skeleton className="h-8 w-48"/>
-            <Skeleton className="h-9 w-90 max-w-full"/>
-            <div className="grid gap-4 md:grid-cols-2">
-                <Skeleton className="h-60 w-full rounded-xl md:col-span-2"/>
-                {Array.from({length: 4}).map((_, i) => (
-                    <Skeleton key={i} className="h-70 w-full rounded-xl"/>
-                ))}
-            </div>
-        </Page>
-    );
+  return (
+    <Page>
+      <Skeleton className="h-8 w-48" />
+      <Skeleton className="h-9 w-90 max-w-full" />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Skeleton className="h-60 w-full rounded-xl md:col-span-2" />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton
+            key={i}
+            className="h-70 w-full rounded-xl"
+          />
+        ))}
+      </div>
+    </Page>
+  );
 }

@@ -1,8 +1,8 @@
 import "server-only";
 
-import {Actor, ActorCreate, ActorUpdate, SpexCharacter} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {mutateForData, runMutationField, runQuery} from "@/lib/graphql.server";
+import { Actor, ActorCreate, ActorUpdate, SpexCharacter } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { mutateForData, runMutationField, runQuery } from "@/lib/graphql.server";
 
 export const ActorSummary = graphql(`
     fragment ActorSummary on Actor {
@@ -67,36 +67,61 @@ const ActorDeleteMutation = graphql(`
  * The characters an actor of the spex may play, copied from Spexipedia: its own and, for a revival, its parent's.
  */
 export async function getCharacters(spexId: string): Promise<SpexCharacter[]> {
-    const data = await runQuery(SpexCharactersQuery, {spexId});
+  const data = await runQuery(SpexCharactersQuery, { spexId });
 
-    return (data?.spexCharacters ?? []) as SpexCharacter[];
+  return (data?.spexCharacters ?? []) as SpexCharacter[];
 }
 
-export async function create(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, input: ActorCreate, characterId?: string | null): Promise<Actor> {
-    return mutateForData(ActorCreateMutation, {
-        spexareId,
-        activityId,
-        taskActivityId,
-        vocalId,
-        input,
-        characterId: characterId ?? null
-    }, "actorCreate", "No data created") as Promise<Actor>;
+export async function create(
+  spexareId: string,
+  activityId: string,
+  taskActivityId: string,
+  vocalId: string,
+  input: ActorCreate,
+  characterId?: string | null
+): Promise<Actor> {
+  return mutateForData(
+    ActorCreateMutation,
+    {
+      spexareId,
+      activityId,
+      taskActivityId,
+      vocalId,
+      input,
+      characterId: characterId ?? null,
+    },
+    "actorCreate",
+    "No data created"
+  ) as Promise<Actor>;
 }
 
 /**
  * Changes the actor. A null characterId clears the character.
  */
-export async function update(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string, input: Omit<ActorUpdate, "id">, characterId: string | null): Promise<Actor> {
-    return mutateForData(ActorUpdateMutation, {
-        spexareId,
-        activityId,
-        taskActivityId,
-        vocalId,
-        input: {...input, id},
-        characterId
-    }, "actorUpdate", "No data updated") as Promise<Actor>;
+export async function update(
+  spexareId: string,
+  activityId: string,
+  taskActivityId: string,
+  vocalId: string,
+  id: string,
+  input: Omit<ActorUpdate, "id">,
+  characterId: string | null
+): Promise<Actor> {
+  return mutateForData(
+    ActorUpdateMutation,
+    {
+      spexareId,
+      activityId,
+      taskActivityId,
+      vocalId,
+      input: { ...input, id },
+      characterId,
+    },
+    "actorUpdate",
+    "No data updated"
+  ) as Promise<Actor>;
 }
 
 export async function del(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string) {
-    return runMutationField(ActorDeleteMutation, {spexareId, activityId, taskActivityId, vocalId, id}, "actorDelete");
+  return runMutationField(ActorDeleteMutation, { spexareId, activityId, taskActivityId, vocalId, id }, "actorDelete");
 }

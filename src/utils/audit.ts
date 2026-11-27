@@ -1,39 +1,39 @@
-import {AuditedType} from "@/gql/schema";
+import { AuditedType } from "@/gql/schema";
 
 const NAMESPACES: Record<AuditedType, string> = {
-    [AuditedType.News]: "News",
-    [AuditedType.Spex]: "Spex",
-    [AuditedType.SpexDetails]: "Spex",
-    [AuditedType.SpexCategory]: "Spex.Category",
-    [AuditedType.Spexare]: "Spexare",
-    [AuditedType.Activity]: "Spexare.Activity",
-    [AuditedType.SpexActivity]: "Spexare.Activity.SpexActivity",
-    [AuditedType.TaskActivity]: "Spexare.Activity.TaskActivity",
-    [AuditedType.Actor]: "Spexare.Activity.TaskActivity.Actor",
-    [AuditedType.Address]: "Spexare.Address",
-    [AuditedType.Consent]: "Spexare.Consent",
-    [AuditedType.Membership]: "Spexare.Membership",
-    [AuditedType.Toggle]: "Spexare.Toggle",
-    [AuditedType.Tag]: "Tag",
-    [AuditedType.Task]: "Task",
-    [AuditedType.TaskCategory]: "Task.Category",
-    [AuditedType.User]: "User",
-    [AuditedType.State]: "User",
-    [AuditedType.Type]: "Audit.fields",
-    [AuditedType.PermissionGrant]: "PermissionGrant",
+  [AuditedType.News]: "News",
+  [AuditedType.Spex]: "Spex",
+  [AuditedType.SpexDetails]: "Spex",
+  [AuditedType.SpexCategory]: "Spex.Category",
+  [AuditedType.Spexare]: "Spexare",
+  [AuditedType.Activity]: "Spexare.Activity",
+  [AuditedType.SpexActivity]: "Spexare.Activity.SpexActivity",
+  [AuditedType.TaskActivity]: "Spexare.Activity.TaskActivity",
+  [AuditedType.Actor]: "Spexare.Activity.TaskActivity.Actor",
+  [AuditedType.Address]: "Spexare.Address",
+  [AuditedType.Consent]: "Spexare.Consent",
+  [AuditedType.Membership]: "Spexare.Membership",
+  [AuditedType.Toggle]: "Spexare.Toggle",
+  [AuditedType.Tag]: "Tag",
+  [AuditedType.Task]: "Task",
+  [AuditedType.TaskCategory]: "Task.Category",
+  [AuditedType.User]: "User",
+  [AuditedType.State]: "User",
+  [AuditedType.Type]: "Audit.fields",
+  [AuditedType.PermissionGrant]: "PermissionGrant",
 };
 
 const ALIASES: Record<string, string> = {
-    logo: "logoUrl",
-    poster: "posterUrl",
-    image: "imageUrl",
+  logo: "logoUrl",
+  poster: "posterUrl",
+  image: "imageUrl",
 };
 
 const ROUTES: Partial<Record<AuditedType, string>> = {
-    [AuditedType.Spexare]: "/spexare",
-    [AuditedType.News]: "/news/manage",
-    [AuditedType.Tag]: "/tags/manage",
-    [AuditedType.User]: "/users/manage",
+  [AuditedType.Spexare]: "/spexare",
+  [AuditedType.News]: "/news/manage",
+  [AuditedType.Tag]: "/tags/manage",
+  [AuditedType.User]: "/users/manage",
 };
 
 /**
@@ -41,11 +41,11 @@ const ROUTES: Partial<Record<AuditedType, string>> = {
  * nor filters on it; a revision of Spexregister's own data may still show it, as what an activity refers to.
  */
 export const SPEXIPEDIA_TYPES: ReadonlySet<AuditedType> = new Set([
-    AuditedType.Spex,
-    AuditedType.SpexDetails,
-    AuditedType.SpexCategory,
-    AuditedType.Task,
-    AuditedType.TaskCategory,
+  AuditedType.Spex,
+  AuditedType.SpexDetails,
+  AuditedType.SpexCategory,
+  AuditedType.Task,
+  AuditedType.TaskCategory,
 ]);
 
 /**
@@ -53,10 +53,10 @@ export const SPEXIPEDIA_TYPES: ReadonlySet<AuditedType> = new Set([
  * editors' management pages.
  */
 const SPEXIPEDIA_ROUTES: Partial<Record<AuditedType, { path: string; editorsOnly: boolean }>> = {
-    [AuditedType.Spex]: {path: "/spex", editorsOnly: false},
-    [AuditedType.SpexCategory]: {path: "/manage/spex-categories", editorsOnly: true},
-    [AuditedType.Task]: {path: "/manage/tasks", editorsOnly: true},
-    [AuditedType.TaskCategory]: {path: "/manage/task-categories", editorsOnly: true},
+  [AuditedType.Spex]: { path: "/spex", editorsOnly: false },
+  [AuditedType.SpexCategory]: { path: "/manage/spex-categories", editorsOnly: true },
+  [AuditedType.Task]: { path: "/manage/tasks", editorsOnly: true },
+  [AuditedType.TaskCategory]: { path: "/manage/task-categories", editorsOnly: true },
 };
 
 /**
@@ -65,15 +65,15 @@ const SPEXIPEDIA_ROUTES: Partial<Record<AuditedType, { path: string; editorsOnly
 export type SpexipediaLink = { url: string; canEdit: boolean } | null | undefined;
 
 const SPEXARE_TABS: Partial<Record<AuditedType, string>> = {
-    [AuditedType.Spexare]: "general",
-    [AuditedType.Address]: "addresses",
-    [AuditedType.Consent]: "consents",
-    [AuditedType.Membership]: "memberships",
-    [AuditedType.Toggle]: "toggles",
-    [AuditedType.Activity]: "activities",
-    [AuditedType.SpexActivity]: "activities",
-    [AuditedType.TaskActivity]: "activities",
-    [AuditedType.Actor]: "activities",
+  [AuditedType.Spexare]: "general",
+  [AuditedType.Address]: "addresses",
+  [AuditedType.Consent]: "consents",
+  [AuditedType.Membership]: "memberships",
+  [AuditedType.Toggle]: "toggles",
+  [AuditedType.Activity]: "activities",
+  [AuditedType.SpexActivity]: "activities",
+  [AuditedType.TaskActivity]: "activities",
+  [AuditedType.Actor]: "activities",
 };
 
 /**
@@ -91,48 +91,48 @@ export const AUDIT_TAB_PARAM = "tab";
  * the viewer can't open.
  */
 export function auditEntityHref(
-    target: { type: AuditedType; id: string | number } | null | undefined,
-    changedType?: AuditedType,
-    spexipedia?: SpexipediaLink,
+  target: { type: AuditedType; id: string | number } | null | undefined,
+  changedType?: AuditedType,
+  spexipedia?: SpexipediaLink
 ): string | null {
-    const external = target ? SPEXIPEDIA_ROUTES[target.type] : undefined;
+  const external = target ? SPEXIPEDIA_ROUTES[target.type] : undefined;
 
-    if (target && external) {
-        return spexipedia && (spexipedia.canEdit || !external.editorsOnly)
-            ? `${spexipedia.url}${external.path}/${encodeURIComponent(String(target.id))}`
-            : null;
-    }
+  if (target && external) {
+    return spexipedia && (spexipedia.canEdit || !external.editorsOnly)
+      ? `${spexipedia.url}${external.path}/${encodeURIComponent(String(target.id))}`
+      : null;
+  }
 
-    const route = target ? ROUTES[target.type] : undefined;
+  const route = target ? ROUTES[target.type] : undefined;
 
-    if (!target || !route) {
-        return null;
-    }
+  if (!target || !route) {
+    return null;
+  }
 
-    const params = new URLSearchParams({[AUDIT_OPEN_PARAM]: String(target.id)});
-    const tab = target.type === AuditedType.Spexare && changedType ? SPEXARE_TABS[changedType] : undefined;
+  const params = new URLSearchParams({ [AUDIT_OPEN_PARAM]: String(target.id) });
+  const tab = target.type === AuditedType.Spexare && changedType ? SPEXARE_TABS[changedType] : undefined;
 
-    if (tab) {
-        params.set(AUDIT_TAB_PARAM, tab);
-    }
+  if (tab) {
+    params.set(AUDIT_TAB_PARAM, tab);
+  }
 
-    return `${route}?${params.toString()}`;
+  return `${route}?${params.toString()}`;
 }
 
 type Translator = {
-    (key: string): string;
-    has: (key: string) => boolean;
+  (key: string): string;
+  has: (key: string) => boolean;
 };
 
 /**
  * The address of an image as it was in a revision, through the image proxy.
  */
 export function auditBinaryUrl(type: AuditedType, entityId: string, revision: number, field: string): string {
-    const params = new URLSearchParams();
+  const params = new URLSearchParams();
 
-    params.set("url", `/api/revisions/${type}/${entityId}/${revision}/binary/${field}`);
+  params.set("url", `/api/revisions/${type}/${entityId}/${revision}/binary/${field}`);
 
-    return `/api/image-download-proxy?${params.toString()}`;
+  return `/api/image-download-proxy?${params.toString()}`;
 }
 
 /**
@@ -140,26 +140,26 @@ export function auditBinaryUrl(type: AuditedType, entityId: string, revision: nu
  * other value as it is.
  */
 export function auditFieldValue(t: Translator, type: AuditedType, field: string, value: string): string {
-    if (value !== "true" && value !== "false") {
-        return value;
-    }
+  if (value !== "true" && value !== "false") {
+    return value;
+  }
 
-    const states = `${NAMESPACES[type]}.${field}States.${value}`;
+  const states = `${NAMESPACES[type]}.${field}States.${value}`;
 
-    if (t.has(states)) {
-        return t(states);
-    }
+  if (t.has(states)) {
+    return t(states);
+  }
 
-    return value === "true" ? t("Common.yes") : t("Common.no");
+  return value === "true" ? t("Common.yes") : t("Common.no");
 }
 
 /**
  * The name of an audited type in the user's language.
  */
 export function auditTypeLabel(t: Translator, type: AuditedType): string {
-    const key = `Audit.types.${type}`;
+  const key = `Audit.types.${type}`;
 
-    return t.has(key) ? t(key) : humanize(type);
+  return t.has(key) ? t(key) : humanize(type);
 }
 
 /**
@@ -167,19 +167,22 @@ export function auditTypeLabel(t: Translator, type: AuditedType): string {
  * name in words.
  */
 export function auditFieldLabel(t: Translator, type: AuditedType, field: string): string {
-    const name = ALIASES[field] ?? field;
+  const name = ALIASES[field] ?? field;
 
-    for (const key of [`${NAMESPACES[type]}.${name}`, `Audit.fields.${name}`]) {
-        if (t.has(key)) {
-            return t(key);
-        }
+  for (const key of [`${NAMESPACES[type]}.${name}`, `Audit.fields.${name}`]) {
+    if (t.has(key)) {
+      return t(key);
     }
+  }
 
-    return humanize(field);
+  return humanize(field);
 }
 
 function humanize(field: string): string {
-    const words = field.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/_/g, " ").toLowerCase();
+  const words = field
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/_/g, " ")
+    .toLowerCase();
 
-    return words.charAt(0).toUpperCase() + words.slice(1);
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }

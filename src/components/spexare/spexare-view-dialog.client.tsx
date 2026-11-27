@@ -1,84 +1,85 @@
 "use client";
 
-import {useTranslations} from "next-intl";
-import {Country, Spexare} from "@/gql/schema";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@bloomper/fgv-web-ui/ui/dialog";
-import {Button} from "@bloomper/fgv-web-ui/ui/button";
-import {Spinner} from "@bloomper/fgv-web-ui/ui/spinner";
-import {SpexareView} from "@/components/spexare/spexare-view.client";
+import { useTranslations } from "next-intl";
+import { Country, Spexare } from "@/gql/schema";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@bloomper/fgv-web-ui/ui/dialog";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Spinner } from "@bloomper/fgv-web-ui/ui/spinner";
+import { SpexareView } from "@/components/spexare/spexare-view.client";
 
 type SpexareViewDialogProps = {
-    open: boolean;
-    onClose: () => void;
-    summary?: Pick<Spexare, "firstName" | "lastName"> | null;
-    full: Spexare | null;
-    isLoading: boolean;
-    countries: Country[];
-    isMe: boolean;
-    showAudit?: boolean;
-    initialTab?: string | null;
+  open: boolean;
+  onClose: () => void;
+  summary?: Pick<Spexare, "firstName" | "lastName"> | null;
+  full: Spexare | null;
+  isLoading: boolean;
+  countries: Country[];
+  isMe: boolean;
+  showAudit?: boolean;
+  initialTab?: string | null;
 };
 
 export function SpexareViewDialog({
-                                      open,
-                                      onClose,
-                                      summary,
-                                      full,
-                                      isLoading,
-                                      countries,
-                                      isMe,
-                                      showAudit = false,
-                                      initialTab,
-                                  }: SpexareViewDialogProps) {
-    const t = useTranslations();
+  open,
+  onClose,
+  summary,
+  full,
+  isLoading,
+  countries,
+  isMe,
+  showAudit = false,
+  initialTab,
+}: SpexareViewDialogProps) {
+  const t = useTranslations();
 
-    return (
-        <Dialog
-            open={open}
-            onOpenChange={(next) => {
-                if (!next) {
-                    onClose();
-                }
-            }}
-        >
-            <DialogContent className="sm:max-w-2xl p-0">
-                <DialogHeader className="sr-only">
-                    <DialogTitle>
-                        {full
-                            ? `${full.firstName} ${full.lastName}`
-                            : summary
-                                ? `${summary.firstName} ${summary.lastName}`
-                                : t("Common.details")}
-                    </DialogTitle>
-                </DialogHeader>
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) {
+          onClose();
+        }
+      }}
+    >
+      <DialogContent className="p-0 sm:max-w-2xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>
+            {full
+              ? `${full.firstName} ${full.lastName}`
+              : summary
+                ? `${summary.firstName} ${summary.lastName}`
+                : t("Common.details")}
+          </DialogTitle>
+        </DialogHeader>
 
-                {isLoading ? (
-                    <div className="p-6">
-                        <div className="flex items-center justify-center py-16">
-                            <Spinner className="size-8"/>
-                        </div>
-                    </div>
-                ) : full ? (
-                    <SpexareView
-                        spexare={full}
-                        countries={countries}
-                        isMe={isMe}
-                        showAudit={showAudit}
-                        initialTab={initialTab}
-                        onRestored={onClose}
-                    />
-                ) : (
-                    <div className="p-6 text-sm text-muted-foreground">
-                        {t("Common.noDataFound")}
-                    </div>
-                )}
+        {isLoading ? (
+          <div className="p-6">
+            <div className="flex items-center justify-center py-16">
+              <Spinner className="size-8" />
+            </div>
+          </div>
+        ) : full ? (
+          <SpexareView
+            spexare={full}
+            countries={countries}
+            isMe={isMe}
+            showAudit={showAudit}
+            initialTab={initialTab}
+            onRestored={onClose}
+          />
+        ) : (
+          <div className="text-muted-foreground p-6 text-sm">{t("Common.noDataFound")}</div>
+        )}
 
-                <DialogFooter className="p-6 pt-0">
-                    <Button variant="outline" onClick={onClose}>
-                        {t("Common.close")}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    );
+        <DialogFooter className="p-6 pt-0">
+          <Button
+            variant="outline"
+            onClick={onClose}
+          >
+            {t("Common.close")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }

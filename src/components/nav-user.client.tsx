@@ -1,167 +1,178 @@
 "use client";
 
-import {ChevronsUpDown, ExternalLink, LogOut, UserCog, UserRound} from "lucide-react";
+import { ChevronsUpDown, ExternalLink, LogOut, UserCog, UserRound } from "lucide-react";
 
-import {Avatar, AvatarFallback, AvatarImage} from "@bloomper/fgv-web-ui/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@bloomper/fgv-web-ui/ui/avatar";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@bloomper/fgv-web-ui/ui/dropdown-menu";
-import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@bloomper/fgv-web-ui/ui/sidebar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@bloomper/fgv-web-ui/ui/sidebar";
 import * as React from "react";
-import {useMemo, useState} from "react";
-import {useLocale, useTranslations} from "next-intl";
-import {toast} from "sonner";
-import {signOut, useSession} from "@/lib/auth-client";
-import {appendLogoutParams} from "@/utils/auth";
-import {Spexare} from "@/gql/schema";
+import { useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { signOut, useSession } from "@/lib/auth-client";
+import { appendLogoutParams } from "@/utils/auth";
+import { Spexare } from "@/gql/schema";
 import Link from "next/link";
-import {useTheme} from "next-themes";
+import { useTheme } from "next-themes";
 
 function getInitials(name?: string | null | undefined, email?: string | null | undefined) {
-    const base = (name?.trim() || email?.trim() || "").trim();
-    if (!base) {
-        return "?";
-    }
+  const base = (name?.trim() || email?.trim() || "").trim();
+  if (!base) {
+    return "?";
+  }
 
-    const parts = base.split(/\s+/).filter(Boolean);
-    const first = parts[0]?.[0] ?? "";
-    const last = (parts.length > 1 ? parts[parts.length - 1]?.[0] : parts[0]?.[1]) ?? "";
+  const parts = base.split(/\s+/).filter(Boolean);
+  const first = parts[0]?.[0] ?? "";
+  const last = (parts.length > 1 ? parts[parts.length - 1]?.[0] : parts[0]?.[1]) ?? "";
 
-    return (first + last).toUpperCase();
+  return (first + last).toUpperCase();
 }
 
 const failedAvatars = new Set<string>();
 
-export function NavUser({spexare, accountUrl}: { spexare?: Spexare | null; accountUrl: string }) {
-    const {isMobile} = useSidebar();
-    const t = useTranslations();
-    const locale = useLocale();
-    const {data: session} = useSession();
-    const user = session?.user;
-    const {theme} = useTheme();
+export function NavUser({ spexare, accountUrl }: { spexare?: Spexare | null; accountUrl: string }) {
+  const { isMobile } = useSidebar();
+  const t = useTranslations();
+  const locale = useLocale();
+  const { data: session } = useSession();
+  const user = session?.user;
+  const { theme } = useTheme();
 
-    const initials = useMemo(() => getInitials(user?.name, user?.email), [user?.name, user?.email]);
-    const [avatarFailed, setAvatarFailed] = useState(false);
-    const avatarSrc = !avatarFailed && user?.image && !failedAvatars.has(user.image) ? user.image : undefined;
+  const initials = useMemo(() => getInitials(user?.name, user?.email), [user?.name, user?.email]);
+  const [avatarFailed, setAvatarFailed] = useState(false);
+  const avatarSrc = !avatarFailed && user?.image && !failedAvatars.has(user.image) ? user.image : undefined;
 
-    const handleAvatarStatus = (status: string) => {
-        if (status === "error" && avatarSrc) {
-            failedAvatars.add(avatarSrc);
-            setAvatarFailed(true);
-        }
-    };
-
-    if (spexare === undefined) {
-        return (
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" disabled className="cursor-default hover:bg-transparent!">
-                        <div className="h-8 w-8 animate-pulse rounded-lg bg-sidebar-accent-foreground/10"/>
-                        <div className="grid flex-1 gap-1">
-                            <div className="h-3 w-24 animate-pulse rounded bg-sidebar-accent-foreground/10"/>
-                            <div className="h-2 w-32 animate-pulse rounded bg-sidebar-accent-foreground/10"/>
-                        </div>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        );
+  const handleAvatarStatus = (status: string) => {
+    if (status === "error" && avatarSrc) {
+      failedAvatars.add(avatarSrc);
+      setAvatarFailed(true);
     }
+  };
 
+  if (spexare === undefined) {
     return (
-        <SidebarMenu>
-            <SidebarMenuItem>
-                <DropdownMenu>
-                    <DropdownMenuTrigger
-                        render={
-                            <SidebarMenuButton
-                                size="lg"
-                                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
-                            />
-                        }
-                    >
-                        <Avatar className="h-8 w-8 rounded-lg">
-                            <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
-                                         onLoadingStatusChange={handleAvatarStatus}/>
-                            <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-                        </Avatar>
-                        <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate font-medium">{user?.name}</span>
-                            <span className="truncate text-xs">{user?.email}</span>
-                        </div>
-                        <ChevronsUpDown className="ml-auto size-4"/>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        className="w-(--anchor-width) min-w-56 rounded-lg"
-                        side={isMobile ? "bottom" : "right"}
-                        align="end"
-                        sideOffset={4}
-                    >
-                        <DropdownMenuGroup>
-                            <DropdownMenuLabel className="p-0 font-normal">
-                                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                    <Avatar className="h-8 w-8 rounded-lg">
-                                        <AvatarImage src={avatarSrc} alt={user?.name ?? ""}
-                                                     onLoadingStatusChange={handleAvatarStatus}/>
-                                        <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-                                    </Avatar>
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-medium">{user?.name}</span>
-                                        <span className="truncate text-xs">{user?.email}</span>
-                                    </div>
-                                </div>
-                            </DropdownMenuLabel>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuGroup>
-                            {spexare && (
-                                <DropdownMenuItem
-                                    render={<Link href="/my-profile" className="flex w-full items-center gap-2"/>}>
-                                    <UserRound className="size-4"/>
-                                    <span>{t("Common.myProfile")}</span>
-                                </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem>
-                                <a
-                                    href={accountUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex w-full items-center gap-2"
-                                >
-                                    <UserCog className="size-4"/>
-                                    <span className="flex-1">{t("Common.myFgvAccount")}</span>
-                                    <ExternalLink className="ml-auto size-3 opacity-50"/>
-                                </a>
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuItem
-                            className="flex items-center gap-2"
-                            onClick={async () => {
-                                const themeParam =
-                                    theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
-
-                                const {data} = await signOut({disableRedirect: true});
-
-                                toast.message(t("Common.loggedOut"));
-                                window.location.assign(
-                                    data?.url
-                                        ? appendLogoutParams(data.url, locale, themeParam)
-                                        : "/"
-                                );
-                            }}
-                        >
-                            <LogOut className="h-4 w-4"/>
-                            <span className="whitespace-nowrap">{t("Common.logout")}</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            size="lg"
+            disabled
+            className="cursor-default hover:bg-transparent!"
+          >
+            <div className="bg-sidebar-accent-foreground/10 h-8 w-8 animate-pulse rounded-lg" />
+            <div className="grid flex-1 gap-1">
+              <div className="bg-sidebar-accent-foreground/10 h-3 w-24 animate-pulse rounded" />
+              <div className="bg-sidebar-accent-foreground/10 h-2 w-32 animate-pulse rounded" />
+            </div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
     );
+  }
+
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton
+                size="lg"
+                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
+              />
+            }
+          >
+            <Avatar className="h-8 w-8 rounded-lg">
+              <AvatarImage
+                src={avatarSrc}
+                alt={user?.name ?? ""}
+                onLoadingStatusChange={handleAvatarStatus}
+              />
+              <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{user?.name}</span>
+              <span className="truncate text-xs">{user?.email}</span>
+            </div>
+            <ChevronsUpDown className="ml-auto size-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-(--anchor-width) min-w-56 rounded-lg"
+            side={isMobile ? "bottom" : "right"}
+            align="end"
+            sideOffset={4}
+          >
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage
+                      src={avatarSrc}
+                      alt={user?.name ?? ""}
+                      onLoadingStatusChange={handleAvatarStatus}
+                    />
+                    <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">{user?.name}</span>
+                    <span className="truncate text-xs">{user?.email}</span>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {spexare && (
+                <DropdownMenuItem
+                  render={
+                    <Link
+                      href="/my-profile"
+                      className="flex w-full items-center gap-2"
+                    />
+                  }
+                >
+                  <UserRound className="size-4" />
+                  <span>{t("Common.myProfile")}</span>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem>
+                <a
+                  href={accountUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center gap-2"
+                >
+                  <UserCog className="size-4" />
+                  <span className="flex-1">{t("Common.myFgvAccount")}</span>
+                  <ExternalLink className="ml-auto size-3 opacity-50" />
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="flex items-center gap-2"
+              onClick={async () => {
+                const themeParam = theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
+
+                const { data } = await signOut({ disableRedirect: true });
+
+                toast.message(t("Common.loggedOut"));
+                window.location.assign(data?.url ? appendLogoutParams(data.url, locale, themeParam) : "/");
+              }}
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="whitespace-nowrap">{t("Common.logout")}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
 }

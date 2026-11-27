@@ -1,23 +1,23 @@
 "use client";
 
-import {startTransition, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {usePathname, useRouter} from "next/navigation";
-import {useInfiniteList} from "@/hooks/use-infinite-list.client";
-import {Facet, Spexare} from "@/gql/schema";
-import {CursorPageInfo, SpexarePage} from "@/types/pagination";
-import {getPageAction, searchAction} from "@/app/(app)/spexare/actions.server";
-import {appendFacetParams, toAggregationFilters} from "@/utils/utils";
-import {textFilter} from "@/utils/filter";
-import {track} from "@/utils/umami";
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useInfiniteList } from "@/hooks/use-infinite-list.client";
+import { Facet, Spexare } from "@/gql/schema";
+import { CursorPageInfo, SpexarePage } from "@/types/pagination";
+import { getPageAction, searchAction } from "@/app/(app)/spexare/actions.server";
+import { appendFacetParams, toAggregationFilters } from "@/utils/utils";
+import { textFilter } from "@/utils/filter";
+import { track } from "@/utils/umami";
 
 type UseSpexareSearchArgs = {
-    mode: "filter" | "search";
-    initialSearchQuery: string;
-    facets: Facet[];
-    initialItems: Spexare[];
-    initialPageInfo?: CursorPageInfo;
-    maxItems?: number;
-    initialSelectedFacets?: Record<string, Set<string>>;
+  mode: "filter" | "search";
+  initialSearchQuery: string;
+  facets: Facet[];
+  initialItems: Spexare[];
+  initialPageInfo?: CursorPageInfo;
+  maxItems?: number;
+  initialSelectedFacets?: Record<string, Set<string>>;
 };
 
 /**
@@ -25,182 +25,188 @@ type UseSpexareSearchArgs = {
  * the address; in `filter` mode it filters the list on names and the deceased flag. Typing is debounced.
  */
 export function useSpexareSearch({
-                                     mode,
-                                     initialSearchQuery,
-                                     facets,
-                                     initialItems,
-                                     initialPageInfo,
-                                     maxItems,
-                                     initialSelectedFacets,
-                                 }: UseSpexareSearchArgs) {
-    const router = useRouter();
-    const pathname = usePathname();
-    const [searchValue, setSearchValue] = useState(initialSearchQuery);
-    const [filterQuery, setFilterQuery] = useState(initialSearchQuery);
-    const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
-    const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>(() => initialSelectedFacets ?? {});
-    const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
-    const previousResetKeyRef = useRef<string | null>(null);
-    const skipNextResetRef = useRef(false);
-    const previousInitialSearchQueryRef = useRef(initialSearchQuery);
+  mode,
+  initialSearchQuery,
+  facets,
+  initialItems,
+  initialPageInfo,
+  maxItems,
+  initialSelectedFacets,
+}: UseSpexareSearchArgs) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [searchValue, setSearchValue] = useState(initialSearchQuery);
+  const [filterQuery, setFilterQuery] = useState(initialSearchQuery);
+  const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
+  const [selectedFacets, setSelectedFacets] = useState<Record<string, Set<string>>>(() => initialSelectedFacets ?? {});
+  const [currentFacets, setCurrentFacets] = useState<Facet[]>(facets);
+  const previousResetKeyRef = useRef<string | null>(null);
+  const skipNextResetRef = useRef(false);
+  const previousInitialSearchQueryRef = useRef(initialSearchQuery);
 
-    useEffect(() => {
-        if (previousInitialSearchQueryRef.current !== initialSearchQuery) {
-            previousInitialSearchQueryRef.current = initialSearchQuery;
-            skipNextResetRef.current = true;
-            setSearchValue(initialSearchQuery);
-            setFilterQuery(initialSearchQuery);
-            setSelectedFacets({});
-        }
-    }, [initialSearchQuery]);
+  useEffect(() => {
+    if (previousInitialSearchQueryRef.current !== initialSearchQuery) {
+      previousInitialSearchQueryRef.current = initialSearchQuery;
+      skipNextResetRef.current = true;
+      setSearchValue(initialSearchQuery);
+      setFilterQuery(initialSearchQuery);
+      setSelectedFacets({});
+    }
+  }, [initialSearchQuery]);
 
-    useEffect(() => {
-        if (mode !== "search") {
-            return;
-        }
+  useEffect(() => {
+    if (mode !== "search") {
+      return;
+    }
 
-        const params = new URLSearchParams();
-        if (filterQuery) {
-            params.set("q", filterQuery);
-        }
-        appendFacetParams(params, selectedFacets);
+    const params = new URLSearchParams();
+    if (filterQuery) {
+      params.set("q", filterQuery);
+    }
+    appendFacetParams(params, selectedFacets);
 
-        const query = params.toString();
-        const url = query ? `${pathname}?${query}` : pathname;
+    const query = params.toString();
+    const url = query ? `${pathname}?${query}` : pathname;
 
-        if (`${window.location.pathname}${window.location.search}` !== url) {
-            window.history.replaceState(null, "", url);
-        }
-    }, [filterQuery, selectedFacets, pathname, mode]);
+    if (`${window.location.pathname}${window.location.search}` !== url) {
+      window.history.replaceState(null, "", url);
+    }
+  }, [filterQuery, selectedFacets, pathname, mode]);
 
-    const fetchPage = useCallback(async (args: { after: string | null; pageSize: number }): Promise<SpexarePage> => {
-        const isFirstPage = args.after === null;
+  const fetchPage = useCallback(
+    async (args: { after: string | null; pageSize: number }): Promise<SpexarePage> => {
+      const isFirstPage = args.after === null;
 
-        if (mode === "search") {
-            const aggregationFilters = toAggregationFilters(selectedFacets);
+      if (mode === "search") {
+        const aggregationFilters = toAggregationFilters(selectedFacets);
 
-            const result = await searchAction({
-                q: filterQuery.trim() || "",
-                first: args.pageSize,
-                after: args.after,
-                aggregationFilters,
-            });
-
-            if (isFirstPage && result.facets) {
-                setCurrentFacets(result.facets);
-            }
-
-            return result;
-        }
-
-        const parts: string[] = [];
-
-        const text = textFilter(["firstName", "lastName", "nickName"], filterQuery);
-        if (text) {
-            parts.push(text);
-        }
-
-        if (selectedDeceasedValues.size < 2) {
-            if (selectedDeceasedValues.size === 0) {
-                parts.push(`id:NULL`);
-            } else {
-                const val = selectedDeceasedValues.has("true") ? "TRUE" : "FALSE";
-                parts.push(`deceased:${val}`);
-            }
-        }
-
-        return getPageAction({
-            after: args.after,
-            first: args.pageSize,
-            filter: parts.join(" AND ")
+        const result = await searchAction({
+          q: filterQuery.trim() || "",
+          first: args.pageSize,
+          after: args.after,
+          aggregationFilters,
         });
-    }, [filterQuery, mode, selectedDeceasedValues, selectedFacets]);
 
-    const infinite = useInfiniteList<Spexare>({
-        fetchPageAction: fetchPage,
-        pageSize: 24,
-        rootMargin: "600px",
-        getKeyAction: (n) => n.id,
-        initialItems,
-        initialPageInfo,
-        maxItems,
+        if (isFirstPage && result.facets) {
+          setCurrentFacets(result.facets);
+        }
+
+        return result;
+      }
+
+      const parts: string[] = [];
+
+      const text = textFilter(["firstName", "lastName", "nickName"], filterQuery);
+      if (text) {
+        parts.push(text);
+      }
+
+      if (selectedDeceasedValues.size < 2) {
+        if (selectedDeceasedValues.size === 0) {
+          parts.push(`id:NULL`);
+        } else {
+          const val = selectedDeceasedValues.has("true") ? "TRUE" : "FALSE";
+          parts.push(`deceased:${val}`);
+        }
+      }
+
+      return getPageAction({
+        after: args.after,
+        first: args.pageSize,
+        filter: parts.join(" AND "),
+      });
+    },
+    [filterQuery, mode, selectedDeceasedValues, selectedFacets]
+  );
+
+  const infinite = useInfiniteList<Spexare>({
+    fetchPageAction: fetchPage,
+    pageSize: 24,
+    rootMargin: "600px",
+    getKeyAction: (n) => n.id,
+    initialItems,
+    initialPageInfo,
+    maxItems,
+  });
+
+  const { items, loading, reset } = infinite;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchValue !== filterQuery) {
+        setFilterQuery(searchValue);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchValue, filterQuery]);
+
+  const resetKey = useMemo(() => {
+    const deceasedKey = Array.from(selectedDeceasedValues).sort().join(",");
+    const facetsKey = Object.entries(selectedFacets)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([name, values]) => `${name}:${Array.from(values).sort().join(",")}`)
+      .join("|");
+    return `${filterQuery}__${deceasedKey}__${facetsKey}`;
+  }, [filterQuery, selectedDeceasedValues, selectedFacets]);
+
+  useEffect(() => {
+    if (previousResetKeyRef.current === null) {
+      previousResetKeyRef.current = resetKey;
+      return;
+    }
+    if (skipNextResetRef.current) {
+      skipNextResetRef.current = false;
+      previousResetKeyRef.current = resetKey;
+      return;
+    }
+    if (previousResetKeyRef.current !== resetKey) {
+      previousResetKeyRef.current = resetKey;
+      reset();
+
+      if (mode === "search") {
+        const facetNames = Object.keys(selectedFacets)
+          .filter((name) => selectedFacets[name].size > 0)
+          .sort();
+        track("spexare-search", {
+          text: filterQuery.trim() !== "",
+          facets: facetNames.join(",") || "none",
+        });
+      }
+    }
+  }, [resetKey, reset, mode, selectedFacets, filterQuery]);
+
+  const handleReset = useCallback(() => {
+    startTransition(() => {
+      setSearchValue("");
+      setFilterQuery("");
+      setSelectedDeceasedValues(new Set(["true", "false"]));
+      setSelectedFacets({});
+
+      if (mode === "search") {
+        router.replace(pathname, { scroll: false });
+      }
     });
+  }, [mode, pathname, router]);
 
-    const {items, loading, reset} = infinite;
+  const noResults = !loading && items.length === 0;
+  const hasActiveFacets = Object.values(selectedFacets).some((s) => s.size > 0);
+  const isFiltered =
+    mode === "search"
+      ? filterQuery.trim() !== "" || hasActiveFacets
+      : filterQuery.trim() !== "" || selectedDeceasedValues.size < 2;
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (searchValue !== filterQuery) {
-                setFilterQuery(searchValue);
-            }
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, [searchValue, filterQuery]);
-
-    const resetKey = useMemo(() => {
-        const deceasedKey = Array.from(selectedDeceasedValues).sort().join(",");
-        const facetsKey = Object.entries(selectedFacets)
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([name, values]) => `${name}:${Array.from(values).sort().join(",")}`)
-            .join("|");
-        return `${filterQuery}__${deceasedKey}__${facetsKey}`;
-    }, [filterQuery, selectedDeceasedValues, selectedFacets]);
-
-    useEffect(() => {
-        if (previousResetKeyRef.current === null) {
-            previousResetKeyRef.current = resetKey;
-            return;
-        }
-        if (skipNextResetRef.current) {
-            skipNextResetRef.current = false;
-            previousResetKeyRef.current = resetKey;
-            return;
-        }
-        if (previousResetKeyRef.current !== resetKey) {
-            previousResetKeyRef.current = resetKey;
-            reset();
-
-            if (mode === "search") {
-                const facetNames = Object.keys(selectedFacets).filter((name) => selectedFacets[name].size > 0).sort();
-                track("spexare-search", {
-                    text: filterQuery.trim() !== "",
-                    facets: facetNames.join(",") || "none",
-                });
-            }
-        }
-    }, [resetKey, reset, mode, selectedFacets, filterQuery]);
-
-    const handleReset = useCallback(() => {
-        startTransition(() => {
-            setSearchValue("");
-            setFilterQuery("");
-            setSelectedDeceasedValues(new Set(["true", "false"]));
-            setSelectedFacets({});
-
-            if (mode === "search") {
-                router.replace(pathname, {scroll: false});
-            }
-        });
-    }, [mode, pathname, router]);
-
-    const noResults = !loading && items.length === 0;
-    const hasActiveFacets = Object.values(selectedFacets).some(s => s.size > 0);
-    const isFiltered = mode === "search"
-        ? filterQuery.trim() !== "" || hasActiveFacets
-        : filterQuery.trim() !== "" || selectedDeceasedValues.size < 2;
-
-    return {
-        ...infinite,
-        searchValue,
-        setSearchValue,
-        selectedDeceasedValues,
-        setSelectedDeceasedValues,
-        selectedFacets,
-        setSelectedFacets,
-        currentFacets,
-        handleReset,
-        noResults,
-        isFiltered,
-    };
+  return {
+    ...infinite,
+    searchValue,
+    setSearchValue,
+    selectedDeceasedValues,
+    setSelectedDeceasedValues,
+    selectedFacets,
+    setSelectedFacets,
+    currentFacets,
+    handleReset,
+    noResults,
+    isFiltered,
+  };
 }

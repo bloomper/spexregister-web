@@ -1,34 +1,34 @@
 "use client";
 
-import {ReactNode} from "react";
-import type {EntityType, QueueItem} from "@/components/edit-queue/edit-queue-provider.client";
-import type {EditQueueOptions} from "@/app/(app)/edit-queue/actions.server";
-import {NewsForm} from "@/components/news/news-form.client";
-import {TagForm} from "@/components/tag/tag-form.client";
-import {UserForm} from "@/components/user/user-form.client";
-import {SpexareForm} from "@/components/spexare/spexare-form.client";
-import {getAction as getSpexareAction} from "@/app/(app)/spexare/actions.server";
-import {getAction as getNewsAction} from "@/app/(app)/news/actions.server";
-import {getAction as getTagAction} from "@/app/(app)/tags/actions.server";
-import {getAction as getUserAction} from "@/app/(app)/users/actions.server";
-import {News, Spexare, Tag, User} from "@/gql/schema";
+import { ReactNode } from "react";
+import type { EntityType, QueueItem } from "@/components/edit-queue/edit-queue-provider.client";
+import type { EditQueueOptions } from "@/app/(app)/edit-queue/actions.server";
+import { NewsForm } from "@/components/news/news-form.client";
+import { TagForm } from "@/components/tag/tag-form.client";
+import { UserForm } from "@/components/user/user-form.client";
+import { SpexareForm } from "@/components/spexare/spexare-form.client";
+import { getAction as getSpexareAction } from "@/app/(app)/spexare/actions.server";
+import { getAction as getNewsAction } from "@/app/(app)/news/actions.server";
+import { getAction as getTagAction } from "@/app/(app)/tags/actions.server";
+import { getAction as getUserAction } from "@/app/(app)/users/actions.server";
+import { News, Spexare, Tag, User } from "@/gql/schema";
 
 export const EDIT_QUEUE_FORM_ID = "edit-queue-form";
 
 type RenderArgs = {
-    item: QueueItem;
-    options: EditQueueOptions;
-    onSuccess: (updated?: { id: string }) => void;
-    onError: () => void;
+  item: QueueItem;
+  options: EditQueueOptions;
+  onSuccess: (updated?: { id: string }) => void;
+  onError: () => void;
 };
 
 type RegistryEntry = {
-    needsOptions: boolean;
-    formId: string;
-    labelOf: (item: QueueItem) => string;
-    Form: (props: RenderArgs) => ReactNode;
-    fetchFull?: (id: string) => Promise<{ id: string } | null | undefined>;
-    getById: (id: string) => Promise<{ id: string } | null | undefined>;
+  needsOptions: boolean;
+  formId: string;
+  labelOf: (item: QueueItem) => string;
+  Form: (props: RenderArgs) => ReactNode;
+  fetchFull?: (id: string) => Promise<{ id: string } | null | undefined>;
+  getById: (id: string) => Promise<{ id: string } | null | undefined>;
 };
 
 /**
@@ -36,61 +36,73 @@ type RegistryEntry = {
  * and tags, and how to load the full record.
  */
 export const editQueueRegistry: Record<EntityType, RegistryEntry> = {
-    spexare: {
-        needsOptions: true,
-        formId: "spexare-general-form",
-        fetchFull: (id) => getSpexareAction(id),
-        getById: (id) => getSpexareAction(id),
-        labelOf: (i) => `${(i as Spexare).firstName ?? ""} ${(i as Spexare).lastName ?? ""}`.trim(),
-        Form: ({item, options, onSuccess, onError}) => (
-            <SpexareForm
-                item={item as Spexare}
-                types={options.types}
-                countries={options.countries}
-                tags={options.tags}
-                tasks={options.tasks}
-                taskCategories={options.taskCategories}
-                spex={options.spex}
-                spexCategories={options.spexCategories}
-                onSuccess={onSuccess}
-                onError={onError}
-                embedded
-            />
-        ),
-    },
-    news: {
-        needsOptions: false,
-        formId: EDIT_QUEUE_FORM_ID,
-        getById: (id) => getNewsAction(id),
-        labelOf: (i) => (i as News).subject ?? "",
-        Form: ({item, onSuccess, onError}) => (
-            <NewsForm item={item as News} onSuccess={onSuccess} onError={onError} embedded formId={EDIT_QUEUE_FORM_ID}/>
-        ),
-    },
-    tag: {
-        needsOptions: false,
-        formId: EDIT_QUEUE_FORM_ID,
-        getById: (id) => getTagAction(id),
-        labelOf: (i) => (i as Tag).name ?? "",
-        Form: ({item, onSuccess, onError}) => (
-            <TagForm item={item as Tag} onSuccess={onSuccess} onError={onError} embedded formId={EDIT_QUEUE_FORM_ID}/>
-        ),
-    },
-    user: {
-        needsOptions: true,
-        formId: EDIT_QUEUE_FORM_ID,
-        getById: (id) => getUserAction(id),
-        labelOf: (i) => (i as User).email ?? "",
-        Form: ({item, options, onSuccess, onError}) => (
-            <UserForm
-                item={item as User}
-                authorities={options.authorities}
-                states={options.states}
-                onSuccess={onSuccess}
-                onError={onError}
-                embedded
-                formId={EDIT_QUEUE_FORM_ID}
-            />
-        ),
-    },
+  spexare: {
+    needsOptions: true,
+    formId: "spexare-general-form",
+    fetchFull: (id) => getSpexareAction(id),
+    getById: (id) => getSpexareAction(id),
+    labelOf: (i) => `${(i as Spexare).firstName ?? ""} ${(i as Spexare).lastName ?? ""}`.trim(),
+    Form: ({ item, options, onSuccess, onError }) => (
+      <SpexareForm
+        item={item as Spexare}
+        types={options.types}
+        countries={options.countries}
+        tags={options.tags}
+        tasks={options.tasks}
+        taskCategories={options.taskCategories}
+        spex={options.spex}
+        spexCategories={options.spexCategories}
+        onSuccess={onSuccess}
+        onError={onError}
+        embedded
+      />
+    ),
+  },
+  news: {
+    needsOptions: false,
+    formId: EDIT_QUEUE_FORM_ID,
+    getById: (id) => getNewsAction(id),
+    labelOf: (i) => (i as News).subject ?? "",
+    Form: ({ item, onSuccess, onError }) => (
+      <NewsForm
+        item={item as News}
+        onSuccess={onSuccess}
+        onError={onError}
+        embedded
+        formId={EDIT_QUEUE_FORM_ID}
+      />
+    ),
+  },
+  tag: {
+    needsOptions: false,
+    formId: EDIT_QUEUE_FORM_ID,
+    getById: (id) => getTagAction(id),
+    labelOf: (i) => (i as Tag).name ?? "",
+    Form: ({ item, onSuccess, onError }) => (
+      <TagForm
+        item={item as Tag}
+        onSuccess={onSuccess}
+        onError={onError}
+        embedded
+        formId={EDIT_QUEUE_FORM_ID}
+      />
+    ),
+  },
+  user: {
+    needsOptions: true,
+    formId: EDIT_QUEUE_FORM_ID,
+    getById: (id) => getUserAction(id),
+    labelOf: (i) => (i as User).email ?? "",
+    Form: ({ item, options, onSuccess, onError }) => (
+      <UserForm
+        item={item as User}
+        authorities={options.authorities}
+        states={options.states}
+        onSuccess={onSuccess}
+        onError={onError}
+        embedded
+        formId={EDIT_QUEUE_FORM_ID}
+      />
+    ),
+  },
 };

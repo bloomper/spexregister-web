@@ -1,25 +1,34 @@
-import {describe, expect, it, vi} from "vitest";
-import {render, screen} from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {TaskViewDialog} from "@/components/task/task-view-dialog.client";
+import { TaskViewDialog } from "@/components/task/task-view-dialog.client";
 
-import type {Task} from "@/gql/schema";
+import type { Task } from "@/gql/schema";
 
-const task = {id: "t1", name: "Lighting", category: {id: "c1", name: "Technical"}} as unknown as Task;
+const task = { id: "t1", name: "Lighting", category: { id: "c1", name: "Technical" } } as unknown as Task;
 
 describe("TaskViewDialog", () => {
-    it("renders the task detail and closes", async () => {
-        const onClose = vi.fn();
-        render(<TaskViewDialog selected={task} onClose={onClose}/>);
-        expect(screen.getByText("Lighting")).toBeInTheDocument();
-        // The footer's button; the corner's X, after it, has the same name
-        await userEvent.click(screen.getAllByRole("button", {name: /Common.close/})[0]);
-        expect(onClose).toHaveBeenCalled();
-    });
+  it("renders the task detail and closes", async () => {
+    const onClose = vi.fn();
+    render(
+      <TaskViewDialog
+        selected={task}
+        onClose={onClose}
+      />
+    );
+    expect(screen.getByText("Lighting")).toBeInTheDocument();
+    // The footer's button; the corner's X, after it, has the same name
+    await userEvent.click(screen.getAllByRole("button", { name: /Common.close/ })[0]);
+    expect(onClose).toHaveBeenCalled();
+  });
 
-    it("renders nothing when there is no selection", () => {
-        render(<TaskViewDialog selected={null} onClose={vi.fn()}/>);
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    });
+  it("renders nothing when there is no selection", () => {
+    render(
+      <TaskViewDialog
+        selected={null}
+        onClose={vi.fn()}
+      />
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
 });
-

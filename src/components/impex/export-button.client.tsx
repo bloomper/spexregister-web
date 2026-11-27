@@ -1,32 +1,37 @@
 "use client";
 
-import {useState} from "react";
-import {Download, FileSpreadsheet, FileText, Loader2} from "lucide-react";
-import {Button} from "@bloomper/fgv-web-ui/ui/button";
-import {toast} from "sonner";
-import {ImpexType, JobReference, ReportType} from "@/gql/schema";
+import { useState } from "react";
+import { Download, FileSpreadsheet, FileText, Loader2 } from "lucide-react";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { toast } from "sonner";
+import { ImpexType, JobReference, ReportType } from "@/gql/schema";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@bloomper/fgv-web-ui/ui/dropdown-menu";
-import {useJobTracker} from "@/hooks/use-job-tracker.client";
-import {useTranslations} from "next-intl";
-import {track} from "@/utils/umami";
+import { useJobTracker } from "@/hooks/use-job-tracker.client";
+import { useTranslations } from "next-intl";
+import { track } from "@/utils/umami";
 
 type ExportAction = (ids: string[] | null, filter: string | null, type: ImpexType) => Promise<JobReference>;
-type ExportActionWithReportType = (ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType) => Promise<JobReference>;
+type ExportActionWithReportType = (
+  ids: string[] | null,
+  filter: string | null,
+  type: ImpexType,
+  reportType: ReportType
+) => Promise<JobReference>;
 
 interface ExportButtonProps {
-    exportAction: ExportAction | ExportActionWithReportType;
-    selectedIds?: string[];
-    filterQuery?: string;
-    getFilterQuery?: () => string | null;
-    requiresReportType?: boolean;
+  exportAction: ExportAction | ExportActionWithReportType;
+  selectedIds?: string[];
+  filterQuery?: string;
+  getFilterQuery?: () => string | null;
+  requiresReportType?: boolean;
 }
 
 /**
@@ -34,91 +39,108 @@ interface ExportButtonProps {
  * `requiresReportType` is set.
  */
 export function ExportButton({
-                                 exportAction,
-                                 selectedIds = [],
-                                 filterQuery,
-                                 getFilterQuery,
-                                 requiresReportType = false
-                             }: ExportButtonProps) {
-    const t = useTranslations();
-    const [loading, setLoading] = useState(false);
-    const [activeJobId, setActiveJobId] = useState<string | null>(null);
+  exportAction,
+  selectedIds = [],
+  filterQuery,
+  getFilterQuery,
+  requiresReportType = false,
+}: ExportButtonProps) {
+  const t = useTranslations();
+  const [loading, setLoading] = useState(false);
+  const [activeJobId, setActiveJobId] = useState<string | null>(null);
 
-    useJobTracker(activeJobId, () => setActiveJobId(null));
+  useJobTracker(activeJobId, () => setActiveJobId(null));
 
-    const handleExport = async (type: ImpexType, reportType?: ReportType) => {
-        setLoading(true);
-        try {
-            const ids = selectedIds.length > 0 ? selectedIds : null;
-            const filter = getFilterQuery?.() ?? filterQuery ?? null;
+  const handleExport = async (type: ImpexType, reportType?: ReportType) => {
+    setLoading(true);
+    try {
+      const ids = selectedIds.length > 0 ? selectedIds : null;
+      const filter = getFilterQuery?.() ?? filterQuery ?? null;
 
-            let result: JobReference;
+      let result: JobReference;
 
-            if (requiresReportType && reportType) {
-                result = await (exportAction as ExportActionWithReportType)(ids, filter, type, reportType);
-            } else {
-                result = await (exportAction as ExportAction)(ids, filter, type);
-            }
+      if (requiresReportType && reportType) {
+        result = await (exportAction as ExportActionWithReportType)(ids, filter, type, reportType);
+      } else {
+        result = await (exportAction as ExportAction)(ids, filter, type);
+      }
 
-            setActiveJobId(result.id);
-            track("export", {
-                format: type,
-                scope: ids ? "selection" : filter ? "filter" : "all",
-                ...(reportType && {report: reportType}),
-            });
-            toast.info(t("Impex.exportStarted"));
-        } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            toast.error(t("Impex.exportFailed"), {description: message});
-        } finally {
-            setLoading(false);
+      setActiveJobId(result.id);
+      track("export", {
+        format: type,
+        scope: ids ? "selection" : filter ? "filter" : "all",
+        ...(reportType && { report: reportType }),
+      });
+      toast.info(t("Impex.exportStarted"));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(t("Impex.exportFailed"), { description: message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const label = `${t("Impex.export")}${selectedIds.length > 0 ? ` (${selectedIds.length})` : ""}`;
+  const standardTypes = Object.values(ImpexType).filter((v) => v !== ImpexType.Pdf);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8"
+            disabled={loading}
+          />
         }
-    };
+      >
+        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+        {label}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="w-64"
+      >
+        <p className="text-muted-foreground px-2 py-1.5 text-xs">
+          {selectedIds.length > 0
+            ? t("Impex.exportScopeSelected", { count: selectedIds.length })
+            : t("Impex.exportScopeAll")}
+        </p>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>{t("Impex.selectFormat")}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
 
-    const label = `${t("Impex.export")}${selectedIds.length > 0 ? ` (${selectedIds.length})` : ""}`;
-    const standardTypes = Object.values(ImpexType).filter(v => v !== ImpexType.Pdf);
+          {standardTypes.map((type) => (
+            <DropdownMenuItem
+              key={type}
+              onClick={() => handleExport(type)}
+            >
+              <FileSpreadsheet className="mr-2 h-4 w-4" />
+              {t(`Impex.types.${type}`)}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
 
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="outline" size="sm" className="h-8" disabled={loading}/>}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Download className="mr-2 h-4 w-4"/>}
-                {label}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64">
-                <p className="px-2 py-1.5 text-xs text-muted-foreground">
-                    {selectedIds.length > 0
-                        ? t("Impex.exportScopeSelected", {count: selectedIds.length})
-                        : t("Impex.exportScopeAll")}
-                </p>
-                <DropdownMenuSeparator/>
-                <DropdownMenuGroup>
-                    <DropdownMenuLabel>{t("Impex.selectFormat")}</DropdownMenuLabel>
-                    <DropdownMenuSeparator/>
-
-                    {standardTypes.map((type) => (
-                        <DropdownMenuItem key={type} onClick={() => handleExport(type)}>
-                            <FileSpreadsheet className="mr-2 h-4 w-4"/>
-                            {t(`Impex.types.${type}`)}
-                        </DropdownMenuItem>
-                    ))}
-                </DropdownMenuGroup>
-
-                {requiresReportType && (
-                    <>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuGroup>
-                            <DropdownMenuLabel>{t("Impex.types.PDF")}</DropdownMenuLabel>
-                            {Object.values(ReportType).map((reportType) => (
-                                <DropdownMenuItem key={reportType}
-                                                  onClick={() => handleExport(ImpexType.Pdf, reportType)}>
-                                    <FileText className="mr-2 h-4 w-4"/>
-                                    {t(`Impex.reportTypes.${reportType}`)}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuGroup>
-                    </>
-                )}
-            </DropdownMenuContent>
-        </DropdownMenu>
-    );
+        {requiresReportType && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>{t("Impex.types.PDF")}</DropdownMenuLabel>
+              {Object.values(ReportType).map((reportType) => (
+                <DropdownMenuItem
+                  key={reportType}
+                  onClick={() => handleExport(ImpexType.Pdf, reportType)}
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  {t(`Impex.reportTypes.${reportType}`)}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }

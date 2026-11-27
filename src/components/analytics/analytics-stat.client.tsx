@@ -1,38 +1,57 @@
 "use client";
 
 import Link from "next/link";
-import {LucideIcon} from "lucide-react";
-import {useLocale} from "next-intl";
-import {Card, CardContent} from "@bloomper/fgv-web-ui/ui/card";
-import {cn} from "@/utils/utils";
+import { LucideIcon } from "lucide-react";
+import { useLocale } from "next-intl";
+import { Card, CardContent } from "@bloomper/fgv-web-ui/ui/card";
+import { cn } from "@/utils/utils";
 
 interface AnalyticsStatProps {
-    label: string;
-    value: number | string;
-    hint?: string;
-    icon?: LucideIcon;
-    href?: string | null;
-    className?: string;
+  label: string;
+  value: number | string;
+  hint?: string;
+  icon?: LucideIcon;
+  href?: string | null;
+  className?: string;
 }
 
-export function AnalyticsStat({label, value, hint, icon: Icon, href, className}: AnalyticsStatProps) {
-    const locale = useLocale();
-    const body = (
-        <Card className={cn("h-full py-0 transition-colors sm:py-6", href && "hover:bg-accent/50", className)}>
-            <CardContent className="flex items-start justify-between gap-3 p-4">
-                <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className="text-xs text-muted-foreground wrap-break-word sm:truncate"
-                          title={label}>{label}</span>
-                    <span className="text-3xl font-bold tabular-nums leading-tight">
-                        {typeof value === "number" ? value.toLocaleString(locale) : value}
-                    </span>
-                    {hint && <span className="text-xs sm:text-[11px] text-muted-foreground wrap-break-word sm:truncate"
-                                   title={hint}>{hint}</span>}
-                </div>
-                {Icon && <Icon className="size-4 shrink-0 opacity-60"/>}
-            </CardContent>
-        </Card>
-    );
+export function AnalyticsStat({ label, value, hint, icon: Icon, href, className }: AnalyticsStatProps) {
+  const locale = useLocale();
+  const body = (
+    <Card className={cn("h-full py-0 transition-colors sm:py-6", href && "hover:bg-accent/50", className)}>
+      <CardContent className="flex items-start justify-between gap-3 p-4">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <span
+            className="text-muted-foreground text-xs wrap-break-word sm:truncate"
+            title={label}
+          >
+            {label}
+          </span>
+          <span className="text-3xl leading-tight font-bold tabular-nums">
+            {typeof value === "number" ? value.toLocaleString(locale) : value}
+          </span>
+          {hint && (
+            <span
+              className="text-muted-foreground text-xs wrap-break-word sm:truncate sm:text-[11px]"
+              title={hint}
+            >
+              {hint}
+            </span>
+          )}
+        </div>
+        {Icon && <Icon className="size-4 shrink-0 opacity-60" />}
+      </CardContent>
+    </Card>
+  );
 
-    return href ? <Link href={href} className="block h-full">{body}</Link> : body;
+  return href ? (
+    <Link
+      href={href}
+      className="block h-full"
+    >
+      {body}
+    </Link>
+  ) : (
+    body
+  );
 }

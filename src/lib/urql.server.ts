@@ -1,67 +1,65 @@
 import "server-only";
 
-import {cacheExchange, createClient, fetchExchange} from "@urql/core";
-import {registerUrql} from "@urql/next/rsc";
-import {getAccessToken} from "@/utils/auth.server";
-import {authExchange} from "@urql/exchange-auth";
-import {getLocale} from "next-intl/server";
+import { cacheExchange, createClient, fetchExchange } from "@urql/core";
+import { registerUrql } from "@urql/next/rsc";
+import { getAccessToken } from "@/utils/auth.server";
+import { authExchange } from "@urql/exchange-auth";
+import { getLocale } from "next-intl/server";
 
 /**
  * An urql client per request that sends the signed-in user's access token and their language, and never uses GET.
  */
 const makeClient = () => {
-    return createClient({
-        url: process.env.API_GRAPHQL_ENDPOINT || "",
-        exchanges: [
-            cacheExchange,
-            authExchange(async (utils) => {
-                let token: string | null = null;
+  return createClient({
+    url: process.env.API_GRAPHQL_ENDPOINT || "",
+    exchanges: [
+      cacheExchange,
+      authExchange(async (utils) => {
+        let token: string | null = null;
 
-                return {
-                    addAuthToOperation(operation) {
-                        if (!token) {
-                            return operation;
-                        }
+        return {
+          addAuthToOperation(operation) {
+            if (!token) {
+              return operation;
+            }
 
-                        return utils.appendHeaders(operation, {
-                            Authorization: `Bearer ${token}`,
-                        });
-                    },
-
-                    didAuthError(error) {
-                        return error.graphQLErrors.some(
-                            (e) =>
-                                e.extensions?.code === "UNAUTHENTICATED" ||
-                                e.extensions?.code === "UNAUTHORIZED"
-                        );
-                    },
-
-                    async refreshAuth() {
-                        token = await getAccessToken();
-                    },
-
-                    willAuthError() {
-                        return !token;
-                    },
-                };
-            }),
-            fetchExchange
-        ],
-        async fetch(input, init) {
-            const locale = await getLocale();
-            const headers = new Headers(init?.headers);
-            headers.set("Accept-Language", locale);
-
-            return fetch(input, {
-                ...init,
-                headers,
+            return utils.appendHeaders(operation, {
+              Authorization: `Bearer ${token}`,
             });
-        },
-        preferGetMethod: false,
-    });
+          },
+
+          didAuthError(error) {
+            return error.graphQLErrors.some(
+              (e) => e.extensions?.code === "UNAUTHENTICATED" || e.extensions?.code === "UNAUTHORIZED"
+            );
+          },
+
+          async refreshAuth() {
+            token = await getAccessToken();
+          },
+
+          willAuthError() {
+            return !token;
+          },
+        };
+      }),
+      fetchExchange,
+    ],
+    async fetch(input, init) {
+      const locale = await getLocale();
+      const headers = new Headers(init?.headers);
+      headers.set("Accept-Language", locale);
+
+      return fetch(input, {
+        ...init,
+        headers,
+      });
+    },
+    preferGetMethod: false,
+  });
 };
 
 /**
  * The urql client of the current request.
  */
-export const {getClient} = registerUrql(makeClient);
+export const { getClient } = registerUrql(makeClient);

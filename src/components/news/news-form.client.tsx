@@ -1,133 +1,172 @@
 "use client";
 
-import {Controller, useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {NewsFormInput, NewsFormOutput, newsFormSchema} from "@/lib/news/schema";
-import {News} from "@/gql/schema";
-import {useTranslations} from "next-intl";
-import {use, useTransition} from "react";
-import {io} from "next/cache";
-import {toast} from "sonner";
-import {createAction, updateAction} from "@/app/(app)/news/actions.server";
-import {Button} from "@bloomper/fgv-web-ui/ui/button";
-import {Input} from "@bloomper/fgv-web-ui/ui/input";
-import {DatePicker} from "@/components/date-picker.client";
-import {Textarea} from "@bloomper/fgv-web-ui/ui/textarea";
-import {SheetClose, SheetFooter} from "@bloomper/fgv-web-ui/ui/sheet";
-import {Field, FieldContent, FieldError, FieldLabel} from "@bloomper/fgv-web-ui/ui/field";
-import {today, translateError} from "@/utils/utils";
-import {ScrollArea} from "@bloomper/fgv-web-ui/ui/scroll-area";
-import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
-import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { NewsFormInput, NewsFormOutput, newsFormSchema } from "@/lib/news/schema";
+import { News } from "@/gql/schema";
+import { useTranslations } from "next-intl";
+import { use, useTransition } from "react";
+import { io } from "next/cache";
+import { toast } from "sonner";
+import { createAction, updateAction } from "@/app/(app)/news/actions.server";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Input } from "@bloomper/fgv-web-ui/ui/input";
+import { DatePicker } from "@/components/date-picker.client";
+import { Textarea } from "@bloomper/fgv-web-ui/ui/textarea";
+import { SheetClose, SheetFooter } from "@bloomper/fgv-web-ui/ui/sheet";
+import { Field, FieldContent, FieldError, FieldLabel } from "@bloomper/fgv-web-ui/ui/field";
+import { today, translateError } from "@/utils/utils";
+import { ScrollArea } from "@bloomper/fgv-web-ui/ui/scroll-area";
+import { EditFormShell } from "@/components/edit-queue/edit-form-shell.client";
+import { useReportEditQueueFormState } from "@/components/edit-queue/edit-queue-form-state.client";
 
 interface NewsFormProps {
-    item?: News;
-    onSuccess: (updated?: { id: string }) => void;
-    onError?: () => void;
-    embedded?: boolean;
-    formId?: string;
+  item?: News;
+  onSuccess: (updated?: { id: string }) => void;
+  onError?: () => void;
+  embedded?: boolean;
+  formId?: string;
 }
 
-export function NewsForm({item, onSuccess, onError, embedded, formId}: NewsFormProps) {
-    use(io());
-    const t = useTranslations();
-    const [isPending, startTransition] = useTransition();
+export function NewsForm({ item, onSuccess, onError, embedded, formId }: NewsFormProps) {
+  use(io());
+  const t = useTranslations();
+  const [isPending, startTransition] = useTransition();
 
-    const {
-        register,
-        control,
-        handleSubmit,
-        formState: {errors, isDirty},
-    } = useForm<NewsFormInput, unknown, NewsFormOutput>({
-        resolver: zodResolver(newsFormSchema),
-        defaultValues: {
-            subject: item?.subject ?? "",
-            text: item?.text ?? "",
-            visibleFrom: item?.visibleFrom ?? today(),
-            visibleTo: item?.visibleTo ?? "",
-        },
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, isDirty },
+  } = useForm<NewsFormInput, unknown, NewsFormOutput>({
+    resolver: zodResolver(newsFormSchema),
+    defaultValues: {
+      subject: item?.subject ?? "",
+      text: item?.text ?? "",
+      visibleFrom: item?.visibleFrom ?? today(),
+      visibleTo: item?.visibleTo ?? "",
+    },
+  });
+
+  useReportEditQueueFormState({ isDirty });
+
+  const onSubmit = handleSubmit((data) => {
+    startTransition(async () => {
+      try {
+        if (item) {
+          await updateAction(item.id, data);
+          toast.success(t("Common.updateSuccess"));
+        } else {
+          await createAction(data);
+          toast.success(t("Common.createSuccess"));
+        }
+        const updated = item ? { ...item, ...data } : undefined;
+        onSuccess(updated);
+      } catch (error) {
+        void error;
+        toast.error(t("Common.errorOccurred"));
+        onError?.();
+      }
     });
+  });
 
-    useReportEditQueueFormState({isDirty});
+  return (
+    <EditFormShell
+      embedded={embedded}
+      title={item ? t("News.editHeading") : t("News.createHeading")}
+    >
+      <form
+        id={formId}
+        onSubmit={onSubmit}
+        className="flex min-h-0 flex-1 flex-col overflow-hidden"
+      >
+        <ScrollArea className="min-h-0 flex-1 border-t">
+          <div className="space-y-4 px-6 py-6 pb-12">
+            <Field data-invalid={!!errors.subject}>
+              <FieldLabel>{t("News.subject")}</FieldLabel>
+              <FieldContent>
+                <Input {...register("subject")} />
+                <FieldError errors={[translateError(t, errors.subject)]} />
+              </FieldContent>
+            </Field>
 
-    const onSubmit = handleSubmit((data) => {
-        startTransition(async () => {
-            try {
-                if (item) {
-                    await updateAction(item.id, data);
-                    toast.success(t("Common.updateSuccess"));
-                } else {
-                    await createAction(data);
-                    toast.success(t("Common.createSuccess"));
-                }
-                const updated = item ? {...item, ...data} : undefined;
-                onSuccess(updated);
-            } catch (error) {
-                void error;
-                toast.error(t("Common.errorOccurred"));
-                onError?.();
-            }
-        });
-    });
+            <Field data-invalid={!!errors.text}>
+              <FieldLabel>{t("News.text")}</FieldLabel>
+              <FieldContent>
+                <Textarea
+                  {...register("text")}
+                  rows={15}
+                />
+                <FieldError errors={[translateError(t, errors.text)]} />
+              </FieldContent>
+            </Field>
 
-    return (
-        <EditFormShell embedded={embedded} title={item ? t("News.editHeading") : t("News.createHeading")}>
-            <form id={formId} onSubmit={onSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                <ScrollArea className="flex-1 border-t min-h-0">
-                    <div className="space-y-4 px-6 py-6 pb-12">
-                        <Field data-invalid={!!errors.subject}>
-                            <FieldLabel>{t("News.subject")}</FieldLabel>
-                            <FieldContent>
-                                <Input {...register("subject")} />
-                                <FieldError errors={[translateError(t, errors.subject)]}/>
-                            </FieldContent>
-                        </Field>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field data-invalid={!!errors.visibleFrom}>
+                <FieldLabel htmlFor="news-visible-from">{t("News.visibleFrom")}</FieldLabel>
+                <FieldContent>
+                  <Controller
+                    control={control}
+                    name="visibleFrom"
+                    render={({ field }) => (
+                      <DatePicker
+                        id="news-visible-from"
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        aria-invalid={!!errors.visibleFrom}
+                        className="w-full"
+                      />
+                    )}
+                  />
+                  <FieldError errors={[translateError(t, errors.visibleFrom)]} />
+                </FieldContent>
+              </Field>
 
-                        <Field data-invalid={!!errors.text}>
-                            <FieldLabel>{t("News.text")}</FieldLabel>
-                            <FieldContent>
-                                <Textarea {...register("text")} rows={15}/>
-                                <FieldError errors={[translateError(t, errors.text)]}/>
-                            </FieldContent>
-                        </Field>
+              <Field data-invalid={!!errors.visibleTo}>
+                <FieldLabel htmlFor="news-visible-to">{t("News.visibleTo")}</FieldLabel>
+                <FieldContent>
+                  <Controller
+                    control={control}
+                    name="visibleTo"
+                    render={({ field }) => (
+                      <DatePicker
+                        id="news-visible-to"
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        aria-invalid={!!errors.visibleTo}
+                        className="w-full"
+                      />
+                    )}
+                  />
+                  <FieldError errors={[translateError(t, errors.visibleTo)]} />
+                </FieldContent>
+              </Field>
+            </div>
+          </div>
+        </ScrollArea>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Field data-invalid={!!errors.visibleFrom}>
-                                <FieldLabel htmlFor="news-visible-from">{t("News.visibleFrom")}</FieldLabel>
-                                <FieldContent>
-                                    <Controller control={control} name="visibleFrom" render={({field}) => (
-                                        <DatePicker id="news-visible-from" value={field.value ?? ""} onChange={field.onChange}
-                                                    aria-invalid={!!errors.visibleFrom} className="w-full"/>
-                                    )}/>
-                                    <FieldError errors={[translateError(t, errors.visibleFrom)]}/>
-                                </FieldContent>
-                            </Field>
-
-                            <Field data-invalid={!!errors.visibleTo}>
-                                <FieldLabel htmlFor="news-visible-to">{t("News.visibleTo")}</FieldLabel>
-                                <FieldContent>
-                                    <Controller control={control} name="visibleTo" render={({field}) => (
-                                        <DatePicker id="news-visible-to" value={field.value ?? ""} onChange={field.onChange}
-                                                    aria-invalid={!!errors.visibleTo} className="w-full"/>
-                                    )}/>
-                                    <FieldError errors={[translateError(t, errors.visibleTo)]}/>
-                                </FieldContent>
-                            </Field>
-                        </div>
-                    </div>
-                </ScrollArea>
-
-                {!embedded && (
-                    <SheetFooter className="p-6 pt-4 border-t bg-muted/30 shrink-0 mt-auto">
-                        <SheetClose render={<Button type="button" variant="outline" disabled={isPending}/>}>
-                            {item ? t("Common.close") : t("Common.cancel")}
-                        </SheetClose>
-                        <Button type="submit" disabled={isPending}>
-                            {isPending ? t("Common.saving") : t("Common.save")}
-                        </Button>
-                    </SheetFooter>
-                )}
-            </form>
-        </EditFormShell>
-    );
+        {!embedded && (
+          <SheetFooter className="bg-muted/30 mt-auto shrink-0 border-t p-6 pt-4">
+            <SheetClose
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isPending}
+                />
+              }
+            >
+              {item ? t("Common.close") : t("Common.cancel")}
+            </SheetClose>
+            <Button
+              type="submit"
+              disabled={isPending}
+            >
+              {isPending ? t("Common.saving") : t("Common.save")}
+            </Button>
+          </SheetFooter>
+        )}
+      </form>
+    </EditFormShell>
+  );
 }

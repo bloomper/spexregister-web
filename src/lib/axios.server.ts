@@ -1,45 +1,45 @@
 import "server-only";
 
 import axios from "axios";
-import {getAccessToken} from "@/utils/auth.server";
-import {getLocale} from "next-intl/server";
+import { getAccessToken } from "@/utils/auth.server";
+import { getLocale } from "next-intl/server";
 
 /**
  * An axios instance for the REST API that sends the signed-in user's access token and their language.
  */
 const instance = axios.create({
-    timeout: 10000,
-    headers: {
-        "Content-Type": "application/json",
-    },
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 instance.interceptors.request.use(
-    async (config) => {
-        try {
-            const accessToken = await getAccessToken();
+  async (config) => {
+    try {
+      const accessToken = await getAccessToken();
 
-            if (accessToken) {
-                config.headers.Authorization = `Bearer ${accessToken}`;
-            }
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
 
-            config.headers["Accept-Language"] = await getLocale();
-        } catch (error) {
-            console.warn("Axios server: Could not retrieve session for auth header", error);
-        }
-
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+      config.headers["Accept-Language"] = await getLocale();
+    } catch (error) {
+      console.warn("Axios server: Could not retrieve session for auth header", error);
     }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 instance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        return Promise.reject(error);
-    }
+  (response) => response,
+  async (error) => {
+    return Promise.reject(error);
+  }
 );
 
 export default instance;

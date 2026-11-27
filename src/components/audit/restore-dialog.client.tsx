@@ -1,166 +1,181 @@
 "use client";
 
-import {useState, useTransition} from "react";
-import {useRouter} from "next/navigation";
-import {toast} from "sonner";
-import {useTranslations} from "next-intl";
-import {History} from "lucide-react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useTranslations } from "next-intl";
+import { History } from "lucide-react";
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@bloomper/fgv-web-ui/ui/alert-dialog";
-import {Button} from "@bloomper/fgv-web-ui/ui/button";
-import {Label} from "@bloomper/fgv-web-ui/ui/label";
-import {Switch} from "@bloomper/fgv-web-ui/ui/switch";
-import {AuditedType, RestorePreview, RestoreResult} from "@/gql/schema";
-import {track} from "@/utils/umami";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Label } from "@bloomper/fgv-web-ui/ui/label";
+import { Switch } from "@bloomper/fgv-web-ui/ui/switch";
+import { AuditedType, RestorePreview, RestoreResult } from "@/gql/schema";
+import { track } from "@/utils/umami";
 
 const CASCADING_TYPES: AuditedType[] = [AuditedType.Spexare, AuditedType.Activity, AuditedType.TaskActivity];
 
 export type RestoreActions = {
-    preview: (type: AuditedType, id: string, revision: number, cascade: boolean) => Promise<RestorePreview>;
-    restore: (type: AuditedType, id: string, revision: number, cascade: boolean, reason?: string) => Promise<RestoreResult>;
+  preview: (type: AuditedType, id: string, revision: number, cascade: boolean) => Promise<RestorePreview>;
+  restore: (
+    type: AuditedType,
+    id: string,
+    revision: number,
+    cascade: boolean,
+    reason?: string
+  ) => Promise<RestoreResult>;
 };
 
 interface RestoreDialogProps {
-    id: string;
-    type: AuditedType;
-    revision: number;
-    actions: RestoreActions;
-    onRestored?: () => void;
+  id: string;
+  type: AuditedType;
+  revision: number;
+  actions: RestoreActions;
+  onRestored?: () => void;
 }
 
 /**
  * Restores a record to a revision after showing what would change, with a reason for the change log. A spexare, an
  * activity and a task activity can be restored with the records that belong to them.
  */
-export function RestoreDialog({id, type, revision, actions, onRestored}: RestoreDialogProps) {
-    const t = useTranslations();
-    const router = useRouter();
-    const [open, setOpen] = useState(false);
-    const [cascade, setCascade] = useState(false);
-    const [preview, setPreview] = useState<RestorePreview | null>(null);
-    const [isPending, startTransition] = useTransition();
+export function RestoreDialog({ id, type, revision, actions, onRestored }: RestoreDialogProps) {
+  const t = useTranslations();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [cascade, setCascade] = useState(false);
+  const [preview, setPreview] = useState<RestorePreview | null>(null);
+  const [isPending, startTransition] = useTransition();
 
-    const supportsCascade = CASCADING_TYPES.includes(type);
+  const supportsCascade = CASCADING_TYPES.includes(type);
 
-    const loadPreview = (nextCascade: boolean) => {
-        setPreview(null);
-        startTransition(async () => {
-            try {
-                setPreview(await actions.preview(type, id, revision, nextCascade));
-            } catch (e) {
-                console.error("Failed to load restore preview", e);
-                toast.error(t("Audit.restoreFailed"));
-            }
-        });
-    };
+  const loadPreview = (nextCascade: boolean) => {
+    setPreview(null);
+    startTransition(async () => {
+      try {
+        setPreview(await actions.preview(type, id, revision, nextCascade));
+      } catch (e) {
+        console.error("Failed to load restore preview", e);
+        toast.error(t("Audit.restoreFailed"));
+      }
+    });
+  };
 
-    const handleOpenChange = (next: boolean) => {
-        setOpen(next);
-        if (next) {
-            loadPreview(cascade);
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (next) {
+      loadPreview(cascade);
+    }
+  };
+
+  const handleCascadeChange = (next: boolean) => {
+    setCascade(next);
+    loadPreview(next);
+  };
+
+  const handleConfirm = () => {
+    startTransition(async () => {
+      try {
+        const reason = cascade ? t("Audit.restoreReasonCascade", { revision }) : t("Audit.restoreReason", { revision });
+
+        await actions.restore(type, id, revision, cascade, reason);
+        track("restore", { type, cascade });
+        toast.success(t("Audit.restored"));
+        setOpen(false);
+        onRestored?.();
+        router.refresh();
+      } catch (e) {
+        console.error("Failed to restore revision", e);
+        toast.error(t("Audit.restoreFailed"));
+      }
+    });
+  };
+
+  const counts = preview
+    ? preview.entries.reduce(
+        (acc, entry) => {
+          if (entry.action === "UPDATE") acc.updated += 1;
+          if (entry.action === "CREATE") acc.created += 1;
+          if (entry.action === "DELETE") acc.deleted += 1;
+          return acc;
+        },
+        { updated: 0, created: 0, deleted: 0 }
+      )
+    : null;
+
+  return (
+    <AlertDialog
+      open={open}
+      onOpenChange={handleOpenChange}
+    >
+      <AlertDialogTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-5 px-1 text-xs sm:text-[10px]"
+          />
         }
-    };
+      >
+        <History className="h-3 w-3" />
+        {t("Audit.restore")}
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("Audit.restoreTitle")}</AlertDialogTitle>
+          <AlertDialogDescription>{t("Audit.restoreDescription", { revision })}</AlertDialogDescription>
+        </AlertDialogHeader>
 
-    const handleCascadeChange = (next: boolean) => {
-        setCascade(next);
-        loadPreview(next);
-    };
+        {supportsCascade && (
+          <div className="flex items-start gap-3 rounded-md border p-3">
+            <Switch
+              id="cascade"
+              checked={cascade}
+              onCheckedChange={handleCascadeChange}
+              disabled={isPending}
+            />
+            <div className="space-y-0.5">
+              <Label htmlFor="cascade">{t("Audit.cascade")}</Label>
+              <p className="text-muted-foreground text-xs">{t("Audit.cascadeDescription")}</p>
+            </div>
+          </div>
+        )}
 
-    const handleConfirm = () => {
-        startTransition(async () => {
-            try {
-                const reason = cascade
-                    ? t("Audit.restoreReasonCascade", {revision})
-                    : t("Audit.restoreReason", {revision});
+        <div className="text-sm">
+          {isPending && !preview && <p className="text-muted-foreground">{t("Audit.loadingPreview")}</p>}
+          {preview && counts && (
+            <>
+              <p className="font-medium">{t("Audit.impact", counts)}</p>
+              {preview.entries.length === 0 && <p className="text-muted-foreground">{t("Audit.noChanges")}</p>}
+              {preview.warnings.length > 0 && (
+                <ul className="text-muted-foreground mt-2 list-disc space-y-0.5 pl-4 text-xs">
+                  {[...new Set(preview.warnings.map((w) => w.code))].map((code) => (
+                    <li key={code}>{t(`Audit.warnings.${code}`)}</li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
+        </div>
 
-                await actions.restore(type, id, revision, cascade, reason);
-                track("restore", {type, cascade});
-                toast.success(t("Audit.restored"));
-                setOpen(false);
-                onRestored?.();
-                router.refresh();
-            } catch (e) {
-                console.error("Failed to restore revision", e);
-                toast.error(t("Audit.restoreFailed"));
-            }
-        });
-    };
-
-    const counts = preview
-        ? preview.entries.reduce(
-            (acc, entry) => {
-                if (entry.action === "UPDATE") acc.updated += 1;
-                if (entry.action === "CREATE") acc.created += 1;
-                if (entry.action === "DELETE") acc.deleted += 1;
-                return acc;
-            },
-            {updated: 0, created: 0, deleted: 0},
-        )
-        : null;
-
-    return (
-        <AlertDialog open={open} onOpenChange={handleOpenChange}>
-            <AlertDialogTrigger
-                render={<Button variant="ghost" size="sm" className="h-5 px-1 text-xs sm:text-[10px]"/>}>
-                <History className="h-3 w-3"/>
-                {t("Audit.restore")}
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>{t("Audit.restoreTitle")}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        {t("Audit.restoreDescription", {revision})}
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-
-                {supportsCascade && (
-                    <div className="flex items-start gap-3 rounded-md border p-3">
-                        <Switch id="cascade" checked={cascade} onCheckedChange={handleCascadeChange}
-                                disabled={isPending}/>
-                        <div className="space-y-0.5">
-                            <Label htmlFor="cascade">{t("Audit.cascade")}</Label>
-                            <p className="text-xs text-muted-foreground">{t("Audit.cascadeDescription")}</p>
-                        </div>
-                    </div>
-                )}
-
-                <div className="text-sm">
-                    {isPending && !preview && <p className="text-muted-foreground">{t("Audit.loadingPreview")}</p>}
-                    {preview && counts && (
-                        <>
-                            <p className="font-medium">
-                                {t("Audit.impact", counts)}
-                            </p>
-                            {preview.entries.length === 0 && (
-                                <p className="text-muted-foreground">{t("Audit.noChanges")}</p>
-                            )}
-                            {preview.warnings.length > 0 && (
-                                <ul className="mt-2 list-disc space-y-0.5 pl-4 text-xs text-muted-foreground">
-                                    {[...new Set(preview.warnings.map((w) => w.code))].map((code) => (
-                                        <li key={code}>{t(`Audit.warnings.${code}`)}</li>
-                                    ))}
-                                </ul>
-                            )}
-                        </>
-                    )}
-                </div>
-
-                <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isPending}>{t("Common.cancel")}</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleConfirm} disabled={isPending || !preview}>
-                        {t("Audit.confirm")}
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
-    );
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isPending}>{t("Common.cancel")}</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleConfirm}
+            disabled={isPending || !preview}
+          >
+            {t("Audit.confirm")}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 }

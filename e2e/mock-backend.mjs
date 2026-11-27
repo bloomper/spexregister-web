@@ -1,100 +1,120 @@
-import {createServer} from "node:http";
-import {randomUUID} from "node:crypto";
-import {exportJWK, generateKeyPair, SignJWT} from "jose";
+import { createServer } from "node:http";
+import { randomUUID } from "node:crypto";
+import { exportJWK, generateKeyPair, SignJWT } from "jose";
 
 const PORT = Number(process.env.MOCK_PORT || 4000);
 
 const pageInfo = (hasNextPage = false, endCursor = null) => ({
-    hasNextPage,
-    hasPreviousPage: false,
-    startCursor: null,
-    endCursor,
+  hasNextPage,
+  hasPreviousPage: false,
+  startCursor: null,
+  endCursor,
 });
 
-const edges = (nodes) => nodes.map((node, i) => ({cursor: `c${i}`, node}));
+const edges = (nodes) => nodes.map((node, i) => ({ cursor: `c${i}`, node }));
 
 const blankSpexare = {
-    firstName: "", lastName: "", nickName: null, socialSecurityNumber: null,
-    deceased: false, published: false, graduation: null, comment: null, imageUrl: null, partner: null,
+  firstName: "",
+  lastName: "",
+  nickName: null,
+  socialSecurityNumber: null,
+  deceased: false,
+  published: false,
+  graduation: null,
+  comment: null,
+  imageUrl: null,
+  partner: null,
 };
 
 const namedSpexare = [
-    {...blankSpexare, id: "1", firstName: "Ada", lastName: "Lovelace", nickName: "Countess", published: true},
-    {...blankSpexare, id: "2", firstName: "Alan", lastName: "Turing", deceased: true, published: true},
-    {...blankSpexare, id: "3", firstName: "Grace", lastName: "Hopper", nickName: "Amazing Grace", published: true},
+  { ...blankSpexare, id: "1", firstName: "Ada", lastName: "Lovelace", nickName: "Countess", published: true },
+  { ...blankSpexare, id: "2", firstName: "Alan", lastName: "Turing", deceased: true, published: true },
+  { ...blankSpexare, id: "3", firstName: "Grace", lastName: "Hopper", nickName: "Amazing Grace", published: true },
 ];
 
-const extraSpexare = Array.from({length: 27}, (_, k) => {
-    const i = k + 3;
-    return {...blankSpexare, id: String(i + 1), firstName: "Testperson", lastName: String(i), published: true};
+const extraSpexare = Array.from({ length: 27 }, (_, k) => {
+  const i = k + 3;
+  return { ...blankSpexare, id: String(i + 1), firstName: "Testperson", lastName: String(i), published: true };
 });
 
 export const spexareList = [...namedSpexare, ...extraSpexare];
 
-const audit = {createdAt: "2024-01-01T00:00:00Z", createdBy: "seed", lastModifiedAt: null, lastModifiedBy: null};
+const audit = { createdAt: "2024-01-01T00:00:00Z", createdBy: "seed", lastModifiedAt: null, lastModifiedBy: null };
 
 // Ada alone gets a career, with a deliberate 2017-2019 gap so the overview strip has
 // both filled and empty years to render.
 const careerActivities = [
-    {year: "2015", title: "Bacchus", category: "Chalmersspexet", task: "Skådespelare", role: "Greve"},
-    {year: "2016", title: "Caesar", category: "Chalmersspexet", task: "Skådespelare", role: "Baron"},
-    {year: "2020", title: "Dante", category: "Vasaspexet", task: "Orkester", role: null},
-].map(({year, title, category, task, role}) => ({
-    id: `act-${year}`,
-    spexActivity: {
-        id: `spexact-${year}`,
-        ...audit,
-        spex: {
-            id: `spex-${year}`, year, title, revival: false, posterUrl: null, parent: null,
-            category: {id: "cat-1", name: category, firstYear: "1948", logoUrl: null, ...audit},
-            ...audit,
-        },
-    },
-    taskActivities: [{
-        id: `taskact-${year}`,
-        task: {id: `task-${year}`, name: task, category: null, ...audit},
-        actors: role ? [{id: `actor-${year}`, role, vocal: null, ...audit}] : [],
-        ...audit,
-    }],
+  { year: "2015", title: "Bacchus", category: "Chalmersspexet", task: "Skådespelare", role: "Greve" },
+  { year: "2016", title: "Caesar", category: "Chalmersspexet", task: "Skådespelare", role: "Baron" },
+  { year: "2020", title: "Dante", category: "Vasaspexet", task: "Orkester", role: null },
+].map(({ year, title, category, task, role }) => ({
+  id: `act-${year}`,
+  spexActivity: {
+    id: `spexact-${year}`,
     ...audit,
+    spex: {
+      id: `spex-${year}`,
+      year,
+      title,
+      revival: false,
+      posterUrl: null,
+      parent: null,
+      category: { id: "cat-1", name: category, firstYear: "1948", logoUrl: null, ...audit },
+      ...audit,
+    },
+  },
+  taskActivities: [
+    {
+      id: `taskact-${year}`,
+      task: { id: `task-${year}`, name: task, category: null, ...audit },
+      actors: role ? [{ id: `actor-${year}`, role, vocal: null, ...audit }] : [],
+      ...audit,
+    },
+  ],
+  ...audit,
 }));
 
 const careerMemberships = [
-    {id: "mem-2015", year: "2015", type: {id: "mtype-1", label: "Fullvärdig", type: "MEMBERSHIP"}, ...audit},
-    {id: "mem-2020", year: "2020", type: {id: "mtype-2", label: "Stödjande", type: "MEMBERSHIP"}, ...audit},
+  { id: "mem-2015", year: "2015", type: { id: "mtype-1", label: "Fullvärdig", type: "MEMBERSHIP" }, ...audit },
+  { id: "mem-2020", year: "2020", type: { id: "mtype-2", label: "Stödjande", type: "MEMBERSHIP" }, ...audit },
 ];
 
 // Grace gets the awkward shape: a 25-year span with long gaps, and two spex in the same
 // year, so the strip has to cope with both in the width of a dialog.
 const longActivities = [
-    {year: "1991", title: "Urspexet", category: "Bobspexet"},
-    {year: "2006", title: "Bob", category: "Bobspexet"},
-    {year: "2014", title: "Vera I", category: "Veraspexet"},
-    {year: "2015", title: "Vera II", category: "Veraspexet"},
-    {year: "2015", title: "Bob igen", category: "Bobspexet"},
-].map(({year, title, category}, index) => ({
-    id: `long-act-${index}`,
-    spexActivity: {
-        id: `long-spexact-${index}`,
-        ...audit,
-        spex: {
-            id: `long-spex-${index}`, year, title, revival: false, posterUrl: null, parent: null,
-            category: {id: `long-cat-${category}`, name: category, firstYear: "1948", logoUrl: null, ...audit},
-            ...audit,
-        },
-    },
-    taskActivities: [],
+  { year: "1991", title: "Urspexet", category: "Bobspexet" },
+  { year: "2006", title: "Bob", category: "Bobspexet" },
+  { year: "2014", title: "Vera I", category: "Veraspexet" },
+  { year: "2015", title: "Vera II", category: "Veraspexet" },
+  { year: "2015", title: "Bob igen", category: "Bobspexet" },
+].map(({ year, title, category }, index) => ({
+  id: `long-act-${index}`,
+  spexActivity: {
+    id: `long-spexact-${index}`,
     ...audit,
+    spex: {
+      id: `long-spex-${index}`,
+      year,
+      title,
+      revival: false,
+      posterUrl: null,
+      parent: null,
+      category: { id: `long-cat-${category}`, name: category, firstYear: "1948", logoUrl: null, ...audit },
+      ...audit,
+    },
+  },
+  taskActivities: [],
+  ...audit,
 }));
 
 const longMemberships = [
-    {id: "long-mem", year: "1991", type: {id: "mtype-3", label: "FGV", type: "MEMBERSHIP"}, ...audit},
+  { id: "long-mem", year: "1991", type: { id: "mtype-3", label: "FGV", type: "MEMBERSHIP" }, ...audit },
 ];
 
 const typeList = [
-    {id: "mtype-1", label: "Fullvärdig", type: "MEMBERSHIP"},
-    {id: "mtype-2", label: "Stödjande", type: "MEMBERSHIP"},
-    {id: "vocal-1", label: "Sopran", type: "VOCAL"},
+  { id: "mtype-1", label: "Fullvärdig", type: "MEMBERSHIP" },
+  { id: "mtype-2", label: "Stödjande", type: "MEMBERSHIP" },
+  { id: "vocal-1", label: "Sopran", type: "VOCAL" },
 ];
 
 // Relations are kept per spexare and seeded on first use, so edits made through the UI are
@@ -103,870 +123,1020 @@ let relations = new Map();
 let nextId = 1;
 const newId = (prefix) => `${prefix}-new-${nextId++}`;
 
-const seedRelations = (id) => structuredClone({
+const seedRelations = (id) =>
+  structuredClone({
     activities: id === "1" ? careerActivities : id === "3" ? longActivities : [],
     memberships: id === "1" ? careerMemberships : id === "3" ? longMemberships : [],
     taggings: [],
-});
+  });
 
 function relationsOf(spexareId) {
-    const id = String(spexareId);
-    if (!relations.has(id)) {
-        relations.set(id, seedRelations(id));
-    }
-    return relations.get(id);
+  const id = String(spexareId);
+  if (!relations.has(id)) {
+    relations.set(id, seedRelations(id));
+  }
+  return relations.get(id);
 }
 
 const activityOf = (spexareId, activityId) =>
-    relationsOf(spexareId).activities.find((activity) => activity.id === String(activityId));
+  relationsOf(spexareId).activities.find((activity) => activity.id === String(activityId));
 
 const spexareFull = (s) => {
-    const {activities, memberships, taggings} = relationsOf(s.id);
-    return {
-        ...s,
-        activities, memberships, taggings,
-        addresses: [], consents: [], toggles: [],
-        ...audit,
-    };
+  const { activities, memberships, taggings } = relationsOf(s.id);
+  return {
+    ...s,
+    activities,
+    memberships,
+    taggings,
+    addresses: [],
+    consents: [],
+    toggles: [],
+    ...audit,
+  };
 };
 
 const newsSeed = [
-    {id: "1", subject: "Premiär 2026", text: "Biljetterna släpps snart.", visibleFrom: "2026-01-01"},
-    {id: "2", subject: "Nya lokaler", text: "Vi har flyttat.", visibleFrom: "2026-02-01"},
+  { id: "1", subject: "Premiär 2026", text: "Biljetterna släpps snart.", visibleFrom: "2026-01-01" },
+  { id: "2", subject: "Nya lokaler", text: "Vi har flyttat.", visibleFrom: "2026-02-01" },
 ];
 let newsList = structuredClone(newsSeed);
 
 const totals = {
-    spexareCount: 3, spexareCountHistory: [{label: "2024", count: 2}, {label: "2025", count: 3}],
-    userCount: 1, userCountHistory: [{label: "2025", count: 1}],
-    spexCount: 4, spexCountHistory: [{label: "2025", count: 4}],
-    spexRevivalCount: 1, spexRevivalCountHistory: [{label: "2025", count: 1}],
-    taskCount: 5, taskCountByCategory: [{key: "1", label: "Scen", count: 5, facet: null}],
+  spexareCount: 3,
+  spexareCountHistory: [
+    { label: "2024", count: 2 },
+    { label: "2025", count: 3 },
+  ],
+  userCount: 1,
+  userCountHistory: [{ label: "2025", count: 1 }],
+  spexCount: 4,
+  spexCountHistory: [{ label: "2025", count: 4 }],
+  spexRevivalCount: 1,
+  spexRevivalCountHistory: [{ label: "2025", count: 1 }],
+  taskCount: 5,
+  taskCountByCategory: [{ key: "1", label: "Scen", count: 5, facet: null }],
 };
 
-const bucket = (key, label, count, facet = null) => ({key, label, count, facet});
+const bucket = (key, label, count, facet = null) => ({ key, label, count, facet });
 
 const analytics = {
-    totals,
-    participation: {
-        bySpexYear: [bucket("2015", "2015", 2, "spexYears"), bucket("2024", "2024", 3, "spexYears")],
-        bySpexCategory: [bucket("chalmersspexet", "Chalmersspexet", 3, "spexCategoryNames")],
-        topSpex: [bucket("bacchus", "Bacchus", 2, "spexTitles")],
-        byTaskCategory: [bucket("scen", "Scen", 2, "taskCategoryNames")],
-        topTask: [bucket("skadespelare", "Skådespelare", 2, "taskNames")],
-        byVocal: [bucket("sopran", "Sopran", 1, "actorVocals")],
-    },
-    demographics: {
-        byCountry: [bucket("se", "Sverige", 3, "countries")],
-        byAddressType: [bucket("home", "Hem", 3, "addressTypes")],
-        byMembership: [bucket("ordinary:2024", "Ordinarie: 2024", 2, "memberships")],
-        byTag: [bucket("grundare", "Grundare", 1, "tags")],
-        byToggle: [bucket("newsletter:true", "Nyhetsbrev: Ja", 2, "toggles")],
-        byStatus: [bucket("false", "Levande", 3, "deceased")],
-        consentCompletion: [{key: "gdpr", label: "GDPR", granted: 2, denied: 0, missing: 1}],
-    },
-    lifecycle: {
-        newcomersByYear: [bucket("2015", "2015", 2, "debutYears"), bucket("2024", "2024", 1, "debutYears")],
-        lastActiveByYear: [bucket("2024", "2024", 3, "lastActiveYears")],
-        byEngagement: [bucket("1", "1", 2, "spexCounts"), bucket("2", "2", 1, "spexCounts")],
-        byDormancy: [bucket("2024..", "Aktiv", 3, "lastActiveYears"), bucket("noActivity", "Aldrig aktiv", 0, "quality")],
-        oneTimers: 2, returning: 1, veterans: 0, neverActive: 0,
-    },
-    dataQuality: {
-        total: 497,
-        issues: [
-            bucket("noImage", "Saknar bild", 254, "quality"),
-            bucket("noSocialSecurityNumber", "Saknar personnummer", 250, "quality"),
-            bucket("noMembership", "Saknar medlemskap", 219, "quality"),
-            bucket("noEmailAddress", "Saknar e-postadress", 210, "quality"),
-            bucket("noPhone", "Saknar telefonnummer", 118, "quality"),
-            bucket("noActivity", "Saknar aktivitet", 93, "quality"),
-            bucket("noAddress", "Saknar adress", 65, "quality"),
-            bucket("noTag", "Saknar tagg", 9, "quality"),
-            bucket("noConsent", "Saknar samtycke", 0, "quality"),
-        ],
-        complete: 243,
-    },
-    operations: {
-        usersByState: [bucket("ACTIVE", "Aktiv", 1)],
-        usersWithoutSpexare: 1,
-        spexareWithoutUser: 2,
-        revisionsByMonth: [bucket("2026-01", "2026-01", 4)],
-        revisionsBySource: [bucket("WEB", "Webb", 4)],
-        topEditors: [bucket("ada", "ada", 4)],
-    },
+  totals,
+  participation: {
+    bySpexYear: [bucket("2015", "2015", 2, "spexYears"), bucket("2024", "2024", 3, "spexYears")],
+    bySpexCategory: [bucket("chalmersspexet", "Chalmersspexet", 3, "spexCategoryNames")],
+    topSpex: [bucket("bacchus", "Bacchus", 2, "spexTitles")],
+    byTaskCategory: [bucket("scen", "Scen", 2, "taskCategoryNames")],
+    topTask: [bucket("skadespelare", "Skådespelare", 2, "taskNames")],
+    byVocal: [bucket("sopran", "Sopran", 1, "actorVocals")],
+  },
+  demographics: {
+    byCountry: [bucket("se", "Sverige", 3, "countries")],
+    byAddressType: [bucket("home", "Hem", 3, "addressTypes")],
+    byMembership: [bucket("ordinary:2024", "Ordinarie: 2024", 2, "memberships")],
+    byTag: [bucket("grundare", "Grundare", 1, "tags")],
+    byToggle: [bucket("newsletter:true", "Nyhetsbrev: Ja", 2, "toggles")],
+    byStatus: [bucket("false", "Levande", 3, "deceased")],
+    consentCompletion: [{ key: "gdpr", label: "GDPR", granted: 2, denied: 0, missing: 1 }],
+  },
+  lifecycle: {
+    newcomersByYear: [bucket("2015", "2015", 2, "debutYears"), bucket("2024", "2024", 1, "debutYears")],
+    lastActiveByYear: [bucket("2024", "2024", 3, "lastActiveYears")],
+    byEngagement: [bucket("1", "1", 2, "spexCounts"), bucket("2", "2", 1, "spexCounts")],
+    byDormancy: [bucket("2024..", "Aktiv", 3, "lastActiveYears"), bucket("noActivity", "Aldrig aktiv", 0, "quality")],
+    oneTimers: 2,
+    returning: 1,
+    veterans: 0,
+    neverActive: 0,
+  },
+  dataQuality: {
+    total: 497,
+    issues: [
+      bucket("noImage", "Saknar bild", 254, "quality"),
+      bucket("noSocialSecurityNumber", "Saknar personnummer", 250, "quality"),
+      bucket("noMembership", "Saknar medlemskap", 219, "quality"),
+      bucket("noEmailAddress", "Saknar e-postadress", 210, "quality"),
+      bucket("noPhone", "Saknar telefonnummer", 118, "quality"),
+      bucket("noActivity", "Saknar aktivitet", 93, "quality"),
+      bucket("noAddress", "Saknar adress", 65, "quality"),
+      bucket("noTag", "Saknar tagg", 9, "quality"),
+      bucket("noConsent", "Saknar samtycke", 0, "quality"),
+    ],
+    complete: 243,
+  },
+  operations: {
+    usersByState: [bucket("ACTIVE", "Aktiv", 1)],
+    usersWithoutSpexare: 1,
+    spexareWithoutUser: 2,
+    revisionsByMonth: [bucket("2026-01", "2026-01", 4)],
+    revisionsBySource: [bucket("WEB", "Webb", 4)],
+    topEditors: [bucket("ada", "ada", 4)],
+  },
 };
 
 // entityId has to resolve in the matching entity list below: the explorer's detail dialogs fetch
 // the real entity by that id, and a dangling one leaves the dialog silently empty.
-const graphNode = (type, entityId, label, sublabel = null, imageUrl = null, revival = false) =>
-    ({id: `${type}:${entityId}`, type, label, sublabel, imageUrl, revival, entityId: String(entityId)});
+const graphNode = (type, entityId, label, sublabel = null, imageUrl = null, revival = false) => ({
+  id: `${type}:${entityId}`,
+  type,
+  label,
+  sublabel,
+  imageUrl,
+  revival,
+  entityId: String(entityId),
+});
 
 const graphNodes = [
-    graphNode("SPEXARE", "1", "Ada Lovelace", "Countess", "/api/spexare/1/image"),
-    graphNode("SPEXARE", "3", "Grace Hopper", "Amazing Grace"),
-    graphNode("SPEX", "1", "Bacchus", "2015"),
-    graphNode("SPEX", "2", "Bacchus", "1998", null, true),
-    graphNode("TASK", "1", "Skådespelare"),
-    graphNode("TAG", "1", "Hedersmedlem"),
+  graphNode("SPEXARE", "1", "Ada Lovelace", "Countess", "/api/spexare/1/image"),
+  graphNode("SPEXARE", "3", "Grace Hopper", "Amazing Grace"),
+  graphNode("SPEX", "1", "Bacchus", "2015"),
+  graphNode("SPEX", "2", "Bacchus", "1998", null, true),
+  graphNode("TASK", "1", "Skådespelare"),
+  graphNode("TAG", "1", "Hedersmedlem"),
 ];
 
 const maintenanceJobs = [
-    {job: "SEARCH_INDEX", schedule: "0 0 */4 * * ?", running: false, lastStartedAt: null, lastFinishedAt: null, lastSucceeded: null},
-    {job: "USER_SYNC", schedule: "0 */5 * * * ?", running: false, lastStartedAt: null, lastFinishedAt: null, lastSucceeded: null},
-    {job: "NEWS_PUBLISHING", schedule: "5 0 0 * * ?", running: false, lastStartedAt: null, lastFinishedAt: null, lastSucceeded: null},
-    {job: "JOB_CLEANUP", schedule: "0 0 3 * * ?", running: false, lastStartedAt: null, lastFinishedAt: null, lastSucceeded: null},
-    {job: "ADDRESS_GEOCODING", schedule: "0 20 * * * ?", running: true, lastStartedAt: "2026-11-01T10:20:00Z", lastFinishedAt: null, lastSucceeded: null},
+  {
+    job: "SEARCH_INDEX",
+    schedule: "0 0 */4 * * ?",
+    running: false,
+    lastStartedAt: null,
+    lastFinishedAt: null,
+    lastSucceeded: null,
+  },
+  {
+    job: "USER_SYNC",
+    schedule: "0 */5 * * * ?",
+    running: false,
+    lastStartedAt: null,
+    lastFinishedAt: null,
+    lastSucceeded: null,
+  },
+  {
+    job: "NEWS_PUBLISHING",
+    schedule: "5 0 0 * * ?",
+    running: false,
+    lastStartedAt: null,
+    lastFinishedAt: null,
+    lastSucceeded: null,
+  },
+  {
+    job: "JOB_CLEANUP",
+    schedule: "0 0 3 * * ?",
+    running: false,
+    lastStartedAt: null,
+    lastFinishedAt: null,
+    lastSucceeded: null,
+  },
+  {
+    job: "ADDRESS_GEOCODING",
+    schedule: "0 20 * * * ?",
+    running: true,
+    lastStartedAt: "2026-11-01T10:20:00Z",
+    lastFinishedAt: null,
+    lastSucceeded: null,
+  },
 ];
 
 const graphNodeById = Object.fromEntries(graphNodes.map((n) => [n.id, n]));
 
 const graphGroups = {
-    "SPEXARE:1": [
-        {type: "PARTICIPATION", nodes: [graphNodeById["SPEX:1"]]},
-        {type: "FUNCTION", nodes: [graphNodeById["TASK:1"]]},
-        {type: "TAG", nodes: [graphNodeById["TAG:1"]]},
-        {type: "PARTNER", nodes: [graphNodeById["SPEXARE:3"]]},
-    ],
-    "SPEX:1": [
-        {type: "PARTICIPATION", nodes: [graphNodeById["SPEXARE:1"]]},
-        {type: "REVIVAL_OF", nodes: [graphNodeById["SPEX:2"]]},
-    ],
-    "TAG:1": [
-        {type: "TAG", nodes: [graphNodeById["SPEXARE:1"], graphNodeById["SPEXARE:3"]]},
-    ],
+  "SPEXARE:1": [
+    { type: "PARTICIPATION", nodes: [graphNodeById["SPEX:1"]] },
+    { type: "FUNCTION", nodes: [graphNodeById["TASK:1"]] },
+    { type: "TAG", nodes: [graphNodeById["TAG:1"]] },
+    { type: "PARTNER", nodes: [graphNodeById["SPEXARE:3"]] },
+  ],
+  "SPEX:1": [
+    { type: "PARTICIPATION", nodes: [graphNodeById["SPEXARE:1"]] },
+    { type: "REVIVAL_OF", nodes: [graphNodeById["SPEX:2"]] },
+  ],
+  "TAG:1": [{ type: "TAG", nodes: [graphNodeById["SPEXARE:1"], graphNodeById["SPEXARE:3"]] }],
 };
 
 const nameHaystack = (s) => [s.firstName, s.lastName, s.nickName].filter(Boolean).join(" ").toLowerCase();
 
 function spexarePaged(variables) {
-    const filter = String(variables?.filter ?? "");
-    const m = filter.match(/firstName:\*([^*]+)\*/);
-    const term = m ? m[1].toLowerCase() : "";
-    // Every whitespace-separated token has to land somewhere in the name fields, rather than
-    // the whole term having to sit inside a single one. A full name like "Grace Hopper" spans
-    // two fields, and the real backend fuzzy-matches it across all of them.
-    const tokens = term.split(/\s+/).filter(Boolean);
-    const matched = tokens.length
-        ? spexareList.filter((s) => tokens.every((token) => nameHaystack(s).includes(token)))
-        : spexareList;
+  const filter = String(variables?.filter ?? "");
+  const m = filter.match(/firstName:\*([^*]+)\*/);
+  const term = m ? m[1].toLowerCase() : "";
+  // Every whitespace-separated token has to land somewhere in the name fields, rather than
+  // the whole term having to sit inside a single one. A full name like "Grace Hopper" spans
+  // two fields, and the real backend fuzzy-matches it across all of them.
+  const tokens = term.split(/\s+/).filter(Boolean);
+  const matched = tokens.length
+    ? spexareList.filter((s) => tokens.every((token) => nameHaystack(s).includes(token)))
+    : spexareList;
 
-    const sortField = variables?.sort?.[0] ?? "firstName";
-    const descending = String(variables?.direction ?? "ASC").toUpperCase() === "DESC";
-    const sorted = [...matched].sort((a, b) =>
-        String(a[sortField] ?? "").localeCompare(String(b[sortField] ?? ""), "sv"));
-    if (descending) {
-        sorted.reverse();
-    }
+  const sortField = variables?.sort?.[0] ?? "firstName";
+  const descending = String(variables?.direction ?? "ASC").toUpperCase() === "DESC";
+  const sorted = [...matched].sort((a, b) =>
+    String(a[sortField] ?? "").localeCompare(String(b[sortField] ?? ""), "sv")
+  );
+  if (descending) {
+    sorted.reverse();
+  }
 
-    const start = variables?.after ? Number(variables.after) : 0;
-    const first = Number(variables?.first ?? matched.length);
-    const slice = sorted.slice(start, start + first);
-    const end = start + slice.length;
-    const pageEdges = slice.map((node, i) => ({cursor: `c${start + i}`, node}));
-    return {
-        spexarePaged: {
-            edges: pageEdges,
-            pageInfo: pageInfo(end < matched.length, String(end)),
-            totalCount: matched.length,
-        },
-    };
+  const start = variables?.after ? Number(variables.after) : 0;
+  const first = Number(variables?.first ?? matched.length);
+  const slice = sorted.slice(start, start + first);
+  const end = start + slice.length;
+  const pageEdges = slice.map((node, i) => ({ cursor: `c${start + i}`, node }));
+  return {
+    spexarePaged: {
+      edges: pageEdges,
+      pageInfo: pageInfo(end < matched.length, String(end)),
+      totalCount: matched.length,
+    },
+  };
 }
 
 const paged = (field, items) => ({
-    [field]: {edges: edges(items), pageInfo: pageInfo(false, null), totalCount: items.length},
+  [field]: { edges: edges(items), pageInfo: pageInfo(false, null), totalCount: items.length },
 });
 
 const single = (field, items, id) => {
-    const found = items.find((item) => item.id === String(id));
+  const found = items.find((item) => item.id === String(id));
 
-    return {[field]: found ? withAudit(found) : null};
+  return { [field]: found ? withAudit(found) : null };
 };
 
 const spexCategoryList = [
-    {id: "1", name: "Chalmersspexet", logoUrl: null, firstYear: 1948},
-    {id: "2", name: "Veraspexet", logoUrl: null, firstYear: 2002},
+  { id: "1", name: "Chalmersspexet", logoUrl: null, firstYear: 1948 },
+  { id: "2", name: "Veraspexet", logoUrl: null, firstYear: 2002 },
 ];
 const spexList = [
-    {
-        id: "1",
-        year: 1996,
-        title: "Nobel",
-        posterUrl: null,
-        revival: false,
-        revivals: [],
-        category: {id: "1", name: "Chalmersspexet"}
-    },
-    {
-        id: "2",
-        year: 2018,
-        title: "Ada Lovelace",
-        posterUrl: null,
-        revival: false,
-        revivals: [],
-        category: {id: "2", name: "Veraspexet"}
-    },
+  {
+    id: "1",
+    year: 1996,
+    title: "Nobel",
+    posterUrl: null,
+    revival: false,
+    revivals: [],
+    category: { id: "1", name: "Chalmersspexet" },
+  },
+  {
+    id: "2",
+    year: 2018,
+    title: "Ada Lovelace",
+    posterUrl: null,
+    revival: false,
+    revivals: [],
+    category: { id: "2", name: "Veraspexet" },
+  },
 ];
 // Nobel has characters in Spexipedia, one of them retired; Ada Lovelace has none, so its roles are typed in.
 const characterList = [
-    {id: "char-1", name: "Alfred Nobel", position: 1, retired: false, spexId: "1"},
-    {id: "char-2", name: "Bertha von Suttner", position: 2, retired: false, spexId: "1"},
-    {id: "char-3", name: "Struken roll", position: 3, retired: true, spexId: "1"},
+  { id: "char-1", name: "Alfred Nobel", position: 1, retired: false, spexId: "1" },
+  { id: "char-2", name: "Bertha von Suttner", position: 2, retired: false, spexId: "1" },
+  { id: "char-3", name: "Struken roll", position: 3, retired: true, spexId: "1" },
 ];
 const taskCategoryList = [
-    {id: "1", name: "Ensemble", actorPresent: true},
-    {id: "2", name: "Kommitté", actorPresent: false},
+  { id: "1", name: "Ensemble", actorPresent: true },
+  { id: "2", name: "Kommitté", actorPresent: false },
 ];
 const taskSeed = [
-    {id: "1", name: "Ensemblist", category: {id: "1", name: "Ensemble", actorPresent: true}},
-    {id: "2", name: "Scenmästare", category: {id: "2", name: "Kommitté", actorPresent: false}},
+  { id: "1", name: "Ensemblist", category: { id: "1", name: "Ensemble", actorPresent: true } },
+  { id: "2", name: "Scenmästare", category: { id: "2", name: "Kommitté", actorPresent: false } },
 ];
 let taskList = structuredClone(taskSeed);
 const tagSeed = [
-    {id: "1", name: "Hedersmedlem"},
-    {id: "2", name: "Grundare"},
+  { id: "1", name: "Hedersmedlem" },
+  { id: "2", name: "Grundare" },
 ];
 let tagList = structuredClone(tagSeed);
 
 const spexShape = (spex) => {
-    const category = spexCategoryList.find((c) => c.id === spex.category?.id);
-    return {
-        id: spex.id, year: String(spex.year), title: spex.title, revival: spex.revival,
-        posterUrl: null, parent: null,
-        category: category ? {...category, firstYear: String(category.firstYear), ...audit} : null,
-        ...audit,
-    };
+  const category = spexCategoryList.find((c) => c.id === spex.category?.id);
+  return {
+    id: spex.id,
+    year: String(spex.year),
+    title: spex.title,
+    revival: spex.revival,
+    posterUrl: null,
+    parent: null,
+    category: category ? { ...category, firstYear: String(category.firstYear), ...audit } : null,
+    ...audit,
+  };
 };
 
-const taskShape = (task) => ({...task, category: task.category ? withAudit(task.category) : null, ...audit});
+const taskShape = (task) => ({ ...task, category: task.category ? withAudit(task.category) : null, ...audit });
 
 // One plain edit and one restore that spanned a spexare and one of its addresses, which between
 // them exercise every part of the change log: origin, co-changes and navigation.
 const revisionFeed = [
-    {
-        revision: 3, modifiedAt: "2026-09-18T14:02:00Z", modifiedBy: "anna@example.com",
-        types: ["SPEXARE", "ADDRESS"], source: "RESTORE", operation: "restore",
-        comment: "Återställd från version 1",
-    },
-    {
-        revision: 2, modifiedAt: "2026-09-17T09:15:00Z", modifiedBy: "admin@example.com",
-        types: ["TAG"], source: "WEB", operation: "tagUpdate", comment: null,
-    },
+  {
+    revision: 3,
+    modifiedAt: "2026-09-18T14:02:00Z",
+    modifiedBy: "anna@example.com",
+    types: ["SPEXARE", "ADDRESS"],
+    source: "RESTORE",
+    operation: "restore",
+    comment: "Återställd från version 1",
+  },
+  {
+    revision: 2,
+    modifiedAt: "2026-09-17T09:15:00Z",
+    modifiedBy: "admin@example.com",
+    types: ["TAG"],
+    source: "WEB",
+    operation: "tagUpdate",
+    comment: null,
+  },
 ];
 
-const spexareTarget = {type: "SPEXARE", id: 1, label: "Ada Lovelace"};
+const spexareTarget = { type: "SPEXARE", id: 1, label: "Ada Lovelace" };
 
 const revisionDetails = {
-    3: {
-        ...revisionFeed[0],
-        entities: [
-            {
-                type: "SPEXARE", entityId: 1, entityLabel: "Ada Lovelace", revisionType: "MOD",
-                changes: [{
-                    field: "nickName", oldValue: "Countess", newValue: "The Countess",
-                    binary: false, type: "SPEXARE", entityId: 1,
-                }],
-                target: spexareTarget,
-            },
-            {
-                type: "ADDRESS", entityId: 12, entityLabel: "Storgatan 1", revisionType: "MOD",
-                changes: [{
-                    field: "city", oldValue: "Göteborg", newValue: "Mölndal",
-                    binary: false, type: "ADDRESS", entityId: 12,
-                }],
-                target: spexareTarget,
-            },
+  3: {
+    ...revisionFeed[0],
+    entities: [
+      {
+        type: "SPEXARE",
+        entityId: 1,
+        entityLabel: "Ada Lovelace",
+        revisionType: "MOD",
+        changes: [
+          {
+            field: "nickName",
+            oldValue: "Countess",
+            newValue: "The Countess",
+            binary: false,
+            type: "SPEXARE",
+            entityId: 1,
+          },
         ],
-    },
-    2: {
-        ...revisionFeed[1],
-        entities: [
-            {
-                type: "TAG", entityId: 1, entityLabel: "Hedersmedlem", revisionType: "MOD",
-                changes: [{
-                    field: "name", oldValue: "Hedersledamot", newValue: "Hedersmedlem",
-                    binary: false, type: "TAG", entityId: 1,
-                }],
-                target: {type: "TAG", id: 1, label: "Hedersmedlem"},
-            },
+        target: spexareTarget,
+      },
+      {
+        type: "ADDRESS",
+        entityId: 12,
+        entityLabel: "Storgatan 1",
+        revisionType: "MOD",
+        changes: [
+          {
+            field: "city",
+            oldValue: "Göteborg",
+            newValue: "Mölndal",
+            binary: false,
+            type: "ADDRESS",
+            entityId: 12,
+          },
         ],
-    },
+        target: spexareTarget,
+      },
+    ],
+  },
+  2: {
+    ...revisionFeed[1],
+    entities: [
+      {
+        type: "TAG",
+        entityId: 1,
+        entityLabel: "Hedersmedlem",
+        revisionType: "MOD",
+        changes: [
+          {
+            field: "name",
+            oldValue: "Hedersledamot",
+            newValue: "Hedersmedlem",
+            binary: false,
+            type: "TAG",
+            entityId: 1,
+          },
+        ],
+        target: { type: "TAG", id: 1, label: "Hedersmedlem" },
+      },
+    ],
+  },
 };
 
 function matchesFeedFilter(entry, variables) {
-    const {type, modifiedBy, sources, from, to} = variables ?? {};
-    const day = entry.modifiedAt.slice(0, 10);
+  const { type, modifiedBy, sources, from, to } = variables ?? {};
+  const day = entry.modifiedAt.slice(0, 10);
 
-    if (type && !entry.types.includes(type)) {
-        return false;
-    }
-    if (modifiedBy?.length && !modifiedBy.includes(entry.modifiedBy)) {
-        return false;
-    }
-    if (sources?.length && !sources.includes(entry.source)) {
-        return false;
-    }
+  if (type && !entry.types.includes(type)) {
+    return false;
+  }
+  if (modifiedBy?.length && !modifiedBy.includes(entry.modifiedBy)) {
+    return false;
+  }
+  if (sources?.length && !sources.includes(entry.source)) {
+    return false;
+  }
 
-    return !(from && day < from) && !(to && day > to);
+  return !(from && day < from) && !(to && day > to);
 }
 
 function applyTagUpdate(input) {
-    const id = String(input?.id ?? "");
-    const existing = tagList.find((tag) => tag.id === id);
-    if (existing) {
-        existing.name = input?.name ?? existing.name;
-        return existing;
-    }
-    const created = {id: id || "new-tag", name: input?.name ?? ""};
-    return created;
+  const id = String(input?.id ?? "");
+  const existing = tagList.find((tag) => tag.id === id);
+  if (existing) {
+    existing.name = input?.name ?? existing.name;
+    return existing;
+  }
+  const created = { id: id || "new-tag", name: input?.name ?? "" };
+  return created;
 }
 
 const userList = [
-    {
-        id: "1",
-        externalId: "ext-1",
-        email: "admin@example.com",
-        authorities: [{id: "1", label: "ADMIN"}],
-        state: {id: "1", label: "ACTIVE"},
-        spexare: null
-    },
-    {
-        id: "2",
-        externalId: "ext-2",
-        email: "redaktor@example.com",
-        authorities: [{id: "2", label: "EDITOR"}],
-        state: {id: "1", label: "ACTIVE"},
-        spexare: null
-    },
+  {
+    id: "1",
+    externalId: "ext-1",
+    email: "admin@example.com",
+    authorities: [{ id: "1", label: "ADMIN" }],
+    state: { id: "1", label: "ACTIVE" },
+    spexare: null,
+  },
+  {
+    id: "2",
+    externalId: "ext-2",
+    email: "redaktor@example.com",
+    authorities: [{ id: "2", label: "EDITOR" }],
+    state: { id: "1", label: "ACTIVE" },
+    spexare: null,
+  },
 ];
 
-const withAudit = (s) => ({...s, ...audit});
+const withAudit = (s) => ({ ...s, ...audit });
 
 // Mutable so a test can save a search and then see it listed.
 let savedSearchList = [];
 
 function resetState() {
-    relations = new Map();
-    nextId = 1;
-    newsList = structuredClone(newsSeed);
-    taskList = structuredClone(taskSeed);
-    tagList = structuredClone(tagSeed);
-    savedSearchList = [];
-    userRoles = ["ADMIN"];
+  relations = new Map();
+  nextId = 1;
+  newsList = structuredClone(newsSeed);
+  taskList = structuredClone(taskSeed);
+  tagList = structuredClone(tagSeed);
+  savedSearchList = [];
+  userRoles = ["ADMIN"];
 }
 
 const removeById = (list, id) => {
-    const index = list.findIndex((item) => item.id === String(id));
-    if (index >= 0) {
-        list.splice(index, 1);
-    }
-    return index >= 0;
+  const index = list.findIndex((item) => item.id === String(id));
+  if (index >= 0) {
+    list.splice(index, 1);
+  }
+  return index >= 0;
 };
 
 // Permission grants the admin page lists, creates and revokes. Kept in memory so a test sees its own changes.
 const permissionGrants = [
-    {
-        id: "g1",
-        role: null,
-        permission: "WRITE",
-        scope: "SPEX_PARTICIPANTS",
-        validUntil: null,
-        expired: false,
-        createdBy: "admin@example.com",
-        createdAt: "2026-10-01T00:00:00Z",
-        lastModifiedBy: null,
-        lastModifiedAt: null,
-        user: {id: "1", email: "admin@example.com", spexare: null},
-        spexare: null,
-        spex: {id: "1", year: 1996, title: "Nobel"},
-    },
+  {
+    id: "g1",
+    role: null,
+    permission: "WRITE",
+    scope: "SPEX_PARTICIPANTS",
+    validUntil: null,
+    expired: false,
+    createdBy: "admin@example.com",
+    createdAt: "2026-10-01T00:00:00Z",
+    lastModifiedBy: null,
+    lastModifiedAt: null,
+    user: { id: "1", email: "admin@example.com", spexare: null },
+    spexare: null,
+    spex: { id: "1", year: 1996, title: "Nobel" },
+  },
 ];
 let nextPermissionGrantId = 2;
 
 function createPermissionGrant(input) {
-    const spex = spexList.find((s) => s.id === input.spexId);
-    const user = userList.find((u) => u.id === input.userId);
-    const grant = {
-        id: `g${nextPermissionGrantId++}`,
-        role: input.role ?? null,
-        permission: input.permission,
-        scope: input.scope,
-        validUntil: input.validUntil ?? null,
-        expired: false,
-        createdBy: "admin@example.com",
-        createdAt: new Date().toISOString(),
-        lastModifiedBy: null,
-        lastModifiedAt: null,
-        user: user ? {id: user.id, email: user.email, spexare: user.spexare} : null,
-        spexare: null,
-        spex: spex ? {id: spex.id, year: spex.year, title: spex.title} : null,
-    };
-    permissionGrants.unshift(grant);
-    return grant;
+  const spex = spexList.find((s) => s.id === input.spexId);
+  const user = userList.find((u) => u.id === input.userId);
+  const grant = {
+    id: `g${nextPermissionGrantId++}`,
+    role: input.role ?? null,
+    permission: input.permission,
+    scope: input.scope,
+    validUntil: input.validUntil ?? null,
+    expired: false,
+    createdBy: "admin@example.com",
+    createdAt: new Date().toISOString(),
+    lastModifiedBy: null,
+    lastModifiedAt: null,
+    user: user ? { id: user.id, email: user.email, spexare: user.spexare } : null,
+    spexare: null,
+    spex: spex ? { id: spex.id, year: spex.year, title: spex.title } : null,
+  };
+  permissionGrants.unshift(grant);
+  return grant;
 }
 
 const resolvers = {
-    PermissionGrantsPaged: (v) => {
-        // Only the equality terms the permissions table sends, e.g. "(permission:READ OR permission:WRITE) AND scope:SPEX_PARTICIPANTS"
-        const filter = String(v?.filter ?? "");
-        const allowed = (field) => {
-            const values = [...filter.matchAll(new RegExp(`${field}:([A-Z_]+)`, "g"))].map((m) => m[1]);
-            return values.length ? new Set(values) : null;
-        };
-        const permissions = allowed("permission");
-        const scopes = allowed("scope");
-        const matched = permissionGrants.filter((g) =>
-            (!permissions || permissions.has(g.permission)) && (!scopes || scopes.has(g.scope)));
+  PermissionGrantsPaged: (v) => {
+    // Only the equality terms the permissions table sends, e.g. "(permission:READ OR permission:WRITE) AND scope:SPEX_PARTICIPANTS"
+    const filter = String(v?.filter ?? "");
+    const allowed = (field) => {
+      const values = [...filter.matchAll(new RegExp(`${field}:([A-Z_]+)`, "g"))].map((m) => m[1]);
+      return values.length ? new Set(values) : null;
+    };
+    const permissions = allowed("permission");
+    const scopes = allowed("scope");
+    const matched = permissionGrants.filter(
+      (g) => (!permissions || permissions.has(g.permission)) && (!scopes || scopes.has(g.scope))
+    );
 
-        return {
-            permissionGrantPaged: {
-                edges: matched.map((node, i) => ({cursor: `c${i}`, node})),
-                pageInfo: pageInfo(false, null),
-                totalCount: matched.length,
-            },
-        };
-    },
-    PermissionGrantCreate: (v) => ({permissionGrantCreate: createPermissionGrant(v.input)}),
-    PermissionGrantUpdate: (v) => {
-        const grant = permissionGrants.find((g) => g.id === v.input.id);
-        if (grant) {
-            grant.permission = v.input.permission;
-            grant.validUntil = v.input.validUntil ?? null;
-            grant.lastModifiedBy = "admin@example.com";
-            grant.lastModifiedAt = new Date().toISOString();
-        }
-        return {permissionGrantUpdate: grant ?? null};
-    },
-    PermissionGrantDelete: (v) => {
-        const index = permissionGrants.findIndex((g) => g.id === v.id);
-        if (index >= 0) {
-            permissionGrants.splice(index, 1);
-        }
-        return {permissionGrantDelete: null};
-    },
-    Authorities: () => ({
-        authorities: [
-            {id: "ADMIN", label: "Administratör"},
-            {id: "EDITOR", label: "Redaktör"},
-            {id: "USER", label: "Användare"},
-        ],
-    }),
-    States: () => ({states: []}),
-    Analytics: () => ({analytics}),
-    AnalyticsSummary: () => ({analytics}),
-    Countries: () => ({countries: [{isoCode: "SE", label: "Sverige"}, {isoCode: "NO", label: "Norge"}]}),
-    Types: () => ({types: typeList}),
+    return {
+      permissionGrantPaged: {
+        edges: matched.map((node, i) => ({ cursor: `c${i}`, node })),
+        pageInfo: pageInfo(false, null),
+        totalCount: matched.length,
+      },
+    };
+  },
+  PermissionGrantCreate: (v) => ({ permissionGrantCreate: createPermissionGrant(v.input) }),
+  PermissionGrantUpdate: (v) => {
+    const grant = permissionGrants.find((g) => g.id === v.input.id);
+    if (grant) {
+      grant.permission = v.input.permission;
+      grant.validUntil = v.input.validUntil ?? null;
+      grant.lastModifiedBy = "admin@example.com";
+      grant.lastModifiedAt = new Date().toISOString();
+    }
+    return { permissionGrantUpdate: grant ?? null };
+  },
+  PermissionGrantDelete: (v) => {
+    const index = permissionGrants.findIndex((g) => g.id === v.id);
+    if (index >= 0) {
+      permissionGrants.splice(index, 1);
+    }
+    return { permissionGrantDelete: null };
+  },
+  Authorities: () => ({
+    authorities: [
+      { id: "ADMIN", label: "Administratör" },
+      { id: "EDITOR", label: "Redaktör" },
+      { id: "USER", label: "Användare" },
+    ],
+  }),
+  States: () => ({ states: [] }),
+  Analytics: () => ({ analytics }),
+  AnalyticsSummary: () => ({ analytics }),
+  Countries: () => ({
+    countries: [
+      { isoCode: "SE", label: "Sverige" },
+      { isoCode: "NO", label: "Norge" },
+    ],
+  }),
+  Types: () => ({ types: typeList }),
 
-    NewsPagedSummary: () => paged("newsPaged", newsList),
-    NewsPagedFull: () => paged("newsPaged", newsList),
-    NewsUpdate: (v) => {
-        const updated = {
-            id: v?.input?.id ?? "1",
-            subject: v?.input?.subject ?? "",
-            text: v?.input?.text ?? "",
-            visibleFrom: v?.input?.visibleFrom ?? null,
-            visibleTo: v?.input?.visibleTo ?? null,
-            published: v?.input?.published ?? false,
-        };
-        const index = newsList.findIndex((n) => n.id === String(updated.id));
-        if (index >= 0) {
-            newsList[index] = {...newsList[index], ...updated};
-        }
-        return {newsUpdate: withAudit(updated)};
-    },
-    NewsDelete: (v) => ({newsDelete: removeById(newsList, v?.id)}),
+  NewsPagedSummary: () => paged("newsPaged", newsList),
+  NewsPagedFull: () => paged("newsPaged", newsList),
+  NewsUpdate: (v) => {
+    const updated = {
+      id: v?.input?.id ?? "1",
+      subject: v?.input?.subject ?? "",
+      text: v?.input?.text ?? "",
+      visibleFrom: v?.input?.visibleFrom ?? null,
+      visibleTo: v?.input?.visibleTo ?? null,
+      published: v?.input?.published ?? false,
+    };
+    const index = newsList.findIndex((n) => n.id === String(updated.id));
+    if (index >= 0) {
+      newsList[index] = { ...newsList[index], ...updated };
+    }
+    return { newsUpdate: withAudit(updated) };
+  },
+  NewsDelete: (v) => ({ newsDelete: removeById(newsList, v?.id) }),
 
-    SpexarePagedSummary: (v) => spexarePaged(v),
-    SpexarePagedFull: (v) => spexarePaged(v),
-    SpexareGet: (v) => ({spexare: spexareFull(spexareList.find((s) => s.id === String(v?.id)) ?? spexareList[0])}),
-    // Deliberately asymmetric, to keep both cases reachable from E2E: the summary query
-    // (the header badge and the command palette) sees no linked spexare, so the palette
-    // spec can assert the profile shortcut is omitted; the full query (/my-profile only)
-    // resolves to Ada, so the profile page can be exercised at all.
-    SpexareMeSummary: () => ({spexareMe: null}),
-    SpexareMeFull: () => ({spexareMe: spexareFull(spexareList[0])}),
-    SpexareSearch: (v) => {
-        const q = String(v?.q ?? "");
-        const {spexarePaged: p} = spexarePaged(q ? {filter: `firstName:*${q}*`} : {});
-        const matched = p.edges.map((e) => e.node);
+  SpexarePagedSummary: (v) => spexarePaged(v),
+  SpexarePagedFull: (v) => spexarePaged(v),
+  SpexareGet: (v) => ({ spexare: spexareFull(spexareList.find((s) => s.id === String(v?.id)) ?? spexareList[0]) }),
+  // Deliberately asymmetric, to keep both cases reachable from E2E: the summary query
+  // (the header badge and the command palette) sees no linked spexare, so the palette
+  // spec can assert the profile shortcut is omitted; the full query (/my-profile only)
+  // resolves to Ada, so the profile page can be exercised at all.
+  SpexareMeSummary: () => ({ spexareMe: null }),
+  SpexareMeFull: () => ({ spexareMe: spexareFull(spexareList[0]) }),
+  SpexareSearch: (v) => {
+    const q = String(v?.q ?? "");
+    const { spexarePaged: p } = spexarePaged(q ? { filter: `firstName:*${q}*` } : {});
+    const matched = p.edges.map((e) => e.node);
 
-        const filters = Array.isArray(v?.aggregationFilters) ? v.aggregationFilters : [];
-        const nodes = filters.reduce(
-            (acc, f) => (f?.name === "deceased"
-                ? acc.filter((s) => String(Boolean(s.deceased)) === String(f.value))
-                : acc),
-            matched,
-        );
+    const filters = Array.isArray(v?.aggregationFilters) ? v.aggregationFilters : [];
+    const nodes = filters.reduce(
+      (acc, f) => (f?.name === "deceased" ? acc.filter((s) => String(Boolean(s.deceased)) === String(f.value)) : acc),
+      matched
+    );
 
-        // Counts are reported over the query-matched set, before the facet narrows it, the
-        // way a real faceted search reports them.
-        const deceasedFacet = {
-            id: "deceased",
-            label: "Avliden",
-            groups: [{
-                id: "deceased",
-                label: "Avliden",
-                values: [
-                    {id: "true", label: "Ja", count: matched.filter((s) => s.deceased).length},
-                    {id: "false", label: "Nej", count: matched.filter((s) => !s.deceased).length},
-                ],
-            }],
-        };
-
-        return {
-            spexareSearchPaged: {
-                edges: nodes.map((node, i) => ({cursor: `c${i}`, node})),
-                pageInfo: pageInfo(false, null),
-                totalCount: nodes.length,
-                facets: [deceasedFacet],
-            },
-        };
-    },
-    SpexareCreate: (v) => ({spexareCreate: spexareFull({...blankSpexare, id: "new-1", ...(v?.input ?? {})})}),
-    SpexareUpdate: (v) => ({
-        spexareUpdate: spexareFull({
-            ...blankSpexare,
-            id: v?.input?.id ?? "new-1", ...(v?.input ?? {})
-        })
-    }),
-    SpexareExport: () => ({spexareExport: {id: "export-job-1"}}),
-
-    ActivityCreate: (v) => {
-        const activity = withAudit({id: newId("act"), spexActivity: null, taskActivities: []});
-        relationsOf(v?.spexareId).activities.push(activity);
-        return {activityCreate: activity};
-    },
-    ActivityDelete: (v) => ({activityDelete: removeById(relationsOf(v?.spexareId).activities, v?.id)}),
-    SpexActivityCreate: (v) => {
-        const activity = activityOf(v?.spexareId, v?.activityId);
-        const spex = spexList.find((s) => s.id === String(v?.spexId));
-        if (!activity || !spex) {
-            return {spexActivityCreate: null};
-        }
-        activity.spexActivity = withAudit({id: newId("spexact"), spex: spexShape(spex)});
-        return {spexActivityCreate: activity.spexActivity};
-    },
-    SpexActivityUpdate: (v) => {
-        const activity = activityOf(v?.spexareId, v?.activityId);
-        const spex = spexList.find((s) => s.id === String(v?.spexId));
-        if (!activity?.spexActivity || !spex) {
-            return {spexActivityUpdate: null};
-        }
-        activity.spexActivity = {...activity.spexActivity, spex: spexShape(spex)};
-        return {spexActivityUpdate: activity.spexActivity};
-    },
-    SpexActivityDelete: (v) => {
-        const activity = activityOf(v?.spexareId, v?.activityId);
-        if (activity) {
-            activity.spexActivity = null;
-        }
-        return {spexActivityDelete: !!activity};
-    },
-    TaskActivityCreate: (v) => {
-        const activity = activityOf(v?.spexareId, v?.activityId);
-        const task = taskList.find((t) => t.id === String(v?.taskId));
-        if (!activity || !task) {
-            return {taskActivityCreate: null};
-        }
-        const taskActivity = withAudit({id: newId("taskact"), task: taskShape(task), actors: []});
-        activity.taskActivities.push(taskActivity);
-        return {taskActivityCreate: taskActivity};
-    },
-    SpexCharacters: (v) => ({spexCharacters: characterList.filter((c) => c.spexId === String(v?.spexId))}),
-    ActorCreate: (v) => {
-        const taskActivity = activityOf(v?.spexareId, v?.activityId)?.taskActivities.find((ta) => ta.id === v?.taskActivityId);
-        const vocal = typeList.find((t) => t.id === String(v?.vocalId) && t.type === "VOCAL");
-        const character = characterList.find((c) => c.id === String(v?.characterId));
-        if (!taskActivity || !vocal) {
-            return {actorCreate: null};
-        }
-        const actor = withAudit({
-            id: newId("actor"),
-            role: v?.input?.role || null,
-            vocal: {id: vocal.id, label: vocal.label},
-            character: character ? {id: character.id, name: character.name} : null,
-        });
-        taskActivity.actors.push(actor);
-        return {actorCreate: actor};
-    },
-    TaskActivityDelete: (v) => {
-        const activity = activityOf(v?.spexareId, v?.activityId);
-        return {taskActivityDelete: activity ? removeById(activity.taskActivities, v?.id) : false};
-    },
-    MembershipCreate: (v) => {
-        const type = typeList.find((t) => t.id === String(v?.typeId));
-        const membership = withAudit({id: newId("mem"), year: String(v?.input?.year ?? ""), type});
-        relationsOf(v?.spexareId).memberships.push(membership);
-        return {membershipCreate: membership};
-    },
-    MembershipDelete: (v) => ({membershipDelete: removeById(relationsOf(v?.spexareId).memberships, v?.id)}),
-    TaggingCreate: (v) => {
-        const tag = tagList.find((t) => t.id === String(v?.tagId));
-        const {taggings} = relationsOf(v?.spexareId);
-        if (tag && !taggings.some((t) => t.id === tag.id)) {
-            taggings.push(withAudit(tag));
-        }
-        return {taggingCreate: !!tag};
-    },
-    TaggingDelete: (v) => ({taggingDelete: removeById(relationsOf(v?.spexareId).taggings, v?.tagId)}),
-
-    SavedSearches: () => ({savedSearches: savedSearchList}),
-    SavedSearchGet: (v) => ({savedSearch: savedSearchList.find((s) => s.id === String(v?.id)) ?? null}),
-    SavedSearchCreate: (v) => {
-        const created = withAudit({
-            id: String(savedSearchList.length + 1),
-            name: v?.input?.name ?? "",
-            query: v?.input?.query ?? "",
-        });
-        savedSearchList.push(created);
-        return {savedSearchCreate: created};
-    },
-    SavedSearchUpdate: (v) => {
-        const existing = savedSearchList.find((s) => s.id === String(v?.input?.id));
-        if (existing) {
-            existing.name = v?.input?.name ?? existing.name;
-            existing.query = v?.input?.query ?? existing.query;
-        }
-        return {savedSearchUpdate: existing ?? null};
-    },
-    SavedSearchDelete: (v) => {
-        const index = savedSearchList.findIndex((s) => s.id === String(v?.id));
-        if (index >= 0) {
-            savedSearchList.splice(index, 1);
-        }
-        return {savedSearchDelete: null};
-    },
-
-    TagPagedSummary: () => paged("tagPaged", tagList),
-    TagPagedFull: () => paged("tagPaged", tagList.map(withAudit)),
-    TagCreate: (v) => {
-        const created = {id: newId("tag"), name: v?.input?.name ?? ""};
-        tagList.push(created);
-        return {tagCreate: withAudit(created)};
-    },
-    TagUpdate: (v) => ({tagUpdate: withAudit(applyTagUpdate(v?.input))}),
-    TagDelete: (v) => ({tagDelete: removeById(tagList, v?.id)}),
-    TagGet: (v) => {
-        const tag = tagList.find((t) => t.id === String(v?.id));
-        return {tag: tag ? withAudit(tag) : null};
-    },
-
-    TaskPagedSummary: () => paged("taskPaged", taskList),
-    TaskPagedFull: () => paged("taskPaged", taskList.map(withAudit)),
-    TaskGet: (v) => single("task", taskList, v?.id),
-    TaskUpdate: (v) => {
-        const task = taskList.find((t) => t.id === String(v?.input?.id));
-        if (task) {
-            task.name = v?.input?.name ?? task.name;
-        }
-        return {taskUpdate: task ? withAudit(task) : null};
-    },
-    TaskDelete: (v) => ({taskDelete: removeById(taskList, v?.id)}),
-    TaskCategoryAdd: (v) => {
-        const task = taskList.find((t) => t.id === String(v?.id));
-        const category = taskCategoryList.find((c) => c.id === String(v?.categoryId));
-        if (task && category) {
-            task.category = category;
-        }
-        return {taskCategoryAdd: task ? withAudit(task) : null};
-    },
-    TaskCategoryRemove: (v) => {
-        const task = taskList.find((t) => t.id === String(v?.id));
-        if (task) {
-            task.category = null;
-        }
-        return {taskCategoryRemove: task ? withAudit(task) : null};
-    },
-
-    TaskCategoryPagedSummary: () => paged("taskCategoryPaged", taskCategoryList),
-    TaskCategoryPagedFull: () => paged("taskCategoryPaged", taskCategoryList.map(withAudit)),
-    TaskCategoryGet: (v) => single("taskCategory", taskCategoryList, v?.id),
-
-    SpexPagedSummary: () => paged("spexPaged", spexList),
-    SpexPagedFull: () => paged("spexPaged", spexList.map(withAudit)),
-    SpexGet: (v) => single("spex", spexList, v?.id),
-
-    SpexCategoryPagedSummary: () => paged("spexCategoryPaged", spexCategoryList),
-    SpexCategoryPagedFull: () => paged("spexCategoryPaged", spexCategoryList.map(withAudit)),
-    SpexCategoryGet: (v) => single("spexCategory", spexCategoryList, v?.id),
-
-    UserPagedSummary: () => paged("userPaged", userList),
-    UserPagedFull: () => paged("userPaged", userList.map(withAudit)),
-    UserSearch: (v) => {
-        const q = (v.query ?? "").toLowerCase();
-        const matched = userList.filter((u) =>
-            [u.email, u.spexare?.firstName, u.spexare?.lastName].some((value) => value?.toLowerCase().includes(q)));
-        return {userSearch: matched.slice(0, v.first ?? 20)};
-    },
-
-    revisions: () => ({
-        revisions: [
-            {
-                revision: 2, type: "TAG", entityId: 1, revisionType: "MOD",
-                modifiedAt: audit.createdAt, modifiedBy: "admin@example.com",
-                changes: [{field: "name", oldValue: "Hedersledamot", newValue: "Hedersmedlem", binary: false}],
-            },
-            {
-                revision: 1, type: "TAG", entityId: 1, revisionType: "ADD",
-                modifiedAt: audit.createdAt, modifiedBy: "admin@example.com", changes: [],
-            },
-        ],
-    }),
-    revisionFeedPaged: (v) => paged("revisionFeedPaged", revisionFeed.filter((entry) => matchesFeedFilter(entry, v))),
-    revisionDetail: (v) => ({revisionDetail: revisionDetails[String(v?.revision)] ?? null}),
-    revisionAuthors: () => ({revisionAuthors: [...new Set(revisionFeed.map((entry) => entry.modifiedBy))].sort()}),
-    restorePreview: () => ({restorePreview: {entries: [], warnings: []}}),
-    restore: () => ({restore: {revision: 1, updated: 1, created: 0, deleted: 0, warnings: []}}),
-
-    Jobs: () => ({
-        jobs: [{
-            id: "job-1", name: "spexareExport", status: "COMPLETED", exitStatus: "COMPLETED",
-            createdAt: audit.createdAt, startedAt: audit.createdAt, finishedAt: audit.createdAt,
-            hasDownload: true, importResult: null,
-        }],
-    }),
-    JobStatus: (v) => ({
-        jobStatus: {
-            id: String(v?.id ?? "export-job-1"), name: "spexareExport",
-            status: "COMPLETED", exitStatus: "COMPLETED",
+    // Counts are reported over the query-matched set, before the facet narrows it, the
+    // way a real faceted search reports them.
+    const deceasedFacet = {
+      id: "deceased",
+      label: "Avliden",
+      groups: [
+        {
+          id: "deceased",
+          label: "Avliden",
+          values: [
+            { id: "true", label: "Ja", count: matched.filter((s) => s.deceased).length },
+            { id: "false", label: "Nej", count: matched.filter((s) => !s.deceased).length },
+          ],
         },
+      ],
+    };
+
+    return {
+      spexareSearchPaged: {
+        edges: nodes.map((node, i) => ({ cursor: `c${i}`, node })),
+        pageInfo: pageInfo(false, null),
+        totalCount: nodes.length,
+        facets: [deceasedFacet],
+      },
+    };
+  },
+  SpexareCreate: (v) => ({ spexareCreate: spexareFull({ ...blankSpexare, id: "new-1", ...(v?.input ?? {}) }) }),
+  SpexareUpdate: (v) => ({
+    spexareUpdate: spexareFull({
+      ...blankSpexare,
+      id: v?.input?.id ?? "new-1",
+      ...(v?.input ?? {}),
     }),
+  }),
+  SpexareExport: () => ({ spexareExport: { id: "export-job-1" } }),
 
-    MaintenanceJobs: () => ({maintenanceJobs: maintenanceJobs}),
-    MaintenanceJobRun: (v) => {
-        const status = maintenanceJobs.find((job) => job.job === v?.job);
+  ActivityCreate: (v) => {
+    const activity = withAudit({ id: newId("act"), spexActivity: null, taskActivities: [] });
+    relationsOf(v?.spexareId).activities.push(activity);
+    return { activityCreate: activity };
+  },
+  ActivityDelete: (v) => ({ activityDelete: removeById(relationsOf(v?.spexareId).activities, v?.id) }),
+  SpexActivityCreate: (v) => {
+    const activity = activityOf(v?.spexareId, v?.activityId);
+    const spex = spexList.find((s) => s.id === String(v?.spexId));
+    if (!activity || !spex) {
+      return { spexActivityCreate: null };
+    }
+    activity.spexActivity = withAudit({ id: newId("spexact"), spex: spexShape(spex) });
+    return { spexActivityCreate: activity.spexActivity };
+  },
+  SpexActivityUpdate: (v) => {
+    const activity = activityOf(v?.spexareId, v?.activityId);
+    const spex = spexList.find((s) => s.id === String(v?.spexId));
+    if (!activity?.spexActivity || !spex) {
+      return { spexActivityUpdate: null };
+    }
+    activity.spexActivity = { ...activity.spexActivity, spex: spexShape(spex) };
+    return { spexActivityUpdate: activity.spexActivity };
+  },
+  SpexActivityDelete: (v) => {
+    const activity = activityOf(v?.spexareId, v?.activityId);
+    if (activity) {
+      activity.spexActivity = null;
+    }
+    return { spexActivityDelete: !!activity };
+  },
+  TaskActivityCreate: (v) => {
+    const activity = activityOf(v?.spexareId, v?.activityId);
+    const task = taskList.find((t) => t.id === String(v?.taskId));
+    if (!activity || !task) {
+      return { taskActivityCreate: null };
+    }
+    const taskActivity = withAudit({ id: newId("taskact"), task: taskShape(task), actors: [] });
+    activity.taskActivities.push(taskActivity);
+    return { taskActivityCreate: taskActivity };
+  },
+  SpexCharacters: (v) => ({ spexCharacters: characterList.filter((c) => c.spexId === String(v?.spexId)) }),
+  ActorCreate: (v) => {
+    const taskActivity = activityOf(v?.spexareId, v?.activityId)?.taskActivities.find(
+      (ta) => ta.id === v?.taskActivityId
+    );
+    const vocal = typeList.find((t) => t.id === String(v?.vocalId) && t.type === "VOCAL");
+    const character = characterList.find((c) => c.id === String(v?.characterId));
+    if (!taskActivity || !vocal) {
+      return { actorCreate: null };
+    }
+    const actor = withAudit({
+      id: newId("actor"),
+      role: v?.input?.role || null,
+      vocal: { id: vocal.id, label: vocal.label },
+      character: character ? { id: character.id, name: character.name } : null,
+    });
+    taskActivity.actors.push(actor);
+    return { actorCreate: actor };
+  },
+  TaskActivityDelete: (v) => {
+    const activity = activityOf(v?.spexareId, v?.activityId);
+    return { taskActivityDelete: activity ? removeById(activity.taskActivities, v?.id) : false };
+  },
+  MembershipCreate: (v) => {
+    const type = typeList.find((t) => t.id === String(v?.typeId));
+    const membership = withAudit({ id: newId("mem"), year: String(v?.input?.year ?? ""), type });
+    relationsOf(v?.spexareId).memberships.push(membership);
+    return { membershipCreate: membership };
+  },
+  MembershipDelete: (v) => ({ membershipDelete: removeById(relationsOf(v?.spexareId).memberships, v?.id) }),
+  TaggingCreate: (v) => {
+    const tag = tagList.find((t) => t.id === String(v?.tagId));
+    const { taggings } = relationsOf(v?.spexareId);
+    if (tag && !taggings.some((t) => t.id === tag.id)) {
+      taggings.push(withAudit(tag));
+    }
+    return { taggingCreate: !!tag };
+  },
+  TaggingDelete: (v) => ({ taggingDelete: removeById(relationsOf(v?.spexareId).taggings, v?.tagId) }),
 
-        if (!status || status.running) {
-            return {maintenanceJobRun: false};
-        }
-        status.lastStartedAt = new Date().toISOString();
-        status.lastFinishedAt = status.lastStartedAt;
-        status.lastSucceeded = true;
-        return {maintenanceJobRun: true};
+  SavedSearches: () => ({ savedSearches: savedSearchList }),
+  SavedSearchGet: (v) => ({ savedSearch: savedSearchList.find((s) => s.id === String(v?.id)) ?? null }),
+  SavedSearchCreate: (v) => {
+    const created = withAudit({
+      id: String(savedSearchList.length + 1),
+      name: v?.input?.name ?? "",
+      query: v?.input?.query ?? "",
+    });
+    savedSearchList.push(created);
+    return { savedSearchCreate: created };
+  },
+  SavedSearchUpdate: (v) => {
+    const existing = savedSearchList.find((s) => s.id === String(v?.input?.id));
+    if (existing) {
+      existing.name = v?.input?.name ?? existing.name;
+      existing.query = v?.input?.query ?? existing.query;
+    }
+    return { savedSearchUpdate: existing ?? null };
+  },
+  SavedSearchDelete: (v) => {
+    const index = savedSearchList.findIndex((s) => s.id === String(v?.id));
+    if (index >= 0) {
+      savedSearchList.splice(index, 1);
+    }
+    return { savedSearchDelete: null };
+  },
+
+  TagPagedSummary: () => paged("tagPaged", tagList),
+  TagPagedFull: () => paged("tagPaged", tagList.map(withAudit)),
+  TagCreate: (v) => {
+    const created = { id: newId("tag"), name: v?.input?.name ?? "" };
+    tagList.push(created);
+    return { tagCreate: withAudit(created) };
+  },
+  TagUpdate: (v) => ({ tagUpdate: withAudit(applyTagUpdate(v?.input)) }),
+  TagDelete: (v) => ({ tagDelete: removeById(tagList, v?.id) }),
+  TagGet: (v) => {
+    const tag = tagList.find((t) => t.id === String(v?.id));
+    return { tag: tag ? withAudit(tag) : null };
+  },
+
+  TaskPagedSummary: () => paged("taskPaged", taskList),
+  TaskPagedFull: () => paged("taskPaged", taskList.map(withAudit)),
+  TaskGet: (v) => single("task", taskList, v?.id),
+  TaskUpdate: (v) => {
+    const task = taskList.find((t) => t.id === String(v?.input?.id));
+    if (task) {
+      task.name = v?.input?.name ?? task.name;
+    }
+    return { taskUpdate: task ? withAudit(task) : null };
+  },
+  TaskDelete: (v) => ({ taskDelete: removeById(taskList, v?.id) }),
+  TaskCategoryAdd: (v) => {
+    const task = taskList.find((t) => t.id === String(v?.id));
+    const category = taskCategoryList.find((c) => c.id === String(v?.categoryId));
+    if (task && category) {
+      task.category = category;
+    }
+    return { taskCategoryAdd: task ? withAudit(task) : null };
+  },
+  TaskCategoryRemove: (v) => {
+    const task = taskList.find((t) => t.id === String(v?.id));
+    if (task) {
+      task.category = null;
+    }
+    return { taskCategoryRemove: task ? withAudit(task) : null };
+  },
+
+  TaskCategoryPagedSummary: () => paged("taskCategoryPaged", taskCategoryList),
+  TaskCategoryPagedFull: () => paged("taskCategoryPaged", taskCategoryList.map(withAudit)),
+  TaskCategoryGet: (v) => single("taskCategory", taskCategoryList, v?.id),
+
+  SpexPagedSummary: () => paged("spexPaged", spexList),
+  SpexPagedFull: () => paged("spexPaged", spexList.map(withAudit)),
+  SpexGet: (v) => single("spex", spexList, v?.id),
+
+  SpexCategoryPagedSummary: () => paged("spexCategoryPaged", spexCategoryList),
+  SpexCategoryPagedFull: () => paged("spexCategoryPaged", spexCategoryList.map(withAudit)),
+  SpexCategoryGet: (v) => single("spexCategory", spexCategoryList, v?.id),
+
+  UserPagedSummary: () => paged("userPaged", userList),
+  UserPagedFull: () => paged("userPaged", userList.map(withAudit)),
+  UserSearch: (v) => {
+    const q = (v.query ?? "").toLowerCase();
+    const matched = userList.filter((u) =>
+      [u.email, u.spexare?.firstName, u.spexare?.lastName].some((value) => value?.toLowerCase().includes(q))
+    );
+    return { userSearch: matched.slice(0, v.first ?? 20) };
+  },
+
+  revisions: () => ({
+    revisions: [
+      {
+        revision: 2,
+        type: "TAG",
+        entityId: 1,
+        revisionType: "MOD",
+        modifiedAt: audit.createdAt,
+        modifiedBy: "admin@example.com",
+        changes: [{ field: "name", oldValue: "Hedersledamot", newValue: "Hedersmedlem", binary: false }],
+      },
+      {
+        revision: 1,
+        type: "TAG",
+        entityId: 1,
+        revisionType: "ADD",
+        modifiedAt: audit.createdAt,
+        modifiedBy: "admin@example.com",
+        changes: [],
+      },
+    ],
+  }),
+  revisionFeedPaged: (v) =>
+    paged(
+      "revisionFeedPaged",
+      revisionFeed.filter((entry) => matchesFeedFilter(entry, v))
+    ),
+  revisionDetail: (v) => ({ revisionDetail: revisionDetails[String(v?.revision)] ?? null }),
+  revisionAuthors: () => ({ revisionAuthors: [...new Set(revisionFeed.map((entry) => entry.modifiedBy))].sort() }),
+  restorePreview: () => ({ restorePreview: { entries: [], warnings: [] } }),
+  restore: () => ({ restore: { revision: 1, updated: 1, created: 0, deleted: 0, warnings: [] } }),
+
+  Jobs: () => ({
+    jobs: [
+      {
+        id: "job-1",
+        name: "spexareExport",
+        status: "COMPLETED",
+        exitStatus: "COMPLETED",
+        createdAt: audit.createdAt,
+        startedAt: audit.createdAt,
+        finishedAt: audit.createdAt,
+        hasDownload: true,
+        importResult: null,
+      },
+    ],
+  }),
+  JobStatus: (v) => ({
+    jobStatus: {
+      id: String(v?.id ?? "export-job-1"),
+      name: "spexareExport",
+      status: "COMPLETED",
+      exitStatus: "COMPLETED",
     },
+  }),
 
-    SpexareLocations: () => ({
-        spexareLocations: [
-            {id: "1", firstName: "Ada", lastName: "Lovelace", nickName: "Countess", latitude: 57.6893, longitude: 11.9776},
-            {id: "3", firstName: "Grace", lastName: "Hopper", nickName: "Amazing Grace", latitude: 59.3293, longitude: 18.0686},
-        ],
-    }),
+  MaintenanceJobs: () => ({ maintenanceJobs: maintenanceJobs }),
+  MaintenanceJobRun: (v) => {
+    const status = maintenanceJobs.find((job) => job.job === v?.job);
 
-    GraphSearch: (v) => {
-        const q = String(v?.q ?? "").trim().toLowerCase();
+    if (!status || status.running) {
+      return { maintenanceJobRun: false };
+    }
+    status.lastStartedAt = new Date().toISOString();
+    status.lastFinishedAt = status.lastStartedAt;
+    status.lastSucceeded = true;
+    return { maintenanceJobRun: true };
+  },
 
-        // A blank term is answered with a single random node, matching the backend's "surprise me".
-        if (!q) {
-            return {graphSearch: [graphNodes[0]]};
-        }
+  SpexareLocations: () => ({
+    spexareLocations: [
+      { id: "1", firstName: "Ada", lastName: "Lovelace", nickName: "Countess", latitude: 57.6893, longitude: 11.9776 },
+      {
+        id: "3",
+        firstName: "Grace",
+        lastName: "Hopper",
+        nickName: "Amazing Grace",
+        latitude: 59.3293,
+        longitude: 18.0686,
+      },
+    ],
+  }),
 
-        return {graphSearch: graphNodes.filter((n) => n.label.toLowerCase().includes(q))};
-    },
-    GraphNeighbourhood: (v) => {
-        const origin = graphNodes.find((n) => n.type === v?.type && String(n.entityId) === String(v?.id));
+  GraphSearch: (v) => {
+    const q = String(v?.q ?? "")
+      .trim()
+      .toLowerCase();
 
-        if (!origin) {
-            return {graphNeighbourhood: null};
-        }
+    // A blank term is answered with a single random node, matching the backend's "surprise me".
+    if (!q) {
+      return { graphSearch: [graphNodes[0]] };
+    }
 
-        const first = Number(v?.first ?? 25);
+    return { graphSearch: graphNodes.filter((n) => n.label.toLowerCase().includes(q)) };
+  },
+  GraphNeighbourhood: (v) => {
+    const origin = graphNodes.find((n) => n.type === v?.type && String(n.entityId) === String(v?.id));
 
-        return {
-            graphNeighbourhood: {
-                origin,
-                groups: (graphGroups[origin.id] ?? []).map((group) => ({
-                    type: group.type,
-                    totalCount: group.nodes.length,
-                    nodes: group.nodes.slice(0, first),
-                    edges: group.nodes.slice(0, first).map((n) => ({
-                        id: `${origin.id}->${n.id}:${group.type}`,
-                        source: origin.id, target: n.id, type: group.type, label: null,
-                    })),
-                })),
-            },
-        };
-    },
-    GraphNeighboursPaged: (v) => {
-        const origin = graphNodes.find((n) => n.type === v?.type && String(n.entityId) === String(v?.id));
-        const group = (graphGroups[origin?.id] ?? []).find((g) => g.type === v?.edge);
-        const nodes = group?.nodes ?? [];
-        const first = Number(v?.first ?? 25);
+    if (!origin) {
+      return { graphNeighbourhood: null };
+    }
 
-        return {
-            graphNeighboursPaged: {
-                edges: nodes.slice(0, first).map((n, i) => ({cursor: `c${i}`, node: n})),
-                pageInfo: {hasNextPage: nodes.length > first, endCursor: `c${Math.min(first, nodes.length) - 1}`},
-                totalCount: nodes.length,
-            },
-        };
-    },
+    const first = Number(v?.first ?? 25);
+
+    return {
+      graphNeighbourhood: {
+        origin,
+        groups: (graphGroups[origin.id] ?? []).map((group) => ({
+          type: group.type,
+          totalCount: group.nodes.length,
+          nodes: group.nodes.slice(0, first),
+          edges: group.nodes.slice(0, first).map((n) => ({
+            id: `${origin.id}->${n.id}:${group.type}`,
+            source: origin.id,
+            target: n.id,
+            type: group.type,
+            label: null,
+          })),
+        })),
+      },
+    };
+  },
+  GraphNeighboursPaged: (v) => {
+    const origin = graphNodes.find((n) => n.type === v?.type && String(n.entityId) === String(v?.id));
+    const group = (graphGroups[origin?.id] ?? []).find((g) => g.type === v?.edge);
+    const nodes = group?.nodes ?? [];
+    const first = Number(v?.first ?? 25);
+
+    return {
+      graphNeighboursPaged: {
+        edges: nodes.slice(0, first).map((n, i) => ({ cursor: `c${i}`, node: n })),
+        pageInfo: { hasNextPage: nodes.length > first, endCursor: `c${Math.min(first, nodes.length) - 1}` },
+        totalCount: nodes.length,
+      },
+    };
+  },
 };
 
 function operationNameOf(query) {
-    const re = /\b(query|mutation|subscription)\s+([A-Za-z0-9_]+)/g;
-    let match;
-    while ((match = re.exec(query)) !== null) {
-        return match[2];
-    }
-    return null;
+  const re = /\b(query|mutation|subscription)\s+([A-Za-z0-9_]+)/g;
+  let match;
+  while ((match = re.exec(query)) !== null) {
+    return match[2];
+  }
+  return null;
 }
 
 // Operation name -> the classification its next call fails with, set by the mock fixture
 const failNext = new Map();
 
 function handleGraphql(body, res) {
-    let payload;
-    try {
-        payload = JSON.parse(body);
-    } catch {
-        res.writeHead(400).end('{"errors":[{"message":"bad json"}]}');
-        return;
-    }
-    const op = operationNameOf(payload.query || "");
-    const resolver = op && resolvers[op];
-    if (!resolver) {
-        res.writeHead(200, {"content-type": "application/json"});
-        res.end(JSON.stringify({data: {}}));
-        return;
-    }
-    const failure = failNext.get(op);
+  let payload;
+  try {
+    payload = JSON.parse(body);
+  } catch {
+    res.writeHead(400).end('{"errors":[{"message":"bad json"}]}');
+    return;
+  }
+  const op = operationNameOf(payload.query || "");
+  const resolver = op && resolvers[op];
+  if (!resolver) {
+    res.writeHead(200, { "content-type": "application/json" });
+    res.end(JSON.stringify({ data: {} }));
+    return;
+  }
+  const failure = failNext.get(op);
 
-    res.writeHead(200, {"content-type": "application/json"});
-    if (failure) {
-        failNext.delete(op);
-        res.end(JSON.stringify({data: null, errors: [{message: "Avsiktligt fel i E2E-testet", extensions: {classification: failure}}]}));
-        return;
-    }
-    const data = resolver(payload.variables || {});
-    res.end(JSON.stringify({data}));
+  res.writeHead(200, { "content-type": "application/json" });
+  if (failure) {
+    failNext.delete(op);
+    res.end(
+      JSON.stringify({
+        data: null,
+        errors: [{ message: "Avsiktligt fel i E2E-testet", extensions: { classification: failure } }],
+      })
+    );
+    return;
+  }
+  const data = resolver(payload.variables || {});
+  res.end(JSON.stringify({ data }));
 }
 
 // A real 16x16 PNG, so the graph's image-sprite path is exercised end to end rather than always
 // falling back to the generated icon.
-const PIXEL = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAFklEQVR4nGMQ2bGMJMQwqmFUw/DVAAAiOnIQQXml9AAAAABJRU5ErkJggg==", "base64");
+const PIXEL = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAFklEQVR4nGMQ2bGMJMQwqmFUw/DVAAAiOnIQQXml9AAAAABJRU5ErkJggg==",
+  "base64"
+);
 
 function handleRest(req, res) {
-    if (/\/(image|poster|logo)$/.test(req.url.split("?")[0])) {
-        res.writeHead(200, {"content-type": "image/png", "content-length": PIXEL.length});
-        res.end(PIXEL);
-        return;
-    }
+  if (/\/(image|poster|logo)$/.test(req.url.split("?")[0])) {
+    res.writeHead(200, { "content-type": "image/png", "content-length": PIXEL.length });
+    res.end(PIXEL);
+    return;
+  }
 
-    res.writeHead(200, {"content-type": "application/json"});
-    res.end(JSON.stringify({id: "job-1"}));
+  res.writeHead(200, { "content-type": "application/json" });
+  res.end(JSON.stringify({ id: "job-1" }));
 }
 
 const ISSUER = `http://localhost:${PORT}/realms/e2e`;
 const oidcConfig = {
-    issuer: ISSUER,
-    authorization_endpoint: `${ISSUER}/protocol/openid-connect/auth`,
-    token_endpoint: `${ISSUER}/protocol/openid-connect/token`,
-    userinfo_endpoint: `${ISSUER}/protocol/openid-connect/userinfo`,
-    jwks_uri: `${ISSUER}/protocol/openid-connect/certs`,
-    end_session_endpoint: `${ISSUER}/protocol/openid-connect/logout`,
-    response_types_supported: ["code"],
-    subject_types_supported: ["public"],
-    id_token_signing_alg_values_supported: ["RS256"],
+  issuer: ISSUER,
+  authorization_endpoint: `${ISSUER}/protocol/openid-connect/auth`,
+  token_endpoint: `${ISSUER}/protocol/openid-connect/token`,
+  userinfo_endpoint: `${ISSUER}/protocol/openid-connect/userinfo`,
+  jwks_uri: `${ISSUER}/protocol/openid-connect/certs`,
+  end_session_endpoint: `${ISSUER}/protocol/openid-connect/logout`,
+  response_types_supported: ["code"],
+  subject_types_supported: ["public"],
+  id_token_signing_alg_values_supported: ["RS256"],
 };
 
 const KID = "e2e-key";
@@ -974,175 +1144,176 @@ const CLIENT_ID = "e2e";
 const TOKEN_TTL = 3600;
 
 const E2E_USER = {
-    sub: "user-1",
-    name: "E2E Admin",
-    email: "e2e@example.com",
-    email_verified: true,
-    preferred_username: "e2e",
+  sub: "user-1",
+  name: "E2E Admin",
+  email: "e2e@example.com",
+  email_verified: true,
+  preferred_username: "e2e",
 };
 
-const {privateKey, publicKey} = await generateKeyPair("RS256", {extractable: true});
-const publicJwk = {...(await exportJWK(publicKey)), kid: KID, alg: "RS256", use: "sig"};
+const { privateKey, publicKey } = await generateKeyPair("RS256", { extractable: true });
+const publicJwk = { ...(await exportJWK(publicKey)), kid: KID, alg: "RS256", use: "sig" };
 
 const pendingCodes = new Map();
 
 let userRoles = ["ADMIN"];
 
-const signJwt = (claims, {audience, expiresIn = TOKEN_TTL}) =>
-    new SignJWT(claims)
-        .setProtectedHeader({alg: "RS256", kid: KID, typ: "JWT"})
-        .setIssuer(ISSUER)
-        .setSubject(E2E_USER.sub)
-        .setAudience(audience)
-        .setIssuedAt()
-        .setExpirationTime(`${expiresIn}s`)
-        .sign(privateKey);
+const signJwt = (claims, { audience, expiresIn = TOKEN_TTL }) =>
+  new SignJWT(claims)
+    .setProtectedHeader({ alg: "RS256", kid: KID, typ: "JWT" })
+    .setIssuer(ISSUER)
+    .setSubject(E2E_USER.sub)
+    .setAudience(audience)
+    .setIssuedAt()
+    .setExpirationTime(`${expiresIn}s`)
+    .sign(privateKey);
 
 const accessToken = () =>
-    signJwt(
-        {
-            ...E2E_USER,
-            typ: "Bearer",
-            azp: CLIENT_ID,
-            resource_access: {
-                "fgv-spexregister": {roles: userRoles},
-                "fgv-spexify": {roles: ["USER"]},
-                "fgv-spexflix": {roles: ["USER"]},
-            },
-        },
-        {audience: "account"},
-    );
+  signJwt(
+    {
+      ...E2E_USER,
+      typ: "Bearer",
+      azp: CLIENT_ID,
+      resource_access: {
+        "fgv-spexregister": { roles: userRoles },
+        "fgv-spexify": { roles: ["USER"] },
+        "fgv-spexflix": { roles: ["USER"] },
+      },
+    },
+    { audience: "account" }
+  );
 
-const idToken = (nonce) =>
-    signJwt({...E2E_USER, ...(nonce ? {nonce} : {})}, {audience: CLIENT_ID});
+const idToken = (nonce) => signJwt({ ...E2E_USER, ...(nonce ? { nonce } : {}) }, { audience: CLIENT_ID });
 
 function handleAuthorize(url, res) {
-    const redirectUri = url.searchParams.get("redirect_uri");
+  const redirectUri = url.searchParams.get("redirect_uri");
 
-    if (!redirectUri) {
-        res.writeHead(400).end("missing redirect_uri");
-        return;
+  if (!redirectUri) {
+    res.writeHead(400).end("missing redirect_uri");
+    return;
+  }
+
+  // The mock keeps no Keycloak session, so a silent login (prompt=none), as the one a visitor gets on arrival,
+  // finds nobody logged in, as Keycloak says it
+  if (url.searchParams.get("prompt") === "none") {
+    const back = new URL(redirectUri);
+    back.searchParams.set("error", "login_required");
+    if (url.searchParams.get("state")) {
+      back.searchParams.set("state", url.searchParams.get("state"));
     }
+    res.writeHead(302, { location: back.toString() }).end();
+    return;
+  }
 
-    // The mock keeps no Keycloak session, so a silent login (prompt=none), as the one a visitor gets on arrival,
-    // finds nobody logged in, as Keycloak says it
-    if (url.searchParams.get("prompt") === "none") {
-        const back = new URL(redirectUri);
-        back.searchParams.set("error", "login_required");
-        if (url.searchParams.get("state")) {
-            back.searchParams.set("state", url.searchParams.get("state"));
-        }
-        res.writeHead(302, {location: back.toString()}).end();
-        return;
-    }
+  const code = randomUUID();
+  pendingCodes.set(code, url.searchParams.get("nonce"));
 
-    const code = randomUUID();
-    pendingCodes.set(code, url.searchParams.get("nonce"));
+  const target = new URL(redirectUri);
+  target.searchParams.set("code", code);
 
-    const target = new URL(redirectUri);
-    target.searchParams.set("code", code);
+  const state = url.searchParams.get("state");
+  if (state) {
+    target.searchParams.set("state", state);
+  }
 
-    const state = url.searchParams.get("state");
-    if (state) {
-        target.searchParams.set("state", state);
-    }
-
-    res.writeHead(302, {location: target.toString()}).end();
+  res.writeHead(302, { location: target.toString() }).end();
 }
 
 async function handleToken(body, res) {
-    const params = new URLSearchParams(body);
-    const grantType = params.get("grant_type");
+  const params = new URLSearchParams(body);
+  const grantType = params.get("grant_type");
 
-    let nonce = null;
-    if (grantType === "authorization_code") {
-        const code = params.get("code");
-        if (!pendingCodes.has(code)) {
-            res.writeHead(400, {"content-type": "application/json"});
-            res.end(JSON.stringify({error: "invalid_grant"}));
-            return;
-        }
-        nonce = pendingCodes.get(code);
-        pendingCodes.delete(code);
+  let nonce = null;
+  if (grantType === "authorization_code") {
+    const code = params.get("code");
+    if (!pendingCodes.has(code)) {
+      res.writeHead(400, { "content-type": "application/json" });
+      res.end(JSON.stringify({ error: "invalid_grant" }));
+      return;
     }
+    nonce = pendingCodes.get(code);
+    pendingCodes.delete(code);
+  }
 
-    res.writeHead(200, {"content-type": "application/json"});
-    res.end(JSON.stringify({
-        access_token: await accessToken(),
-        id_token: await idToken(nonce),
-        refresh_token: `refresh-${randomUUID()}`,
-        token_type: "Bearer",
-        expires_in: TOKEN_TTL,
-        scope: "openid profile email",
-    }));
+  res.writeHead(200, { "content-type": "application/json" });
+  res.end(
+    JSON.stringify({
+      access_token: await accessToken(),
+      id_token: await idToken(nonce),
+      refresh_token: `refresh-${randomUUID()}`,
+      token_type: "Bearer",
+      expires_in: TOKEN_TTL,
+      scope: "openid profile email",
+    })
+  );
 }
 
 function handleLogout(url, res) {
-    const redirectUri = url.searchParams.get("post_logout_redirect_uri");
-    res.writeHead(302, {location: redirectUri || `http://localhost:${PORT}/`}).end();
+  const redirectUri = url.searchParams.get("post_logout_redirect_uri");
+  res.writeHead(302, { location: redirectUri || `http://localhost:${PORT}/` }).end();
 }
 
 const server = createServer((req, res) => {
-    const chunks = [];
-    req.on("data", (c) => chunks.push(c));
-    req.on("end", async () => {
-        const raw = req.url || "";
-        const url = new URL(raw, `http://localhost:${PORT}`);
-        const path = url.pathname;
+  const chunks = [];
+  req.on("data", (c) => chunks.push(c));
+  req.on("end", async () => {
+    const raw = req.url || "";
+    const url = new URL(raw, `http://localhost:${PORT}`);
+    const path = url.pathname;
 
-        if (path.endsWith("/.well-known/openid-configuration")) {
-            res.writeHead(200, {"content-type": "application/json"});
-            res.end(JSON.stringify(oidcConfig));
-            return;
-        }
-        if (path.endsWith("/protocol/openid-connect/certs")) {
-            res.writeHead(200, {"content-type": "application/json"});
-            res.end(JSON.stringify({keys: [publicJwk]}));
-            return;
-        }
-        if (path.endsWith("/protocol/openid-connect/auth")) {
-            handleAuthorize(url, res);
-            return;
-        }
-        if (path.endsWith("/protocol/openid-connect/token")) {
-            await handleToken(Buffer.concat(chunks).toString("utf8"), res);
-            return;
-        }
-        if (path.endsWith("/protocol/openid-connect/userinfo")) {
-            res.writeHead(200, {"content-type": "application/json"});
-            res.end(JSON.stringify(E2E_USER));
-            return;
-        }
-        if (path.endsWith("/protocol/openid-connect/logout")) {
-            handleLogout(url, res);
-            return;
-        }
-        if (req.method === "POST" && path === "/__fail") {
-            const {operation, classification} = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    if (path.endsWith("/.well-known/openid-configuration")) {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify(oidcConfig));
+      return;
+    }
+    if (path.endsWith("/protocol/openid-connect/certs")) {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify({ keys: [publicJwk] }));
+      return;
+    }
+    if (path.endsWith("/protocol/openid-connect/auth")) {
+      handleAuthorize(url, res);
+      return;
+    }
+    if (path.endsWith("/protocol/openid-connect/token")) {
+      await handleToken(Buffer.concat(chunks).toString("utf8"), res);
+      return;
+    }
+    if (path.endsWith("/protocol/openid-connect/userinfo")) {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify(E2E_USER));
+      return;
+    }
+    if (path.endsWith("/protocol/openid-connect/logout")) {
+      handleLogout(url, res);
+      return;
+    }
+    if (req.method === "POST" && path === "/__fail") {
+      const { operation, classification } = JSON.parse(Buffer.concat(chunks).toString("utf8"));
 
-            failNext.set(operation, classification);
-            res.writeHead(204).end();
-            return;
-        }
-        if (req.method === "POST" && path === "/__reset") {
-            failNext.clear();
-            resetState();
-            res.writeHead(204).end();
-            return;
-        }
-        if (req.method === "POST" && path === "/__roles") {
-            userRoles = JSON.parse(Buffer.concat(chunks).toString("utf8")).roles;
-            res.writeHead(204).end();
-            return;
-        }
-        if (req.method === "POST" && path.includes("/api/graphql")) {
-            handleGraphql(Buffer.concat(chunks).toString("utf8"), res);
-            return;
-        }
-        handleRest(req, res);
-    });
+      failNext.set(operation, classification);
+      res.writeHead(204).end();
+      return;
+    }
+    if (req.method === "POST" && path === "/__reset") {
+      failNext.clear();
+      resetState();
+      res.writeHead(204).end();
+      return;
+    }
+    if (req.method === "POST" && path === "/__roles") {
+      userRoles = JSON.parse(Buffer.concat(chunks).toString("utf8")).roles;
+      res.writeHead(204).end();
+      return;
+    }
+    if (req.method === "POST" && path.includes("/api/graphql")) {
+      handleGraphql(Buffer.concat(chunks).toString("utf8"), res);
+      return;
+    }
+    handleRest(req, res);
+  });
 });
 
 server.listen(PORT, () => {
-    console.log(`[mock-backend] listening on http://localhost:${PORT}`);
+  console.log(`[mock-backend] listening on http://localhost:${PORT}`);
 });

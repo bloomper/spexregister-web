@@ -1,343 +1,365 @@
 "use client";
 
-import {CheckCircle2, Circle, Plus, User, X} from "lucide-react";
-import {Button} from "@bloomper/fgv-web-ui/ui/button";
-import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/schema";
-import {useTranslations} from "next-intl";
-import {DataTable} from "@/components/data-table.client";
-import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client";
-import {SpexareEditSheet} from "@/components/spexare/spexare-edit-sheet.client";
+import { CheckCircle2, Circle, Plus, User, X } from "lucide-react";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type } from "@/gql/schema";
+import { useTranslations } from "next-intl";
+import { DataTable } from "@/components/data-table.client";
+import { SpexareViewDialog } from "@/components/spexare/spexare-view-dialog.client";
+import { SpexareEditSheet } from "@/components/spexare/spexare-edit-sheet.client";
 import * as React from "react";
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-    bulkApplyAction,
-    bulkDeleteAction,
-    bulkPreviewAction,
-    deleteAction,
-    exportAction,
-    getAction,
-    getPageAction,
-    importAction
+  bulkApplyAction,
+  bulkDeleteAction,
+  bulkPreviewAction,
+  deleteAction,
+  exportAction,
+  getAction,
+  getPageAction,
+  importAction,
 } from "@/app/(app)/spexare/actions.server";
-import {CursorPage} from "@/types/pagination";
-import {useRouter} from "next/navigation";
-import {DataTableSkeleton} from "@/components/data-table-skeleton";
-import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import { CursorPage } from "@/types/pagination";
+import { useRouter } from "next/navigation";
+import { DataTableSkeleton } from "@/components/data-table-skeleton";
+import { Input } from "@bloomper/fgv-web-ui/ui/input";
 import Link from "next/link";
-import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
-import {useDeepLinkItem} from "@/hooks/use-deep-link-item.client";
-import {DataFilter} from "@/components/data-filter";
-import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
-import {columnHelper} from "@/components/data-table-columns.client";
-import type {DataTableColumnDef} from "@/components/data-table-features";
-import {ExportButton} from "@/components/impex/export-button.client";
-import {ImportButton} from "@/components/impex/import-button.client";
-import {useIsClient} from "@bloomper/fgv-web-ui/hooks/use-is-client";
-import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
-import {BulkActionsMenu} from "@/components/bulk";
-import {useLazyFull} from "@/hooks/use-lazy-full.client";
-import {textFilter} from "@/utils/filter";
-
+import { useDataTableActions } from "@/hooks/use-data-table-actions.client";
+import { useDeepLinkItem } from "@/hooks/use-deep-link-item.client";
+import { DataFilter } from "@/components/data-filter";
+import { DataTableDeleteDialogs } from "@/components/data-table-delete-dialogs.client";
+import { columnHelper } from "@/components/data-table-columns.client";
+import type { DataTableColumnDef } from "@/components/data-table-features";
+import { ExportButton } from "@/components/impex/export-button.client";
+import { ImportButton } from "@/components/impex/import-button.client";
+import { useIsClient } from "@bloomper/fgv-web-ui/hooks/use-is-client";
+import { AddSelectedToQueueButton, useEditQueue } from "@/components/edit-queue";
+import { BulkActionsMenu } from "@/components/bulk";
+import { useLazyFull } from "@/hooks/use-lazy-full.client";
+import { textFilter } from "@/utils/filter";
 
 export const columns: DataTableColumnDef<Spexare>[] = [
-    columnHelper.select(),
-    columnHelper.text("firstName", "Spexare.firstName"),
-    columnHelper.text("lastName", "Spexare.lastName"),
-    columnHelper.text("nickName", "Spexare.nickName", "nickName", "hidden md:table-cell"),
-    columnHelper.image("image", "Spexare.imageUrl", "imageUrl", User, "hidden sm:table-cell"),
-    columnHelper.boolean("published", "Spexare.published", "hidden md:table-cell"),
-    columnHelper.boolean("deceased", "Spexare.deceased", "hidden md:table-cell"),
-    ...columnHelper.audit<Spexare>(),
-    columnHelper.actions<Spexare>(),
+  columnHelper.select(),
+  columnHelper.text("firstName", "Spexare.firstName"),
+  columnHelper.text("lastName", "Spexare.lastName"),
+  columnHelper.text("nickName", "Spexare.nickName", "nickName", "hidden md:table-cell"),
+  columnHelper.image("image", "Spexare.imageUrl", "imageUrl", User, "hidden sm:table-cell"),
+  columnHelper.boolean("published", "Spexare.published", "hidden md:table-cell"),
+  columnHelper.boolean("deceased", "Spexare.deceased", "hidden md:table-cell"),
+  ...columnHelper.audit<Spexare>(),
+  columnHelper.actions<Spexare>(),
 ];
 
 interface SpexareTableProps {
-    types: Type[],
-    countries: Country[];
-    tags?: TagType[],
-    tasks?: Task[],
-    taskCategories?: TaskCategory[],
-    spex?: Spex[],
-    spexCategories?: SpexCategory[],
-    initialData: CursorPage<Spexare>,
-    currentSpexareId?: string | null,
-    /** Offers deleting rows; without it there is no delete action */
-    canDelete: boolean,
+  types: Type[];
+  countries: Country[];
+  tags?: TagType[];
+  tasks?: Task[];
+  taskCategories?: TaskCategory[];
+  spex?: Spex[];
+  spexCategories?: SpexCategory[];
+  initialData: CursorPage<Spexare>;
+  currentSpexareId?: string | null;
+  /** Offers deleting rows; without it there is no delete action */
+  canDelete: boolean;
 }
 
 export function SpexareTable({
-                                 types,
-                                 tags = [],
-                                 countries = [],
-                                 tasks = [],
-                                 taskCategories = [],
-                                 spex = [],
-                                 spexCategories = [],
-                                 initialData,
-                                 currentSpexareId,
-                                 canDelete,
-                             }: SpexareTableProps) {
-    const t = useTranslations();
-    const router = useRouter();
-    const isClient = useIsClient();
-    const {enqueue} = useEditQueue();
-    const [filterQuery, setFilterQuery] = useState("");
-    const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
-    const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
-    const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
-    const [purge, setPurge] = useState(false);
+  types,
+  tags = [],
+  countries = [],
+  tasks = [],
+  taskCategories = [],
+  spex = [],
+  spexCategories = [],
+  initialData,
+  currentSpexareId,
+  canDelete,
+}: SpexareTableProps) {
+  const t = useTranslations();
+  const router = useRouter();
+  const isClient = useIsClient();
+  const { enqueue } = useEditQueue();
+  const [filterQuery, setFilterQuery] = useState("");
+  const [selectedPublishedValues, setSelectedPublishedValues] = useState<Set<string>>(new Set(["true", "false"]));
+  const [selectedDeceasedValues, setSelectedDeceasedValues] = useState<Set<string>>(new Set(["true", "false"]));
+  const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
+  const [purge, setPurge] = useState(false);
 
-    const {
-        viewItem, setViewItem,
-        editItem, setEditItem,
-        deleteItem, setDeleteItem,
-        selectedRows, setSelectedRows,
-        isBulkDeleting, setIsBulkDeleting,
-        isPending,
-        handleDelete,
-        handleBulkDelete
-    } = useDataTableActions<Spexare>(
-        (id) => deleteAction(id, purge),
-        (ids) => bulkDeleteAction(ids, purge),
-        () => {
-            setFilterQuery("");
-            setSelectedPublishedValues(new Set(["true", "false"]));
-            setSelectedDeceasedValues(new Set(["true", "false"]));
-        }
-    );
-
-    useDeepLinkItem(getAction, setViewItem);
-
-    const {full: viewFullItem, isLoading: isViewLoading} = useLazyFull(viewItem?.id ?? null, getAction);
-    const {
-        full: editFullItem,
-        isLoading: isEditLoading,
-        reload: reloadEditItem
-    } = useLazyFull(editItem?.id ?? null, getAction);
-
-    useEffect(() => {
-        if (viewItem) {
-            const updated = initialData.items.find(i => i.id === viewItem.id);
-            if (updated) {
-                setViewItem(updated);
-            }
-        }
-        if (editItem) {
-            const updated = initialData.items.find(i => i.id === editItem.id);
-            if (updated) {
-                setEditItem(updated);
-            }
-        }
-    }, [initialData, viewItem, editItem, setViewItem, setEditItem]);
-
-    const buildFilterString = (query: string, published: Set<string>, deceased: Set<string>) => {
-        const parts: string[] = ["(published:TRUE OR published:FALSE)"];
-        const text = textFilter(["firstName", "lastName", "nickName"], query);
-        if (text) {
-            parts.push(text);
-        }
-        if (published.size < 2) {
-            if (published.size === 0) {
-                parts.push(`published:NULL`);
-            } else {
-                const val = published.has("true") ? "TRUE" : "FALSE";
-                parts.push(`published:${val}`);
-            }
-        }
-        if (deceased.size < 2) {
-            if (deceased.size === 0) {
-                parts.push(`deceased:NULL`);
-            } else {
-                const val = deceased.has("true") ? "TRUE" : "FALSE";
-                parts.push(`deceased:${val}`);
-            }
-        }
-        return parts.join(" AND ");
-    };
-
-    const defaultFilterQuery = buildFilterString("", new Set(["true", "false"]), new Set(["true", "false"]));
-
-    const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
-    const isFilterActive = filterQuery !== "" || selectedPublishedValues.size < 2 || selectedDeceasedValues.size < 2;
-
-    useEffect(() => {
-        const query = buildFilterString(filterQuery, selectedPublishedValues, selectedDeceasedValues);
-
-        const timer = setTimeout(() => {
-            if (setFilterQueryRef.current && query !== lastFilterQueryRef.current) {
-                lastFilterQueryRef.current = query;
-                setFilterQueryRef.current(query);
-            }
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, [filterQuery, selectedPublishedValues, selectedDeceasedValues]);
-
-    if (!isClient) {
-        return <DataTableSkeleton columnCount={9} rowCount={15}/>;
+  const {
+    viewItem,
+    setViewItem,
+    editItem,
+    setEditItem,
+    deleteItem,
+    setDeleteItem,
+    selectedRows,
+    setSelectedRows,
+    isBulkDeleting,
+    setIsBulkDeleting,
+    isPending,
+    handleDelete,
+    handleBulkDelete,
+  } = useDataTableActions<Spexare>(
+    (id) => deleteAction(id, purge),
+    (ids) => bulkDeleteAction(ids, purge),
+    () => {
+      setFilterQuery("");
+      setSelectedPublishedValues(new Set(["true", "false"]));
+      setSelectedDeceasedValues(new Set(["true", "false"]));
     }
+  );
 
+  useDeepLinkItem(getAction, setViewItem);
+
+  const { full: viewFullItem, isLoading: isViewLoading } = useLazyFull(viewItem?.id ?? null, getAction);
+  const {
+    full: editFullItem,
+    isLoading: isEditLoading,
+    reload: reloadEditItem,
+  } = useLazyFull(editItem?.id ?? null, getAction);
+
+  useEffect(() => {
+    if (viewItem) {
+      const updated = initialData.items.find((i) => i.id === viewItem.id);
+      if (updated) {
+        setViewItem(updated);
+      }
+    }
+    if (editItem) {
+      const updated = initialData.items.find((i) => i.id === editItem.id);
+      if (updated) {
+        setEditItem(updated);
+      }
+    }
+  }, [initialData, viewItem, editItem, setViewItem, setEditItem]);
+
+  const buildFilterString = (query: string, published: Set<string>, deceased: Set<string>) => {
+    const parts: string[] = ["(published:TRUE OR published:FALSE)"];
+    const text = textFilter(["firstName", "lastName", "nickName"], query);
+    if (text) {
+      parts.push(text);
+    }
+    if (published.size < 2) {
+      if (published.size === 0) {
+        parts.push(`published:NULL`);
+      } else {
+        const val = published.has("true") ? "TRUE" : "FALSE";
+        parts.push(`published:${val}`);
+      }
+    }
+    if (deceased.size < 2) {
+      if (deceased.size === 0) {
+        parts.push(`deceased:NULL`);
+      } else {
+        const val = deceased.has("true") ? "TRUE" : "FALSE";
+        parts.push(`deceased:${val}`);
+      }
+    }
+    return parts.join(" AND ");
+  };
+
+  const defaultFilterQuery = buildFilterString("", new Set(["true", "false"]), new Set(["true", "false"]));
+
+  const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
+  const isFilterActive = filterQuery !== "" || selectedPublishedValues.size < 2 || selectedDeceasedValues.size < 2;
+
+  useEffect(() => {
+    const query = buildFilterString(filterQuery, selectedPublishedValues, selectedDeceasedValues);
+
+    const timer = setTimeout(() => {
+      if (setFilterQueryRef.current && query !== lastFilterQueryRef.current) {
+        lastFilterQueryRef.current = query;
+        setFilterQueryRef.current(query);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [filterQuery, selectedPublishedValues, selectedDeceasedValues]);
+
+  if (!isClient) {
     return (
-        <>
-            <DataTable
-                columns={columns}
-                initialData={initialData}
-                initialSorting={[{id: "firstName", desc: false}]}
-                initialFilter={defaultFilterQuery}
-                onRowClick={setViewItem}
-                onSelectionChange={setSelectedRows}
-                onFetch={(args) => getPageAction({...args, full: false})}
-                rowClassName={(row) =>
-                    currentSpexareId && row.id === currentSpexareId
-                        ? "relative after:absolute after:inset-y-0 after:left-0 after:w-1 after:bg-linear-to-b after:from-pink-500 after:via-purple-500 after:to-indigo-500 bg-primary/5 hover:bg-primary/10 transition-colors"
-                        : ""
-                }
-                meta={{
-                    setEditItem,
-                    setDeleteItem: canDelete ? (item: Spexare | null) => {
-                        setPurge(false);
-                        setDeleteItem(item);
-                    } : undefined,
-                    addToQueue: (item) => enqueue("spexare", item),
-                    setFilter: (handler) => {
-                        setFilterQueryRef.current = handler;
-                    }
-                }}
-            >
-                <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-                        <Input
-                            placeholder={t("Spexare.filterPlaceholder")}
-                            value={filterQuery}
-                            onChange={(e) => setFilterQuery(e.target.value)}
-                            className="h-8 w-full sm:w-37.5 lg:w-62.5"
-                        />
+      <DataTableSkeleton
+        columnCount={9}
+        rowCount={15}
+      />
+    );
+  }
 
-                        <div className="flex flex-wrap items-center gap-2">
-                            <DataFilter
-                                title={t("Spexare.published")}
-                                selectedValues={selectedPublishedValues}
-                                onSelect={setSelectedPublishedValues}
-                                onClear={() => setSelectedPublishedValues(new Set(["true", "false"]))}
-                                options={[
-                                    {label: t("Spexare.publishedStates.true"), value: "true", icon: CheckCircle2},
-                                    {label: t("Spexare.publishedStates.false"), value: "false", icon: Circle},
-                                ]}
-                            />
-
-                            <DataFilter
-                                title={t("Spexare.deceased")}
-                                selectedValues={selectedDeceasedValues}
-                                onSelect={setSelectedDeceasedValues}
-                                onClear={() => setSelectedDeceasedValues(new Set(["true", "false"]))}
-                                options={[
-                                    {label: t("Spexare.deceasedStates.true"), value: "true", icon: CheckCircle2},
-                                    {label: t("Spexare.deceasedStates.false"), value: "false", icon: Circle},
-                                ]}
-                            />
-
-                            {isFilterActive && (
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => {
-                                        setFilterQuery("");
-                                        setSelectedPublishedValues(new Set(["true", "false"]));
-                                        setSelectedDeceasedValues(new Set(["true", "false"]));
-                                    }}
-                                    className="h-8 px-2 lg:px-3"
-                                >
-                                    <X className="mr-2 h-4 w-4"/>
-                                    {t("Common.reset")}
-                                </Button>
-                            )}
-
-                            {canDelete && selectedRows.length > 0 && (
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    className="h-8"
-                                    onClick={() => {
-                                        setPurge(false);
-                                        setIsBulkDeleting(true);
-                                    }}
-                                >
-                                    {t("Common.delete")} ({selectedRows.length})
-                                </Button>
-                            )}
-
-                            <AddSelectedToQueueButton entityType="spexare" items={selectedRows}/>
-
-                            <BulkActionsMenu
-                                options={{tags, spex, tasks, types}}
-                                actions={{preview: bulkPreviewAction, apply: bulkApplyAction}}
-                                selectedIds={selectedRows.map(r => r.id)}
-                                filter={isFilterActive ? buildFilterString(filterQuery, selectedPublishedValues, selectedDeceasedValues) : null}
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <ExportButton
-                                exportAction={exportAction}
-                                selectedIds={selectedRows.map(r => r.id)}
-                                getFilterQuery={() => lastFilterQueryRef.current}
-                                requiresReportType={true}
-                            />
-
-                            <ImportButton importAction={importAction}/>
-                        </div>
-                    </div>
-
-                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false}
-                            render={<Link href="/spexare/create"/>}>
-                        <Plus className="mr-2 h-4 w-4"/>
-                        {t("Spexare.createHeading")}
-                    </Button>
-                </div>
-            </DataTable>
-
-            <SpexareViewDialog
-                open={!!viewItem}
-                onClose={() => setViewItem(null)}
-                summary={viewItem}
-                full={viewFullItem}
-                isLoading={isViewLoading}
-                countries={countries}
-                isMe={viewFullItem?.id === currentSpexareId}
-                showAudit
+  return (
+    <>
+      <DataTable
+        columns={columns}
+        initialData={initialData}
+        initialSorting={[{ id: "firstName", desc: false }]}
+        initialFilter={defaultFilterQuery}
+        onRowClick={setViewItem}
+        onSelectionChange={setSelectedRows}
+        onFetch={(args) => getPageAction({ ...args, full: false })}
+        rowClassName={(row) =>
+          currentSpexareId && row.id === currentSpexareId
+            ? "relative after:absolute after:inset-y-0 after:left-0 after:w-1 after:bg-linear-to-b after:from-pink-500 after:via-purple-500 after:to-indigo-500 bg-primary/5 hover:bg-primary/10 transition-colors"
+            : ""
+        }
+        meta={{
+          setEditItem,
+          setDeleteItem: canDelete
+            ? (item: Spexare | null) => {
+                setPurge(false);
+                setDeleteItem(item);
+              }
+            : undefined,
+          addToQueue: (item) => enqueue("spexare", item),
+          setFilter: (handler) => {
+            setFilterQueryRef.current = handler;
+          },
+        }}
+      >
+        <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <Input
+              placeholder={t("Spexare.filterPlaceholder")}
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              className="h-8 w-full sm:w-37.5 lg:w-62.5"
             />
 
-            <SpexareEditSheet
-                open={!!editItem}
-                onClose={() => setEditItem(null)}
-                full={editFullItem}
-                isLoading={isEditLoading}
-                onSuccess={() => {
-                    setEditItem(null);
+            <div className="flex flex-wrap items-center gap-2">
+              <DataFilter
+                title={t("Spexare.published")}
+                selectedValues={selectedPublishedValues}
+                onSelect={setSelectedPublishedValues}
+                onClear={() => setSelectedPublishedValues(new Set(["true", "false"]))}
+                options={[
+                  { label: t("Spexare.publishedStates.true"), value: "true", icon: CheckCircle2 },
+                  { label: t("Spexare.publishedStates.false"), value: "false", icon: Circle },
+                ]}
+              />
+
+              <DataFilter
+                title={t("Spexare.deceased")}
+                selectedValues={selectedDeceasedValues}
+                onSelect={setSelectedDeceasedValues}
+                onClear={() => setSelectedDeceasedValues(new Set(["true", "false"]))}
+                options={[
+                  { label: t("Spexare.deceasedStates.true"), value: "true", icon: CheckCircle2 },
+                  { label: t("Spexare.deceasedStates.false"), value: "false", icon: Circle },
+                ]}
+              />
+
+              {isFilterActive && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
                     setFilterQuery("");
                     setSelectedPublishedValues(new Set(["true", "false"]));
                     setSelectedDeceasedValues(new Set(["true", "false"]));
-                    router.refresh();
-                }}
-                onChange={reloadEditItem}
-                types={types}
-                countries={countries}
-                tags={tags}
-                tasks={tasks}
-                taskCategories={taskCategories}
-                spex={spex}
-                spexCategories={spexCategories}
-            />
+                  }}
+                  className="h-8 px-2 lg:px-3"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  {t("Common.reset")}
+                </Button>
+              )}
 
-            <DataTableDeleteDialogs
-                deleteItem={deleteItem}
-                setDeleteItem={setDeleteItem}
-                isBulkDeleting={isBulkDeleting}
-                setIsBulkDeleting={setIsBulkDeleting}
-                isPending={isPending}
-                handleDelete={handleDelete}
-                handleBulkDelete={handleBulkDelete}
-                purge={{checked: purge, onCheckedChange: setPurge}}
-            />
-        </>
-    );
+              {canDelete && selectedRows.length > 0 && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="h-8"
+                  onClick={() => {
+                    setPurge(false);
+                    setIsBulkDeleting(true);
+                  }}
+                >
+                  {t("Common.delete")} ({selectedRows.length})
+                </Button>
+              )}
+
+              <AddSelectedToQueueButton
+                entityType="spexare"
+                items={selectedRows}
+              />
+
+              <BulkActionsMenu
+                options={{ tags, spex, tasks, types }}
+                actions={{ preview: bulkPreviewAction, apply: bulkApplyAction }}
+                selectedIds={selectedRows.map((r) => r.id)}
+                filter={
+                  isFilterActive
+                    ? buildFilterString(filterQuery, selectedPublishedValues, selectedDeceasedValues)
+                    : null
+                }
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <ExportButton
+                exportAction={exportAction}
+                selectedIds={selectedRows.map((r) => r.id)}
+                getFilterQuery={() => lastFilterQueryRef.current}
+                requiresReportType={true}
+              />
+
+              <ImportButton importAction={importAction} />
+            </div>
+          </div>
+
+          <Button
+            size="sm"
+            className="h-8 w-full lg:w-auto"
+            nativeButton={false}
+            render={<Link href="/spexare/create" />}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            {t("Spexare.createHeading")}
+          </Button>
+        </div>
+      </DataTable>
+
+      <SpexareViewDialog
+        open={!!viewItem}
+        onClose={() => setViewItem(null)}
+        summary={viewItem}
+        full={viewFullItem}
+        isLoading={isViewLoading}
+        countries={countries}
+        isMe={viewFullItem?.id === currentSpexareId}
+        showAudit
+      />
+
+      <SpexareEditSheet
+        open={!!editItem}
+        onClose={() => setEditItem(null)}
+        full={editFullItem}
+        isLoading={isEditLoading}
+        onSuccess={() => {
+          setEditItem(null);
+          setFilterQuery("");
+          setSelectedPublishedValues(new Set(["true", "false"]));
+          setSelectedDeceasedValues(new Set(["true", "false"]));
+          router.refresh();
+        }}
+        onChange={reloadEditItem}
+        types={types}
+        countries={countries}
+        tags={tags}
+        tasks={tasks}
+        taskCategories={taskCategories}
+        spex={spex}
+        spexCategories={spexCategories}
+      />
+
+      <DataTableDeleteDialogs
+        deleteItem={deleteItem}
+        setDeleteItem={setDeleteItem}
+        isBulkDeleting={isBulkDeleting}
+        setIsBulkDeleting={setIsBulkDeleting}
+        isPending={isPending}
+        handleDelete={handleDelete}
+        handleBulkDelete={handleBulkDelete}
+        purge={{ checked: purge, onCheckedChange: setPurge }}
+      />
+    </>
+  );
 }

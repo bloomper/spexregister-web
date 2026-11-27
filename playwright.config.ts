@@ -1,66 +1,66 @@
-import {defineConfig, devices} from "@playwright/test";
-import {APP_PORT, AUTH_SECRET, BASE_URL, MOCK_PORT, STORAGE_STATE} from "./e2e/constants";
+import { defineConfig, devices } from "@playwright/test";
+import { APP_PORT, AUTH_SECRET, BASE_URL, MOCK_PORT, STORAGE_STATE } from "./e2e/constants";
 
 const appEnv: Record<string, string> = {
-    // Everything the app reads is set here, or a developer's .env.local (which points at the local stack) would win
-    AUTH_SECRET,
-    KEYCLOAK_CLIENT_ID: "e2e",
-    KEYCLOAK_CLIENT_SECRET: "e2e",
-    KEYCLOAK_ISSUER: `http://localhost:${MOCK_PORT}/realms/e2e`,
-    API_GRAPHQL_ENDPOINT: `http://localhost:${MOCK_PORT}/api/graphql`,
-    API_REST_BASE_URL: `http://localhost:${MOCK_PORT}`,
-    BETTER_AUTH_URL: BASE_URL,
-    SUPPORT_EMAIL: "support.register@example.org",
-    FEEDBACK_EMAIL: "feedback.register@example.org",
-    SUPPORTED_LOCALES: "sv,en",
-    DEFAULT_LOCALE: "sv",
-    UMAMI_URL: "",
-    UMAMI_WEBSITE_ID: "",
-    SPEXREGISTER_WEB_URL: "",
-    REVIVAL_WEB_URL: "https://revival.e2e.test",
-    SPEXIFY_WEB_URL: "https://spexify.e2e.test",
-    SPEXFLIX_WEB_URL: "",
-    SPEXGRAM_WEB_URL: "",
-    ARCHIVE_WEB_URL: "",
+  // Everything the app reads is set here, or a developer's .env.local (which points at the local stack) would win
+  AUTH_SECRET,
+  KEYCLOAK_CLIENT_ID: "e2e",
+  KEYCLOAK_CLIENT_SECRET: "e2e",
+  KEYCLOAK_ISSUER: `http://localhost:${MOCK_PORT}/realms/e2e`,
+  API_GRAPHQL_ENDPOINT: `http://localhost:${MOCK_PORT}/api/graphql`,
+  API_REST_BASE_URL: `http://localhost:${MOCK_PORT}`,
+  BETTER_AUTH_URL: BASE_URL,
+  SUPPORT_EMAIL: "support.register@example.org",
+  FEEDBACK_EMAIL: "feedback.register@example.org",
+  SUPPORTED_LOCALES: "sv,en",
+  DEFAULT_LOCALE: "sv",
+  UMAMI_URL: "",
+  UMAMI_WEBSITE_ID: "",
+  SPEXREGISTER_WEB_URL: "",
+  REVIVAL_WEB_URL: "https://revival.e2e.test",
+  SPEXIFY_WEB_URL: "https://spexify.e2e.test",
+  SPEXFLIX_WEB_URL: "",
+  SPEXGRAM_WEB_URL: "",
+  ARCHIVE_WEB_URL: "",
 };
 
 export default defineConfig({
-    testDir: "./e2e",
-    fullyParallel: false,
-    workers: 1,
-    forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 1 : 0,
-    reporter: process.env.CI
-        ? [["github"], ["html", {open: "never"}], ["junit", {outputFile: "test-results/e2e-results.xml"}]]
-        : [["list"], ["html", {open: "never"}]],
-    timeout: 30_000,
-    use: {
-        baseURL: BASE_URL,
-        trace: "on-first-retry",
+  testDir: "./e2e",
+  fullyParallel: false,
+  workers: 1,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 1 : 0,
+  reporter: process.env.CI
+    ? [["github"], ["html", { open: "never" }], ["junit", { outputFile: "test-results/e2e-results.xml" }]]
+    : [["list"], ["html", { open: "never" }]],
+  timeout: 30_000,
+  use: {
+    baseURL: BASE_URL,
+    trace: "on-first-retry",
+  },
+  projects: [
+    { name: "setup", testMatch: /auth\.setup\.ts/ },
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], storageState: STORAGE_STATE },
+      dependencies: ["setup"],
     },
-    projects: [
-        {name: "setup", testMatch: /auth\.setup\.ts/},
-        {
-            name: "chromium",
-            use: {...devices["Desktop Chrome"], storageState: STORAGE_STATE},
-            dependencies: ["setup"],
-        },
-    ],
-    webServer: [
-        {
-            command: "node e2e/mock-backend.mjs",
-            port: MOCK_PORT,
-            env: {MOCK_PORT: String(MOCK_PORT)},
-            reuseExistingServer: !process.env.CI,
-            stdout: "pipe",
-        },
-        {
-            command: `next build && next start -p ${APP_PORT}`,
-            port: APP_PORT,
-            env: {...appEnv, PORT: String(APP_PORT)},
-            timeout: 240_000,
-            reuseExistingServer: !process.env.CI,
-            stdout: "pipe",
-        },
-    ],
+  ],
+  webServer: [
+    {
+      command: "node e2e/mock-backend.mjs",
+      port: MOCK_PORT,
+      env: { MOCK_PORT: String(MOCK_PORT) },
+      reuseExistingServer: !process.env.CI,
+      stdout: "pipe",
+    },
+    {
+      command: `next build && next start -p ${APP_PORT}`,
+      port: APP_PORT,
+      env: { ...appEnv, PORT: String(APP_PORT) },
+      timeout: 240_000,
+      reuseExistingServer: !process.env.CI,
+      stdout: "pipe",
+    },
+  ],
 });

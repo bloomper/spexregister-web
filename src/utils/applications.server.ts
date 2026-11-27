@@ -1,19 +1,19 @@
 import "server-only";
 
-import {jwtDecode} from "jwt-decode";
-import {getSessionContext} from "@/utils/auth.server";
-import {type Application, resolveApplications} from "@bloomper/fgv-web-ui/shell/applications";
-import type {AccessTokenClaims} from "@/types/auth";
+import { jwtDecode } from "jwt-decode";
+import { getSessionContext } from "@/utils/auth.server";
+import { type Application, resolveApplications } from "@bloomper/fgv-web-ui/shell/applications";
+import type { AccessTokenClaims } from "@/types/auth";
 
 /**
  * The applications the signed-in user can switch to from Spexregister. The addresses are read from the environment
  * at request time, so one image serves every environment; without a session only Spexregister itself is listed.
  */
 export async function getApplications(): Promise<Application[]> {
-    const {accessToken} = await getSessionContext();
-    const claims = accessToken ? jwtDecode<AccessTokenClaims>(accessToken) : {};
+  const { accessToken } = await getSessionContext();
+  const claims = accessToken ? jwtDecode<AccessTokenClaims>(accessToken) : {};
 
-    return resolveApplications("spexregister", claims, process.env);
+  return resolveApplications("spexregister", claims, process.env);
 }
 
 /**
@@ -21,17 +21,17 @@ export async function getApplications(): Promise<Application[]> {
  * data there (EDITOR on fgv-spexipedia, which Spexregister's tokens carry). Null when Spexipedia's address is not set.
  */
 export async function getSpexipedia(): Promise<{ url: string; canEdit: boolean } | null> {
-    const url = process.env.SPEXIPEDIA_WEB_URL?.trim().replace(/\/+$/, "");
+  const url = process.env.SPEXIPEDIA_WEB_URL?.trim().replace(/\/+$/, "");
 
-    if (!url) {
-        return null;
-    }
+  if (!url) {
+    return null;
+  }
 
-    const {accessToken} = await getSessionContext();
-    const claims = accessToken ? jwtDecode<AccessTokenClaims>(accessToken) : {};
-    const roles = claims.resource_access?.["fgv-spexipedia"]?.roles ?? [];
+  const { accessToken } = await getSessionContext();
+  const claims = accessToken ? jwtDecode<AccessTokenClaims>(accessToken) : {};
+  const roles = claims.resource_access?.["fgv-spexipedia"]?.roles ?? [];
 
-    return {url, canEdit: roles.includes("EDITOR") || roles.includes("ADMIN")};
+  return { url, canEdit: roles.includes("EDITOR") || roles.includes("ADMIN") };
 }
 
 /**
@@ -39,15 +39,15 @@ export async function getSpexipedia(): Promise<{ url: string; canEdit: boolean }
  * fgv-membership, which Spexregister's tokens carry). Null when Medlemskap's address is not set.
  */
 export async function getMedlemskap(): Promise<{ url: string; canManage: boolean } | null> {
-    const url = process.env.MEMBERSHIP_WEB_URL?.trim().replace(/\/+$/, "");
+  const url = process.env.MEMBERSHIP_WEB_URL?.trim().replace(/\/+$/, "");
 
-    if (!url) {
-        return null;
-    }
+  if (!url) {
+    return null;
+  }
 
-    const {accessToken} = await getSessionContext();
-    const claims = accessToken ? jwtDecode<AccessTokenClaims>(accessToken) : {};
-    const roles = claims.resource_access?.["fgv-membership"]?.roles ?? [];
+  const { accessToken } = await getSessionContext();
+  const claims = accessToken ? jwtDecode<AccessTokenClaims>(accessToken) : {};
+  const roles = claims.resource_access?.["fgv-membership"]?.roles ?? [];
 
-    return {url, canManage: roles.includes("BOARD") || roles.includes("TREASURER") || roles.includes("ADMIN")};
+  return { url, canManage: roles.includes("BOARD") || roles.includes("TREASURER") || roles.includes("ADMIN") };
 }

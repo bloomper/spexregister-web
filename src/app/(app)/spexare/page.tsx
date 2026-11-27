@@ -1,64 +1,64 @@
-import {SpexareGrid} from "@/components/spexare";
-import {getMine, getPaged} from "@/lib/spexare";
-import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
-import {withPolicyPage} from "@/utils/route.server";
-import {Policies} from "@/utils/policy.server";
-import {UserRound} from "lucide-react";
-import {getCountries, getTypes} from "@/lib/settings";
-import {getLocale, getTranslations} from "next-intl/server";
-import {isAdminOrEditor} from "@/utils/auth";
-import {getAll as getAllTags} from "@/lib/tag";
-import {getAll as getAllTasks} from "@/lib/task";
-import {getAll as getAllTaskCategories} from "@/lib/task/category";
-import {getAll as getAllSpex} from "@/lib/spex";
-import {getAll as getAllSpexCategories} from "@/lib/spex/category";
-import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
+import { SpexareGrid } from "@/components/spexare";
+import { getMine, getPaged } from "@/lib/spexare";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
+import { withPolicyPage } from "@/utils/route.server";
+import { Policies } from "@/utils/policy.server";
+import { UserRound } from "lucide-react";
+import { getCountries, getTypes } from "@/lib/settings";
+import { getLocale, getTranslations } from "next-intl/server";
+import { isAdminOrEditor } from "@/utils/auth";
+import { getAll as getAllTags } from "@/lib/tag";
+import { getAll as getAllTasks } from "@/lib/task";
+import { getAll as getAllTaskCategories } from "@/lib/task/category";
+import { getAll as getAllSpex } from "@/lib/spex";
+import { getAll as getAllSpexCategories } from "@/lib/spex/category";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The published spexare as cards, scrolling on.
  */
 export default async function SpexarePage() {
-    return withPolicyPage(Policies.spexare.requireRead, async (authz) => {
-        const canUpdate = isAdminOrEditor(authz.roles);
-        const locale = await getLocale();
+  return withPolicyPage(Policies.spexare.requireRead, async (authz) => {
+    const canUpdate = isAdminOrEditor(authz.roles);
+    const locale = await getLocale();
 
-        const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, mySpexare] = await Promise.all([
-            getPaged({first: 24, after: null}),
-            getCountries(locale),
-            getTypes(locale),
-            getAllTags(),
-            getAllTasks(),
-            getAllTaskCategories(),
-            getAllSpex(),
-            getAllSpexCategories(),
-            getMine(),
-        ]);
-        const initialItems = page.items;
-        const t = await getTranslations();
+    const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, mySpexare] = await Promise.all([
+      getPaged({ first: 24, after: null }),
+      getCountries(locale),
+      getTypes(locale),
+      getAllTags(),
+      getAllTasks(),
+      getAllTaskCategories(),
+      getAllSpex(),
+      getAllSpexCategories(),
+      getMine(),
+    ]);
+    const initialItems = page.items;
+    const t = await getTranslations();
 
-        return (
-            <Page>
-                <h1 className="sr-only">{t("Spexare.heading")}</h1>
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    {initialItems.length > 0 ? (
-                        <SpexareGrid
-                            countries={countries}
-                            types={types}
-                            tags={tags}
-                            tasks={tasks}
-                            taskCategories={taskCategories}
-                            spex={spex}
-                            spexCategories={spexCategories}
-                            initialItems={initialItems}
-                            initialPageInfo={page.pageInfo}
-                            currentSpexareId={mySpexare?.id ?? null}
-                            canManage={canUpdate}
-                        />
-                    ) : (
-                        <DataEmpty icon={UserRound}/>
-                    )}
-                </div>
-            </Page>
-        );
-    });
+    return (
+      <Page>
+        <h1 className="sr-only">{t("Spexare.heading")}</h1>
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          {initialItems.length > 0 ? (
+            <SpexareGrid
+              countries={countries}
+              types={types}
+              tags={tags}
+              tasks={tasks}
+              taskCategories={taskCategories}
+              spex={spex}
+              spexCategories={spexCategories}
+              initialItems={initialItems}
+              initialPageInfo={page.pageInfo}
+              currentSpexareId={mySpexare?.id ?? null}
+              canManage={canUpdate}
+            />
+          ) : (
+            <DataEmpty icon={UserRound} />
+          )}
+        </div>
+      </Page>
+    );
+  });
 }

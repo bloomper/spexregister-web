@@ -1,8 +1,8 @@
 import "server-only";
 
-import {Membership, MembershipCreate} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {mutateForData, runMutationField} from "@/lib/graphql.server";
+import { Membership, MembershipCreate } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { mutateForData, runMutationField } from "@/lib/graphql.server";
 
 export const MembershipSummary = graphql(`
     fragment MembershipSummary on Membership {
@@ -41,13 +41,18 @@ const MembershipDeleteMutation = graphql(`
 `);
 
 export async function create(spexareId: string, typeId: string, input: MembershipCreate): Promise<Membership> {
-    return mutateForData(MembershipCreateMutation, {
-        spexareId,
-        typeId,
-        input
-    }, "membershipCreate", "No data created") as Promise<Membership>;
+  return mutateForData(
+    MembershipCreateMutation,
+    {
+      spexareId,
+      typeId,
+      input,
+    },
+    "membershipCreate",
+    "No data created"
+  ) as Promise<Membership>;
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    return runMutationField(MembershipDeleteMutation, {spexareId, typeId, id}, "membershipDelete");
+  return runMutationField(MembershipDeleteMutation, { spexareId, typeId, id }, "membershipDelete");
 }

@@ -26,12 +26,14 @@ Spexregister Web is the second generation of the frontend responsible for servin
 ### Development
 
 1. **Install dependencies:**
+
    ```bash
    npm ci
    ```
 
 2. **Configure environment:**
    Start fgv-infra-deploy's local stack and [Spexregister Server][1]'s, then create `.env.local` (`.env` already holds the rest):
+
    ```
    BETTER_AUTH_URL=http://localhost:3000
    AUTH_SECRET=<random string of at least 32 characters>
@@ -46,6 +48,7 @@ Spexregister Web is the second generation of the frontend responsible for servin
    SPEXGRAM_WEB_URL=http://localhost:3004
    ARCHIVE_WEB_URL=http://localhost:3005
    ```
+
    `REVIVAL_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXGRAM_WEB_URL` and `ARCHIVE_WEB_URL` are the other applications' addresses, for
    the application switcher in the header; it lists only those that are set and that the user can open.
    For visitor statistics, run fgv-infra-deploy's `local/bin/configure-umami.sh` and put the ID it prints in
@@ -57,6 +60,7 @@ Spexregister Web is the second generation of the frontend responsible for servin
 3. **Generate GraphQL types:**
    If you change GraphQL queries or the schema, regenerate types. The schema is read from the files of a
    `spexregister-server` checkout next to this one (`GRAPHQL_SCHEMA` overrides the path), so no server needs to run:
+
    ```bash
    npm run gql-codegen
    ```
@@ -89,7 +93,7 @@ fgv-infra-deploy's local Caddy.
 CI publishes `bloomper/spexregister-web` for `linux/amd64`:
 
 | Trigger              | Tags                              |
-|----------------------|-----------------------------------|
+| -------------------- | --------------------------------- |
 | push to `develop`    | `develop`, `sha-<commit>`         |
 | push of tag `vX.Y.Z` | `X.Y.Z`, `latest`, `sha-<commit>` |
 
@@ -131,11 +135,7 @@ You can contribute to Spexregister Web by:
 Spexregister Web is open source software released under the [Apache 2.0 license][6].
 
 [1]: https://github.com/bloomper/spexregister-server
-
 [3]: CODE_OF_CONDUCT.md
-
 [4]: https://help.github.com/articles/using-pull-requests/
-
 [5]: CONTRIBUTING.md
-
 [6]: https://www.apache.org/licenses/LICENSE-2.0.html

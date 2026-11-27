@@ -21,7 +21,7 @@ separate GraphQL/REST API. Stack and setup: `README.md`. PR process: `CONTRIBUTI
 
 - `npm run dev` / `build` / `start`
 - `npm run lint` (ESLint), `npm run typecheck` (tsc) — note typecheck only covers `src/**`, so
-  `next.config.ts`, `codegen.ts` and `eslint.config.mts` are *not* type-checked by it.
+  `next.config.ts`, `codegen.ts` and `eslint.config.mts` are _not_ type-checked by it.
 - `npm run test` (Vitest), `npm run test:e2e` (Playwright)
 - `npm run gql-codegen` — regenerate `src/gql/` from the schema files of a sibling `spexregister-server` checkout (`GRAPHQL_SCHEMA` overrides the path)
 
@@ -35,16 +35,16 @@ ESLint enforces double quotes.
 ## File conventions
 
 - **A module's directive and its filename must agree**, both ways:
-    - `"use client"` ⇔ `*.client.ts(x)` — components *and* hooks (`use-lazy-full.client.ts`).
-    - `import "server-only"` ⇔ `*.server.ts` (libs, utils).
-    - `"use server"` ⇔ `*.server.ts` too — the `actions.server.ts` server-action modules. Don't add
-      `server-only` to a `"use server"` file; the directive already pins it to the server.
+  - `"use client"` ⇔ `*.client.ts(x)` — components _and_ hooks (`use-lazy-full.client.ts`).
+  - `import "server-only"` ⇔ `*.server.ts` (libs, utils).
+  - `"use server"` ⇔ `*.server.ts` too — the `actions.server.ts` server-action modules. Don't add
+    `server-only` to a `"use server"` file; the directive already pins it to the server.
 - Three standing exceptions, all deliberate:
-    - `src/auth.ts` — `server-only`, but keeps the conventional Better Auth entry-point name.
-    - Next.js reserved filenames (`page.tsx`, `layout.tsx`, `error.tsx`, `global-error.tsx`) cannot
-      be renamed, so a `"use client"` one keeps its required name.
-    - `src/components/ui/chart.tsx`, shadcn's chart, keeps its upstream name so `shadcn add chart` stays a clean
-      overwrite.
+  - `src/auth.ts` — `server-only`, but keeps the conventional Better Auth entry-point name.
+  - Next.js reserved filenames (`page.tsx`, `layout.tsx`, `error.tsx`, `global-error.tsx`) cannot
+    be renamed, so a `"use client"` one keeps its required name.
+  - `src/components/ui/chart.tsx`, shadcn's chart, keeps its upstream name so `shadcn add chart` stays a clean
+    overwrite.
 - `src/gql/**` (generated) and `src/components/ui/**` (shadcn) are ESLint-ignored — don't hand-edit.
 
 ## Shared FGV UI
@@ -170,7 +170,7 @@ changing routing or data fetching; this area differs sharply from older Next.
 ## Audit and the change log
 
 - Every revision records **why** it happened, not just what changed: `source` (`WEB | IMPORT |
-  RESTORE | SYSTEM | MCP`), `operation` and a free-text `comment` on `revinfo`. The server decides
+RESTORE | SYSTEM | MCP`), `operation` and a free-text `comment` on `revinfo`. The server decides
   `source`; the only thing a client contributes is the comment, via an **`X-Audit-Reason`** header —
   use `auditReason()` from `src/lib/graphql.server.ts` and pass it as the mutation context, as the
   restore dialog does so the reason is recorded in the user's language.
@@ -193,7 +193,7 @@ changing routing or data fetching; this area differs sharply from older Next.
   `/<route>?open=<id>` plus `&tab=` for the spexare view. Pages read it with `useDeepLink` /
   `useDeepLinkItem` (`src/hooks/use-deep-link-item.client.ts`). Two things this depends on: every
   linkable route needs a `loading.tsx` (the Suspense boundary `useSearchParams` requires), and the
-  params stay in the URL, so a page must treat the link as the *initial* selection and let a later
+  params stay in the URL, so a page must treat the link as the _initial_ selection and let a later
   choice of its own win — see the derived `selection` state in `spexare-grid.client.tsx`.
 
 ## Tables and forms
@@ -243,7 +243,7 @@ which walks records one at a time.
   reader confirms are the counts they get. Per record the outcome is `APPLIED`, `UNCHANGED`
   (already as asked — a skip, not a failure) or `NOT_PERMITTED` (no ACL write permission).
 - `BulkTarget` takes **`ids` or `filter`, never both**, mirroring `spexareExport`, so an action can
-  run on a whole filtered set without ticking every row. The size cap (500 records) is checked *before* the rows are
+  run on a whole filtered set without ticking every row. The size cap (500 records) is checked _before_ the rows are
   loaded.
 - The payload's tag/spex/task/type ids are resolved **before the first write**, so a bad id fails the
   batch having changed nothing. The batch is otherwise all-or-nothing: one transaction.
@@ -268,7 +268,7 @@ Rendered on `/spexare/analytics`, with a headline slice on `/` (`src/components/
   into `AnalyticsSection`s and the service builds just those; REST has no field selection so
   `/api/analytics` always pays for all six. This is why the home page uses `getSummary()` — a
   narrower document — rather than `get()`: asking for the full fragment would drag the revision
-  queries behind `operations` onto every landing. Add a section to the schema *and* to
+  queries behind `operations` onto every landing. Add a section to the schema _and_ to
   `AnalyticsSection`, or it will silently never be built.
 
 - **A chart bucket carries its own drill-down.** `Bucket` has `facet` + `key`, which
@@ -283,7 +283,7 @@ Rendered on `/spexare/analytics`, with a headline slice on `/` (`src/components/
   `SpexareSearchEnabledJpaRepository`, not writing a query.
 - Two filter values exist only for drilling down, both in that repository:
   `quality` is a **filter-only** facet (no aggregation) whose values are `DataQualityIssue` keys and
-  which resolves to a `mustNot(exists(...))` predicate — `countByDataQualityIssue` uses the *same*
+  which resolves to a `mustNot(exists(...))` predicate — `countByDataQualityIssue` uses the _same_
   predicate, so tile and list agree. The year facets (`spexYears`, `debutYears`,
   `lastActiveYears`) also accept `2010..2015`, either bound omitted, which is what makes the
   dormancy bands clickable. Note multiple values of one facet still **AND** together.

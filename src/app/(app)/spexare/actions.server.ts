@@ -1,110 +1,115 @@
 "use server";
 
-import {Policies} from "@/utils/policy.server";
-import {withPolicyAction} from "@/utils/route.server";
-import {deleteEach} from "@/utils/utils.server";
+import { Policies } from "@/utils/policy.server";
+import { withPolicyAction } from "@/utils/route.server";
+import { deleteEach } from "@/utils/utils.server";
 import {
-    addPartner,
-    create,
-    del,
-    delAndPurge,
-    deleteImage,
-    exp,
-    get,
-    getMine,
-    getPaged,
-    imp,
-    removePartner,
-    revisions,
-    search,
-    spexareFormSchema,
-    update,
-    uploadImage
+  addPartner,
+  create,
+  del,
+  delAndPurge,
+  deleteImage,
+  exp,
+  get,
+  getMine,
+  getPaged,
+  imp,
+  removePartner,
+  revisions,
+  search,
+  spexareFormSchema,
+  update,
+  uploadImage,
 } from "@/lib/spexare";
-import {getRelatedRevisions, getRestorePreview, restore} from "@/lib/audit/audit.server";
-import {revalidateTag} from "next/cache";
+import { getRelatedRevisions, getRestorePreview, restore } from "@/lib/audit/audit.server";
+import { revalidateTag } from "next/cache";
 import {
-    AggregationFilterInput,
-    AuditedType,
-    ImpexType,
-    ReportType,
-    SortDirection,
-    SpexareBulkInput,
-    SpexareCreate,
-    SpexareUpdate
+  AggregationFilterInput,
+  AuditedType,
+  ImpexType,
+  ReportType,
+  SortDirection,
+  SpexareBulkInput,
+  SpexareCreate,
+  SpexareUpdate,
 } from "@/gql/schema";
-import {apply as bulkApply, bulkInputSchema, preview as bulkPreview} from "@/lib/spexare/bulk";
+import { apply as bulkApply, bulkInputSchema, preview as bulkPreview } from "@/lib/spexare/bulk";
 import {
-    addressFormSchema,
-    create as createAddress,
-    del as delAddress,
-    update as updateAddress
+  addressFormSchema,
+  create as createAddress,
+  del as delAddress,
+  update as updateAddress,
 } from "@/lib/spexare/address";
 import {
-    consentFormSchema,
-    create as createConsent,
-    del as delConsent,
-    update as updateConsent
+  consentFormSchema,
+  create as createConsent,
+  del as delConsent,
+  update as updateConsent,
 } from "@/lib/spexare/consent";
-import {create as createMembership, del as delMembership, membershipFormSchema} from "@/lib/spexare/membership";
-import {create as createTagging, del as delTagging} from "@/lib/spexare/tagging";
-import {create as createToggle, del as delToggle, toggleFormSchema, update as updateToggle} from "@/lib/spexare/toggle";
-import {create as createActivity, del as delActivity,} from "@/lib/spexare/activity";
+import { create as createMembership, del as delMembership, membershipFormSchema } from "@/lib/spexare/membership";
+import { create as createTagging, del as delTagging } from "@/lib/spexare/tagging";
 import {
-    create as createSpexActivity,
-    del as delSpexActivity,
-    update as updateSpexActivity
+  create as createToggle,
+  del as delToggle,
+  toggleFormSchema,
+  update as updateToggle,
+} from "@/lib/spexare/toggle";
+import { create as createActivity, del as delActivity } from "@/lib/spexare/activity";
+import {
+  create as createSpexActivity,
+  del as delSpexActivity,
+  update as updateSpexActivity,
 } from "@/lib/spexare/activity/spex-activity";
 import {
-    create as createTaskActivity,
-    del as delTaskActivity,
-    update as updateTaskActivity
+  create as createTaskActivity,
+  del as delTaskActivity,
+  update as updateTaskActivity,
 } from "@/lib/spexare/activity/task-activity";
 import {
-    actorFormSchema,
-    create as createActor,
-    del as delActor,
-    getCharacters,
-    update as updateActor
+  actorFormSchema,
+  create as createActor,
+  del as delActor,
+  getCharacters,
+  update as updateActor,
 } from "@/lib/spexare/activity/task-activity/actor";
 
 export async function getPageAction(args: {
-    first?: number;
-    last?: number;
-    after?: string | null;
-    before?: string | null;
-    sort?: string[];
-    direction?: SortDirection;
-    filter?: string;
-    full?: boolean | string;
+  first?: number;
+  last?: number;
+  after?: string | null;
+  before?: string | null;
+  sort?: string[];
+  direction?: SortDirection;
+  filter?: string;
+  full?: boolean | string;
 }) {
-    return withPolicyAction(Policies.spexare.requireRead, async () => {
-        return getPaged({
-            ...args,
-            full: args.full === true || args.full === "true"
-        });
+  return withPolicyAction(Policies.spexare.requireRead, async () => {
+    return getPaged({
+      ...args,
+      full: args.full === true || args.full === "true",
     });
+  });
 }
 
 export async function searchAction(args: {
-    q: string;
-    aggregationFilters: AggregationFilterInput[];
-    first?: number;
-    last?: number;
-    after?: string | null;
-    before?: string | null;
-    sort?: string[];
-    direction?: SortDirection;
+  q: string;
+  aggregationFilters: AggregationFilterInput[];
+  first?: number;
+  last?: number;
+  after?: string | null;
+  before?: string | null;
+  sort?: string[];
+  direction?: SortDirection;
 }) {
-    return withPolicyAction(Policies.spexare.requireRead, async () => {
-        return search(args);
-    });
+  return withPolicyAction(Policies.spexare.requireRead, async () => {
+    return search(args);
+  });
 }
 
 export async function getMineAction() {
-    return withPolicyAction(Policies.spexare.requireRead, async () => {
-        return getMine();
-    });
+  return withPolicyAction(Policies.spexare.requireRead, async () => {
+    return getMine();
+  });
 }
 
 /**
@@ -112,406 +117,444 @@ export async function getMineAction() {
  * security number and are not sent; deceased and published default to false.
  */
 export async function createAction(data: unknown) {
-    return withPolicyAction(Policies.spexare.requireCreate, async () => {
-        const validated = spexareFormSchema.parse(data);
-        const {birthDate, birthNumber, ...createInput} = validated;
-        void birthDate;
-        void birthNumber;
-        const payload: SpexareCreate = {
-            ...createInput,
-            deceased: createInput.deceased ?? false,
-            published: createInput.published ?? false,
-        };
-        const result = await create(payload);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireCreate, async () => {
+    const validated = spexareFormSchema.parse(data);
+    const { birthDate, birthNumber, ...createInput } = validated;
+    void birthDate;
+    void birthNumber;
+    const payload: SpexareCreate = {
+      ...createInput,
+      deceased: createInput.deceased ?? false,
+      published: createInput.published ?? false,
+    };
+    const result = await create(payload);
+    revalidate();
+    return result;
+  });
 }
 
 export async function getAction(id: string) {
-    return withPolicyAction(Policies.spexare.requireRead, async () => {
-        return get(id);
-    });
+  return withPolicyAction(Policies.spexare.requireRead, async () => {
+    return get(id);
+  });
 }
 
 /**
  * Changes a spexare from the form, as `createAction` sends it.
  */
 export async function updateAction(id: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = spexareFormSchema.parse(data);
-        const {birthDate, birthNumber, ...updateInput} = validated;
-        void birthDate;
-        void birthNumber;
-        const payload: Omit<SpexareUpdate, "id"> = {
-            ...updateInput,
-            deceased: updateInput.deceased ?? false,
-            published: updateInput.published ?? false,
-        };
-        const result = await update(id, payload);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = spexareFormSchema.parse(data);
+    const { birthDate, birthNumber, ...updateInput } = validated;
+    void birthDate;
+    void birthNumber;
+    const payload: Omit<SpexareUpdate, "id"> = {
+      ...updateInput,
+      deceased: updateInput.deceased ?? false,
+      published: updateInput.published ?? false,
+    };
+    const result = await update(id, payload);
+    revalidate();
+    return result;
+  });
 }
 
 /**
  * Removes a spexare, and with `purge` its audit history too, which only administrators may do.
  */
 export async function deleteAction(id: string, purge = false) {
-    return withPolicyAction(Policies.spexare.requireDelete, async () => {
-        const result = await (purge ? delAndPurge(id) : del(id));
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireDelete, async () => {
+    const result = await (purge ? delAndPurge(id) : del(id));
+    revalidate();
+    return result;
+  });
 }
 
 /**
  * Removes each spexare, going on past failures, and reports those that failed.
  */
 export async function bulkDeleteAction(ids: string[], purge = false) {
-    await withPolicyAction(Policies.spexare.requireDelete, async () => {
-        try {
-            await deleteEach(ids, purge ? delAndPurge : del);
-        } finally {
-            revalidate();
-        }
-    });
+  await withPolicyAction(Policies.spexare.requireDelete, async () => {
+    try {
+      await deleteEach(ids, purge ? delAndPurge : del);
+    } finally {
+      revalidate();
+    }
+  });
 }
 
 /**
  * What a bulk change would do to each spexare, without changing anything.
  */
 export async function bulkPreviewAction(data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        return bulkPreview(bulkInputSchema.parse(data) as SpexareBulkInput);
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    return bulkPreview(bulkInputSchema.parse(data) as SpexareBulkInput);
+  });
 }
 
 /**
  * Applies a bulk change, recording the reason with the revision.
  */
 export async function bulkApplyAction(data: unknown, reason?: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await bulkApply(bulkInputSchema.parse(data) as SpexareBulkInput, reason);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await bulkApply(bulkInputSchema.parse(data) as SpexareBulkInput, reason);
+    revalidate();
+    return result;
+  });
 }
 
-export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType) {
-    return withPolicyAction(Policies.spexare.requireExport, async () => {
-        return await exp(ids, filter, type, reportType);
-    });
+export async function exportAction(
+  ids: string[] | null,
+  filter: string | null,
+  type: ImpexType,
+  reportType: ReportType
+) {
+  return withPolicyAction(Policies.spexare.requireExport, async () => {
+    return await exp(ids, filter, type, reportType);
+  });
 }
 
 export async function importAction(type: ImpexType, file: File) {
-    return withPolicyAction(Policies.spexare.requireImport, async () => {
-        const result = await imp(type, file);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireImport, async () => {
+    const result = await imp(type, file);
+    revalidate();
+    return result;
+  });
 }
 
 export async function addPartnerAction(spexareId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await addPartner(spexareId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await addPartner(spexareId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function removePartnerAction(spexareId: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await removePartner(spexareId);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await removePartner(spexareId);
+    revalidate();
+    return result;
+  });
 }
 
 export async function uploadImageAction(id: string, formData: FormData) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const file = formData.get("file") as File;
-        const result = await uploadImage(id, file);
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const file = formData.get("file") as File;
+    const result = await uploadImage(id, file);
 
-        revalidate();
-        return result;
-    });
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteImageAction(id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        await deleteImage(id);
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    await deleteImage(id);
 
-        revalidate();
-        return {
-            success: true
-        };
-    });
+    revalidate();
+    return {
+      success: true,
+    };
+  });
 }
 
 export async function createAddressAction(spexareId: string, _typeId: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireCreate, async () => {
-        const validated = addressFormSchema.parse(data);
-        const {typeId, ...createInput} = validated;
-        void typeId;
-        const result = await createAddress(spexareId, _typeId, createInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireCreate, async () => {
+    const validated = addressFormSchema.parse(data);
+    const { typeId, ...createInput } = validated;
+    void typeId;
+    const result = await createAddress(spexareId, _typeId, createInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function updateAddressAction(spexareId: string, _typeId: string, id: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = addressFormSchema.parse(data);
-        const {typeId, ...updateInput} = validated;
-        void typeId;
-        const result = await updateAddress(spexareId, _typeId, id, updateInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = addressFormSchema.parse(data);
+    const { typeId, ...updateInput } = validated;
+    void typeId;
+    const result = await updateAddress(spexareId, _typeId, id, updateInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteAddressAction(spexareId: string, typeId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireDelete, async () => {
-        const result = await delAddress(spexareId, typeId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireDelete, async () => {
+    const result = await delAddress(spexareId, typeId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function createConsentAction(spexareId: string, _typeId: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = consentFormSchema.parse(data);
-        const {typeId, ...createInput} = validated;
-        void typeId;
-        const result = await createConsent(spexareId, _typeId, createInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = consentFormSchema.parse(data);
+    const { typeId, ...createInput } = validated;
+    void typeId;
+    const result = await createConsent(spexareId, _typeId, createInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function updateConsentAction(spexareId: string, _typeId: string, id: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = consentFormSchema.parse(data);
-        const {typeId, ...updateInput} = validated;
-        void typeId;
-        const result = await updateConsent(spexareId, _typeId, id, updateInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = consentFormSchema.parse(data);
+    const { typeId, ...updateInput } = validated;
+    void typeId;
+    const result = await updateConsent(spexareId, _typeId, id, updateInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteConsentAction(spexareId: string, typeId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await delConsent(spexareId, typeId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await delConsent(spexareId, typeId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function createMembershipAction(spexareId: string, _typeId: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = membershipFormSchema.parse(data);
-        const {typeId, ...createInput} = validated;
-        void typeId;
-        const result = await createMembership(spexareId, _typeId, createInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = membershipFormSchema.parse(data);
+    const { typeId, ...createInput } = validated;
+    void typeId;
+    const result = await createMembership(spexareId, _typeId, createInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteMembershipAction(spexareId: string, typeId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await delMembership(spexareId, typeId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await delMembership(spexareId, typeId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function createTaggingAction(spexareId: string, tagId: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await createTagging(spexareId, tagId);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await createTagging(spexareId, tagId);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteTaggingAction(spexareId: string, tagId: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await delTagging(spexareId, tagId);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await delTagging(spexareId, tagId);
+    revalidate();
+    return result;
+  });
 }
 
 export async function createToggleAction(spexareId: string, _typeId: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = toggleFormSchema.parse(data);
-        const {typeId, ...createInput} = validated;
-        void typeId;
-        const result = await createToggle(spexareId, _typeId, createInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = toggleFormSchema.parse(data);
+    const { typeId, ...createInput } = validated;
+    void typeId;
+    const result = await createToggle(spexareId, _typeId, createInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function updateToggleAction(spexareId: string, _typeId: string, id: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = toggleFormSchema.parse(data);
-        const {typeId, ...updateInput} = validated;
-        void typeId;
-        const result = await updateToggle(spexareId, _typeId, id, updateInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = toggleFormSchema.parse(data);
+    const { typeId, ...updateInput } = validated;
+    void typeId;
+    const result = await updateToggle(spexareId, _typeId, id, updateInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteToggleAction(spexareId: string, typeId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await delToggle(spexareId, typeId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await delToggle(spexareId, typeId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function createActivityAction(spexareId: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await createActivity(spexareId);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await createActivity(spexareId);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteActivityAction(spexareId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await delActivity(spexareId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await delActivity(spexareId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function createSpexActivityAction(spexareId: string, activityId: string, spexId: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await createSpexActivity(spexareId, activityId, spexId);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await createSpexActivity(spexareId, activityId, spexId);
+    revalidate();
+    return result;
+  });
 }
 
 export async function updateSpexActivityAction(spexareId: string, activityId: string, spexId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await updateSpexActivity(spexareId, activityId, spexId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await updateSpexActivity(spexareId, activityId, spexId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteSpexActivityAction(spexareId: string, activityId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await delSpexActivity(spexareId, activityId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await delSpexActivity(spexareId, activityId, id);
+    revalidate();
+    return result;
+  });
 }
 
 /**
  * Adds the task to the activity and, when given, its actor in the same step.
  */
 export async function createTaskActivityAction(spexareId: string, activityId: string, taskId: string, actor?: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validatedActor = actor === undefined ? undefined : actorFormSchema.parse(actor);
-        const result = await createTaskActivity(spexareId, activityId, taskId);
-        try {
-            if (validatedActor) {
-                const {vocalId, characterId, ...createInput} = validatedActor;
-                await createActor(spexareId, activityId, result.id, vocalId, createInput, characterId);
-            }
-        } finally {
-            // The task activity is kept even when its actor fails, so the page must show it either way.
-            revalidate();
-        }
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validatedActor = actor === undefined ? undefined : actorFormSchema.parse(actor);
+    const result = await createTaskActivity(spexareId, activityId, taskId);
+    try {
+      if (validatedActor) {
+        const { vocalId, characterId, ...createInput } = validatedActor;
+        await createActor(spexareId, activityId, result.id, vocalId, createInput, characterId);
+      }
+    } finally {
+      // The task activity is kept even when its actor fails, so the page must show it either way.
+      revalidate();
+    }
+    return result;
+  });
 }
 
 export async function updateTaskActivityAction(spexareId: string, activityId: string, taskId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await updateTaskActivity(spexareId, activityId, taskId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await updateTaskActivity(spexareId, activityId, taskId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteTaskActivityAction(spexareId: string, activityId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await delTaskActivity(spexareId, activityId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await delTaskActivity(spexareId, activityId, id);
+    revalidate();
+    return result;
+  });
 }
 
-export async function createActorAction(spexareId: string, activityId: string, taskActivityId: string, _vocalId: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = actorFormSchema.parse(data);
-        const {vocalId, characterId, ...createInput} = validated;
-        void vocalId;
-        const result = await createActor(spexareId, activityId, taskActivityId, _vocalId, createInput, characterId);
-        revalidate();
-        return result;
-    });
+export async function createActorAction(
+  spexareId: string,
+  activityId: string,
+  taskActivityId: string,
+  _vocalId: string,
+  data: unknown
+) {
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = actorFormSchema.parse(data);
+    const { vocalId, characterId, ...createInput } = validated;
+    void vocalId;
+    const result = await createActor(spexareId, activityId, taskActivityId, _vocalId, createInput, characterId);
+    revalidate();
+    return result;
+  });
 }
 
-export async function updateActorAction(spexareId: string, activityId: string, taskActivityId: string, _vocalId: string, id: string, data: unknown) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const validated = actorFormSchema.parse(data);
-        const {vocalId, characterId, ...updateInput} = validated;
-        const result = await updateActor(spexareId, activityId, taskActivityId, vocalId, id, updateInput, characterId ?? null);
-        revalidate();
-        return result;
-    });
+export async function updateActorAction(
+  spexareId: string,
+  activityId: string,
+  taskActivityId: string,
+  _vocalId: string,
+  id: string,
+  data: unknown
+) {
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const validated = actorFormSchema.parse(data);
+    const { vocalId, characterId, ...updateInput } = validated;
+    const result = await updateActor(
+      spexareId,
+      activityId,
+      taskActivityId,
+      vocalId,
+      id,
+      updateInput,
+      characterId ?? null
+    );
+    revalidate();
+    return result;
+  });
 }
 
 /**
  * The characters an actor of the spex may play.
  */
 export async function getSpexCharactersAction(spexId: string) {
-    return withPolicyAction(Policies.spexare.requireRead, async () => getCharacters(spexId));
+  return withPolicyAction(Policies.spexare.requireRead, async () => getCharacters(spexId));
 }
 
-export async function deleteActorAction(spexareId: string, activityId: string, taskActivityId: string, vocalId: string, id: string) {
-    return withPolicyAction(Policies.spexare.requireUpdate, async () => {
-        const result = await delActor(spexareId, activityId, taskActivityId, vocalId, id);
-        revalidate();
-        return result;
-    });
+export async function deleteActorAction(
+  spexareId: string,
+  activityId: string,
+  taskActivityId: string,
+  vocalId: string,
+  id: string
+) {
+  return withPolicyAction(Policies.spexare.requireUpdate, async () => {
+    const result = await delActor(spexareId, activityId, taskActivityId, vocalId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function getRevisionsAction(id: string) {
-    return withPolicyAction(Policies.spexare.requireRead, async () => {
-        return revisions(id);
-    });
+  return withPolicyAction(Policies.spexare.requireRead, async () => {
+    return revisions(id);
+  });
 }
 
 export async function getRelatedTypeRevisionsAction(id: string, relatedType: AuditedType) {
-    return withPolicyAction(Policies.spexare.requireRead, async () => {
-        return getRelatedRevisions(AuditedType.Spexare, id, relatedType);
-    });
+  return withPolicyAction(Policies.spexare.requireRead, async () => {
+    return getRelatedRevisions(AuditedType.Spexare, id, relatedType);
+  });
 }
 
 export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        return getRestorePreview(type, id, revision, cascade);
-    });
+  return withPolicyAction(Policies.audit.requireRestore, async () => {
+    return getRestorePreview(type, id, revision, cascade);
+  });
 }
 
-export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean, reason?: string) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        const result = await restore(type, id, revision, cascade, reason);
-        revalidate();
-        return result;
-    });
+export async function restoreRevisionAction(
+  type: AuditedType,
+  id: string,
+  revision: number,
+  cascade: boolean,
+  reason?: string
+) {
+  return withPolicyAction(Policies.audit.requireRestore, async () => {
+    const result = await restore(type, id, revision, cascade, reason);
+    revalidate();
+    return result;
+  });
 }
 
 function revalidate() {
-    revalidateTag("spexare", "max");
+  revalidateTag("spexare", "max");
 }

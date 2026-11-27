@@ -1,23 +1,23 @@
 import "server-only";
 
 import {
-    AggregationFilterInput,
-    AuditedType,
-    Facet,
-    ImpexType,
-    JobReference,
-    ReportType,
-    SortDirection,
-    Spexare,
-    SpexareCreate,
-    SpexareEdge,
-    SpexareUpdate
+  AggregationFilterInput,
+  AuditedType,
+  Facet,
+  ImpexType,
+  JobReference,
+  ReportType,
+  SortDirection,
+  Spexare,
+  SpexareCreate,
+  SpexareEdge,
+  SpexareUpdate,
 } from "@/gql/schema";
-import {SpexareWithFacetsPage} from "@/types/pagination";
-import {mapConnection} from "@/utils/utils.server";
+import { SpexareWithFacetsPage } from "@/types/pagination";
+import { mapConnection } from "@/utils/utils.server";
 import axios from "@/lib/axios.server";
-import {graphql} from "@/gql";
-import {createResourceClient, runMutationField, runQuery} from "@/lib/graphql.server";
+import { graphql } from "@/gql";
+import { createResourceClient, runMutationField, runQuery } from "@/lib/graphql.server";
 
 export const SpexareBase = graphql(`
     fragment SpexareBase on Spexare {
@@ -126,21 +126,21 @@ const DeleteAndPurgeMutation = graphql(`
 `);
 
 const client = createResourceClient<Spexare, SpexareEdge, SpexareCreate, SpexareUpdate>({
-    singular: "spexare",
-    pagedSummaryQuery: SpexarePagedSummary,
-    pagedFullQuery: SpexarePagedFull,
-    createMutation: SpexareCreateMutation,
-    updateMutation: SpexareUpdateMutation,
-    deleteMutation: SpexareDeleteMutation,
-    auditedType: AuditedType.Spexare,
-    cacheTag: "spexare",
-    restPath: "spexare",
-    defaultSort: ["firstName"],
-    defaultDirection: SortDirection.Asc,
-    defaultFilter: "published:TRUE",
+  singular: "spexare",
+  pagedSummaryQuery: SpexarePagedSummary,
+  pagedFullQuery: SpexarePagedFull,
+  createMutation: SpexareCreateMutation,
+  updateMutation: SpexareUpdateMutation,
+  deleteMutation: SpexareDeleteMutation,
+  auditedType: AuditedType.Spexare,
+  cacheTag: "spexare",
+  restPath: "spexare",
+  defaultSort: ["firstName"],
+  defaultDirection: SortDirection.Asc,
+  defaultFilter: "published:TRUE",
 });
 
-export const {getPaged, create, update, del, imp, revisions} = client;
+export const { getPaged, create, update, del, imp, revisions } = client;
 
 const GetQuery = graphql(`
     query SpexareGet($id: ID!) {
@@ -217,136 +217,147 @@ const SearchQuery = graphql(`
  * A page of the free-text spexare search with the facets of all hits, by relevance unless sorted.
  */
 export async function search(args: {
-    q: string;
-    aggregationFilters?: AggregationFilterInput[];
-    first?: number;
-    last?: number;
-    after?: string | null;
-    before?: string | null;
-    sort?: string[];
-    direction?: SortDirection;
+  q: string;
+  aggregationFilters?: AggregationFilterInput[];
+  first?: number;
+  last?: number;
+  after?: string | null;
+  before?: string | null;
+  sort?: string[];
+  direction?: SortDirection;
 }): Promise<SpexareWithFacetsPage> {
-    const data = await runQuery(SearchQuery, {
-        q: args.q,
-        aggregationFilters: args.aggregationFilters ?? [],
-        first: args.first ?? null,
-        last: args.last ?? null,
-        after: args.after ?? null,
-        before: args.before ?? null,
-        sort: args.sort ?? ["score"],
-        direction: args.direction ?? SortDirection.Desc,
-    }, {
-        fetchOptions: {
-            next: {tags: ["spexare"]}
-        }
-    });
+  const data = await runQuery(
+    SearchQuery,
+    {
+      q: args.q,
+      aggregationFilters: args.aggregationFilters ?? [],
+      first: args.first ?? null,
+      last: args.last ?? null,
+      after: args.after ?? null,
+      before: args.before ?? null,
+      sort: args.sort ?? ["score"],
+      direction: args.direction ?? SortDirection.Desc,
+    },
+    {
+      fetchOptions: {
+        next: { tags: ["spexare"] },
+      },
+    }
+  );
 
-    const connection = data?.spexareSearchPaged;
-    const safeConnection = connection
-        ? {
-            edges: connection.edges ?? [],
-            pageInfo: connection.pageInfo ?? {
-                hasNextPage: false,
-                hasPreviousPage: false,
-                startCursor: null,
-                endCursor: null,
-            },
-            totalCount: connection.totalCount ?? 0,
-        }
-        : undefined;
-    const page = mapConnection<Spexare, SpexareEdge>(safeConnection as Parameters<typeof mapConnection<Spexare, SpexareEdge>>[0]);
+  const connection = data?.spexareSearchPaged;
+  const safeConnection = connection
+    ? {
+        edges: connection.edges ?? [],
+        pageInfo: connection.pageInfo ?? {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: null,
+          endCursor: null,
+        },
+        totalCount: connection.totalCount ?? 0,
+      }
+    : undefined;
+  const page = mapConnection<Spexare, SpexareEdge>(
+    safeConnection as Parameters<typeof mapConnection<Spexare, SpexareEdge>>[0]
+  );
 
-    return {
-        ...page,
-        facets: (connection?.facets ?? []).filter(Boolean) as Facet[],
-    };
+  return {
+    ...page,
+    facets: (connection?.facets ?? []).filter(Boolean) as Facet[],
+  };
 }
 
 /**
  * A spexare with everything that belongs to it.
  */
 export async function get(id: string) {
-    const data = await runQuery(GetQuery, {id});
-    return data?.spexare as Spexare | undefined;
+  const data = await runQuery(GetQuery, { id });
+  return data?.spexare as Spexare | undefined;
 }
 
 /**
  * The user's own spexare, or null when their user has none.
  */
 export async function getMine(args?: { full?: boolean }): Promise<Spexare | null> {
-    const context = {
-        fetchOptions: {
-            next: {tags: ["spexare", "me"]}
-        }
-    };
+  const context = {
+    fetchOptions: {
+      next: { tags: ["spexare", "me"] },
+    },
+  };
 
-    if (args?.full) {
-        const data = await runQuery(MineFullQuery, {}, context);
-        return (data?.spexareMe as Spexare | undefined) ?? null;
-    }
-
-    const data = await runQuery(MineSummaryQuery, {}, context);
+  if (args?.full) {
+    const data = await runQuery(MineFullQuery, {}, context);
     return (data?.spexareMe as Spexare | undefined) ?? null;
+  }
+
+  const data = await runQuery(MineSummaryQuery, {}, context);
+  return (data?.spexareMe as Spexare | undefined) ?? null;
 }
 
 /**
  * Starts an export of the given spexare, or of those matching the filter, as a spreadsheet or the PDF report.
  */
-export async function exp(ids: string[] | null, filter: string | null, type: ImpexType, reportType: ReportType): Promise<JobReference> {
-    const data = await runQuery(ExportQuery, {ids, filter, type, reportType});
-    return data!.spexareExport as JobReference;
+export async function exp(
+  ids: string[] | null,
+  filter: string | null,
+  type: ImpexType,
+  reportType: ReportType
+): Promise<JobReference> {
+  const data = await runQuery(ExportQuery, { ids, filter, type, reportType });
+  return data!.spexareExport as JobReference;
 }
 
 /**
  * Removes a spexare and its audit history, which only administrators may purge.
  */
 export async function delAndPurge(id: string) {
-    return runMutationField(DeleteAndPurgeMutation, {id}, "spexareDelete");
+  return runMutationField(DeleteAndPurgeMutation, { id }, "spexareDelete");
 }
 
 /**
  * Starts an export of the user's own spexare.
  */
 export async function expMine(type: ImpexType): Promise<JobReference> {
-    const data = await runQuery(ExportMineQuery, {type});
-    return data!.spexareMeExport as JobReference;
+  const data = await runQuery(ExportMineQuery, { type });
+  return data!.spexareMeExport as JobReference;
 }
 
 /**
  * Mails the administrators a request to remove the user from the register.
  */
 export async function requestRemoval(reason: string | null) {
-    return runMutationField(RemovalRequestMutation, {reason}, "spexareMeRemovalRequest");
+  return runMutationField(RemovalRequestMutation, { reason }, "spexareMeRemovalRequest");
 }
 
 /**
  * Makes the two spexare each other's partner, parting either from a previous one.
  */
 export async function addPartner(spexareId: string, id: string) {
-    return runMutationField(AddPartnerMutation, {spexareId, id}, "spexarePartnerAdd");
+  return runMutationField(AddPartnerMutation, { spexareId, id }, "spexarePartnerAdd");
 }
 
 /**
  * Parts the spexare and its partner.
  */
 export async function removePartner(spexareId: string) {
-    return runMutationField(RemovePartnerMutation, {spexareId}, "spexarePartnerRemove");
+  return runMutationField(RemovePartnerMutation, { spexareId }, "spexarePartnerRemove");
 }
 
 /**
  * Replaces the spexare's image through the REST API.
  */
 export async function uploadImage(id: string, file: File) {
-    const arrayBuffer = await file.arrayBuffer();
-    const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spexare/${id}/image`, arrayBuffer, {
-        headers: {
-            "Content-Type": file.type,
-        }
-    });
-    return response.data;
+  const arrayBuffer = await file.arrayBuffer();
+  const response = await axios.put(`${process.env.API_REST_BASE_URL}/api/spexare/${id}/image`, arrayBuffer, {
+    headers: {
+      "Content-Type": file.type,
+    },
+  });
+  return response.data;
 }
 
 export async function deleteImage(id: string) {
-    await axios.delete(`${process.env.API_REST_BASE_URL}/api/spexare/${id}/image`);
-    return {success: true};
+  await axios.delete(`${process.env.API_REST_BASE_URL}/api/spexare/${id}/image`);
+  return { success: true };
 }

@@ -1,77 +1,80 @@
-import {getMine, search} from "@/lib/spexare";
-import {withPolicyPage} from "@/utils/route.server";
-import {Policies} from "@/utils/policy.server";
-import {getLocale, getTranslations} from "next-intl/server";
-import {SpexareGrid} from "@/components/spexare";
-import {SavedSearchBar} from "@/components/spexare/saved-search-bar.client";
-import {getAll as getSavedSearches} from "@/lib/saved-search";
-import {isAdminOrEditor} from "@/utils/auth";
-import {parseFacetParams, toAggregationFilters} from "@/utils/utils";
-import {getCountries, getTypes} from "@/lib/settings";
-import {getAll as getAllTags} from "@/lib/tag";
-import {getAll as getAllTasks} from "@/lib/task";
-import {getAll as getAllTaskCategories} from "@/lib/task/category";
-import {getAll as getAllSpex} from "@/lib/spex";
-import {getAll as getAllSpexCategories} from "@/lib/spex/category";
-import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
+import { getMine, search } from "@/lib/spexare";
+import { withPolicyPage } from "@/utils/route.server";
+import { Policies } from "@/utils/policy.server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { SpexareGrid } from "@/components/spexare";
+import { SavedSearchBar } from "@/components/spexare/saved-search-bar.client";
+import { getAll as getSavedSearches } from "@/lib/saved-search";
+import { isAdminOrEditor } from "@/utils/auth";
+import { parseFacetParams, toAggregationFilters } from "@/utils/utils";
+import { getCountries, getTypes } from "@/lib/settings";
+import { getAll as getAllTags } from "@/lib/tag";
+import { getAll as getAllTasks } from "@/lib/task";
+import { getAll as getAllTaskCategories } from "@/lib/task/category";
+import { getAll as getAllSpex } from "@/lib/spex";
+import { getAll as getAllSpexCategories } from "@/lib/spex/category";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The free-text spexare search with facets, as given by `q` and the `f.<facet>` parameters, and the user's saved
  * searches.
  */
 export default async function SpexareSearchPage({
-                                                    searchParams,
-                                                }: {
-    searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-    return withPolicyPage(Policies.spexare.requireRead, async (authz) => {
-        const isManager = isAdminOrEditor(authz.roles);
-        const params = await searchParams;
-        const q = typeof params.q === "string" ? params.q : "";
-        const initialSelectedFacets = parseFacetParams(params);
-        const locale = await getLocale();
+  return withPolicyPage(Policies.spexare.requireRead, async (authz) => {
+    const isManager = isAdminOrEditor(authz.roles);
+    const params = await searchParams;
+    const q = typeof params.q === "string" ? params.q : "";
+    const initialSelectedFacets = parseFacetParams(params);
+    const locale = await getLocale();
 
-        const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, mySpexare, savedSearches] = await Promise.all([
-            search({q, first: 24, aggregationFilters: toAggregationFilters(initialSelectedFacets)}),
-            getCountries(locale),
-            getTypes(locale),
-            getAllTags(),
-            getAllTasks(),
-            getAllTaskCategories(),
-            getAllSpex(),
-            getAllSpexCategories(),
-            getMine(),
-            getSavedSearches(),
-        ]);
-        const initialItems = page.edges.map((e) => e.node);
-        const searchKey = `${q}::${toAggregationFilters(initialSelectedFacets).map((f) => `${f.name}=${f.value}`).join("&")}`;
-        const t = await getTranslations();
+    const [page, countries, types, tags, tasks, taskCategories, spex, spexCategories, mySpexare, savedSearches] =
+      await Promise.all([
+        search({ q, first: 24, aggregationFilters: toAggregationFilters(initialSelectedFacets) }),
+        getCountries(locale),
+        getTypes(locale),
+        getAllTags(),
+        getAllTasks(),
+        getAllTaskCategories(),
+        getAllSpex(),
+        getAllSpexCategories(),
+        getMine(),
+        getSavedSearches(),
+      ]);
+    const initialItems = page.edges.map((e) => e.node);
+    const searchKey = `${q}::${toAggregationFilters(initialSelectedFacets)
+      .map((f) => `${f.name}=${f.value}`)
+      .join("&")}`;
+    const t = await getTranslations();
 
-        return (
-            <Page>
-                <h1 className="sr-only">{t("Common.search")}</h1>
-                <SavedSearchBar savedSearches={savedSearches}/>
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <SpexareGrid
-                        key={searchKey}
-                        countries={countries}
-                        types={types}
-                        tags={tags}
-                        tasks={tasks}
-                        taskCategories={taskCategories}
-                        spex={spex}
-                        spexCategories={spexCategories}
-                        initialItems={initialItems}
-                        initialPageInfo={page.pageInfo}
-                        initialSearchQuery={q}
-                        mode="search"
-                        facets={page.facets}
-                        initialSelectedFacets={initialSelectedFacets}
-                        currentSpexareId={mySpexare?.id ?? null}
-                        canManage={isManager}
-                    />
-                </div>
-            </Page>
-        );
-    });
+    return (
+      <Page>
+        <h1 className="sr-only">{t("Common.search")}</h1>
+        <SavedSearchBar savedSearches={savedSearches} />
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <SpexareGrid
+            key={searchKey}
+            countries={countries}
+            types={types}
+            tags={tags}
+            tasks={tasks}
+            taskCategories={taskCategories}
+            spex={spex}
+            spexCategories={spexCategories}
+            initialItems={initialItems}
+            initialPageInfo={page.pageInfo}
+            initialSearchQuery={q}
+            mode="search"
+            facets={page.facets}
+            initialSelectedFacets={initialSelectedFacets}
+            currentSpexareId={mySpexare?.id ?? null}
+            canManage={isManager}
+          />
+        </div>
+      </Page>
+    );
+  });
 }

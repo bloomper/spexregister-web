@@ -1,39 +1,41 @@
-import {beforeEach, describe, expect, it, vi} from "vitest";
-import {renderHook} from "@testing-library/react";
-import {useInfiniteList} from "@/hooks/use-infinite-list.client";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderHook } from "@testing-library/react";
+import { useInfiniteList } from "@/hooks/use-infinite-list.client";
 
 const cursor = vi.fn();
 vi.mock("@/hooks/use-infinite-scrolling.client", () => ({
-    useInfiniteCursor: (opts: unknown) => cursor(opts),
+  useInfiniteCursor: (opts: unknown) => cursor(opts),
 }));
 
 const noopFetch = async () => ({
-    items: [],
-    pageInfo: {hasNextPage: false, hasPreviousPage: false, startCursor: null, endCursor: null},
-    totalCount: 0,
+  items: [],
+  pageInfo: { hasNextPage: false, hasPreviousPage: false, startCursor: null, endCursor: null },
+  totalCount: 0,
 });
 
 beforeEach(() => {
-    cursor.mockReset();
-    cursor.mockReturnValue({items: [{id: "1"}, {id: "2"}, {id: "3"}], loading: false});
+  cursor.mockReset();
+  cursor.mockReturnValue({ items: [{ id: "1" }, { id: "2" }, { id: "3" }], loading: false });
 });
 
 describe("useInfiniteList", () => {
-    it("forwards cursor options and exposes the full list + isInfiniteMode when uncapped", () => {
-        const {result} = renderHook(() => useInfiniteList({
-            fetchPageAction: noopFetch,
-            getKeyAction: (x: { id: string }) => x.id
-        }));
+  it("forwards cursor options and exposes the full list + isInfiniteMode when uncapped", () => {
+    const { result } = renderHook(() =>
+      useInfiniteList({
+        fetchPageAction: noopFetch,
+        getKeyAction: (x: { id: string }) => x.id,
+      })
+    );
 
-        expect(result.current.items).toEqual([{id: "1"}, {id: "2"}, {id: "3"}]);
-        expect(result.current.isInfiniteMode).toBe(true);
-        expect(cursor.mock.calls[0][0]).not.toHaveProperty("maxItems");
-    });
+    expect(result.current.items).toEqual([{ id: "1" }, { id: "2" }, { id: "3" }]);
+    expect(result.current.isInfiniteMode).toBe(true);
+    expect(cursor.mock.calls[0][0]).not.toHaveProperty("maxItems");
+  });
 
-    it("caps the list at maxItems and marks the mode as non-infinite", () => {
-        const {result} = renderHook(() => useInfiniteList({fetchPageAction: noopFetch, maxItems: 2}));
+  it("caps the list at maxItems and marks the mode as non-infinite", () => {
+    const { result } = renderHook(() => useInfiniteList({ fetchPageAction: noopFetch, maxItems: 2 }));
 
-        expect(result.current.items).toEqual([{id: "1"}, {id: "2"}]);
-        expect(result.current.isInfiniteMode).toBe(false);
-    });
+    expect(result.current.items).toEqual([{ id: "1" }, { id: "2" }]);
+    expect(result.current.isInfiniteMode).toBe(false);
+  });
 });

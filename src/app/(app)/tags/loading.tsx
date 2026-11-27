@@ -1,7 +1,5 @@
-import {DataGridSkeleton} from "@/components/data-grid-skeleton";
+import { DataGridSkeleton } from "@/components/data-grid-skeleton";
 
 export default function TagGridLoading() {
-    return (
-        <DataGridSkeleton/>
-    );
+  return <DataGridSkeleton />;
 }

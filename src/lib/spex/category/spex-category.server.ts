@@ -1,8 +1,8 @@
 import "server-only";
 
-import {AuditedType, SortDirection, SpexCategory, SpexCategoryEdge} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {createResourceClient} from "@/lib/graphql.server";
+import { AuditedType, SortDirection, SpexCategory, SpexCategoryEdge } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { createResourceClient } from "@/lib/graphql.server";
 
 export const SpexCategorySummary = graphql(`
     fragment SpexCategorySummary on SpexCategory {
@@ -50,20 +50,18 @@ const SpexCategoryGetQuery = graphql(`
     }
 `);
 
-
-const client = createResourceClient<SpexCategory, SpexCategoryEdge, never, {id?: unknown}>({
-    singular: "spexCategory",
-    pagedSummaryQuery: SpexCategoryPagedSummary,
-    pagedFullQuery: SpexCategoryPagedFull,
-    getQuery: SpexCategoryGetQuery,
-    auditedType: AuditedType.SpexCategory,
-    cacheTag: "spex-category",
-    restPath: "spex/categories",
-    defaultSort: ["name"],
-    defaultDirection: SortDirection.Asc,
-    defaultFilter: "",
+const client = createResourceClient<SpexCategory, SpexCategoryEdge, never, { id?: unknown }>({
+  singular: "spexCategory",
+  pagedSummaryQuery: SpexCategoryPagedSummary,
+  pagedFullQuery: SpexCategoryPagedFull,
+  getQuery: SpexCategoryGetQuery,
+  auditedType: AuditedType.SpexCategory,
+  cacheTag: "spex-category",
+  restPath: "spex/categories",
+  defaultSort: ["name"],
+  defaultDirection: SortDirection.Asc,
+  defaultFilter: "",
 });
 
 // Read only: Spexipedia keeps base data
-export const {getPaged, get, getAll} = client;
-
+export const { getPaged, get, getAll } = client;
