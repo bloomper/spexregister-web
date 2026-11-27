@@ -10,14 +10,14 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog";
+} from "@bloomper/fgv-web-ui/ui/dialog";
 import {useTranslations} from "next-intl";
 import {News} from "@/gql/schema";
 import {CursorPageInfo} from "@/types/pagination";
 import {formatDate} from "@/utils/utils";
 import {InfiniteScrollFooter} from "@/components/infinite-scroll-footer.client";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@bloomper/fgv-web-ui/ui/card";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {
     getPageAction,
     getRestorePreviewAction,
@@ -25,11 +25,11 @@ import {
     restoreRevisionAction
 } from "@/app/(app)/news/actions.server";
 import {useRouter} from "next/navigation";
-import {Sheet} from "@/components/ui/sheet";
+import {Sheet} from "@bloomper/fgv-web-ui/ui/sheet";
 import {NewsForm} from "@/components/news/news-form.client";
 import {Newspaper, Pencil} from "lucide-react";
 import {GridFilterHeader} from "@/components/grid-filter-header.client";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {AuditTrail} from "../data-audit-trail.client";
 import {textFilter} from "@/utils/filter";
 

@@ -1,10 +1,11 @@
 import {getTranslations} from "next-intl/server";
 import * as Analytics from "@/lib/analytics";
 import {AnalyticsDashboard} from "@/components/analytics";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {Policies} from "@/utils/policy.server";
 import {withPolicyPage} from "@/utils/route.server";
 import {ChartNoAxesCombined} from "lucide-react";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The statistics of the register, with data quality for editors and operations for administrators.
@@ -17,12 +18,10 @@ export default async function AnalyticsPage() {
         ]);
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("Analytics.heading")}</h1>
-                </div>
+            <Page>
+                <PageHeader title={t("Analytics.heading")}/>
                 {data ? <AnalyticsDashboard data={data}/> : <DataEmpty icon={ChartNoAxesCombined}/>}
-            </div>
+            </Page>
         );
     });
 }

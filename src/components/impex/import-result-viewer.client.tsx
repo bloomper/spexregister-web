@@ -5,9 +5,9 @@ import {useTranslations} from "next-intl";
 import {Copy} from "lucide-react";
 import {toast} from "sonner";
 
-import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
-import {ScrollArea} from "@/components/ui/scroll-area";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Label} from "@bloomper/fgv-web-ui/ui/label";
+import {ScrollArea} from "@bloomper/fgv-web-ui/ui/scroll-area";
 
 interface ImportResultViewerProps {
     result: ImportResult;

@@ -1,8 +1,9 @@
-import {Skeleton} from "@/components/ui/skeleton";
+import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 export default function AdminLoading() {
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
+        <Page>
             <div className="flex items-center justify-between gap-2">
                 <Skeleton className="h-8 w-37.5"/>
             </div>
@@ -10,6 +11,6 @@ export default function AdminLoading() {
             <div className="grid gap-4 md:grid-cols-2">
                 <Skeleton className="h-40 w-full"/>
             </div>
-        </div>
+        </Page>
     );
 }

@@ -5,10 +5,10 @@ import {useTranslations} from "next-intl";
 import {History} from "lucide-react";
 
 import {Activity, Actor, TaskActivity} from "@/gql/schema";
-import {Button} from "@/components/ui/button";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
-import {DataEmpty} from "@/components/data-empty";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@bloomper/fgv-web-ui/ui/table";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@bloomper/fgv-web-ui/ui/tooltip";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 
 const SERIES = [
     "var(--viz-series-1)",

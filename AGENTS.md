@@ -43,10 +43,38 @@ ESLint enforces double quotes.
     - `src/auth.ts` — `server-only`, but keeps the conventional Better Auth entry-point name.
     - Next.js reserved filenames (`page.tsx`, `layout.tsx`, `error.tsx`, `global-error.tsx`) cannot
       be renamed, so a `"use client"` one keeps its required name.
-    - shadcn-owned files keep their upstream names so `shadcn add` stays a clean overwrite. That is
-      `src/components/ui/**` *and* `src/hooks/use-mobile.ts`, which ships with the sidebar component
-      and is imported by it as `@/hooks/use-mobile`.
+    - `src/components/ui/chart.tsx`, shadcn's chart, keeps its upstream name so `shadcn add chart` stays a clean
+      overwrite.
 - `src/gql/**` (generated) and `src/components/ui/**` (shadcn) are ESLint-ignored — don't hand-edit.
+
+## Shared FGV UI
+
+The theme, the shadcn components and the application shell come from `@bloomper/fgv-web-ui` (repo
+`bloomper/fgv-web-ui`, published to GitHub Packages), shared by all eight FGV web applications:
+
+- `@bloomper/fgv-web-ui/ui/<name>` for every shadcn component (`button`, `sidebar`, `dialog`, …). Don't add a local
+  copy with `shadcn add`: the shell and the application must share one `SidebarProvider`, and a change that belongs in
+  every application goes into the package. Only `chart` stays local, used by Spexregister alone.
+- `shell/*`: `SiteHeader` (wrapped in `src/components/site-header.client.tsx` with Spexregister's own controls),
+  `AppSwitcher`, `resolveApplications`, `SidebarBrand`, `NavMain`, `NavSecondary`, the toggles, `DataEmpty`, the
+  status pages and the logos.
+- **Pages** are a `Page` (`variant="content"` for articles and records, the default for lists and forms) with a
+  `PageHeader` first (`title`, `description`, `actions`, `eyebrow`, `badges`), both from `shell/page-header`; a page's
+  `loading.tsx` uses the same `Page`.
+- **Confirmations** always ask in an alert dialog: `ConfirmButton` (`shell/confirm-button`), or
+  `useDialogs().confirm` / `prompt` / `choose` (`shell/dialogs`; mount `DialogsProvider` in the `(app)` layout first)
+  inside a handler. A dialog with content of its own uses `ui/alert-dialog` directly. Never `window.confirm` or
+  `window.prompt`.
+- `src/app/globals.css` imports `tailwindcss` and the package's `styles.css`, then only what is Spexregister's own. The brand
+  colour on the page background (links, labels, active icons) is `text-link`; `primary` is for fills.
+- The favicons in `src/app/` (`icon.svg`, `favicon.ico`, `apple-icon.png`) are Spexregister's switcher icon on the brand
+  blue, generated in the package (`scripts/app-icons.mjs`).
+- The shell's texts live in the package under `FgvUi`; `withFgvMessages` adds them wherever messages are loaded
+  (`src/i18n/request.ts`, `src/app/layout.tsx`, `changeLocale` in `src/app/provider.client.tsx`), and
+  `FgvShellProvider` there hands the shell `changeLocale` and Umami's `track`.
+- Installing needs a token, even locally: `.npmrc` reads `NODE_AUTH_TOKEN` (a token with `read:packages`). CI uses
+  `GITHUB_TOKEN`, and the image build gets it as the `npm_token` build secret.
+- Vitest inlines the package (`server.deps.inline`) so the mocks in the setup file reach it.
 
 ## Rendering and caching — Cache Components is ON
 
@@ -311,15 +339,15 @@ and funnels pick events by name: `<entity>-create` / `-update` from its form and
 
 ## Application switcher
 
-The title in the header (`src/components/app-switcher.client.tsx`) opens a menu of the FGV applications: Spexregister,
-Nyuppsättning, Spexflix, Spexify, Spexgram and Spexarkiv. `getApplications()` (`src/utils/applications.server.ts`) lists the current one and
+The title in the header (`AppSwitcher` from `@bloomper/fgv-web-ui/shell/app-switcher`) opens a menu of the FGV
+applications, in the same order in every application: Medlemskap, Spexipedia, Spexregister, Nyuppsättning, Spexflix,
+Spexify, Spexgram and Spexarkiv. `getApplications()` (`src/utils/applications.server.ts`) lists the current one and
 each other one whose `USER` role is in the access token and whose address is set (`SPEXREGISTER_WEB_URL`,
-`REVIVAL_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXGRAM_WEB_URL`,
-`ARCHIVE_WEB_URL`). The role is there because fgv-keycloak maps every web
+`MEMBERSHIP_WEB_URL`, `SPEXIPEDIA_WEB_URL`, `REVIVAL_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXGRAM_WEB_URL`,
+`ARCHIVE_WEB_URL`; `resolveApplications` in the package). The role is there because fgv-keycloak maps every web
 client to the other web clients' `USER` role; a realm imported before that needs fgv-infra-deploy's
-`bin/configure-keycloak.sh`. With no other application to offer, the title is plain text. The six webs (with fgv-spexgram-web and
-fgv-archive-web) carry identical copies of `applications.ts`, the component and their tests, and differ only in the id passed in
-`applications.server.ts`, so change all six together.
+`bin/configure-keycloak.sh`. With no other application to offer, the title is plain text. The list, the
+component and their tests live in the package; each application only passes its own id in `applications.server.ts`.
 
 ## Testing
 

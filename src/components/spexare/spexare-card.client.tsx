@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import {ClipboardPen, Pencil, Sparkles, User} from "lucide-react";
 import {Spexare} from "@/gql/schema";
-import {Card, CardHeader, CardTitle} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
-import {Badge} from "@/components/ui/badge";
+import {Card, CardHeader, CardTitle} from "@bloomper/fgv-web-ui/ui/card";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {cn, getProxiedImageUrl} from "@/utils/utils";
 
 type SpexareCardProps = {

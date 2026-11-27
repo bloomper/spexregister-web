@@ -2,7 +2,7 @@ import "server-only";
 
 import {jwtDecode} from "jwt-decode";
 import {getSessionContext} from "@/utils/auth.server";
-import {type Application, resolveApplications} from "@/utils/applications";
+import {type Application, resolveApplications} from "@bloomper/fgv-web-ui/shell/applications";
 import type {AccessTokenClaims} from "@/types/auth";
 
 /**

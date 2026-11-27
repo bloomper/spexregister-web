@@ -2,9 +2,9 @@
 
 import {useTranslations} from "next-intl";
 import {Controller, useFormContext} from "react-hook-form";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Input} from "@/components/ui/input";
-import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import {Field, FieldContent, FieldError, FieldLabel} from "@bloomper/fgv-web-ui/ui/field";
 import {translateError} from "@/utils/utils";
 import {SpexCharacter, Type} from "@/gql/schema";
 import {ActorFormInput} from "@/lib/spexare/activity/task-activity/actor/schema";

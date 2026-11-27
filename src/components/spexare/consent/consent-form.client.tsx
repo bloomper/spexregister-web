@@ -3,13 +3,13 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {ConsentFormInput, ConsentFormOutput, consentFormSchema} from "@/lib/spexare/consent/schema";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {useTranslations} from "next-intl";
-import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
+import {Field, FieldContent, FieldError, FieldLabel} from "@bloomper/fgv-web-ui/ui/field";
 import {translateError} from "@/utils/utils";
 import {Type, TypeType} from "@/gql/schema";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Switch} from "@/components/ui/switch";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
+import {Switch} from "@bloomper/fgv-web-ui/ui/switch";
 
 interface ConsentFormProps {
     defaultValues?: Partial<ConsentFormInput>;

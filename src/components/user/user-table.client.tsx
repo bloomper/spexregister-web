@@ -1,7 +1,7 @@
 "use client";
 
 import {Check, CheckCircle2, Circle, Copy, Plus, X} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {Authority, State, User} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
@@ -18,11 +18,11 @@ import {
     importAction,
     restoreRevisionAction
 } from "@/app/(app)/users/actions.server";
-import {Sheet} from "@/components/ui/sheet";
+import {Sheet} from "@bloomper/fgv-web-ui/ui/sheet";
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
-import {Input} from "@/components/ui/input";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
 import Link from "next/link";
 import {
     Dialog,
@@ -31,7 +31,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog";
+} from "@bloomper/fgv-web-ui/ui/dialog";
 import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
 import {useDeepLinkItem} from "@/hooks/use-deep-link-item.client";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
@@ -39,11 +39,11 @@ import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {columnHelper} from "@/components/data-table-columns.client";
 import type {DataTableColumnDef} from "@/components/data-table-features";
 import {Translated} from "@/components/translated.client";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
-import {useIsClient} from "@/hooks/use-is-client.client";
+import {useIsClient} from "@bloomper/fgv-web-ui/hooks/use-is-client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 import {textFilter} from "@/utils/filter";
 

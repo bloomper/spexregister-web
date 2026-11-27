@@ -2,17 +2,17 @@
 
 import {useState, useTransition} from "react";
 import {AuditedType, Toggle, Type, TypeType} from "@/gql/schema";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {Edit2, Fingerprint, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {ToggleForm} from "./toggle-form.client";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {createToggleAction, deleteToggleAction, updateToggleAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {ToggleFormOutput} from "@/lib/spexare/toggle/schema";
 import {useRefresh} from "@/hooks/use-refresh.client";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 
 export function ToggleManager({
                                   spexareId,

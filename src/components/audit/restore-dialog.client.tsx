@@ -15,10 +15,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
-import {Switch} from "@/components/ui/switch";
+} from "@bloomper/fgv-web-ui/ui/alert-dialog";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Label} from "@bloomper/fgv-web-ui/ui/label";
+import {Switch} from "@bloomper/fgv-web-ui/ui/switch";
 import {AuditedType, RestorePreview, RestoreResult} from "@/gql/schema";
 import {track} from "@/utils/umami";
 

@@ -2,7 +2,7 @@
 
 import {useTranslations} from "next-intl";
 import {Mail, Wrench} from "lucide-react";
-import {useIsClient} from "@/hooks/use-is-client.client";
+import {useIsClient} from "@bloomper/fgv-web-ui/hooks/use-is-client";
 
 export function SupportPage({supportEmail}: { supportEmail: string }) {
     const t = useTranslations("Support");
@@ -14,7 +14,7 @@ export function SupportPage({supportEmail}: { supportEmail: string }) {
 
                 <section className="space-y-4">
                     <div
-                        className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-6">
+                        className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-link mb-6">
                         <Wrench className="size-10"/>
                     </div>
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
@@ -39,7 +39,7 @@ export function SupportPage({supportEmail}: { supportEmail: string }) {
                         {isClient ? (
                             <a
                                 href={`mailto:${supportEmail}`}
-                                className="inline-flex h-10 items-center justify-center rounded-full bg-primary-foreground px-6 text-sm font-medium text-primary transition-colors hover:bg-primary-foreground/90"
+                                className="inline-flex h-10 items-center justify-center rounded-full bg-primary-foreground px-6 text-sm font-medium text-link transition-colors hover:bg-primary-foreground/90"
                             >
                                 {t("contactAction")}
                             </a>

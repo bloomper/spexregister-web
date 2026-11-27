@@ -2,8 +2,8 @@
 
 import {useTranslations} from "next-intl";
 import {ClipboardPen} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Badge} from "@/components/ui/badge";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {useEditQueue} from "@/components/edit-queue/edit-queue-provider.client";
 
 /**

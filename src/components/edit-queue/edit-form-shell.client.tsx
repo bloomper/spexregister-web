@@ -1,7 +1,7 @@
 "use client";
 
 import {ReactNode} from "react";
-import {SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {SheetContent, SheetHeader, SheetTitle} from "@bloomper/fgv-web-ui/ui/sheet";
 
 /**
  * The frame of a form inside the edit queue.

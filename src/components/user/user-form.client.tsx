@@ -18,18 +18,18 @@ import {
     setStateAction,
     updateAction
 } from "@/app/(app)/users/actions.server";
-import {Button} from "@/components/ui/button";
-import {Switch} from "@/components/ui/switch";
-import {Input} from "@/components/ui/input";
-import {SheetClose, SheetFooter} from "@/components/ui/sheet";
-import {Field, FieldContent, FieldDescription, FieldError, FieldLabel} from "@/components/ui/field";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Switch} from "@bloomper/fgv-web-ui/ui/switch";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import {SheetClose, SheetFooter} from "@bloomper/fgv-web-ui/ui/sheet";
+import {Field, FieldContent, FieldDescription, FieldError, FieldLabel} from "@bloomper/fgv-web-ui/ui/field";
 import {cn, translateError} from "@/utils/utils";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {ScrollArea} from "@bloomper/fgv-web-ui/ui/scroll-area";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
 import {Check, ChevronsUpDown, X} from "lucide-react";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
-import {Checkbox} from "@/components/ui/checkbox";
+import {Popover, PopoverContent, PopoverTrigger} from "@bloomper/fgv-web-ui/ui/popover";
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@bloomper/fgv-web-ui/ui/command";
+import {Checkbox} from "@bloomper/fgv-web-ui/ui/checkbox";
 import {EditFormShell} from "@/components/edit-queue/edit-form-shell.client";
 import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
 

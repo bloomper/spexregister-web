@@ -1,7 +1,7 @@
 "use client";
 
 import {CheckCircle2, Circle, Plus, User, X} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/schema";
 import {useTranslations} from "next-intl";
 import {DataTable} from "@/components/data-table.client";
@@ -22,7 +22,7 @@ import {
 import {CursorPage} from "@/types/pagination";
 import {useRouter} from "next/navigation";
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
-import {Input} from "@/components/ui/input";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
 import Link from "next/link";
 import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
 import {useDeepLinkItem} from "@/hooks/use-deep-link-item.client";
@@ -32,7 +32,7 @@ import {columnHelper} from "@/components/data-table-columns.client";
 import type {DataTableColumnDef} from "@/components/data-table-features";
 import {ExportButton} from "@/components/impex/export-button.client";
 import {ImportButton} from "@/components/impex/import-button.client";
-import {useIsClient} from "@/hooks/use-is-client.client";
+import {useIsClient} from "@bloomper/fgv-web-ui/hooks/use-is-client";
 import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
 import {BulkActionsMenu} from "@/components/bulk";
 import {useLazyFull} from "@/hooks/use-lazy-full.client";

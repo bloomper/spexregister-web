@@ -3,6 +3,7 @@ import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {TagTable} from "@/components/tag";
 import {withPolicyPage} from "@/utils/route.server";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * For editors: the tags as a table.
@@ -17,14 +18,12 @@ export default async function TagManagePage() {
         const t = await getTranslations();
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("Tag.heading")}</h1>
-                </div>
+            <Page>
+                <PageHeader title={t("Tag.heading")}/>
                 <TagTable
                     initialData={initialData}
                 />
-            </div>
+            </Page>
         );
     });
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import {X} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
 
 /**
  * The title and text filter above a grid of cards.

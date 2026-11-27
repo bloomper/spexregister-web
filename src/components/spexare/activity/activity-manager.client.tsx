@@ -4,9 +4,9 @@ import {useTranslations} from "next-intl";
 import {useState, useTransition} from "react";
 import {toast} from "sonner";
 import {Activity, Drama, Edit2, Plus, Trash2} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {createActivityAction, deleteActivityAction} from "@/app/(app)/spexare/actions.server";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,7 +18,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
+} from "@bloomper/fgv-web-ui/ui/alert-dialog";
 import {SpexActivityForm} from "@/components/spexare/activity/spex-activity/spex-activity-form.client";
 import {TaskActivityManager} from "@/components/spexare/activity/task-activity/task-activity-manager.client";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
@@ -133,7 +133,7 @@ export function ActivityManager({
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors"
+                                                className="h-8 w-8 text-muted-foreground hover:text-link transition-colors"
                                                 onClick={() => setEditingActivityId(activity.id)}
                                             >
                                                 <Edit2 className="h-4 w-4"/>

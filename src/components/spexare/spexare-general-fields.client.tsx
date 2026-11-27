@@ -6,12 +6,12 @@ import {Controller} from "react-hook-form";
 import {useTranslations} from "next-intl";
 import {SpexareFormInput, SpexareFormOutput} from "@/lib/spexare/schema";
 import {Spexare} from "@/gql/schema";
-import {Input} from "@/components/ui/input";
-import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import {Field, FieldContent, FieldError, FieldLabel} from "@bloomper/fgv-web-ui/ui/field";
 import {cn, today, translateError} from "@/utils/utils";
-import {Checkbox} from "@/components/ui/checkbox";
+import {Checkbox} from "@bloomper/fgv-web-ui/ui/checkbox";
 import {ImageUpload} from "@/components/image-upload.client";
-import {Textarea} from "@/components/ui/textarea";
+import {Textarea} from "@bloomper/fgv-web-ui/ui/textarea";
 import {DatePicker} from "@/components/date-picker.client";
 
 type SpexareGeneralFieldsProps = {

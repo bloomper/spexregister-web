@@ -3,10 +3,10 @@
 import {useTranslations} from "next-intl";
 import Image from "next/image";
 import {Spex} from "@/gql/schema";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {ImageIcon} from "lucide-react";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {getProxiedImageUrl} from "@/utils/utils";
 
 /**

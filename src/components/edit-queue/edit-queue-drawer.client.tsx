@@ -3,7 +3,7 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useTranslations} from "next-intl";
 import {ChevronLeft, ChevronRight, Save, Trash2, X} from "lucide-react";
-import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@bloomper/fgv-web-ui/ui/sheet";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -13,10 +13,10 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {Button} from "@/components/ui/button";
-import {Badge} from "@/components/ui/badge";
-import {Spinner} from "@/components/ui/spinner";
+} from "@bloomper/fgv-web-ui/ui/alert-dialog";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
+import {Spinner} from "@bloomper/fgv-web-ui/ui/spinner";
 import {type EntityType, useEditQueue} from "@/components/edit-queue/edit-queue-provider.client";
 import {editQueueRegistry} from "@/components/edit-queue/registry.client";
 import {

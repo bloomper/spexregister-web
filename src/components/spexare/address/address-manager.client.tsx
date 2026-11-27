@@ -2,12 +2,12 @@
 
 import {useState, useTransition} from "react";
 import {Address, AuditedType, Country, Type, TypeType} from "@/gql/schema";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {Edit2, MapPin, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {AddressForm} from "./address-form.client";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {createAddressAction, deleteAddressAction, updateAddressAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {AddressFormOutput} from "@/lib/spexare/address/schema";

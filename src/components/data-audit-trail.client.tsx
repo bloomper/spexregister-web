@@ -1,8 +1,8 @@
 "use client";
 
 import {useCallback, useEffect, useState} from "react";
-import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible";
-import {Button} from "@/components/ui/button";
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@bloomper/fgv-web-ui/ui/collapsible";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {ChevronDown, ChevronRight, ChevronUp, History, Pencil, PlusCircle, Trash2} from "lucide-react";
 import {FieldChange, Revision, RevisionType} from "@/gql/schema";
 import {useTranslations} from "next-intl";

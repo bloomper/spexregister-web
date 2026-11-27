@@ -3,9 +3,9 @@
 import {useTranslations} from "next-intl";
 import {X} from "lucide-react";
 import {AuditedType, AuditSource} from "@/gql/schema";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
 import {DataFilter} from "@/components/data-filter";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {auditTypeLabel, SPEXIPEDIA_TYPES} from "@/utils/audit";
 import {PeriodFilter} from "@/components/audit/period-filter.client";
 

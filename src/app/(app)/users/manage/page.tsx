@@ -3,6 +3,7 @@ import {Policies} from "@/utils/policy.server";
 import {getTranslations} from "next-intl/server";
 import {UserTable} from "@/components/user";
 import {withPolicyPage} from "@/utils/route.server";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * For administrators: the users as a table, with their roles, state and spexare.
@@ -21,16 +22,14 @@ export default async function UserManagePage() {
         ]);
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("User.heading")}</h1>
-                </div>
+            <Page>
+                <PageHeader title={t("User.heading")}/>
                 <UserTable
                     initialData={initialData}
                     states={states}
                     authorities={authorities}
                 />
-            </div>
+            </Page>
         );
     });
 }

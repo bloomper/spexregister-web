@@ -2,7 +2,7 @@
 
 import {useTranslations} from "next-intl";
 import {ClipboardPen} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {type EntityType, useEditQueue} from "@/components/edit-queue/edit-queue-provider.client";
 import {track} from "@/utils/umami";
 

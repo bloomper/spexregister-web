@@ -7,10 +7,10 @@ import {toast} from "sonner";
 import Image from "next/image";
 import {Spexare, SpexarePartner} from "@/gql/schema";
 import {addPartnerAction, getPageAction, removePartnerAction} from "@/app/(app)/spexare/actions.server";
-import {Button} from "@/components/ui/button";
-import {DataEmpty} from "@/components/data-empty";
-import {Input} from "@/components/ui/input";
-import {Badge} from "@/components/ui/badge";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {getProxiedImageUrl} from "@/utils/utils";
 import {textFilter} from "@/utils/filter";
 

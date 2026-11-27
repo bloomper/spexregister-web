@@ -2,11 +2,11 @@ import * as React from "react";
 import {useMemo, useState} from "react";
 import {Check, Funnel} from "lucide-react";
 import {cn} from "@/utils/utils";
-import {Button} from "@/components/ui/button";
-import {Separator} from "@/components/ui/separator";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Separator} from "@bloomper/fgv-web-ui/ui/separator";
+import {Popover, PopoverContent, PopoverTrigger} from "@bloomper/fgv-web-ui/ui/popover";
 import {useTranslations} from "next-intl";
-import {Input} from "@/components/ui/input";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
 
 interface DataFilterProps {
     title?: string

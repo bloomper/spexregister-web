@@ -5,7 +5,7 @@ import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {ConsentCompletion} from "@/gql/schema";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@bloomper/fgv-web-ui/ui/card";
 import {
     ChartContainer,
     ChartLegend,
@@ -13,7 +13,7 @@ import {
     ChartTooltip
 } from "@/components/ui/chart";
 import {LocalizedChartTooltipContent} from "@/components/analytics/chart-tooltip-content.client";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {bucketHref} from "@/utils/analytics";
 
 const CONSENTS_FACET = "consents";

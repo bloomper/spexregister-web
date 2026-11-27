@@ -2,17 +2,17 @@
 
 import {useState, useTransition} from "react";
 import {AuditedType, Consent, Type, TypeType} from "@/gql/schema";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {Edit2, Plus, ShieldCheck, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {ConsentForm} from "./consent-form.client";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {createConsentAction, deleteConsentAction, updateConsentAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {ConsentFormOutput} from "@/lib/spexare/consent/schema";
 import {useRefresh} from "@/hooks/use-refresh.client";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 
 export function ConsentManager({
                                    spexareId,

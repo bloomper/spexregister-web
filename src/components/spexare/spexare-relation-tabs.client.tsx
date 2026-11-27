@@ -15,7 +15,7 @@ import {
     Toggle,
     Type,
 } from "@/gql/schema";
-import {TabsContent} from "@/components/ui/tabs";
+import {TabsContent} from "@bloomper/fgv-web-ui/ui/tabs";
 import {AddressManager} from "@/components/spexare/address/address-manager.client";
 import {ConsentManager} from "@/components/spexare/consent/consent-manager.client";
 import {MembershipManager} from "@/components/spexare/membership/membership-manager.client";

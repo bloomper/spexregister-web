@@ -1,5 +1,5 @@
-import {Skeleton} from "@/components/ui/skeleton";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@bloomper/fgv-web-ui/ui/table";
 
 interface DataTableSkeletonProps {
     rowCount?: number;

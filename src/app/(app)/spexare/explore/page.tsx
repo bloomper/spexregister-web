@@ -4,6 +4,7 @@ import {getCountries} from "@/lib/settings";
 import {Policies} from "@/utils/policy.server";
 import {withPolicyPage} from "@/utils/route.server";
 import {getSpexipedia} from "@/utils/applications.server";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The register as a graph to explore from a spexare, spex, task or tag.
@@ -14,13 +15,10 @@ export default async function GraphPage() {
         const [countries, spexipedia, t] = await Promise.all([getCountries(locale), getSpexipedia(), getTranslations()]);
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4">
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("Explore.heading")}</h1>
-                    <p className="text-sm text-muted-foreground">{t("Explore.description")}</p>
-                </div>
+            <Page>
+                <PageHeader title={t("Explore.heading")} description={t("Explore.description")}/>
                 <GraphExplorer countries={countries} spexipediaUrl={spexipedia?.url ?? null}/>
-            </div>
+            </Page>
         );
     });
 }

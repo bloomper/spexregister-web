@@ -6,9 +6,9 @@ import {useLocale, useTranslations} from "next-intl";
 import {format, isValid, parseISO} from "date-fns";
 import {enUS, sv} from "react-day-picker/locale";
 import {CalendarIcon, X} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Calendar} from "@/components/ui/calendar";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Calendar} from "@bloomper/fgv-web-ui/ui/calendar";
+import {Popover, PopoverContent, PopoverTrigger} from "@bloomper/fgv-web-ui/ui/popover";
 import {cn} from "@/utils/utils";
 
 /** The date-fns locale for the app's language; the browser's language is never used. */

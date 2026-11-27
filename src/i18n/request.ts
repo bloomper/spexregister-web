@@ -1,6 +1,7 @@
 import {getRequestConfig} from "next-intl/server";
 import {cookies} from "next/headers";
 import {normalizeLocale} from "@/utils/utils.server";
+import {withFgvMessages} from "@bloomper/fgv-web-ui/messages";
 
 export default getRequestConfig(async () => {
     const store = await cookies();
@@ -10,6 +11,6 @@ export default getRequestConfig(async () => {
     return {
         locale,
         timeZone: "Europe/Stockholm",
-        messages: (await import(`../../messages/${locale}.json`)).default
+        messages: withFgvMessages(locale, (await import(`../../messages/${locale}.json`)).default)
     };
 });

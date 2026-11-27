@@ -9,6 +9,7 @@ import {getAll as getAllTasks} from "@/lib/task";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * All spexare, published or not, as a table for those who may change them.
@@ -37,10 +38,8 @@ export default async function SpexareManagePage() {
         ]);
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("Spexare.heading")}</h1>
-                </div>
+            <Page>
+                <PageHeader title={t("Spexare.heading")}/>
                 <SpexareTable
                     types={types}
                     countries={countries}
@@ -53,7 +52,7 @@ export default async function SpexareManagePage() {
                     currentSpexareId={mySpexare?.id ?? null}
                     canDelete={canDelete.ok}
                 />
-            </div>
+            </Page>
         );
     });
 }

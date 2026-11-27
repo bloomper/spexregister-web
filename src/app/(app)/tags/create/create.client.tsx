@@ -2,7 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
-import {Sheet} from "@/components/ui/sheet";
+import {Sheet} from "@bloomper/fgv-web-ui/ui/sheet";
 import {TagForm} from "@/components/tag";
 
 export function TagCreateForm() {

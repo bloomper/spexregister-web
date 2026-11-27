@@ -3,7 +3,7 @@
 import {useTranslations} from "next-intl";
 import React, {use, useCallback, useEffect, useState, useTransition} from "react";
 import {io} from "next/cache";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {ImagePlus, Loader2, X} from "lucide-react";
 import {toast} from "sonner";
 import {type FileRejection, useDropzone} from "react-dropzone";
@@ -136,10 +136,10 @@ export function ImageUpload({initialImageUrl, onUpload, onDelete, onFileSelect, 
                     <div className="flex flex-col items-center justify-center space-y-2 text-center">
                         <div className="bg-primary/10 p-3 rounded-full">
                             {isPending ? <Loader2 className="h-6 w-6 animate-spin"/> :
-                                <ImagePlus className="h-6 w-6 text-primary"/>}
+                                <ImagePlus className="h-6 w-6 text-link"/>}
                         </div>
                         <div className="text-sm">
-                            <span className="font-semibold text-primary">{t("Common.clickToUpload")}</span>
+                            <span className="font-semibold text-link">{t("Common.clickToUpload")}</span>
                             <p className="text-muted-foreground">{t("Common.dragAndDrop")}</p>
                         </div>
                         <p className="text-xs text-muted-foreground/70">

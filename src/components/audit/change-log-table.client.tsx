@@ -3,10 +3,10 @@
 import {Fragment, useState, useTransition} from "react";
 import {useTranslations} from "next-intl";
 import {ChevronDown, ChevronRight} from "lucide-react";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import {Spinner} from "@/components/ui/spinner";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@bloomper/fgv-web-ui/ui/table";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Spinner} from "@bloomper/fgv-web-ui/ui/spinner";
 import {AuditedType, AuditSource, RevisionDetail} from "@/gql/schema";
 import {RevisionFeedPage} from "@/types/pagination";
 import {formatDateTime} from "@/utils/utils";
@@ -14,7 +14,7 @@ import {auditTypeLabel} from "@/utils/audit";
 import {getRevisionDetailAction, getRevisionFeedPageAction} from "@/app/(app)/admin/change-log/actions.server";
 import {RevisionDetailPanel} from "@/components/audit/revision-detail.client";
 import type {SpexipediaLink} from "@/utils/audit";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {
     ALL_TYPES,
     ChangeLogFilter,

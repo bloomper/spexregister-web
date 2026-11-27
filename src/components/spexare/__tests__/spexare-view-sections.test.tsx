@@ -42,7 +42,7 @@ describe("MembershipsSection", () => {
 
     it("renders an empty state when there are no memberships", () => {
         render(<MembershipsSection memberships={[]} spexareId="1"/>);
-        expect(screen.getByText("Common.noDataHeading")).toBeInTheDocument();
+        expect(screen.getByText("noDataHeading")).toBeInTheDocument();
     });
 });
 
@@ -100,7 +100,7 @@ describe("TaggingsSection", () => {
 
     it("shows the history of the tags, also without any", () => {
         render(<TaggingsSection taggings={[]} spexareId="1"/>);
-        expect(screen.getByText("Common.noDataHeading")).toBeInTheDocument();
+        expect(screen.getByText("noDataHeading")).toBeInTheDocument();
         expect(screen.getByTestId("audit-trail")).toBeInTheDocument();
     });
 });
@@ -116,6 +116,6 @@ describe("PartnerSection", () => {
 
     it("renders an empty state without a partner", () => {
         render(<PartnerSection partner={null} spexareId="1"/>);
-        expect(screen.getByText("Common.noDataHeading")).toBeInTheDocument();
+        expect(screen.getByText("noDataHeading")).toBeInTheDocument();
     });
 });

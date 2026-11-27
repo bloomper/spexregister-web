@@ -4,6 +4,7 @@ import {getTranslations} from "next-intl/server";
 import {UserTable} from "@/components/user";
 import {withPolicyPage} from "@/utils/route.server";
 import {UserCreateForm} from "./create.client";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * For administrators: the user table with the form to add a user.
@@ -22,10 +23,8 @@ export default async function UserCreatePage() {
         ]);
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("User.heading")}</h1>
-                </div>
+            <Page>
+                <PageHeader title={t("User.heading")}/>
                 <UserTable
                     initialData={initialData}
                     states={states}
@@ -35,7 +34,7 @@ export default async function UserCreatePage() {
                     states={states}
                     authorities={authorities}
                 />
-            </div>
+            </Page>
         );
     });
 }

@@ -1,9 +1,10 @@
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
-import {Skeleton} from "@/components/ui/skeleton";
+import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 export default function SpexareManageLoading() {
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
+        <Page>
             <div className="flex items-center justify-between gap-2">
                 <Skeleton className="h-8 w-45"/>
             </div>
@@ -24,6 +25,6 @@ export default function SpexareManageLoading() {
                     "w-[50px]"                        // Actions
                 ]}
             />
-        </div>
+        </Page>
     );
 }

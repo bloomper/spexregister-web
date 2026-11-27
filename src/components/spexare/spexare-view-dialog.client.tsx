@@ -2,9 +2,9 @@
 
 import {useTranslations} from "next-intl";
 import {Country, Spexare} from "@/gql/schema";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Spinner} from "@/components/ui/spinner";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Spinner} from "@bloomper/fgv-web-ui/ui/spinner";
 import {SpexareView} from "@/components/spexare/spexare-view.client";
 
 type SpexareViewDialogProps = {

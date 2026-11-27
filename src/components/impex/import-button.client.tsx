@@ -2,7 +2,7 @@
 
 import {useCallback, useMemo, useState} from "react";
 import {FileSpreadsheet, Loader2, Upload} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {toast} from "sonner";
 import {ImpexType, JobReference} from "@/gql/schema";
 import {useJobTracker} from "@/hooks/use-job-tracker.client";
@@ -16,8 +16,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
 import {track} from "@/utils/umami";
 
 interface ImportButtonProps {
@@ -183,13 +183,13 @@ export function ImportButton({importAction}: ImportButtonProps) {
                                             {loading ? (
                                                 <Loader2 className="h-6 w-6 animate-spin"/>
                                             ) : (
-                                                <Upload className="h-6 w-6 text-primary"/>
+                                                <Upload className="h-6 w-6 text-link"/>
                                             )}
                                         </div>
 
                                         <div className="text-sm">
                                             <span
-                                                className="font-semibold text-primary">{t("Common.clickToUpload")}</span>
+                                                className="font-semibold text-link">{t("Common.clickToUpload")}</span>
                                             <p className="text-muted-foreground">{t("Common.dragAndDrop")}</p>
                                         </div>
 

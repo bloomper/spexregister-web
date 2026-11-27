@@ -2,17 +2,17 @@
 
 import {useState, useTransition} from "react";
 import {AuditedType, Membership, MembershipKind, Type, TypeType} from "@/gql/schema";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {ExternalLink, IdCard, Plus, Trash2} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
 import {MembershipForm} from "./membership-form.client";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {createMembershipAction, deleteMembershipAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {MembershipFormOutput} from "@/lib/spexare/membership/schema";
 import {useRefresh} from "@/hooks/use-refresh.client";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {useMedlemskap} from "@/components/medlemskap-provider.client";
 
 export function MembershipManager({

@@ -27,7 +27,7 @@ const activities = [
 describe("SpexareCareer", () => {
     it("shows the empty state when there is nothing to plot", () => {
         render(<SpexareCareer/>);
-        expect(screen.getByText("Common.noDataHeading")).toBeInTheDocument();
+        expect(screen.getByText("noDataHeading")).toBeInTheDocument();
     });
 
     it("summarises the career in the stat tiles", () => {

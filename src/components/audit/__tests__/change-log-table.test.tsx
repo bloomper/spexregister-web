@@ -47,7 +47,7 @@ describe("ChangeLogTable", () => {
         render(<ChangeLogTable initialData={pageOf([])} authors={[]}/>);
 
         expect(screen.queryByText("editor@example.com")).not.toBeInTheDocument();
-        expect(screen.getByText("Common.noDataHeading")).toBeInTheDocument();
+        expect(screen.getByText("noDataHeading")).toBeInTheDocument();
         // The count would only repeat the empty state
         expect(screen.queryByText(/^Audit.matchCount:/)).not.toBeInTheDocument();
     });

@@ -4,8 +4,8 @@ import Link from "next/link";
 import {useLocale, useTranslations} from "next-intl";
 import {ChevronRight} from "lucide-react";
 import {Bucket} from "@/gql/schema";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {DataEmpty} from "@/components/data-empty";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@bloomper/fgv-web-ui/ui/card";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {bucketHref} from "@/utils/analytics";
 
 export function AnalyticsIssueList({issues, total}: { issues: Bucket[]; total: number }) {
