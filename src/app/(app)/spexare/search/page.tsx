@@ -13,6 +13,7 @@ import {getAll as getAllTasks} from "@/lib/task";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The free-text spexare search with facets, as given by `q` and the `f.<facet>` parameters, and the user's saved
@@ -47,7 +48,7 @@ export default async function SpexareSearchPage({
         const t = await getTranslations();
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4">
+            <Page>
                 <h1 className="sr-only">{t("Common.search")}</h1>
                 <SavedSearchBar savedSearches={savedSearches}/>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -70,7 +71,7 @@ export default async function SpexareSearchPage({
                         canManage={isManager}
                     />
                 </div>
-            </div>
+            </Page>
         );
     });
 }

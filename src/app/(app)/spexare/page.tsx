@@ -12,6 +12,7 @@ import {getAll as getAllTasks} from "@/lib/task";
 import {getAll as getAllTaskCategories} from "@/lib/task/category";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {getAll as getAllSpexCategories} from "@/lib/spex/category";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The published spexare as cards, scrolling on.
@@ -36,7 +37,7 @@ export default async function SpexarePage() {
         const t = await getTranslations();
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4">
+            <Page>
                 <h1 className="sr-only">{t("Spexare.heading")}</h1>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {initialItems.length > 0 ? (
@@ -57,7 +58,7 @@ export default async function SpexarePage() {
                         <DataEmpty icon={UserRound}/>
                     )}
                 </div>
-            </div>
+            </Page>
         );
     });
 }

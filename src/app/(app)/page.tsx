@@ -10,6 +10,7 @@ import * as Analytics from "@/lib/analytics";
 import {AnalyticsHighlights, AnalyticsTotals} from "@/components/analytics";
 import {requireUser} from "@/utils/auth.server";
 import {redirect} from "next/navigation";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The start page: the register's totals and highlights, and the latest news.
@@ -29,7 +30,7 @@ export default async function HomePage() {
     const hasNews = initialItems.length > 0;
 
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4">
+        <Page>
             <h1 className="sr-only">{t("Home.heading")}</h1>
             {analytics?.totals && <AnalyticsTotals data={analytics.totals}/>}
             {analytics && (
@@ -67,6 +68,6 @@ export default async function HomePage() {
                     <DataEmpty icon={Newspaper}/>
                 </div>
             )}
-        </div>
+        </Page>
     );
 }

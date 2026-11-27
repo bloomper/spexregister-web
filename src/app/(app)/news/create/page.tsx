@@ -4,6 +4,7 @@ import {getTranslations} from "next-intl/server";
 import {NewsTable} from "@/components/news";
 import {withPolicyPage} from "@/utils/route.server";
 import {NewsCreateForm} from "./create.client";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * For editors: the news table with the form to add a news item.
@@ -19,15 +20,13 @@ export default async function NewsCreatePage() {
         const t = await getTranslations();
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("News.heading")}</h1>
-                </div>
+            <Page>
+                <PageHeader title={t("News.heading")}/>
                 <NewsTable
                     initialData={initialData}
                 />
                 <NewsCreateForm/>
-            </div>
+            </Page>
         );
     });
 }

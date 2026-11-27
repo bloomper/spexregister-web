@@ -41,7 +41,7 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                         <div key={activity.id} className="relative pl-12">
                             <div
                                 className="absolute left-0 flex items-center justify-center w-10 h-10 rounded-full border bg-background shadow-sm z-10">
-                                <Drama className="h-4 w-4 text-primary"/>
+                                <Drama className="h-4 w-4 text-link"/>
                             </div>
 
                             <div className="flex flex-col gap-2">
@@ -62,7 +62,7 @@ export function ActivityTimeline({activities}: ActivityTimelineProps) {
                             </span>
                                     {activity.spexActivity?.spex?.revival && (
                                         <Badge variant="outline"
-                                               className="text-xs sm:text-[10px] h-4 py-0 uppercase border-primary/30 text-primary/70">
+                                               className="text-xs sm:text-[10px] h-4 py-0 uppercase border-primary/30 text-link/70">
                                             {t("Spexare.Activity.SpexActivity.revival")}
                                         </Badge>
                                     )}

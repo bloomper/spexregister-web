@@ -4,6 +4,7 @@ import {getTranslations} from "next-intl/server";
 import {getRevisionAuthors, getRevisionFeedPaged} from "@/lib/audit/audit.server";
 import {ChangeLogTable} from "@/components/audit/change-log-table.client";
 import {getSpexipedia} from "@/utils/applications.server";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * For administrators: every change in the register, newest first, filtered by type, author, source and period.
@@ -19,13 +20,11 @@ export default async function ChangeLogPage() {
         ]);
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("Audit.title")}</h1>
-                </div>
+            <Page>
+                <PageHeader title={t("Audit.title")}/>
                 <p className="text-sm text-muted-foreground">{t("Audit.feedDescription")}</p>
                 <ChangeLogTable initialData={initialData} authors={authors} spexipedia={spexipedia}/>
-            </div>
+            </Page>
         );
     });
 }

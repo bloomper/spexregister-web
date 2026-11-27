@@ -152,7 +152,7 @@ export function TaskActivityManager({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="h-4 w-4 text-muted-foreground hover:text-primary p-0"
+                                                    className="h-4 w-4 text-muted-foreground hover:text-link p-0"
                                                     onClick={() => setEditingActorId(actor.id)}
                                                 >
                                                     <Edit2 className="h-2.5 w-2.5"/>
@@ -200,7 +200,7 @@ export function TaskActivityManager({
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-7 w-7 text-muted-foreground hover:text-primary transition-colors"
+                                            className="h-7 w-7 text-muted-foreground hover:text-link transition-colors"
                                             onClick={() => setEditingTaskActivityId(taskActivity.id)}
                                             disabled={isPending}
                                         >

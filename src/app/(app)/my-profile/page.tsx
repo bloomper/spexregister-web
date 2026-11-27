@@ -12,6 +12,7 @@ import {MyData} from "@/components/spexare/my-data.client";
 import {Activity} from "@/gql/schema";
 import {redirect} from "next/navigation";
 import {revalidateTag} from "next/cache";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The user's own spexare: their spex career, their details to change, an export of their data and a request to be
@@ -43,10 +44,8 @@ export default async function MyProfilePage() {
     }
 
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4 md:p-8 max-w-6xl mx-auto w-full">
-            <div className="flex flex-col gap-1 mb-4">
-                <h1 className="text-2xl font-bold tracking-tight">{t("Common.myProfile")}</h1>
-            </div>
+        <Page className="max-w-6xl mx-auto w-full">
+            <PageHeader title={t("Common.myProfile")}/>
             <div className="mb-8">
                 <SpexareCareer
                     activities={(item.activities ?? []).filter((activity): activity is Activity => !!activity)}
@@ -67,6 +66,6 @@ export default async function MyProfilePage() {
             <div className="mt-8">
                 <MyData/>
             </div>
-        </div>
+        </Page>
     );
 }

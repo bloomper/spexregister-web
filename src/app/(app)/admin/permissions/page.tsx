@@ -6,6 +6,7 @@ import {SortDirection} from "@/gql/schema";
 import {getAuthorities} from "@/lib/user";
 import {getAll as getAllSpex} from "@/lib/spex";
 import {PermissionGrants} from "@/components/admin/permission/permission-grants.client";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * For administrators: the permission grants, and adding one for a user or role on a spexare, a spex's participants or a
@@ -21,10 +22,8 @@ export default async function PermissionsPage() {
         ]);
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-center justify-between gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{t("PermissionGrant.heading")}</h1>
-                </div>
+            <Page>
+                <PageHeader title={t("PermissionGrant.heading")}/>
                 <p className="text-sm text-muted-foreground">{t("PermissionGrant.description")}</p>
                 <p className="text-sm text-muted-foreground">{t("PermissionGrant.ownSpexareNote")}</p>
                 <PermissionGrants
@@ -32,7 +31,7 @@ export default async function PermissionsPage() {
                     spex={spex.map((s) => ({id: s.id, label: `${s.title} (${s.year})`}))}
                     roles={authorities.map((authority) => ({id: authority.id, label: authority.label}))}
                 />
-            </div>
+            </Page>
         );
     });
 }

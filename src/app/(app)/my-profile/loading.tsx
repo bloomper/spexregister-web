@@ -1,8 +1,9 @@
 import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 export default function MyProfileLoading() {
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4 md:p-8 max-w-6xl mx-auto w-full">
+        <Page className="max-w-6xl mx-auto w-full">
             <div className="flex flex-col gap-1 mb-4">
                 <Skeleton className="h-8 w-50"/>
             </div>
@@ -21,6 +22,6 @@ export default function MyProfileLoading() {
                     </div>
                 ))}
             </div>
-        </div>
+        </Page>
     );
 }

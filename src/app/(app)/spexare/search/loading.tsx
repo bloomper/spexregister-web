@@ -1,9 +1,10 @@
 import {DataGridSkeleton} from "@/components/data-grid-skeleton";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 export default function SpexareSearchLoading() {
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4">
+        <Page>
             <DataGridSkeleton/>
-        </div>
+        </Page>
     );
 }

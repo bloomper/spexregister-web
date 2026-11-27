@@ -5,6 +5,7 @@ import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {Tag} from "lucide-react";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The tags as cards, scrolling on.
@@ -19,7 +20,7 @@ export default async function TagPage() {
         const t = await getTranslations();
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4">
+            <Page>
                 <h1 className="sr-only">{t("Tag.heading")}</h1>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {initialItems.length > 0 ? (
@@ -32,7 +33,7 @@ export default async function TagPage() {
                         <DataEmpty icon={Tag}/>
                     )}
                 </div>
-            </div>
+            </Page>
         );
     });
 }

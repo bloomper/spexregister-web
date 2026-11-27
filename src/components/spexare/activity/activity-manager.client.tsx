@@ -133,7 +133,7 @@ export function ActivityManager({
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors"
+                                                className="h-8 w-8 text-muted-foreground hover:text-link transition-colors"
                                                 onClick={() => setEditingActivityId(activity.id)}
                                             >
                                                 <Edit2 className="h-4 w-4"/>

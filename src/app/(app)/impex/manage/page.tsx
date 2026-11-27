@@ -3,6 +3,7 @@ import {getTranslations} from "next-intl/server";
 import {ImpexTable} from "@/components/impex/impex-table.client";
 import {withPolicyPage} from "@/utils/route.server";
 import {jobs as getJobs} from "@/lib/impex";
+import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The user's own import and export jobs, their outcome and their files.
@@ -24,17 +25,10 @@ export default async function ImpexManagePage() {
         };
 
         return (
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
-                <div className="flex items-start justify-between gap-2">
-                    <div className="flex flex-col gap-1">
-                        <h1 className="text-2xl font-bold tracking-tight">{t("Impex.heading")}</h1>
-                        <p className="text-sm text-muted-foreground">
-                            {t("Impex.purgeHint")}
-                        </p>
-                    </div>
-                </div>
+            <Page>
+                <PageHeader title={t("Impex.heading")} description={t("Impex.purgeHint")}/>
                 <ImpexTable initialData={initialData}/>
-            </div>
+            </Page>
         );
     });
 }

@@ -1,8 +1,9 @@
 import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
+import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
 
 export default function AnalyticsLoading() {
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4 md:p-8">
+        <Page>
             <Skeleton className="h-8 w-48"/>
             <Skeleton className="h-9 w-90 max-w-full"/>
             <div className="grid gap-4 md:grid-cols-2">
@@ -11,6 +12,6 @@ export default function AnalyticsLoading() {
                     <Skeleton key={i} className="h-70 w-full rounded-xl"/>
                 ))}
             </div>
-        </div>
+        </Page>
     );
 }

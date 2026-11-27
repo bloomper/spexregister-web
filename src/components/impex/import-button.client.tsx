@@ -183,13 +183,13 @@ export function ImportButton({importAction}: ImportButtonProps) {
                                             {loading ? (
                                                 <Loader2 className="h-6 w-6 animate-spin"/>
                                             ) : (
-                                                <Upload className="h-6 w-6 text-primary"/>
+                                                <Upload className="h-6 w-6 text-link"/>
                                             )}
                                         </div>
 
                                         <div className="text-sm">
                                             <span
-                                                className="font-semibold text-primary">{t("Common.clickToUpload")}</span>
+                                                className="font-semibold text-link">{t("Common.clickToUpload")}</span>
                                             <p className="text-muted-foreground">{t("Common.dragAndDrop")}</p>
                                         </div>
 

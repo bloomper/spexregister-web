@@ -55,7 +55,7 @@ export function AboutPage({feedbackEmail}: { feedbackEmail: string }) {
 
                 <section className="space-y-4">
                     <div
-                        className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-6">
+                        className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-link mb-6">
                         <Drama className="size-10"/>
                     </div>
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
@@ -67,7 +67,7 @@ export function AboutPage({feedbackEmail}: { feedbackEmail: string }) {
                 </section>
 
                 <section className="space-y-8">
-                    <h2 className="text-2xl font-bold uppercase tracking-widest text-primary/70">
+                    <h2 className="text-2xl font-bold uppercase tracking-widest text-link/70">
                         {t("behindTheScenes")}
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left min-h-25">
@@ -79,7 +79,7 @@ export function AboutPage({feedbackEmail}: { feedbackEmail: string }) {
                                         className="size-16 border-2 border-primary/20 transition-transform group-hover:scale-110">
                                         <AvatarImage src={person.image} alt={person.name} className="object-cover"/>
                                         <AvatarFallback
-                                            className="bg-linear-to-br from-primary/20 to-primary/5 text-primary">
+                                            className="bg-linear-to-br from-primary/20 to-primary/5 text-link">
                                             <User className="size-8 opacity-40"/>
                                         </AvatarFallback>
                                     </Avatar>
@@ -87,7 +87,7 @@ export function AboutPage({feedbackEmail}: { feedbackEmail: string }) {
                                         <div className="flex flex-col">
                                             {person.nickName && (
                                                 <span
-                                                    className="text-xs font-black uppercase text-primary tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
+                                                    className="text-xs font-black uppercase text-link tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
                                                     {person.nickName}
                                                 </span>
                                             )}
@@ -116,7 +116,7 @@ export function AboutPage({feedbackEmail}: { feedbackEmail: string }) {
                         {isClient ? (
                             <a
                                 href={`mailto:${feedbackEmail}`}
-                                className="inline-flex h-10 items-center justify-center rounded-full bg-primary-foreground px-6 text-sm font-medium text-primary transition-colors hover:bg-primary-foreground/90"
+                                className="inline-flex h-10 items-center justify-center rounded-full bg-primary-foreground px-6 text-sm font-medium text-link transition-colors hover:bg-primary-foreground/90"
                             >
                                 {t("feedbackAction")}
                             </a>
