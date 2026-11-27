@@ -3,7 +3,7 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import dynamic from "next/dynamic";
 import {GraphEdge, GraphEdgeType, GraphNodeType} from "@/gql/schema";
-import {Skeleton} from "@/components/ui/skeleton";
+import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
 import {getProxiedImageUrl} from "@/utils/utils";
 import type {ForceNode} from "@/components/graph/graph-force-3d.client";
 import {LoadedNode} from "@/components/graph/use-graph-state.client";

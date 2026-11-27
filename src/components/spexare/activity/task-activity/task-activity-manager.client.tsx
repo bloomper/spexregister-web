@@ -4,9 +4,9 @@ import {useTranslations} from "next-intl";
 import {useEffect, useState, useTransition} from "react";
 import {toast} from "sonner";
 import {Edit2, Trash2, X} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {deleteActorAction, deleteTaskActivityAction, getSpexCharactersAction} from "@/app/(app)/spexare/actions.server";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {Actor, SpexCharacter, Task, TaskActivity, TaskCategory, Type, TypeType} from "@/gql/schema";
 import {ActorForm} from "@/components/spexare/activity/task-activity/actor/actor-form.client";
 import {TaskActivityForm} from "@/components/spexare/activity/task-activity/task-activity-form.client";
@@ -22,7 +22,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
+} from "@bloomper/fgv-web-ui/ui/alert-dialog";
 import {useRefresh} from "@/hooks/use-refresh.client";
 
 interface TaskActivityManagerProps {

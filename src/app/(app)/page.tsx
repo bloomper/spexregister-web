@@ -1,10 +1,10 @@
 import {NewsGrid} from "@/components/news";
-import {Separator} from "@/components/ui/separator";
+import {Separator} from "@bloomper/fgv-web-ui/ui/separator";
 import {getTranslations} from "next-intl/server";
 import {getPaged} from "@/lib/news";
 import Link from "next/link";
-import {buttonVariants} from "@/components/ui/button";
-import {DataEmpty} from "@/components/data-empty";
+import {buttonVariants} from "@bloomper/fgv-web-ui/ui/button";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {Newspaper} from "lucide-react";
 import * as Analytics from "@/lib/analytics";
 import {AnalyticsHighlights, AnalyticsTotals} from "@/components/analytics";

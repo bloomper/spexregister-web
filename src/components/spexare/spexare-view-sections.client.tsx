@@ -6,8 +6,8 @@ import {useTranslations} from "next-intl";
 import {Fingerprint, Heart, IdCard, Mail, MapPin, Phone, ShieldCheck, Tag, ToggleLeft, User} from "lucide-react";
 import {AuditedType, Country, Spexare} from "@/gql/schema";
 import {getProxiedImageUrl} from "@/utils/utils";
-import {Badge} from "@/components/ui/badge";
-import {DataEmpty} from "@/components/data-empty";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {AuditInfo} from "@/components/data-table-audit-info.client";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
@@ -188,7 +188,7 @@ export function AddressesSection({addresses, countries, spexareId, onRestored}: 
                                 {address?.emailAddress && (
                                     <div className="flex items-center gap-2">
                                         <Mail className="h-4 w-4 text-muted-foreground"/>
-                                        <a href={`mailto:${address.emailAddress}`} className="hover:text-primary">
+                                        <a href={`mailto:${address.emailAddress}`} className="hover:text-link">
                                             {address.emailAddress}
                                         </a>
                                     </div>

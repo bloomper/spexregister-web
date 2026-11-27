@@ -7,8 +7,8 @@ import {toast} from "sonner";
 
 import {Job} from "@/gql/schema";
 import {CursorPage} from "@/types/pagination";
-import {Button} from "@/components/ui/button";
-import {Badge} from "@/components/ui/badge";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {
     Dialog,
     DialogContent,
@@ -16,14 +16,14 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog";
+} from "@bloomper/fgv-web-ui/ui/dialog";
 import {DataTable} from "@/components/data-table.client";
 import {columnHelper} from "@/components/data-table-columns.client";
 import type {DataTableColumnDef} from "@/components/data-table-features";
 import {ImportResultViewer} from "./import-result-viewer.client";
 import {deleteAction, getJobAction, getJobsAction} from "@/app/(app)/impex/actions.server";
 import {formatDateTime} from "@/utils/utils";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@bloomper/fgv-web-ui/ui/dropdown-menu";
 import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
 import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
 

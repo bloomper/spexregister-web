@@ -3,9 +3,9 @@
 import Link from "next/link";
 import {Search} from "lucide-react";
 
-import {Label} from "@/components/ui/label";
-import {buttonVariants} from "@/components/ui/button";
-import {SidebarInput} from "@/components/ui/sidebar";
+import {Label} from "@bloomper/fgv-web-ui/ui/label";
+import {buttonVariants} from "@bloomper/fgv-web-ui/ui/button";
+import {SidebarInput} from "@bloomper/fgv-web-ui/ui/sidebar";
 import {cn} from "@/utils/utils";
 import {useTranslations} from "next-intl";
 import {useRouter, useSearchParams} from "next/navigation";

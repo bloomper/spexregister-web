@@ -2,14 +2,14 @@
 
 import type {Row, RowData, Table} from "@tanstack/react-table";
 import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, LucideIcon, MoreHorizontal} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Checkbox} from "@/components/ui/checkbox";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Checkbox} from "@bloomper/fgv-web-ui/ui/checkbox";
 import {useTranslations} from "next-intl";
 import {Translated} from "@/components/translated.client";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@bloomper/fgv-web-ui/ui/tooltip";
 import {formatDate, formatDateTime} from "@/utils/utils";
 import {TableThumbnail} from "@/components/data-table-thumbnail.client";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@bloomper/fgv-web-ui/ui/dropdown-menu";
 import type {DataTableColumnDef, DataTableFeatures} from "@/components/data-table-features";
 
 function SelectAllHeader({

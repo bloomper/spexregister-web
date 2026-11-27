@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {LucideIcon} from "lucide-react";
 import {useLocale} from "next-intl";
-import {Card, CardContent} from "@/components/ui/card";
+import {Card, CardContent} from "@bloomper/fgv-web-ui/ui/card";
 import {cn} from "@/utils/utils";
 
 interface AnalyticsStatProps {

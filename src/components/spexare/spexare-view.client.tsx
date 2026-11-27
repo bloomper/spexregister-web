@@ -5,12 +5,12 @@ import {useTranslations} from "next-intl";
 import {Sparkles, User} from "lucide-react";
 import {Activity, AuditedType, Country, Spexare} from "@/gql/schema";
 import {getProxiedImageUrl} from "@/utils/utils";
-import {Badge} from "@/components/ui/badge";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@bloomper/fgv-web-ui/ui/tabs";
 import {ActivityTimeline} from "@/components/spexare/activity/activity-timeline.client";
 import {SpexareCareer} from "@/components/spexare/spexare-career.client";
 import {AggregateAuditTrail} from "@/components/audit/aggregate-audit-trail.client";
-import {DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {DialogDescription, DialogHeader, DialogTitle} from "@bloomper/fgv-web-ui/ui/dialog";
 import {
     AddressesSection,
     ConsentsSection,

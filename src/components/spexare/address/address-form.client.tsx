@@ -3,16 +3,16 @@
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {AddressFormInput, AddressFormOutput, addressFormSchema} from "@/lib/spexare/address/schema";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {useTranslations} from "next-intl";
-import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
+import {Field, FieldContent, FieldError, FieldLabel} from "@bloomper/fgv-web-ui/ui/field";
 import {cn, translateError} from "@/utils/utils";
 import {Country, Type, TypeType} from "@/gql/schema";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
+import {Popover, PopoverContent, PopoverTrigger} from "@bloomper/fgv-web-ui/ui/popover";
 import {Check, ChevronsUpDown} from "lucide-react";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@bloomper/fgv-web-ui/ui/command";
 
 interface AddressFormProps {
     defaultValues?: Partial<AddressFormInput>;

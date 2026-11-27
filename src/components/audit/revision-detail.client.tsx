@@ -4,7 +4,7 @@ import Link from "next/link";
 import {useTranslations} from "next-intl";
 import {ArrowUpRight, Pencil, PlusCircle, Trash2} from "lucide-react";
 import {AuditSource, RevisionDetail, RevisionEntityChange, RevisionType} from "@/gql/schema";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {AuditDiff} from "@/components/audit/audit-diff.client";
 import {auditEntityHref, auditTypeLabel, type SpexipediaLink} from "@/utils/audit";
 
@@ -131,7 +131,7 @@ export function RevisionDetailPanel({detail, spexipedia}: { detail: RevisionDeta
                                         <Link href={href}
                                               {...(external ? {target: "_blank", rel: "noopener noreferrer"} : {})}
                                               aria-label={`${auditTypeLabel(t, entity.type)}: ${t("Audit.openRecord")}`}
-                                              className="ml-auto inline-flex items-center gap-1 text-primary hover:text-primary/80">
+                                              className="ml-auto inline-flex items-center gap-1 text-link hover:text-link/80">
                                             {t("Audit.openRecord")}
                                             <ArrowUpRight className="h-3 w-3"/>
                                         </Link>

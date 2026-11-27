@@ -3,14 +3,14 @@
 import {Fragment, useState} from "react";
 import {useTranslations} from "next-intl";
 import {ChevronDown} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@bloomper/fgv-web-ui/ui/dropdown-menu";
 import {SpexareBulkOperation} from "@/gql/schema";
 import {BulkActionDialog, BulkActions} from "@/components/bulk/bulk-action-dialog.client";
 import {bulkMenuIcon as MenuIcon, BulkOptions, bulkRegistry} from "@/components/bulk/registry.client";

@@ -2,7 +2,7 @@
 
 import {useTranslations} from "next-intl";
 import {Mail, Wrench} from "lucide-react";
-import {useIsClient} from "@/hooks/use-is-client.client";
+import {useIsClient} from "@bloomper/fgv-web-ui/hooks/use-is-client";
 
 export function SupportPage({supportEmail}: { supportEmail: string }) {
     const t = useTranslations("Support");

@@ -7,7 +7,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "sonner";
 import {ActorFormInput, actorFormSchema} from "@/lib/spexare/activity/task-activity/actor/schema";
 import {createActorAction, updateActorAction} from "@/app/(app)/spexare/actions.server";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {Actor, SpexCharacter, Type} from "@/gql/schema";
 import {useRefresh} from "@/hooks/use-refresh.client";
 import {Plus} from "lucide-react";

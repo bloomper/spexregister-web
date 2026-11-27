@@ -9,8 +9,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
+} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {AuditTrail} from "@/components/data-audit-trail.client";
 import {getRestorePreviewAction, getRevisionsAction, restoreRevisionAction} from "@/app/(app)/tags/actions.server";
 

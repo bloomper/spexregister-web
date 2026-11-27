@@ -12,11 +12,11 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {Separator} from "@/components/ui/separator";
+} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Label} from "@bloomper/fgv-web-ui/ui/label";
+import {ScrollArea} from "@bloomper/fgv-web-ui/ui/scroll-area";
+import {Separator} from "@bloomper/fgv-web-ui/ui/separator";
 import {BulkResult, SpexareBulkInput, SpexareBulkOperation} from "@/gql/schema";
 import {BulkOptions, BulkPayload, findBulkOperation} from "@/components/bulk/registry.client";
 import {track} from "@/utils/umami";

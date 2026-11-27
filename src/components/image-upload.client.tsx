@@ -3,7 +3,7 @@
 import {useTranslations} from "next-intl";
 import React, {use, useCallback, useEffect, useState, useTransition} from "react";
 import {io} from "next/cache";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {ImagePlus, Loader2, X} from "lucide-react";
 import {toast} from "sonner";
 import {type FileRejection, useDropzone} from "react-dropzone";

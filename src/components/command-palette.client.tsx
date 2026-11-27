@@ -18,9 +18,9 @@ import {
     Users
 } from "lucide-react";
 
-import {Command, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
-import {Dialog, DialogContent, DialogDescription, DialogTitle} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
+import {Command, CommandGroup, CommandInput, CommandItem, CommandList} from "@bloomper/fgv-web-ui/ui/command";
+import {Dialog, DialogContent, DialogDescription, DialogTitle} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {useRoles} from "@/components/roles-provider.client";
 import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {getMineAction} from "@/app/(app)/spexare/actions.server";

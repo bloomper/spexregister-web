@@ -1,7 +1,7 @@
 import {getTranslations} from "next-intl/server";
 import * as Analytics from "@/lib/analytics";
 import {AnalyticsDashboard} from "@/components/analytics";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {Policies} from "@/utils/policy.server";
 import {withPolicyPage} from "@/utils/route.server";
 import {ChartNoAxesCombined} from "lucide-react";

@@ -6,10 +6,10 @@ import {useTranslations} from "next-intl";
 import {Bookmark, BookmarkPlus, Check, Pencil, Save, Trash2, X} from "lucide-react";
 import {toast} from "sonner";
 
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Popover, PopoverContent, PopoverTrigger} from "@bloomper/fgv-web-ui/ui/popover";
 import {SavedSearch} from "@/gql/schema";
 import {
     createSavedSearchAction,

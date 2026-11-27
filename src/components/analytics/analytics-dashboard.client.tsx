@@ -2,7 +2,7 @@
 
 import {useTranslations} from "next-intl";
 import {Analytics} from "@/gql/schema";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@bloomper/fgv-web-ui/ui/tabs";
 import {AnalyticsBarChart} from "./analytics-bar-chart.client";
 import {AnalyticsConsentChart} from "./analytics-consent-chart.client";
 import {AnalyticsIssueList} from "./analytics-issue-list.client";

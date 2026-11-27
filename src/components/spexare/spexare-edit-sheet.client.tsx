@@ -1,8 +1,8 @@
 "use client";
 
 import {Country, Spex, Spexare, SpexCategory, Tag as TagType, Task, TaskCategory, Type} from "@/gql/schema";
-import {Sheet} from "@/components/ui/sheet";
-import {Spinner} from "@/components/ui/spinner";
+import {Sheet} from "@bloomper/fgv-web-ui/ui/sheet";
+import {Spinner} from "@bloomper/fgv-web-ui/ui/spinner";
 import {SpexareForm} from "@/components/spexare/spexare-form.client";
 import {RefreshContext} from "@/hooks/use-refresh.client";
 

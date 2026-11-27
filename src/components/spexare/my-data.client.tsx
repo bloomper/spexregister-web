@@ -4,8 +4,8 @@ import {useState, useTransition} from "react";
 import {useTranslations} from "next-intl";
 import {toast} from "sonner";
 import {Download, Loader2, UserX} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@bloomper/fgv-web-ui/ui/card";
 import {
     Dialog,
     DialogContent,
@@ -13,8 +13,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import {Textarea} from "@/components/ui/textarea";
+} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Textarea} from "@bloomper/fgv-web-ui/ui/textarea";
 import {useJobTracker} from "@/hooks/use-job-tracker.client";
 import {ImpexType} from "@/gql/schema";
 import {exportMineAction, getMineExportStatusAction, requestRemovalAction} from "@/app/(app)/my-profile/actions.server";

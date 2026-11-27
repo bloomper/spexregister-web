@@ -3,13 +3,16 @@
 import * as React from "react";
 import {createContext, useCallback, useContext, useEffect, useState} from "react";
 import {NextIntlClientProvider} from "next-intl";
-import {ThemeProvider} from "@/components/theme-provider.client";
+import {ThemeProvider} from "@bloomper/fgv-web-ui/shell/theme-provider";
 import {ConsentManager} from "@/components/consent-manager.client";
 import {useRouter} from "next/navigation";
-import {Toaster} from "@/components/ui/sonner.client";
+import {Toaster} from "@bloomper/fgv-web-ui/ui/sonner";
 import type {AbstractIntlMessages} from "use-intl/core";
 import {EditQueueDrawer, EditQueueProvider} from "@/components/edit-queue";
 import {FormValidation} from "@/components/form-validation.client";
+import {FgvShellProvider} from "@bloomper/fgv-web-ui/shell/shell-provider";
+import {withFgvMessages} from "@bloomper/fgv-web-ui/messages";
+import {track} from "@/utils/umami";
 
 export default function Provider({
                                      children,
@@ -27,7 +30,7 @@ export default function Provider({
     const changeLocale = useCallback(async (newLocale: string) => {
         document.cookie = `locale=${newLocale}; path=/; max-age=31536000`;
 
-        const newMessages = (await import(`../../messages/${newLocale}.json`)).default;
+        const newMessages = withFgvMessages(newLocale, (await import(`../../messages/${newLocale}.json`)).default);
 
         setLocale(newLocale);
         setMessages(newMessages);
@@ -47,21 +50,23 @@ export default function Provider({
     return (
         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Stockholm">
             <LocaleContext.Provider value={{locale, changeLocale}}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <ConsentManager>
-                        <EditQueueProvider>
-                            {children}
-                            <EditQueueDrawer/>
-                        </EditQueueProvider>
-                        <Toaster/>
-                        <FormValidation/>
-                    </ConsentManager>
-                </ThemeProvider>
+                <FgvShellProvider changeLocale={changeLocale} track={track}>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        <ConsentManager>
+                            <EditQueueProvider>
+                                {children}
+                                <EditQueueDrawer/>
+                            </EditQueueProvider>
+                            <Toaster/>
+                            <FormValidation/>
+                        </ConsentManager>
+                    </ThemeProvider>
+                </FgvShellProvider>
             </LocaleContext.Provider>
         </NextIntlClientProvider>
     );

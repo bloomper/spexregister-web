@@ -3,8 +3,8 @@
 import {useEffect, useMemo, useRef} from "react";
 import {useTranslations} from "next-intl";
 import {Info, Minus, Plus, Search, X} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
 import {NODE_COLOR} from "@/components/graph/graph-canvas.client";
 import {LoadedNode, matchesTerm, PendingGroup} from "@/components/graph/use-graph-state.client";
 
@@ -100,7 +100,7 @@ export function GraphNodeList({
                                       style={{backgroundColor: NODE_COLOR[node.type]}}/>
                                 <button
                                     type="button"
-                                    className="min-w-0 flex-1 truncate text-left text-sm hover:text-primary"
+                                    className="min-w-0 flex-1 truncate text-left text-sm hover:text-link"
                                     aria-label={t("Explore.focusLabel", {name: node.label})}
                                     onClick={() => onFocus(node.id)}
                                 >

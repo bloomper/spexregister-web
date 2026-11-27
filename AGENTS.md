@@ -43,10 +43,30 @@ ESLint enforces double quotes.
     - `src/auth.ts` — `server-only`, but keeps the conventional Better Auth entry-point name.
     - Next.js reserved filenames (`page.tsx`, `layout.tsx`, `error.tsx`, `global-error.tsx`) cannot
       be renamed, so a `"use client"` one keeps its required name.
-    - shadcn-owned files keep their upstream names so `shadcn add` stays a clean overwrite. That is
-      `src/components/ui/**` *and* `src/hooks/use-mobile.ts`, which ships with the sidebar component
-      and is imported by it as `@/hooks/use-mobile`.
+    - shadcn-owned files keep their upstream names so `shadcn add` stays a clean overwrite. Only
+      `src/components/ui/chart.tsx` is left here; see "Shared FGV UI" below for the rest.
 - `src/gql/**` (generated) and `src/components/ui/**` (shadcn) are ESLint-ignored — don't hand-edit.
+
+## Shared FGV UI
+
+The theme, the shadcn components and the application shell come from `@bloomper/fgv-web-ui` (repo
+`bloomper/fgv-web-ui`, published to GitHub Packages), shared by all eight FGV web applications:
+
+- `@bloomper/fgv-web-ui/ui/<name>` for every shadcn component (`button`, `sidebar`, `dialog`, …). Don't add a local
+  copy with `shadcn add`: the shell and the application must share one `SidebarProvider`, and a change that belongs in
+  every application goes into the package. Only `chart` (recharts, used by Spexregister alone) stays local.
+- `shell/*`: `SiteHeader` (wrapped in `src/components/site-header.client.tsx` with Spexregister's search, command
+  palette and edit queue), `AppSwitcher`, `resolveApplications`, `SidebarBrand`, `NavMain`, `NavSecondary`, the
+  toggles, `DataEmpty`, the status pages and the logos.
+- `src/app/globals.css` only imports `tailwindcss` and the package's `styles.css`. Colour links with `text-link`, not
+  `text-primary`.
+- The shell's texts live in the package under `FgvUi`; `withFgvMessages` adds them wherever messages are loaded
+  (`src/i18n/request.ts`, `src/app/layout.tsx`, `changeLocale` in `src/app/provider.client.tsx`), and
+  `FgvShellProvider` there hands the shell `changeLocale` and Umami's `track`.
+- Installing needs a token, even locally: `.npmrc` reads `NODE_AUTH_TOKEN` (a token with `read:packages`). CI uses
+  `GITHUB_TOKEN`, and the image build gets it as the `npm_token` build secret.
+- Vitest inlines the package (`server.deps.inline`) so the `next-intl` mock in `vitest.setup.ts` reaches it; its
+  components therefore render bare keys (`noDataHeading`) in tests.
 
 ## Rendering and caching — Cache Components is ON
 
@@ -311,15 +331,15 @@ and funnels pick events by name: `<entity>-create` / `-update` from its form and
 
 ## Application switcher
 
-The title in the header (`src/components/app-switcher.client.tsx`) opens a menu of the FGV applications: Spexregister,
-Nyuppsättning, Spexflix, Spexify, Spexgram and Spexarkiv. `getApplications()` (`src/utils/applications.server.ts`) lists the current one and
+The title in the header (`AppSwitcher` from `@bloomper/fgv-web-ui/shell/app-switcher`) opens a menu of the FGV
+applications, in the same order in every application: Medlemskap, Spexipedia, Spexregister, Nyuppsättning, Spexflix,
+Spexify, Spexgram and Spexarkiv. `getApplications()` (`src/utils/applications.server.ts`) lists the current one and
 each other one whose `USER` role is in the access token and whose address is set (`SPEXREGISTER_WEB_URL`,
-`REVIVAL_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXGRAM_WEB_URL`,
-`ARCHIVE_WEB_URL`). The role is there because fgv-keycloak maps every web
+`MEMBERSHIP_WEB_URL`, `SPEXIPEDIA_WEB_URL`, `REVIVAL_WEB_URL`, `SPEXFLIX_WEB_URL`, `SPEXIFY_WEB_URL`, `SPEXGRAM_WEB_URL`,
+`ARCHIVE_WEB_URL`; `resolveApplications` in the package). The role is there because fgv-keycloak maps every web
 client to the other web clients' `USER` role; a realm imported before that needs fgv-infra-deploy's
-`bin/configure-keycloak.sh`. With no other application to offer, the title is plain text. The six webs (with fgv-spexgram-web and
-fgv-archive-web) carry identical copies of `applications.ts`, the component and their tests, and differ only in the id passed in
-`applications.server.ts`, so change all six together.
+`bin/configure-keycloak.sh`. With no other application to offer, the title is plain text. The list, the
+component and their tests live in the package; each application only passes its own id in `applications.server.ts`.
 
 ## Testing
 

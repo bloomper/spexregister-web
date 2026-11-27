@@ -4,16 +4,16 @@ import * as React from "react";
 import {useCallback, useEffect, useEffectEvent, useRef, useState} from "react";
 import {RowSelectionState, SortingState, useTable} from "@tanstack/react-table";
 
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Button} from "@/components/ui/button";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@bloomper/fgv-web-ui/ui/table";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {CursorPage, CursorPageInfo} from "@/types/pagination";
 import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight} from "lucide-react";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
 import {useTranslations} from "next-intl";
 import {SortDirection} from "@/gql/schema";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {cn} from "@/utils/utils";
-import {Spinner} from "@/components/ui/spinner";
+import {Spinner} from "@bloomper/fgv-web-ui/ui/spinner";
 import {useDataRefresh} from "@/hooks/use-data-refresh.client";
 import {type DataTableColumnDef, dataTableFeatures, type DataTableMeta} from "@/components/data-table-features";
 

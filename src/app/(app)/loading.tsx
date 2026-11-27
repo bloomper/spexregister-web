@@ -1,6 +1,6 @@
 import {DataGridSkeleton} from "@/components/data-grid-skeleton";
-import {Separator} from "@/components/ui/separator";
-import {Skeleton} from "@/components/ui/skeleton";
+import {Separator} from "@bloomper/fgv-web-ui/ui/separator";
+import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
 
 export default function HomeLoading() {
     return (

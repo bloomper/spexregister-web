@@ -1,11 +1,11 @@
 "use client";
 
 import {useTranslations} from "next-intl";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.client";
-import {Card, CardContent} from "@/components/ui/card";
+import {Avatar, AvatarFallback, AvatarImage} from "@bloomper/fgv-web-ui/ui/avatar";
+import {Card, CardContent} from "@bloomper/fgv-web-ui/ui/card";
 import {Drama, Mail, User} from "lucide-react";
 import {useMemo} from "react";
-import {useIsClient} from "@/hooks/use-is-client.client";
+import {useIsClient} from "@bloomper/fgv-web-ui/hooks/use-is-client";
 
 function fnv1a32(input: string): number {
     let hash = 0x811c9dc5;

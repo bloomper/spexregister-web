@@ -5,10 +5,10 @@ import {useLocale, useTranslations} from "next-intl";
 import {CalendarRange} from "lucide-react";
 import {enGB, sv} from "date-fns/locale";
 import type {DateRange} from "react-day-picker";
-import {Button} from "@/components/ui/button";
-import {Calendar} from "@/components/ui/calendar";
-import {Separator} from "@/components/ui/separator";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Calendar} from "@bloomper/fgv-web-ui/ui/calendar";
+import {Separator} from "@bloomper/fgv-web-ui/ui/separator";
+import {Popover, PopoverContent, PopoverTrigger} from "@bloomper/fgv-web-ui/ui/popover";
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 

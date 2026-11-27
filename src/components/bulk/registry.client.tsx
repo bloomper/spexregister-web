@@ -14,9 +14,9 @@ import {
 } from "lucide-react";
 import {Spex, SpexareBulkOperation, Tag, Task, Type, TypeType} from "@/gql/schema";
 import {DataFilter} from "@/components/data-filter";
-import {Label} from "@/components/ui/label";
-import {Switch} from "@/components/ui/switch";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Label} from "@bloomper/fgv-web-ui/ui/label";
+import {Switch} from "@bloomper/fgv-web-ui/ui/switch";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
 
 export type BulkOptions = {
     tags: Tag[];

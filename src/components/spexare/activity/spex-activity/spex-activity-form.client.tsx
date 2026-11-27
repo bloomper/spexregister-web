@@ -7,13 +7,13 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "sonner";
 import {SpexActivityFormInput, spexActivityFormSchema} from "@/lib/spexare/activity/spex-activity/schema";
 import {createSpexActivityAction, updateSpexActivityAction} from "@/app/(app)/spexare/actions.server";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
-import {Field, FieldContent, FieldError, FieldLabel} from "@/components/ui/field";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Field, FieldContent, FieldError, FieldLabel} from "@bloomper/fgv-web-ui/ui/field";
 import {cn, translateError} from "@/utils/utils";
 import {Spex, SpexActivity, SpexCategory} from "@/gql/schema";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
+import {Popover, PopoverContent, PopoverTrigger} from "@bloomper/fgv-web-ui/ui/popover";
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@bloomper/fgv-web-ui/ui/command";
 import {Check, ChevronsUpDown, Plus} from "lucide-react";
 import {useRefresh} from "@/hooks/use-refresh.client";
 

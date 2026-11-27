@@ -246,7 +246,6 @@
       "DEL": "Deleted"
     },
     "add": "Add",
-    "backToHome": "To the home page",
     "cancel": "Cancel",
     "clickToUpload": "Click to upload",
     "close": "Close",
@@ -273,8 +272,6 @@
     "fieldRequired": "Field is required",
     "fieldTooLong": "Field is too long",
     "fileTooLarge": "File too large. Maximum file size is 15MB.",
-    "forbidden": "You do not have permission",
-    "forbiddenDescription": "You do not have permission to see this page. Contact an administrator if you need it.",
     "general": "General",
     "history": "History",
     "imageUploadHint": "PNG, JPEG, GIF or SVG (max. 15MB)",
@@ -300,8 +297,6 @@
     "noMoreDataFound": "No more data found",
     "none": "None",
     "openMenu": "Open menu",
-    "pageNotFound": "Page not found",
-    "pageNotFoundDescription": "The page you are looking for does not exist or has been moved.",
     "pageOf": "Page {page} of {pages}",
     "reset": "Reset",
     "filters": "Filters",
@@ -316,10 +311,6 @@
     "selectDate": "Select date",
     "selectType": "Select type",
     "selected": "{count, plural, =1 {# selected} other {# selected}}",
-    "themeDark": "Dark",
-    "themeLight": "Light",
-    "themeSystem": "System",
-    "toggle": "Toggle",
     "tryAgain": "Try again",
     "updateSuccess": "Update successful",
     "uploadSuccess": "Upload successful",
@@ -412,22 +403,6 @@
       "TASK_CATEGORY": "Function category",
       "TAG": "Tag"
     }
-  },
-  "Header": {
-    "showMenu": "Show menu",
-    "toggleLanguage": "Toggle language",
-    "toggleTheme": "Toggle theme"
-  },
-  "AppSwitcher": {
-    "heading": "Switch application",
-    "spexregister": "Spexregister",
-    "revival": "Nyuppsättning",
-    "spexflix": "Spexflix",
-    "spexify": "Spexify",
-    "spexgram": "Spexgram",
-    "archive": "Spexarkiv",
-    "spexipedia": "Spexipedia",
-    "membership": "Medlemskap"
   },
   "Home": {
     "heading": "Home",
@@ -532,10 +507,6 @@
     "visibleFrom": "Visible from",
     "visibleTo": "Visible to"
   },
-  "NoAccess": {
-    "title": "You do not have access",
-    "text": "Your FGV account ({email}) does not have access to the address register. Contact an administrator if you need access, or log out and log in with another account."
-  },
   "PermissionGrant": {
     "heading": "Permissions",
     "description": "Give a user, or everyone with a role, extra rights on part of the register. Grants only add to what their role allows, and every change is in the change log.",
@@ -606,10 +577,6 @@
     "deleteLabel": "Delete {name}",
     "empty": "No saved searches",
     "nothingToSave": "There is no search to save"
-  },
-  "Sidebar": {
-    "hideMenu": "Hide menu",
-    "showMenu": "Show menu"
   },
   "Spex": {
     "Category": {

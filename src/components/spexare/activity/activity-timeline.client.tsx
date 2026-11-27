@@ -2,9 +2,9 @@
 
 import {useTranslations} from "next-intl";
 import {Drama, History} from "lucide-react";
-import {Badge} from "@/components/ui/badge";
-import {DataEmpty} from "@/components/data-empty";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@bloomper/fgv-web-ui/ui/tooltip";
 import {Activity, Actor, TaskActivity} from "@/gql/schema";
 
 interface ActivityTimelineProps {

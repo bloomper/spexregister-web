@@ -2,7 +2,7 @@
 
 import {useCallback, useMemo, useState} from "react";
 import {FileSpreadsheet, Loader2, Upload} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {toast} from "sonner";
 import {ImpexType, JobReference} from "@/gql/schema";
 import {useJobTracker} from "@/hooks/use-job-tracker.client";
@@ -16,8 +16,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@bloomper/fgv-web-ui/ui/select";
 import {track} from "@/utils/umami";
 
 interface ImportButtonProps {

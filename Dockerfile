@@ -10,7 +10,8 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 # Omit --production flag for TypeScript devDependencies
-RUN \
+# The token for GitHub Packages (@bloomper/fgv-web-ui) is a build secret, so it never lands in an image layer
+RUN --mount=type=secret,id=npm_token,env=NODE_AUTH_TOKEN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i; \

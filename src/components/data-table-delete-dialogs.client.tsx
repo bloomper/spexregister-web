@@ -10,8 +10,8 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {Checkbox} from "@/components/ui/checkbox";
+} from "@bloomper/fgv-web-ui/ui/alert-dialog";
+import {Checkbox} from "@bloomper/fgv-web-ui/ui/checkbox";
 
 interface PurgeOption {
     checked: boolean;

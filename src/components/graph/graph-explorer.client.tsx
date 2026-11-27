@@ -6,9 +6,9 @@ import {Network, RotateCcw, Search, X} from "lucide-react";
 import {toast} from "sonner";
 
 import {Country, GraphNode, GraphNodeType, Spex, SpexCategory, Tag, Task, TaskCategory} from "@/gql/schema";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {DataEmpty} from "@/components/data-empty";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {useLazyFull} from "@/hooks/use-lazy-full.client";
 import {useMediaQuery} from "@/hooks/use-media-query.client";
 import {SpexareViewDialog} from "@/components/spexare/spexare-view-dialog.client";

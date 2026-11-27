@@ -9,8 +9,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
+} from "@bloomper/fgv-web-ui/ui/dialog";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 
 export function TaskCategoryViewDialog({selected, onClose}: { selected: TaskCategory | null; onClose: () => void }) {
     const t = useTranslations();

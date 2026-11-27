@@ -8,12 +8,12 @@ import {useTranslations} from "next-intl";
 import {useState, useTransition} from "react";
 import {toast} from "sonner";
 import {createAction, deleteImageAction, updateAction, uploadImageAction} from "@/app/(app)/spexare/actions.server";
-import {Button} from "@/components/ui/button";
-import {SheetClose, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
+import {SheetClose, SheetContent, SheetHeader, SheetTitle} from "@bloomper/fgv-web-ui/ui/sheet";
 import {cn} from "@/utils/utils";
 import {useReportEditQueueFormState} from "@/components/edit-queue/edit-queue-form-state.client";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {ScrollArea} from "@/components/ui/scroll-area";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@bloomper/fgv-web-ui/ui/tabs";
+import {ScrollArea} from "@bloomper/fgv-web-ui/ui/scroll-area";
 import {SpexareGeneralFields} from "@/components/spexare/spexare-general-fields.client";
 import {SpexareRelationTabs} from "@/components/spexare/spexare-relation-tabs.client";
 

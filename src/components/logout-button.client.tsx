@@ -4,7 +4,7 @@ import {LogOut} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
 import {useTheme} from "next-themes";
 import {toast} from "sonner";
-import {Button} from "@/components/ui/button";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 import {signOut} from "@/lib/auth-client";
 import {appendLogoutParams, normalizeTheme} from "@/utils/auth";
 

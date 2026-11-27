@@ -246,7 +246,6 @@
       "DEL": "Raderad"
     },
     "add": "Lägg till",
-    "backToHome": "Till startsidan",
     "cancel": "Avbryt",
     "clickToUpload": "Klicka för att ladda upp",
     "close": "Stäng",
@@ -273,8 +272,6 @@
     "fieldRequired": "Fältet är obligatoriskt",
     "fieldTooLong": "Fälter är för långt",
     "fileTooLarge": "Filen är för stor. Max filstorlek är 15MB.",
-    "forbidden": "Du har inte behörighet",
-    "forbiddenDescription": "Du har inte behörighet till den här sidan. Kontakta en administratör om du behöver den.",
     "general": "Allmänt",
     "history": "Historik",
     "imageUploadHint": "PNG, JPEG, GIF eller SVG (max 15MB)",
@@ -300,8 +297,6 @@
     "noMoreDataFound": "Ingen mer data hittades",
     "none": "Ingen",
     "openMenu": "Öppna meny",
-    "pageNotFound": "Sidan hittades inte",
-    "pageNotFoundDescription": "Sidan du letar efter finns inte eller har flyttats.",
     "pageOf": "Sida {page} av {pages}",
     "reset": "Återställ",
     "filters": "Filter",
@@ -316,10 +311,6 @@
     "selectDate": "Välj datum",
     "selectType": "Välj typ",
     "selected": "{count, plural, =1 {# vald} other {# valda}}",
-    "themeDark": "Mörk",
-    "themeLight": "Ljus",
-    "themeSystem": "System",
-    "toggle": "Växla",
     "tryAgain": "Försök igen",
     "updateSuccess": "Uppdateringen lyckades",
     "uploadSuccess": "Uppladdning lyckades",
@@ -412,22 +403,6 @@
       "TASK_CATEGORY": "Funktionskategori",
       "TAG": "Tagg"
     }
-  },
-  "Header": {
-    "showMenu": "Visa menyn",
-    "toggleLanguage": "Byt språk",
-    "toggleTheme": "Byt tema"
-  },
-  "AppSwitcher": {
-    "heading": "Byt applikation",
-    "spexregister": "Spexregister",
-    "revival": "Nyuppsättning",
-    "spexflix": "Spexflix",
-    "spexify": "Spexify",
-    "spexgram": "Spexgram",
-    "archive": "Spexarkiv",
-    "spexipedia": "Spexipedia",
-    "membership": "Medlemskap"
   },
   "Home": {
     "heading": "Hem",
@@ -532,10 +507,6 @@
     "visibleFrom": "Synlig från",
     "visibleTo": "Synlig till"
   },
-  "NoAccess": {
-    "title": "Du har inte åtkomst",
-    "text": "Ditt FGV-konto ({email}) har inte åtkomst till adressregistret. Kontakta en administratör om du behöver åtkomst, eller logga ut och logga in med ett annat konto."
-  },
   "PermissionGrant": {
     "heading": "Behörigheter",
     "description": "Ge en användare, eller alla med en roll, extra rättigheter i en del av registret. En behörighet lägger bara till det rollen redan tillåter, och varje ändring syns i ändringsloggen.",
@@ -606,10 +577,6 @@
     "deleteLabel": "Ta bort {name}",
     "empty": "Inga sparade sökningar",
     "nothingToSave": "Det finns ingen sökning att spara"
-  },
-  "Sidebar": {
-    "hideMenu": "Dölj menyn",
-    "showMenu": "Visa menyn"
   },
   "Spex": {
     "Category": {

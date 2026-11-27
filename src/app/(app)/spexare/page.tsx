@@ -1,6 +1,6 @@
 import {SpexareGrid} from "@/components/spexare";
 import {getMine, getPaged} from "@/lib/spexare";
-import {DataEmpty} from "@/components/data-empty";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
 import {withPolicyPage} from "@/utils/route.server";
 import {Policies} from "@/utils/policy.server";
 import {UserRound} from "lucide-react";

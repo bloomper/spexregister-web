@@ -2,7 +2,7 @@
 
 import {ChevronsUpDown, ExternalLink, LogOut, UserCog, UserRound} from "lucide-react";
 
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.client";
+import {Avatar, AvatarFallback, AvatarImage} from "@bloomper/fgv-web-ui/ui/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,8 +11,8 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@/components/ui/sidebar";
+} from "@bloomper/fgv-web-ui/ui/dropdown-menu";
+import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@bloomper/fgv-web-ui/ui/sidebar";
 import * as React from "react";
 import {useMemo, useState} from "react";
 import {useLocale, useTranslations} from "next-intl";

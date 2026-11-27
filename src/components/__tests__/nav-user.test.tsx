@@ -20,7 +20,7 @@ vi.mock("sonner", () => ({toast}));
 vi.mock("next/link", () => ({
     default: ({children, href, ...props}: { children?: ReactNode; href: string }) => <a href={href} {...props}>{children}</a>,
 }));
-vi.mock("@/components/ui/sidebar", () => ({
+vi.mock("@bloomper/fgv-web-ui/ui/sidebar", () => ({
     SidebarMenu: ({children}: { children?: ReactNode }) => <ul>{children}</ul>,
     SidebarMenuItem: ({children}: { children?: ReactNode }) => <li>{children}</li>,
     SidebarMenuButton: (props: object) => <button type="button" {...props}/>,

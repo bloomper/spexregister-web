@@ -4,7 +4,7 @@ import Link from "next/link";
 import {useTranslations} from "next-intl";
 import {ArrowRight, CircleAlert} from "lucide-react";
 import {Analytics} from "@/gql/schema";
-import {buttonVariants} from "@/components/ui/button";
+import {buttonVariants} from "@bloomper/fgv-web-ui/ui/button";
 import {AnalyticsBarChart} from "./analytics-bar-chart.client";
 import {AnalyticsStat} from "./analytics-stat.client";
 import {bucketHref} from "@/utils/analytics";

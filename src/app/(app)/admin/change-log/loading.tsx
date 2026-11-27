@@ -1,5 +1,5 @@
 import {DataTableSkeleton} from "@/components/data-table-skeleton";
-import {Skeleton} from "@/components/ui/skeleton";
+import {Skeleton} from "@bloomper/fgv-web-ui/ui/skeleton";
 
 export default function ChangeLogLoading() {
     return (

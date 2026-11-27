@@ -15,43 +15,25 @@ import {
     Wrench
 } from "lucide-react";
 
-import {NavMain} from "@/components/nav-main.client";
-import {NavSecondary} from "@/components/nav-secondary.client";
+import {NavMain, type NavItem} from "@bloomper/fgv-web-ui/shell/nav-main";
+import {NavSecondary, SidebarBrand} from "@bloomper/fgv-web-ui/shell/sidebar-parts";
 import {NavUser} from "@/components/nav-user.client";
-import {SidebarToggle} from "@/components/sidebar-toggle.client";
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
     useSidebar
-} from "@/components/ui/sidebar";
-import {Logo} from "@/components/logo";
-import {LogoText} from "@/components/logo-text";
+} from "@bloomper/fgv-web-ui/ui/sidebar";
 import {Role} from "@/types/auth";
 import {isAdmin, isAdminOrEditor} from "@/utils/auth";
 import {usePathname} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {Spexare} from "@/gql/schema";
-import {useIsClient} from "@/hooks/use-is-client.client";
+import {useIsClient} from "@bloomper/fgv-web-ui/hooks/use-is-client";
 
-interface NavLink {
+interface NavSecondaryItem {
     title: string;
     url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: NavLink[];
-}
-
-/** A group without an address only opens and closes its entries. */
-interface NavItem extends Omit<NavLink, "url"> {
-    url?: string;
-}
-
-interface NavSecondaryItem extends Omit<NavLink, "icon"> {
     icon: LucideIcon;
 }
 
@@ -180,32 +162,7 @@ export function AppSidebar({roles, spexare, accountUrl, ...props}: AppSidebarPro
                  className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
                  {...props}
         >
-            <SidebarHeader className="flex-row items-center group-data-[collapsible=icon]:flex-col">
-                <SidebarMenu className="min-w-0 flex-1">
-                    <SidebarMenuItem>
-                        <SidebarMenuButton
-                            size="lg"
-                            render={
-                                <a
-                                    href="https://www.fgv.nu"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-3 flex-nowrap bg-transparent! hover:bg-transparent! active:bg-transparent! focus:bg-transparent!"
-                                />
-                            }
-                        >
-                            <div
-                                className="flex aspect-square size-10 shrink-0 items-center justify-center rounded-lg group-data-[collapsible=icon]:size-8">
-                                <Logo/>
-                            </div>
-                            <div className="min-w-0 flex-1 overflow-hidden pl-1">
-                                <LogoText className="h-10 w-auto text-foreground"/>
-                            </div>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-                <SidebarToggle/>
-            </SidebarHeader>
+            <SidebarBrand/>
             <SidebarContent onClickCapture={closeOnNavigate}>
                 {isClient ? (
                     <>

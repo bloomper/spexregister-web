@@ -5,8 +5,9 @@ import {cookies} from "next/headers";
 import Provider from "@/app/provider.client";
 import React, {Suspense} from "react";
 import {normalizeLocale} from "@/utils/utils.server";
-import {Spinner} from "@/components/ui/spinner";
+import {Spinner} from "@bloomper/fgv-web-ui/ui/spinner";
 import {Umami} from "@/components/umami";
+import {withFgvMessages} from "@bloomper/fgv-web-ui/messages";
 import enMessages from "../../messages/en.json";
 import svMessages from "../../messages/sv.json";
 
@@ -27,7 +28,7 @@ async function RootProvider({children}: { children: React.ReactNode }) {
     const store = await cookies();
     const cookieLocale = store.get("locale")?.value;
     const locale = normalizeLocale(cookieLocale);
-    const messages = (await import(`../../messages/${locale}.json`)).default;
+    const messages = withFgvMessages(locale, (await import(`../../messages/${locale}.json`)).default);
 
     return (
         <Provider locale={locale} messages={messages}>

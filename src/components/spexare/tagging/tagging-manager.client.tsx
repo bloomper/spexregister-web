@@ -2,16 +2,16 @@
 
 import {useTransition} from "react";
 import {Tag} from "@/gql/schema";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
 import {Plus, Tag as TagIcon, X} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {createTaggingAction, deleteTaggingAction} from "@/app/(app)/spexare/actions.server";
 import {toast} from "sonner";
 import {useRefresh} from "@/hooks/use-refresh.client";
-import {DataEmpty} from "@/components/data-empty";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Button} from "@/components/ui/button";
+import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@bloomper/fgv-web-ui/ui/command";
+import {Popover, PopoverContent, PopoverTrigger} from "@bloomper/fgv-web-ui/ui/popover";
+import {Button} from "@bloomper/fgv-web-ui/ui/button";
 
 export function TaggingManager({
                                    spexareId,
