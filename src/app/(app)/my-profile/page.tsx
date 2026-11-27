@@ -1,71 +1,69 @@
-import {getMine} from "@/lib/spexare";
-import {getLocale, getTranslations} from "next-intl/server";
-import {getCountries, getTypes} from "@/lib/settings";
-import {getAll as getAllTags} from "@/lib/tag";
-import {getAll as getAllTasks} from "@/lib/task";
-import {getAll as getAllTaskCategories} from "@/lib/task/category";
-import {getAll as getAllSpex} from "@/lib/spex";
-import {getAll as getAllSpexCategories} from "@/lib/spex/category";
-import {SpexareForm} from "@/components/spexare/spexare-form.client";
-import {SpexareCareer} from "@/components/spexare/spexare-career.client";
-import {MyData} from "@/components/spexare/my-data.client";
-import {Activity} from "@/gql/schema";
-import {redirect} from "next/navigation";
-import {revalidateTag} from "next/cache";
-import {Page, PageHeader} from "@bloomper/fgv-web-ui/shell/page-header";
+import { getMine } from "@/lib/spexare";
+import { getLocale, getTranslations } from "next-intl/server";
+import { getCountries, getTypes } from "@/lib/settings";
+import { getAll as getAllTags } from "@/lib/tag";
+import { getAll as getAllTasks } from "@/lib/task";
+import { getAll as getAllTaskCategories } from "@/lib/task/category";
+import { getAll as getAllSpex } from "@/lib/spex";
+import { getAll as getAllSpexCategories } from "@/lib/spex/category";
+import { SpexareForm } from "@/components/spexare/spexare-form.client";
+import { SpexareCareer } from "@/components/spexare/spexare-career.client";
+import { MyData } from "@/components/spexare/my-data.client";
+import { Activity } from "@/gql/schema";
+import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
+import { Page, PageHeader } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The user's own spexare: their spex career, their details to change, an export of their data and a request to be
  * removed. Users without a spexare are sent to the start page.
  */
 export default async function MyProfilePage() {
-    const item = await getMine({full: true});
+  const item = await getMine({ full: true });
 
-    if (!item) {
-        redirect("/");
-    }
+  if (!item) {
+    redirect("/");
+  }
 
-    const locale = await getLocale();
-    const [types, countries, tags, tasks, taskCategories, spex, spexCategories, t] = await Promise.all([
-        getTypes(locale),
-        getCountries(locale),
-        getAllTags(),
-        getAllTasks(),
-        getAllTaskCategories(),
-        getAllSpex(),
-        getAllSpexCategories(),
-        getTranslations()
-    ]);
+  const locale = await getLocale();
+  const [types, countries, tags, tasks, taskCategories, spex, spexCategories, t] = await Promise.all([
+    getTypes(locale),
+    getCountries(locale),
+    getAllTags(),
+    getAllTasks(),
+    getAllTaskCategories(),
+    getAllSpex(),
+    getAllSpexCategories(),
+    getTranslations(),
+  ]);
 
-    async function handleSuccess() {
-        "use server";
-        revalidateTag("me", "max");
-        redirect("/");
-    }
+  async function handleSuccess() {
+    "use server";
+    revalidateTag("me", "max");
+    redirect("/");
+  }
 
-    return (
-        <Page className="max-w-6xl mx-auto w-full">
-            <PageHeader title={t("Common.myProfile")}/>
-            <div className="mb-8">
-                <SpexareCareer
-                    activities={(item.activities ?? []).filter((activity): activity is Activity => !!activity)}
-                />
-            </div>
-            <SpexareForm
-                mode="page"
-                item={item}
-                types={types}
-                countries={countries}
-                tags={tags}
-                tasks={tasks}
-                taskCategories={taskCategories}
-                spex={spex}
-                spexCategories={spexCategories}
-                onSuccess={handleSuccess}
-            />
-            <div className="mt-8">
-                <MyData/>
-            </div>
-        </Page>
-    );
+  return (
+    <Page className="mx-auto w-full max-w-6xl">
+      <PageHeader title={t("Common.myProfile")} />
+      <div className="mb-8">
+        <SpexareCareer activities={(item.activities ?? []).filter((activity): activity is Activity => !!activity)} />
+      </div>
+      <SpexareForm
+        mode="page"
+        item={item}
+        types={types}
+        countries={countries}
+        tags={tags}
+        tasks={tasks}
+        taskCategories={taskCategories}
+        spex={spex}
+        spexCategories={spexCategories}
+        onSuccess={handleSuccess}
+      />
+      <div className="mt-8">
+        <MyData />
+      </div>
+    </Page>
+  );
 }

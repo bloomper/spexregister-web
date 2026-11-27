@@ -1,8 +1,8 @@
 import "server-only";
 
-import {AuditedType, SortDirection, Tag, TagCreate, TagEdge, TagUpdate} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {createResourceClient} from "@/lib/graphql.server";
+import { AuditedType, SortDirection, Tag, TagCreate, TagEdge, TagUpdate } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { createResourceClient } from "@/lib/graphql.server";
 
 export const TagSummary = graphql(`
     fragment TagSummary on Tag {
@@ -72,20 +72,20 @@ const TagExportQuery = graphql(`
 `);
 
 const client = createResourceClient<Tag, TagEdge, TagCreate, TagUpdate>({
-    singular: "tag",
-    pagedSummaryQuery: TagPagedSummary,
-    pagedFullQuery: TagPagedFull,
-    getQuery: TagGetQuery,
-    createMutation: TagCreateMutation,
-    updateMutation: TagUpdateMutation,
-    deleteMutation: TagDeleteMutation,
-    exportQuery: TagExportQuery,
-    auditedType: AuditedType.Tag,
-    cacheTag: "tag",
-    restPath: "tags",
-    defaultSort: ["name"],
-    defaultDirection: SortDirection.Desc,
-    defaultFilter: "",
+  singular: "tag",
+  pagedSummaryQuery: TagPagedSummary,
+  pagedFullQuery: TagPagedFull,
+  getQuery: TagGetQuery,
+  createMutation: TagCreateMutation,
+  updateMutation: TagUpdateMutation,
+  deleteMutation: TagDeleteMutation,
+  exportQuery: TagExportQuery,
+  auditedType: AuditedType.Tag,
+  cacheTag: "tag",
+  restPath: "tags",
+  defaultSort: ["name"],
+  defaultDirection: SortDirection.Desc,
+  defaultFilter: "",
 });
 
-export const {getPaged, get, getAll, create, update, del, exp, imp, revisions} = client;
+export const { getPaged, get, getAll, create, update, del, exp, imp, revisions } = client;

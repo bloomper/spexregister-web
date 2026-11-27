@@ -1,8 +1,8 @@
 import "server-only";
 
-import {SpexActivity} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {mutateForData, runMutationField} from "@/lib/graphql.server";
+import { SpexActivity } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { mutateForData, runMutationField } from "@/lib/graphql.server";
 
 export const SpexActivityBase = graphql(`
     fragment SpexActivityBase on SpexActivity {
@@ -58,22 +58,32 @@ const SpexActivityDeleteMutation = graphql(`
 `);
 
 export async function create(spexareId: string, activityId: string, spexId: string): Promise<SpexActivity> {
-    return mutateForData(SpexActivityCreateMutation, {
-        spexareId,
-        activityId,
-        spexId
-    }, "spexActivityCreate", "No data created") as Promise<SpexActivity>;
+  return mutateForData(
+    SpexActivityCreateMutation,
+    {
+      spexareId,
+      activityId,
+      spexId,
+    },
+    "spexActivityCreate",
+    "No data created"
+  ) as Promise<SpexActivity>;
 }
 
 export async function update(spexareId: string, activityId: string, spexId: string, id: string): Promise<SpexActivity> {
-    return mutateForData(SpexActivityUpdateMutation, {
-        spexareId,
-        activityId,
-        spexId,
-        id
-    }, "spexActivityUpdate", "No data updated") as Promise<SpexActivity>;
+  return mutateForData(
+    SpexActivityUpdateMutation,
+    {
+      spexareId,
+      activityId,
+      spexId,
+      id,
+    },
+    "spexActivityUpdate",
+    "No data updated"
+  ) as Promise<SpexActivity>;
 }
 
 export async function del(spexareId: string, activityId: string, id: string) {
-    return runMutationField(SpexActivityDeleteMutation, {spexareId, activityId, id}, "spexActivityDelete");
+  return runMutationField(SpexActivityDeleteMutation, { spexareId, activityId, id }, "spexActivityDelete");
 }

@@ -1,40 +1,40 @@
-import {type ClassValue, clsx} from "clsx";
-import {twMerge} from "tailwind-merge";
-import {format, parseISO} from "date-fns";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { format, parseISO } from "date-fns";
 
 /**
  * Joins class names, letting later Tailwind classes override earlier ones.
  */
 export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs));
 }
 
 /**
  * An ISO date as yyyy-MM-dd, or an empty string when it cannot be read.
  */
 export function formatDate(date: string) {
-    if (!date) {
-        return "";
-    }
-    try {
-        return format(parseISO(date), "yyyy-MM-dd");
-    } catch {
-        return "";
-    }
+  if (!date) {
+    return "";
+  }
+  try {
+    return format(parseISO(date), "yyyy-MM-dd");
+  } catch {
+    return "";
+  }
 }
 
 /**
  * An ISO instant as yyyy-MM-dd HH:mm in the browser's time zone.
  */
 export function formatDateTime(date: string) {
-    if (!date) {
-        return "";
-    }
-    try {
-        return format(parseISO(date), "yyyy-MM-dd HH:mm");
-    } catch {
-        return formatDate(date);
-    }
+  if (!date) {
+    return "";
+  }
+  try {
+    return format(parseISO(date), "yyyy-MM-dd HH:mm");
+  } catch {
+    return formatDate(date);
+  }
 }
 
 /**
@@ -42,30 +42,30 @@ export function formatDateTime(date: string) {
  * browser's cache when the image changes.
  */
 export function getProxiedImageUrl(url?: string | null, lastModifiedAt?: string | null) {
-    if (!url) {
-        return "";
-    }
-    const params = new URLSearchParams();
-    params.set("url", url);
+  if (!url) {
+    return "";
+  }
+  const params = new URLSearchParams();
+  params.set("url", url);
 
-    if (lastModifiedAt) {
-        params.set("t", new Date(lastModifiedAt).getTime().toString());
-    }
+  if (lastModifiedAt) {
+    params.set("t", new Date(lastModifiedAt).getTime().toString());
+  }
 
-    return `/api/image-download-proxy?${params.toString()}`;
+  return `/api/image-download-proxy?${params.toString()}`;
 }
 
 /**
  * A form error with its message key translated.
  */
 export function translateError<T extends { message?: string }>(t: (key: string) => string, error?: T) {
-    if (!error?.message) {
-        return error;
-    }
-    return {
-        ...error,
-        message: t(error.message)
-    };
+  if (!error?.message) {
+    return error;
+  }
+  return {
+    ...error,
+    message: t(error.message),
+  };
 }
 
 const FACET_PARAM_PREFIX = "f.";
@@ -73,64 +73,69 @@ const FACET_PARAM_PREFIX = "f.";
 type FacetParamSource = URLSearchParams | Record<string, string | string[] | undefined>;
 
 function facetParamEntries(source: FacetParamSource): [string, string][] {
-    if (source instanceof URLSearchParams) {
-        return [...source.entries()];
+  if (source instanceof URLSearchParams) {
+    return [...source.entries()];
+  }
+  return Object.entries(source).flatMap(([key, value]) => {
+    if (value === undefined) {
+      return [];
     }
-    return Object.entries(source).flatMap(([key, value]) => {
-        if (value === undefined) {
-            return [];
-        }
-        return (Array.isArray(value) ? value : [value]).map((v): [string, string] => [key, v]);
-    });
+    return (Array.isArray(value) ? value : [value]).map((v): [string, string] => [key, v]);
+  });
 }
 
 /**
  * The selected facet values in search parameters named `f.<facet>`.
  */
 export function parseFacetParams(source: FacetParamSource): Record<string, Set<string>> {
-    const selected: Record<string, Set<string>> = {};
+  const selected: Record<string, Set<string>> = {};
 
-    for (const [key, value] of facetParamEntries(source)) {
-        if (!key.startsWith(FACET_PARAM_PREFIX) || !value) {
-            continue;
-        }
-        const id = key.slice(FACET_PARAM_PREFIX.length);
-        if (!id) {
-            continue;
-        }
-        (selected[id] ??= new Set<string>()).add(value);
+  for (const [key, value] of facetParamEntries(source)) {
+    if (!key.startsWith(FACET_PARAM_PREFIX) || !value) {
+      continue;
     }
+    const id = key.slice(FACET_PARAM_PREFIX.length);
+    if (!id) {
+      continue;
+    }
+    (selected[id] ??= new Set<string>()).add(value);
+  }
 
-    return selected;
+  return selected;
 }
 
 /**
  * Adds the selected facet values as `f.<facet>` parameters, sorted so that the same selection gives the same address.
  */
 export function appendFacetParams(params: URLSearchParams, selectedFacets: Record<string, Set<string>>) {
-    for (const id of Object.keys(selectedFacets).sort()) {
-        for (const value of [...selectedFacets[id]].sort()) {
-            params.append(`${FACET_PARAM_PREFIX}${id}`, value);
-        }
+  for (const id of Object.keys(selectedFacets).sort()) {
+    for (const value of [...selectedFacets[id]].sort()) {
+      params.append(`${FACET_PARAM_PREFIX}${id}`, value);
     }
-    return params;
+  }
+  return params;
 }
 
 /**
  * The selected facet values as the search's aggregation filters.
  */
 export function toAggregationFilters(selectedFacets: Record<string, Set<string>>): { name: string; value: string }[] {
-    return Object.keys(selectedFacets)
-        .sort()
-        .flatMap((name) => [...selectedFacets[name]].sort().map((value) => ({name, value})));
+  return Object.keys(selectedFacets)
+    .sort()
+    .flatMap((name) => [...selectedFacets[name]].sort().map((value) => ({ name, value })));
 }
 
-const TODAY = new Intl.DateTimeFormat("sv-SE", {year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Europe/Stockholm"});
+const TODAY = new Intl.DateTimeFormat("sv-SE", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "Europe/Stockholm",
+});
 
 /**
  * Today's date as yyyy-mm-dd in Swedish time. An ISO instant cut at the date is the day in UTC, which is yesterday
  * during the first hour or two after midnight here.
  */
 export function today(now: Date = new Date()): string {
-    return TODAY.format(now);
+  return TODAY.format(now);
 }

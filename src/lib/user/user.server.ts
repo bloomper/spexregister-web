@@ -1,8 +1,8 @@
 import "server-only";
 
-import {AuditedType, Authority, SortDirection, State, User, UserCreate, UserEdge, UserUpdate} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {createResourceClient, runMutationField, runQuery} from "@/lib/graphql.server";
+import { AuditedType, Authority, SortDirection, State, User, UserCreate, UserEdge, UserUpdate } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { createResourceClient, runMutationField, runQuery } from "@/lib/graphql.server";
 
 export const UserSummary = graphql(`
     fragment UserSummary on User {
@@ -89,23 +89,23 @@ const UserExportQuery = graphql(`
 `);
 
 const client = createResourceClient<User, UserEdge, UserCreate, UserUpdate>({
-    singular: "user",
-    pagedSummaryQuery: UserPagedSummary,
-    pagedFullQuery: UserPagedFull,
-    getQuery: UserGetQuery,
-    createMutation: UserCreateMutation,
-    updateMutation: UserUpdateMutation,
-    deleteMutation: UserDeleteMutation,
-    exportQuery: UserExportQuery,
-    auditedType: AuditedType.User,
-    cacheTag: "user",
-    restPath: "users",
-    defaultSort: ["id"],
-    defaultDirection: SortDirection.Asc,
-    defaultFilter: "",
+  singular: "user",
+  pagedSummaryQuery: UserPagedSummary,
+  pagedFullQuery: UserPagedFull,
+  getQuery: UserGetQuery,
+  createMutation: UserCreateMutation,
+  updateMutation: UserUpdateMutation,
+  deleteMutation: UserDeleteMutation,
+  exportQuery: UserExportQuery,
+  auditedType: AuditedType.User,
+  cacheTag: "user",
+  restPath: "users",
+  defaultSort: ["id"],
+  defaultDirection: SortDirection.Asc,
+  defaultFilter: "",
 });
 
-export const {getPaged, get, create, update, del, exp, imp, revisions} = client;
+export const { getPaged, get, create, update, del, exp, imp, revisions } = client;
 
 const AuthoritiesAddMutation = graphql(`
     mutation UserAuthoritiesAdd($userId: ID!, $ids: [ID]!) {
@@ -171,64 +171,64 @@ const StatesQuery = graphql(`
  * Users to pick from, found by the email, username or name of their account or by the name of their spexare.
  */
 export async function search(query: string, first = 20): Promise<User[]> {
-    const data = await runQuery(UserSearchQuery, {query, first});
-    return (data?.userSearch ?? []) as User[];
+  const data = await runQuery(UserSearchQuery, { query, first });
+  return (data?.userSearch ?? []) as User[];
 }
 
 /**
  * The Spexregister roles, labelled in the user's language.
  */
 export async function getAuthorities(): Promise<Authority[]> {
-    const data = await runQuery(AuthoritiesQuery, {});
-    return (data?.authorities ?? []) as Authority[];
+  const data = await runQuery(AuthoritiesQuery, {});
+  return (data?.authorities ?? []) as Authority[];
 }
 
 /**
  * Gives the user's Keycloak account the roles it lacks.
  */
 export async function addAuthorities(userId: string, ids: string[]) {
-    return runMutationField(AuthoritiesAddMutation, {userId, ids}, "userAuthoritiesAdd");
+  return runMutationField(AuthoritiesAddMutation, { userId, ids }, "userAuthoritiesAdd");
 }
 
 /**
  * Takes the roles from the user's Keycloak account.
  */
 export async function removeAuthorities(userId: string, ids: string[]) {
-    return runMutationField(AuthoritiesRemoveMutation, {userId, ids}, "userAuthoritiesRemove");
+  return runMutationField(AuthoritiesRemoveMutation, { userId, ids }, "userAuthoritiesRemove");
 }
 
 /**
  * The user states, labelled in the user's language.
  */
 export async function getStates(): Promise<State[]> {
-    const data = await runQuery(StatesQuery, {});
-    return (data?.states ?? []) as State[];
+  const data = await runQuery(StatesQuery, {});
+  return (data?.states ?? []) as State[];
 }
 
 /**
  * Moves the user to the state, enabling or disabling the Keycloak account to match.
  */
 export async function setState(userId: string, id: string) {
-    return runMutationField(StateSetMutation, {userId, id}, "userStateSet");
+  return runMutationField(StateSetMutation, { userId, id }, "userStateSet");
 }
 
 /**
  * Links the user to their spexare.
  */
 export async function addSpexare(userId: string, id: string) {
-    return runMutationField(SpexareAddMutation, {userId, id}, "userSpexareAdd");
+  return runMutationField(SpexareAddMutation, { userId, id }, "userSpexareAdd");
 }
 
 /**
  * Unlinks the user from their spexare.
  */
 export async function removeSpexare(userId: string) {
-    return runMutationField(SpexareRemoveMutation, {userId}, "userSpexareRemove");
+  return runMutationField(SpexareRemoveMutation, { userId }, "userSpexareRemove");
 }
 
 /**
  * Whether the user is linked to their spexare by email when they have none: on until an admin removes a link by hand.
  */
 export async function setSpexareAutoLink(userId: string, enabled: boolean) {
-    return runMutationField(SpexareAutoLinkSetMutation, {userId, enabled}, "userSpexareAutoLinkSet");
+  return runMutationField(SpexareAutoLinkSetMutation, { userId, enabled }, "userSpexareAutoLinkSet");
 }

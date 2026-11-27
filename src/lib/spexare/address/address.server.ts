@@ -1,8 +1,8 @@
 import "server-only";
 
-import {Address, AddressCreate, AddressUpdate} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {mutateForData, runMutationField} from "@/lib/graphql.server";
+import { Address, AddressCreate, AddressUpdate } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { mutateForData, runMutationField } from "@/lib/graphql.server";
 
 export const AddressSummary = graphql(`
     fragment AddressSummary on Address {
@@ -54,21 +54,36 @@ const AddressDeleteMutation = graphql(`
 `);
 
 export async function create(spexareId: string, typeId: string, input: AddressCreate): Promise<Address> {
-    return mutateForData(AddressCreateMutation, {
-        spexareId,
-        typeId,
-        input
-    }, "addressCreate", "No data created") as Promise<Address>;
+  return mutateForData(
+    AddressCreateMutation,
+    {
+      spexareId,
+      typeId,
+      input,
+    },
+    "addressCreate",
+    "No data created"
+  ) as Promise<Address>;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: Omit<AddressUpdate, "id">): Promise<Address> {
-    return mutateForData(AddressUpdateMutation, {
-        spexareId,
-        typeId,
-        input: {...input, id}
-    }, "addressUpdate", "No data updated") as Promise<Address>;
+export async function update(
+  spexareId: string,
+  typeId: string,
+  id: string,
+  input: Omit<AddressUpdate, "id">
+): Promise<Address> {
+  return mutateForData(
+    AddressUpdateMutation,
+    {
+      spexareId,
+      typeId,
+      input: { ...input, id },
+    },
+    "addressUpdate",
+    "No data updated"
+  ) as Promise<Address>;
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    return runMutationField(AddressDeleteMutation, {spexareId, typeId, id}, "addressDelete");
+  return runMutationField(AddressDeleteMutation, { spexareId, typeId, id }, "addressDelete");
 }

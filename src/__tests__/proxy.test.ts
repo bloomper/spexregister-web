@@ -1,103 +1,107 @@
-import {beforeEach, describe, expect, it, vi} from "vitest";
-import {NextRequest} from "next/server";
-import {proxy} from "@/proxy";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextRequest } from "next/server";
+import { proxy } from "@/proxy";
 
 const getAccessTokenMock = vi.fn();
 
 vi.mock("@/auth", () => ({
-    auth: {api: {getAccessToken: (...args: unknown[]) => getAccessTokenMock(...args)}},
+  auth: { api: { getAccessToken: (...args: unknown[]) => getAccessTokenMock(...args) } },
 }));
 
 const ACCOUNT_COOKIE = "better-auth.account_data";
 
-function request(path: string, {cookie = `${ACCOUNT_COOKIE}=abc`, headers = {}} = {}) {
-    return new NextRequest(new URL(`http://localhost${path}`), {
-        headers: {...(cookie ? {cookie} : {}), ...headers},
-    });
+function request(path: string, { cookie = `${ACCOUNT_COOKIE}=abc`, headers = {} } = {}) {
+  return new NextRequest(new URL(`http://localhost${path}`), {
+    headers: { ...(cookie ? { cookie } : {}), ...headers },
+  });
 }
 
 const refreshed = (cookie: string) => ({
-    headers: new Headers({"set-cookie": cookie}),
+  headers: new Headers({ "set-cookie": cookie }),
 });
 
 beforeEach(() => {
-    getAccessTokenMock.mockReset();
-    getAccessTokenMock.mockResolvedValue(refreshed(`${ACCOUNT_COOKIE}=refreshed; Path=/`));
+  getAccessTokenMock.mockReset();
+  getAccessTokenMock.mockResolvedValue(refreshed(`${ACCOUNT_COOKIE}=refreshed; Path=/`));
 });
 
 describe("proxy", () => {
-    it("forwards the refreshed cookie on an app request", async () => {
-        const response = await proxy(request("/news"));
+  it("forwards the refreshed cookie on an app request", async () => {
+    const response = await proxy(request("/news"));
 
-        expect(getAccessTokenMock).toHaveBeenCalledWith(
-            expect.objectContaining({body: {useAccountCookie: true}, returnHeaders: true}),
-        );
-        expect(response.headers.getSetCookie()).toContain(`${ACCOUNT_COOKIE}=refreshed; Path=/`);
+    expect(getAccessTokenMock).toHaveBeenCalledWith(
+      expect.objectContaining({ body: { useAccountCookie: true }, returnHeaders: true })
+    );
+    expect(response.headers.getSetCookie()).toContain(`${ACCOUNT_COOKIE}=refreshed; Path=/`);
+  });
+
+  it("hands the rotated cookies to this request's own render", async () => {
+    getAccessTokenMock.mockResolvedValue({
+      headers: new Headers([
+        ["set-cookie", `${ACCOUNT_COOKIE}.0=rotated; Path=/`],
+        ["set-cookie", `${ACCOUNT_COOKIE}.1=; Max-Age=0; Path=/`],
+      ]),
     });
 
-    it("hands the rotated cookies to this request's own render", async () => {
-        getAccessTokenMock.mockResolvedValue({
-            headers: new Headers([
-                ["set-cookie", `${ACCOUNT_COOKIE}.0=rotated; Path=/`],
-                ["set-cookie", `${ACCOUNT_COOKIE}.1=; Max-Age=0; Path=/`],
-            ]),
-        });
+    const response = await proxy(
+      request("/news", { cookie: `${ACCOUNT_COOKIE}.0=old; ${ACCOUNT_COOKIE}.1=stale; other=kept` })
+    );
+    const forwarded = response.headers.get("x-middleware-request-cookie") ?? "";
 
-        const response = await proxy(request("/news", {cookie: `${ACCOUNT_COOKIE}.0=old; ${ACCOUNT_COOKIE}.1=stale; other=kept`}));
-        const forwarded = response.headers.get("x-middleware-request-cookie") ?? "";
+    expect(forwarded).toContain(`${ACCOUNT_COOKIE}.0=rotated`);
+    expect(forwarded).not.toContain(`${ACCOUNT_COOKIE}.1=`);
+    expect(forwarded).toContain("other=kept");
+  });
 
-        expect(forwarded).toContain(`${ACCOUNT_COOKIE}.0=rotated`);
-        expect(forwarded).not.toContain(`${ACCOUNT_COOKIE}.1=`);
-        expect(forwarded).toContain("other=kept");
-    });
+  // Better Auth rewrites the session and account cookies on these routes itself. A second,
+  // independently-computed Set-Cookie set on the same response cannot be reconciled with it:
+  // sign-out gets partly undone, and the OAuth callback can pair a new session with the
+  // previous user's tokens.
+  it.each([
+    "/api/auth/callback/keycloak",
+    "/api/auth/sign-out",
+    "/api/auth/sign-in/social",
+    "/api/auth/get-session",
+    "/api/auth/login",
+  ])("leaves Better Auth's own route %s alone", async (path) => {
+    const response = await proxy(request(path));
 
-    // Better Auth rewrites the session and account cookies on these routes itself. A second,
-    // independently-computed Set-Cookie set on the same response cannot be reconciled with it:
-    // sign-out gets partly undone, and the OAuth callback can pair a new session with the
-    // previous user's tokens.
-    it.each([
-        "/api/auth/callback/keycloak",
-        "/api/auth/sign-out",
-        "/api/auth/sign-in/social",
-        "/api/auth/get-session",
-        "/api/auth/login",
-    ])("leaves Better Auth's own route %s alone", async (path) => {
-        const response = await proxy(request(path));
+    expect(getAccessTokenMock).not.toHaveBeenCalled();
+    expect(response.headers.getSetCookie()).toEqual([]);
+  });
 
-        expect(getAccessTokenMock).not.toHaveBeenCalled();
-        expect(response.headers.getSetCookie()).toEqual([]);
-    });
+  it("still runs on app routes that merely share the /api/auth prefix", async () => {
+    await proxy(request("/api/auth-debug"));
 
-    it("still runs on app routes that merely share the /api/auth prefix", async () => {
-        await proxy(request("/api/auth-debug"));
+    expect(getAccessTokenMock).toHaveBeenCalled();
+  });
 
-        expect(getAccessTokenMock).toHaveBeenCalled();
-    });
+  it("skips speculative prefetches", async () => {
+    await proxy(request("/news", { headers: { "next-router-prefetch": "1" } }));
 
-    it("skips speculative prefetches", async () => {
-        await proxy(request("/news", {headers: {"next-router-prefetch": "1"}}));
+    expect(getAccessTokenMock).not.toHaveBeenCalled();
+  });
 
-        expect(getAccessTokenMock).not.toHaveBeenCalled();
-    });
+  it("skips anonymous requests", async () => {
+    await proxy(request("/news", { cookie: "" }));
 
-    it("skips anonymous requests", async () => {
-        await proxy(request("/news", {cookie: ""}));
+    expect(getAccessTokenMock).not.toHaveBeenCalled();
+  });
 
-        expect(getAccessTokenMock).not.toHaveBeenCalled();
-    });
+  it("gives pages their Content Security Policy, and leaves the API routes to set their own", async () => {
+    expect((await proxy(request("/news"))).headers.get("Content-Security-Policy")).toContain("default-src 'self'");
+    expect((await proxy(request("/news", { cookie: "" }))).headers.get("Content-Security-Policy")).toContain(
+      "frame-ancestors 'none'"
+    );
+    expect((await proxy(request("/api/image-download-proxy"))).headers.get("Content-Security-Policy")).toBeNull();
+  });
 
-    it("gives pages their Content Security Policy, and leaves the API routes to set their own", async () => {
-        expect((await proxy(request("/news"))).headers.get("Content-Security-Policy")).toContain("default-src 'self'");
-        expect((await proxy(request("/news", {cookie: ""}))).headers.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
-        expect((await proxy(request("/api/image-download-proxy"))).headers.get("Content-Security-Policy")).toBeNull();
-    });
+  it("never blocks the request when the refresh fails", async () => {
+    getAccessTokenMock.mockRejectedValue(new Error("FAILED_TO_GET_ACCESS_TOKEN"));
 
-    it("never blocks the request when the refresh fails", async () => {
-        getAccessTokenMock.mockRejectedValue(new Error("FAILED_TO_GET_ACCESS_TOKEN"));
+    const response = await proxy(request("/news"));
 
-        const response = await proxy(request("/news"));
-
-        expect(response.headers.getSetCookie()).toEqual([]);
-        expect(response.status).toBe(200);
-    });
+    expect(response.headers.getSetCookie()).toEqual([]);
+    expect(response.status).toBe(200);
+  });
 });

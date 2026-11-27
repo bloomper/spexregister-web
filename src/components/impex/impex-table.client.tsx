@@ -1,355 +1,363 @@
 "use client";
 
-import {useRef, useState} from "react";
-import {Download, MoreHorizontal} from "lucide-react";
-import {useTranslations} from "next-intl";
-import {toast} from "sonner";
+import { useRef, useState } from "react";
+import { Download, MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
-import {Job} from "@/gql/schema";
-import {CursorPage} from "@/types/pagination";
-import {Button} from "@bloomper/fgv-web-ui/ui/button";
-import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
+import { Job } from "@/gql/schema";
+import { CursorPage } from "@/types/pagination";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@bloomper/fgv-web-ui/ui/dialog";
-import {DataTable} from "@/components/data-table.client";
-import {columnHelper} from "@/components/data-table-columns.client";
-import type {DataTableColumnDef} from "@/components/data-table-features";
-import {ImportResultViewer} from "./import-result-viewer.client";
-import {deleteAction, getJobAction, getJobsAction} from "@/app/(app)/impex/actions.server";
-import {formatDateTime} from "@/utils/utils";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@bloomper/fgv-web-ui/ui/dropdown-menu";
-import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
-import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
+import { DataTable } from "@/components/data-table.client";
+import { columnHelper } from "@/components/data-table-columns.client";
+import type { DataTableColumnDef } from "@/components/data-table-features";
+import { ImportResultViewer } from "./import-result-viewer.client";
+import { deleteAction, getJobAction, getJobsAction } from "@/app/(app)/impex/actions.server";
+import { formatDateTime } from "@/utils/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@bloomper/fgv-web-ui/ui/dropdown-menu";
+import { useDataTableActions } from "@/hooks/use-data-table-actions.client";
+import { DataTableDeleteDialogs } from "@/components/data-table-delete-dialogs.client";
 
 /**
  * The user's import and export jobs, their status, the download of an export and the result of an import.
  */
-export function ImpexTable({initialData}: { initialData: CursorPage<Job> }) {
-    const t = useTranslations();
-    const [viewItem, setViewItem] = useState<Job | null>(null);
-    const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+export function ImpexTable({ initialData }: { initialData: CursorPage<Job> }) {
+  const t = useTranslations();
+  const [viewItem, setViewItem] = useState<Job | null>(null);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
-    const refreshRef = useRef<null | (() => void)>(null);
+  const refreshRef = useRef<null | (() => void)>(null);
 
-    const {deleteItem, setDeleteItem, isPending, handleDelete} = useDataTableActions<Job>(
-        deleteAction,
-        undefined,
-        (deleted) => {
-            refreshRef.current?.();
+  const { deleteItem, setDeleteItem, isPending, handleDelete } = useDataTableActions<Job>(
+    deleteAction,
+    undefined,
+    (deleted) => {
+      refreshRef.current?.();
 
-            if (viewItem && deleted && viewItem.id === deleted.id) {
-                setViewItem(null);
-            }
-        }
-    );
-
-    const translateJobStatus = (status?: string | null) => {
-        if (!status) {
-            return "-";
-        }
-
-        const key = `Impex.statuses.${status}`;
-        const translated = t(key);
-
-        return translated === key ? status : translated;
-    };
-
-    const translateJobExitStatus = (status?: string | null) => {
-        if (!status) {
-            return "-";
-        }
-
-        const key = `Impex.exitStatuses.${status}`;
-        const translated = t(key);
-
-        return translated === key ? status : translated;
-    };
-
-    const handleRowClick = async (job: Job) => {
-        setIsLoadingDetails(true);
+      if (viewItem && deleted && viewItem.id === deleted.id) {
         setViewItem(null);
-        try {
-            const fullJob = await getJobAction(job.id);
+      }
+    }
+  );
 
-            if (fullJob) {
-                setViewItem(fullJob);
-            }
-        } catch (error) {
-            void error;
-            toast.error(t("Common.couldNotLoadData"));
-        } finally {
-            setIsLoadingDetails(false);
-        }
-    };
+  const translateJobStatus = (status?: string | null) => {
+    if (!status) {
+      return "-";
+    }
 
-    const columns: DataTableColumnDef<Job>[] = [
-        {
-            ...columnHelper.text("id", "Impex.id", "id"),
-            enableSorting: false,
-        },
-        {
-            ...columnHelper.text("name", "Impex.name"),
-            enableSorting: false,
-        },
-        {
-            accessorKey: "status",
-            header: () => t("Impex.status"),
-            enableSorting: false,
-            cell: ({row}) => {
-                const status = row.original.status;
-                return (
-                    <div className="flex items-center gap-2">
-                        <Badge
-                            variant={status === "COMPLETED" ? "default" : status === "FAILED" ? "destructive" : "secondary"}>
-                            {translateJobStatus(status)}
-                        </Badge>
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "exitStatus",
-            header: () => t("Impex.exitStatus"),
-            enableSorting: false,
-            cell: ({row}) => {
-                const exitStatus = row.original.exitStatus;
-                return (
-                    <div className="flex items-center gap-2">
-                        <Badge
-                            variant={exitStatus === "COMPLETED" ? "default" : exitStatus === "FAILED" ? "destructive" : "secondary"}>
-                            {translateJobExitStatus(exitStatus)}
-                        </Badge>
-                    </div>
-                );
-            },
-        },
-        {
-            ...columnHelper.dateTime("createdAt", "Impex.createdAt", "createdAt", "hidden md:table-cell"),
-            enableSorting: false,
-        },
-        {
-            ...columnHelper.dateTime("startedAt", "Impex.startedAt", "startedAt", "hidden md:table-cell"),
-            enableSorting: false,
-        },
-        {
-            ...columnHelper.dateTime("finishedAt", "Impex.finishedAt", "finishedAt", "hidden md:table-cell"),
-            enableSorting: false,
-        },
-        {
-            id: "actions",
-            meta: {className: "text-right"},
-            enableSorting: false,
-            cell: ({row}) => {
-                const hasDownload = row.original.hasDownload === true;
-                const isRunning = row.original.status === "RUNNING";
+    const key = `Impex.statuses.${status}`;
+    const translated = t(key);
 
-                return (
-                    <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0"
-                                                                 aria-label={t("Common.openMenu")}/>}>
-                                <MoreHorizontal className="h-4 w-4"/>
-                            </DropdownMenuTrigger>
+    return translated === key ? status : translated;
+  };
 
-                            <DropdownMenuContent align="end">
-                                {hasDownload && (
-                                    <DropdownMenuItem
-                                        render={<a href={`/api/impex-result-download-proxy?id=${row.original.id}`}
-                                                   download/>}>
-                                        <Download className="mr-0 h-4 w-4"/>
-                                        {t("Impex.download")}
-                                    </DropdownMenuItem>
-                                )}
+  const translateJobExitStatus = (status?: string | null) => {
+    if (!status) {
+      return "-";
+    }
 
-                                <DropdownMenuItem
-                                    className="text-destructive"
-                                    disabled={isRunning}
-                                    onClick={() => setDeleteItem(row.original)}
-                                >
-                                    {t("Common.delete")}
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                );
-            },
-        },
-    ];
+    const key = `Impex.exitStatuses.${status}`;
+    const translated = t(key);
 
-    return (
-        <>
-            <DataTable
-                columns={columns}
-                initialData={initialData}
-                showPagination={false}
-                onRowClick={handleRowClick}
-                onFetch={async () => {
-                    const jobs = await getJobsAction();
-                    return {
-                        items: jobs,
-                        pageInfo: {
-                            hasNextPage: false,
-                            hasPreviousPage: false,
-                            startCursor: null,
-                            endCursor: null
-                        },
-                        totalCount: jobs.length,
-                    };
-                }}
-                meta={{
-                    setRefresh: (handler) => {
-                        refreshRef.current = handler;
-                    }
-                }}
-            />
+    return translated === key ? status : translated;
+  };
 
-            <Dialog
-                open={isLoadingDetails || !!viewItem}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setIsLoadingDetails(false);
-                        setViewItem(null);
-                    }
-                }}
+  const handleRowClick = async (job: Job) => {
+    setIsLoadingDetails(true);
+    setViewItem(null);
+    try {
+      const fullJob = await getJobAction(job.id);
+
+      if (fullJob) {
+        setViewItem(fullJob);
+      }
+    } catch (error) {
+      void error;
+      toast.error(t("Common.couldNotLoadData"));
+    } finally {
+      setIsLoadingDetails(false);
+    }
+  };
+
+  const columns: DataTableColumnDef<Job>[] = [
+    {
+      ...columnHelper.text("id", "Impex.id", "id"),
+      enableSorting: false,
+    },
+    {
+      ...columnHelper.text("name", "Impex.name"),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: () => t("Impex.status"),
+      enableSorting: false,
+      cell: ({ row }) => {
+        const status = row.original.status;
+        return (
+          <div className="flex items-center gap-2">
+            <Badge variant={status === "COMPLETED" ? "default" : status === "FAILED" ? "destructive" : "secondary"}>
+              {translateJobStatus(status)}
+            </Badge>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "exitStatus",
+      header: () => t("Impex.exitStatus"),
+      enableSorting: false,
+      cell: ({ row }) => {
+        const exitStatus = row.original.exitStatus;
+        return (
+          <div className="flex items-center gap-2">
+            <Badge
+              variant={exitStatus === "COMPLETED" ? "default" : exitStatus === "FAILED" ? "destructive" : "secondary"}
             >
-                <DialogContent className="sm:max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-xl pr-6">
-                            {isLoadingDetails ? t("Common.loading") : (viewItem?.name ?? "-")}
-                        </DialogTitle>
-                        <DialogDescription className="sr-only">
-                            {t("Common.details")}
-                        </DialogDescription>
-                    </DialogHeader>
+              {translateJobExitStatus(exitStatus)}
+            </Badge>
+          </div>
+        );
+      },
+    },
+    {
+      ...columnHelper.dateTime("createdAt", "Impex.createdAt", "createdAt", "hidden md:table-cell"),
+      enableSorting: false,
+    },
+    {
+      ...columnHelper.dateTime("startedAt", "Impex.startedAt", "startedAt", "hidden md:table-cell"),
+      enableSorting: false,
+    },
+    {
+      ...columnHelper.dateTime("finishedAt", "Impex.finishedAt", "finishedAt", "hidden md:table-cell"),
+      enableSorting: false,
+    },
+    {
+      id: "actions",
+      meta: { className: "text-right" },
+      enableSorting: false,
+      cell: ({ row }) => {
+        const hasDownload = row.original.hasDownload === true;
+        const isRunning = row.original.status === "RUNNING";
 
-                    {isLoadingDetails ? (
-                        <div className="py-8 text-sm text-muted-foreground">
-                            {t("Common.loading")}
-                        </div>
-                    ) : (
-                        <div className="space-y-6">
-                            <div className="grid gap-6">
-                                <div className="space-y-1">
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                        {t("Impex.id")}
-                                    </p>
-                                    <p className="text-sm font-mono">{viewItem?.id ?? "-"}</p>
-                                </div>
+        return (
+          <div
+            className="flex justify-end"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    className="h-8 w-8 p-0"
+                    aria-label={t("Common.openMenu")}
+                  />
+                }
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </DropdownMenuTrigger>
 
-                                <div className="space-y-1">
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                        {t("Impex.name")}
-                                    </p>
-                                    <p className="text-sm">{viewItem?.name ?? "-"}</p>
-                                </div>
+              <DropdownMenuContent align="end">
+                {hasDownload && (
+                  <DropdownMenuItem
+                    render={
+                      <a
+                        href={`/api/impex-result-download-proxy?id=${row.original.id}`}
+                        download
+                      />
+                    }
+                  >
+                    <Download className="mr-0 h-4 w-4" />
+                    {t("Impex.download")}
+                  </DropdownMenuItem>
+                )}
 
-                                <div className="space-y-1">
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                        {t("Impex.status")}
-                                    </p>
-                                    <div className="flex items-center gap-2">
-                                        <Badge
-                                            variant={
-                                                viewItem?.status === "COMPLETED"
-                                                    ? "default"
-                                                    : viewItem?.status === "FAILED"
-                                                        ? "destructive"
-                                                        : "secondary"
-                                            }
-                                        >
-                                            {translateJobStatus(viewItem?.status)}
-                                        </Badge>
-                                    </div>
-                                </div>
+                <DropdownMenuItem
+                  className="text-destructive"
+                  disabled={isRunning}
+                  onClick={() => setDeleteItem(row.original)}
+                >
+                  {t("Common.delete")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
+    },
+  ];
 
-                                <div className="space-y-1">
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                        {t("Impex.exitStatus")}
-                                    </p>
-                                    <div className="flex items-center gap-2">
-                                        <Badge
-                                            variant={
-                                                viewItem?.exitStatus === "COMPLETED"
-                                                    ? "default"
-                                                    : viewItem?.exitStatus === "FAILED"
-                                                        ? "destructive"
-                                                        : "secondary"
-                                            }
-                                        >
-                                            {translateJobExitStatus(viewItem?.exitStatus)}
-                                        </Badge>
-                                    </div>
-                                </div>
+  return (
+    <>
+      <DataTable
+        columns={columns}
+        initialData={initialData}
+        showPagination={false}
+        onRowClick={handleRowClick}
+        onFetch={async () => {
+          const jobs = await getJobsAction();
+          return {
+            items: jobs,
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+            totalCount: jobs.length,
+          };
+        }}
+        meta={{
+          setRefresh: (handler) => {
+            refreshRef.current = handler;
+          },
+        }}
+      />
 
-                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
-                                    <div className="space-y-1">
-                                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                            {t("Impex.createdAt")}
-                                        </p>
-                                        <p className="text-sm">
-                                            {viewItem?.createdAt ? formatDateTime(viewItem.createdAt) : "-"}
-                                        </p>
-                                    </div>
+      <Dialog
+        open={isLoadingDetails || !!viewItem}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsLoadingDetails(false);
+            setViewItem(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="pr-6 text-xl">
+              {isLoadingDetails ? t("Common.loading") : (viewItem?.name ?? "-")}
+            </DialogTitle>
+            <DialogDescription className="sr-only">{t("Common.details")}</DialogDescription>
+          </DialogHeader>
 
-                                    <div className="space-y-1">
-                                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                            {t("Impex.startedAt")}
-                                        </p>
-                                        <p className="text-sm">
-                                            {viewItem?.startedAt ? formatDateTime(viewItem.startedAt) : "-"}
-                                        </p>
-                                    </div>
+          {isLoadingDetails ? (
+            <div className="text-muted-foreground py-8 text-sm">{t("Common.loading")}</div>
+          ) : (
+            <div className="space-y-6">
+              <div className="grid gap-6">
+                <div className="space-y-1">
+                  <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                    {t("Impex.id")}
+                  </p>
+                  <p className="font-mono text-sm">{viewItem?.id ?? "-"}</p>
+                </div>
 
-                                    <div className="space-y-1">
-                                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                            {t("Impex.finishedAt")}
-                                        </p>
-                                        <p className="text-sm">
-                                            {viewItem?.finishedAt ? formatDateTime(viewItem.finishedAt) : "-"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                    {t("Impex.name")}
+                  </p>
+                  <p className="text-sm">{viewItem?.name ?? "-"}</p>
+                </div>
 
-                            {viewItem?.importResult && (
-                                <div className="border-t pt-4">
-                                    <ImportResultViewer result={viewItem.importResult}/>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                <div className="space-y-1">
+                  <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                    {t("Impex.status")}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant={
+                        viewItem?.status === "COMPLETED"
+                          ? "default"
+                          : viewItem?.status === "FAILED"
+                            ? "destructive"
+                            : "secondary"
+                      }
+                    >
+                      {translateJobStatus(viewItem?.status)}
+                    </Badge>
+                  </div>
+                </div>
 
-                    <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => {
-                                setIsLoadingDetails(false);
-                                setViewItem(null);
-                            }}
-                        >
-                            {t("Common.close")}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                    {t("Impex.exitStatus")}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant={
+                        viewItem?.exitStatus === "COMPLETED"
+                          ? "default"
+                          : viewItem?.exitStatus === "FAILED"
+                            ? "destructive"
+                            : "secondary"
+                      }
+                    >
+                      {translateJobExitStatus(viewItem?.exitStatus)}
+                    </Badge>
+                  </div>
+                </div>
 
-            <DataTableDeleteDialogs
-                deleteItem={deleteItem}
-                setDeleteItem={setDeleteItem}
-                isBulkDeleting={false}
-                setIsBulkDeleting={() => {
-                }}
-                isPending={isPending}
-                handleDelete={handleDelete}
-                handleBulkDelete={() => {
-                }}
-            />
-        </>
-    );
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                      {t("Impex.createdAt")}
+                    </p>
+                    <p className="text-sm">{viewItem?.createdAt ? formatDateTime(viewItem.createdAt) : "-"}</p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                      {t("Impex.startedAt")}
+                    </p>
+                    <p className="text-sm">{viewItem?.startedAt ? formatDateTime(viewItem.startedAt) : "-"}</p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                      {t("Impex.finishedAt")}
+                    </p>
+                    <p className="text-sm">{viewItem?.finishedAt ? formatDateTime(viewItem.finishedAt) : "-"}</p>
+                  </div>
+                </div>
+              </div>
+
+              {viewItem?.importResult && (
+                <div className="border-t pt-4">
+                  <ImportResultViewer result={viewItem.importResult} />
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsLoadingDetails(false);
+                setViewItem(null);
+              }}
+            >
+              {t("Common.close")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <DataTableDeleteDialogs
+        deleteItem={deleteItem}
+        setDeleteItem={setDeleteItem}
+        isBulkDeleting={false}
+        setIsBulkDeleting={() => {}}
+        isPending={isPending}
+        handleDelete={handleDelete}
+        handleBulkDelete={() => {}}
+      />
+    </>
+  );
 }

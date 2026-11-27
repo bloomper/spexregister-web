@@ -1,73 +1,67 @@
-import {NewsGrid} from "@/components/news";
-import {Separator} from "@bloomper/fgv-web-ui/ui/separator";
-import {getTranslations} from "next-intl/server";
-import {getPaged} from "@/lib/news";
+import { NewsGrid } from "@/components/news";
+import { Separator } from "@bloomper/fgv-web-ui/ui/separator";
+import { getTranslations } from "next-intl/server";
+import { getPaged } from "@/lib/news";
 import Link from "next/link";
-import {buttonVariants} from "@bloomper/fgv-web-ui/ui/button";
-import {DataEmpty} from "@bloomper/fgv-web-ui/shell/data-empty";
-import {Newspaper} from "lucide-react";
+import { buttonVariants } from "@bloomper/fgv-web-ui/ui/button";
+import { DataEmpty } from "@bloomper/fgv-web-ui/shell/data-empty";
+import { Newspaper } from "lucide-react";
 import * as Analytics from "@/lib/analytics";
-import {AnalyticsHighlights, AnalyticsTotals} from "@/components/analytics";
-import {requireUser} from "@/utils/auth.server";
-import {redirect} from "next/navigation";
-import {Page} from "@bloomper/fgv-web-ui/shell/page-header";
+import { AnalyticsHighlights, AnalyticsTotals } from "@/components/analytics";
+import { requireUser } from "@/utils/auth.server";
+import { redirect } from "next/navigation";
+import { Page } from "@bloomper/fgv-web-ui/shell/page-header";
 
 /**
  * The start page: the register's totals and highlights, and the latest news.
  */
 export default async function HomePage() {
-    const {session} = await requireUser();
-    if (!session) {
-        redirect("/api/auth/login");
-    }
+  const { session } = await requireUser();
+  if (!session) {
+    redirect("/api/auth/login");
+  }
 
-    const [page, analytics, t] = await Promise.all([
-        getPaged({first: 6}),
-        Analytics.getSummary(),
-        getTranslations()
-    ]);
-    const initialItems = page.edges.map(e => e.node);
-    const hasNews = initialItems.length > 0;
+  const [page, analytics, t] = await Promise.all([getPaged({ first: 6 }), Analytics.getSummary(), getTranslations()]);
+  const initialItems = page.edges.map((e) => e.node);
+  const hasNews = initialItems.length > 0;
 
-    return (
-        <Page>
-            <h1 className="sr-only">{t("Home.heading")}</h1>
-            {analytics?.totals && <AnalyticsTotals data={analytics.totals}/>}
-            {analytics && (
-                <>
-                    <Separator className="my-4"/>
-                    <AnalyticsHighlights data={analytics}/>
-                </>
-            )}
-            <div className="space-y-1 mt-4">
-                <Separator className="my-4"/>
-                <h2 className="text-2xl text-center font-semibold tracking-tight">
-                    {t("Home.latestNews")}
-                </h2>
-            </div>
-            {hasNews && (
-                <>
-                    <div className="grid auto-rows-min gap-4 md:grid-cols-3 max-md:[&>*:nth-child(n+4)]:hidden">
-                        <NewsGrid
-                            initialItems={initialItems}
-                            maxItems={6}
-                        />
-                    </div>
-                    <div className="flex justify-center mt-4">
-                        <Link
-                            href="/news"
-                            className={buttonVariants({variant: "outline", size: "sm"})}
-                        >
-                            {t("Home.showAllNews")}
-                        </Link>
-                    </div>
-                </>
-            )}
-            {!hasNews && (
-                <div className="mt-8">
-                    <DataEmpty icon={Newspaper}/>
-                </div>
-            )}
-        </Page>
-    );
+  return (
+    <Page>
+      <h1 className="sr-only">{t("Home.heading")}</h1>
+      {analytics?.totals && <AnalyticsTotals data={analytics.totals} />}
+      {analytics && (
+        <>
+          <Separator className="my-4" />
+          <AnalyticsHighlights data={analytics} />
+        </>
+      )}
+      <div className="mt-4 space-y-1">
+        <Separator className="my-4" />
+        <h2 className="text-center text-2xl font-semibold tracking-tight">{t("Home.latestNews")}</h2>
+      </div>
+      {hasNews && (
+        <>
+          <div className="grid auto-rows-min gap-4 md:grid-cols-3 max-md:[&>*:nth-child(n+4)]:hidden">
+            <NewsGrid
+              initialItems={initialItems}
+              maxItems={6}
+            />
+          </div>
+          <div className="mt-4 flex justify-center">
+            <Link
+              href="/news"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              {t("Home.showAllNews")}
+            </Link>
+          </div>
+        </>
+      )}
+      {!hasNews && (
+        <div className="mt-8">
+          <DataEmpty icon={Newspaper} />
+        </div>
+      )}
+    </Page>
+  );
 }

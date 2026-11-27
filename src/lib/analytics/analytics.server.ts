@@ -1,8 +1,8 @@
 import "server-only";
 
-import {Analytics} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {runQuery} from "@/lib/graphql.server";
+import { Analytics } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { runQuery } from "@/lib/graphql.server";
 
 export const BucketFields = graphql(`
     fragment BucketFields on Bucket {
@@ -103,25 +103,25 @@ const AnalyticsSummaryQuery = graphql(`
 `);
 
 const context = {
-    fetchOptions: {
-        next: {tags: ["spexare", "spex", "task", "tag", "user"]}
-    }
+  fetchOptions: {
+    next: { tags: ["spexare", "spex", "task", "tag", "user"] },
+  },
 };
 
 /**
  * Every section of the statistics the user may see, revalidated when spexare, spex, tasks, tags or users change.
  */
 export async function get(): Promise<Analytics | undefined> {
-    const data = await runQuery(AnalyticsQuery, {}, context);
+  const data = await runQuery(AnalyticsQuery, {}, context);
 
-    return data?.analytics as Analytics | undefined;
+  return data?.analytics as Analytics | undefined;
 }
 
 /**
  * The totals, participation by year and data quality issues only, for the start page.
  */
 export async function getSummary(): Promise<Analytics | undefined> {
-    const data = await runQuery(AnalyticsSummaryQuery, {}, context);
+  const data = await runQuery(AnalyticsSummaryQuery, {}, context);
 
-    return data?.analytics as Analytics | undefined;
+  return data?.analytics as Analytics | undefined;
 }

@@ -1,376 +1,401 @@
 "use client";
 
-import {Check, CheckCircle2, Circle, Copy, Plus, X} from "lucide-react";
-import {Button} from "@bloomper/fgv-web-ui/ui/button";
-import {Authority, State, User} from "@/gql/schema";
-import {useTranslations} from "next-intl";
-import {DataTable} from "@/components/data-table.client";
-import {UserForm} from "@/components/user";
-import {useEffect, useRef, useState} from "react";
+import { Check, CheckCircle2, Circle, Copy, Plus, X } from "lucide-react";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Authority, State, User } from "@/gql/schema";
+import { useTranslations } from "next-intl";
+import { DataTable } from "@/components/data-table.client";
+import { UserForm } from "@/components/user";
+import { useEffect, useRef, useState } from "react";
 import {
-    bulkDeleteAction,
-    deleteAction,
-    exportAction,
-    getAction,
-    getPageAction,
-    getRestorePreviewAction,
-    getRevisionsAction,
-    importAction,
-    restoreRevisionAction
+  bulkDeleteAction,
+  deleteAction,
+  exportAction,
+  getAction,
+  getPageAction,
+  getRestorePreviewAction,
+  getRevisionsAction,
+  importAction,
+  restoreRevisionAction,
 } from "@/app/(app)/users/actions.server";
-import {Sheet} from "@bloomper/fgv-web-ui/ui/sheet";
-import {CursorPage} from "@/types/pagination";
-import {useRouter} from "next/navigation";
-import {DataTableSkeleton} from "@/components/data-table-skeleton";
-import {Input} from "@bloomper/fgv-web-ui/ui/input";
+import { Sheet } from "@bloomper/fgv-web-ui/ui/sheet";
+import { CursorPage } from "@/types/pagination";
+import { useRouter } from "next/navigation";
+import { DataTableSkeleton } from "@/components/data-table-skeleton";
+import { Input } from "@bloomper/fgv-web-ui/ui/input";
 import Link from "next/link";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@bloomper/fgv-web-ui/ui/dialog";
-import {useDataTableActions} from "@/hooks/use-data-table-actions.client";
-import {useDeepLinkItem} from "@/hooks/use-deep-link-item.client";
-import {DataTableDeleteDialogs} from "@/components/data-table-delete-dialogs.client";
-import {AuditInfo} from "@/components/data-table-audit-info.client";
-import {columnHelper} from "@/components/data-table-columns.client";
-import type {DataTableColumnDef} from "@/components/data-table-features";
-import {Translated} from "@/components/translated.client";
-import {Badge} from "@bloomper/fgv-web-ui/ui/badge";
-import {AuditTrail} from "@/components/data-audit-trail.client";
-import {ExportButton} from "@/components/impex/export-button.client";
-import {ImportButton} from "@/components/impex/import-button.client";
-import {useIsClient} from "@bloomper/fgv-web-ui/hooks/use-is-client";
-import {AddSelectedToQueueButton, useEditQueue} from "@/components/edit-queue";
-import {textFilter} from "@/utils/filter";
+import { useDataTableActions } from "@/hooks/use-data-table-actions.client";
+import { useDeepLinkItem } from "@/hooks/use-deep-link-item.client";
+import { DataTableDeleteDialogs } from "@/components/data-table-delete-dialogs.client";
+import { AuditInfo } from "@/components/data-table-audit-info.client";
+import { columnHelper } from "@/components/data-table-columns.client";
+import type { DataTableColumnDef } from "@/components/data-table-features";
+import { Translated } from "@/components/translated.client";
+import { Badge } from "@bloomper/fgv-web-ui/ui/badge";
+import { AuditTrail } from "@/components/data-audit-trail.client";
+import { ExportButton } from "@/components/impex/export-button.client";
+import { ImportButton } from "@/components/impex/import-button.client";
+import { useIsClient } from "@bloomper/fgv-web-ui/hooks/use-is-client";
+import { AddSelectedToQueueButton, useEditQueue } from "@/components/edit-queue";
+import { textFilter } from "@/utils/filter";
 
 const restoreActions = {
-    preview: getRestorePreviewAction,
-    restore: restoreRevisionAction,
+  preview: getRestorePreviewAction,
+  restore: restoreRevisionAction,
 };
 
 export const columns: DataTableColumnDef<User>[] = [
-    columnHelper.select(),
-    columnHelper.text("externalId", "User.externalId", "externalId", "hidden max-w-[150px] sm:table-cell"),
-    {
-        id: "email",
-        accessorKey: "email",
-        header: () => <Translated id="User.email"/>,
-        cell: ({row}) => (
-            <div className="max-w-50 truncate font-medium cursor-default sm:max-w-75">
-                {row.original.email}
-            </div>
-        ),
-    },
-    {
-        id: "state",
-        accessorKey: "state.label",
-        header: () => <Translated id="User.state"/>,
-        cell: ({row}) => row.original.state?.label && (
-            <Badge variant="outline">{row.original.state.label}</Badge>
-        ),
-        meta: {className: "hidden md:table-cell"}
-    },
-    {
-        id: "authorities",
-        accessorKey: "authorities",
-        header: () => <Translated id="User.authorities"/>,
-        cell: ({row}) => (
-            <div className="flex flex-wrap gap-1">
-                {row.original.authorities?.map((auth) => (
-                    <Badge key={auth?.id} variant="secondary" className="text-xs sm:text-[10px]">
-                        {auth?.label}
-                    </Badge>
-                ))}
-            </div>
-        ),
-        meta: {className: "hidden md:table-cell"}
-    },
-    {
-        id: "spexare",
-        accessorKey: "spexare",
-        header: () => <Translated id="User.spexare"/>,
-        cell: ({row}) => (
-            <div className="flex items-center justify-center">
-                {row.original.spexare ?
-                    <CheckCircle2 className="h-4 w-4 text-green-500"/> :
-                    <Circle className="h-4 w-4 text-muted-foreground/30"/>
-                }
-            </div>
-        ),
-        meta: {className: "hidden md:table-cell"}
-    },
-    ...columnHelper.audit<User>(),
-    columnHelper.actions<User>(),
+  columnHelper.select(),
+  columnHelper.text("externalId", "User.externalId", "externalId", "hidden max-w-[150px] sm:table-cell"),
+  {
+    id: "email",
+    accessorKey: "email",
+    header: () => <Translated id="User.email" />,
+    cell: ({ row }) => (
+      <div className="max-w-50 cursor-default truncate font-medium sm:max-w-75">{row.original.email}</div>
+    ),
+  },
+  {
+    id: "state",
+    accessorKey: "state.label",
+    header: () => <Translated id="User.state" />,
+    cell: ({ row }) => row.original.state?.label && <Badge variant="outline">{row.original.state.label}</Badge>,
+    meta: { className: "hidden md:table-cell" },
+  },
+  {
+    id: "authorities",
+    accessorKey: "authorities",
+    header: () => <Translated id="User.authorities" />,
+    cell: ({ row }) => (
+      <div className="flex flex-wrap gap-1">
+        {row.original.authorities?.map((auth) => (
+          <Badge
+            key={auth?.id}
+            variant="secondary"
+            className="text-xs sm:text-[10px]"
+          >
+            {auth?.label}
+          </Badge>
+        ))}
+      </div>
+    ),
+    meta: { className: "hidden md:table-cell" },
+  },
+  {
+    id: "spexare",
+    accessorKey: "spexare",
+    header: () => <Translated id="User.spexare" />,
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center">
+        {row.original.spexare ? (
+          <CheckCircle2 className="h-4 w-4 text-green-500" />
+        ) : (
+          <Circle className="text-muted-foreground/30 h-4 w-4" />
+        )}
+      </div>
+    ),
+    meta: { className: "hidden md:table-cell" },
+  },
+  ...columnHelper.audit<User>(),
+  columnHelper.actions<User>(),
 ];
 
 export function UserTable({
-                              initialData,
-                              authorities = [],
-                              states = [],
-                          }: {
-    authorities: Authority[],
-    states: State[],
-    initialData: CursorPage<User>,
+  initialData,
+  authorities = [],
+  states = [],
+}: {
+  authorities: Authority[];
+  states: State[];
+  initialData: CursorPage<User>;
 }) {
-    const t = useTranslations();
-    const router = useRouter();
-    const isClient = useIsClient();
-    const {enqueue} = useEditQueue();
-    const [copied, setCopied] = useState(false);
-    const [filterQuery, setFilterQuery] = useState("");
-    const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
+  const t = useTranslations();
+  const router = useRouter();
+  const isClient = useIsClient();
+  const { enqueue } = useEditQueue();
+  const [copied, setCopied] = useState(false);
+  const [filterQuery, setFilterQuery] = useState("");
+  const setFilterQueryRef = useRef<((filter: string) => void) | null>(null);
 
-    const {
-        viewItem, setViewItem,
-        editItem, setEditItem,
-        deleteItem, setDeleteItem,
-        selectedRows, setSelectedRows,
-        isBulkDeleting, setIsBulkDeleting,
-        isPending,
-        handleDelete,
-        handleBulkDelete
-    } = useDataTableActions<User>(
-        deleteAction,
-        bulkDeleteAction,
-        () => {
-            setFilterQuery("");
-        }
-    );
+  const {
+    viewItem,
+    setViewItem,
+    editItem,
+    setEditItem,
+    deleteItem,
+    setDeleteItem,
+    selectedRows,
+    setSelectedRows,
+    isBulkDeleting,
+    setIsBulkDeleting,
+    isPending,
+    handleDelete,
+    handleBulkDelete,
+  } = useDataTableActions<User>(deleteAction, bulkDeleteAction, () => {
+    setFilterQuery("");
+  });
 
-    useDeepLinkItem(getAction, setViewItem);
+  useDeepLinkItem(getAction, setViewItem);
 
-    const buildFilterString = (query: string) => {
-        const parts: string[] = [];
-        const text = textFilter(["externalId"], query);
-        if (text) {
-            parts.push(text);
-        }
-        return parts.join("");
-    };
-
-    const defaultFilterQuery = buildFilterString("");
-
-    const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
-    const isFilterActive = filterQuery !== "";
-
-    useEffect(() => {
-        const query = buildFilterString(filterQuery);
-
-        const timer = setTimeout(() => {
-            if (setFilterQueryRef.current && query !== lastFilterQueryRef.current) {
-                lastFilterQueryRef.current = query;
-                setFilterQueryRef.current(query);
-            }
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, [filterQuery]);
-
-    const handleCopyExternalId = (text: string) => {
-        navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    if (!isClient) {
-        return <DataTableSkeleton columnCount={4} rowCount={15}/>;
+  const buildFilterString = (query: string) => {
+    const parts: string[] = [];
+    const text = textFilter(["externalId"], query);
+    if (text) {
+      parts.push(text);
     }
+    return parts.join("");
+  };
 
+  const defaultFilterQuery = buildFilterString("");
+
+  const lastFilterQueryRef = useRef<string>(defaultFilterQuery);
+  const isFilterActive = filterQuery !== "";
+
+  useEffect(() => {
+    const query = buildFilterString(filterQuery);
+
+    const timer = setTimeout(() => {
+      if (setFilterQueryRef.current && query !== lastFilterQueryRef.current) {
+        lastFilterQueryRef.current = query;
+        setFilterQueryRef.current(query);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [filterQuery]);
+
+  const handleCopyExternalId = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (!isClient) {
     return (
-        <>
-            <DataTable
-                columns={columns}
-                initialData={initialData}
-                initialSorting={[]}
-                initialFilter={defaultFilterQuery}
-                onRowClick={setViewItem}
-                onSelectionChange={setSelectedRows}
-                onFetch={(args) => getPageAction({...args, full: true})}
-                meta={{
-                    setEditItem,
-                    setDeleteItem,
-                    addToQueue: (item) => enqueue("user", item),
-                    setFilter: (handler) => {
-                        setFilterQueryRef.current = handler;
-                    }
-                }}
-            >
-                <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-                        <Input
-                            placeholder={t("User.filterPlaceholder")}
-                            value={filterQuery}
-                            onChange={(e) => setFilterQuery(e.target.value)}
-                            className="h-8 w-full sm:w-37.5 lg:w-62.5"
-                        />
-
-                        <div className="flex items-center gap-2">
-                            {isFilterActive && (
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => {
-                                        setFilterQuery("");
-                                    }}
-                                    className="h-8 px-2 lg:px-3"
-                                >
-                                    <X className="mr-2 h-4 w-4"/>
-                                    {t("Common.reset")}
-                                </Button>
-                            )}
-
-                            {selectedRows.length > 0 && (
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    className="h-8"
-                                    onClick={() => setIsBulkDeleting(true)}
-                                >
-                                    {t("Common.delete")} ({selectedRows.length})
-                                </Button>
-                            )}
-
-                            <AddSelectedToQueueButton entityType="user" items={selectedRows}/>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <ExportButton
-                                exportAction={exportAction}
-                                selectedIds={selectedRows.map(r => r.id)}
-                                getFilterQuery={() => lastFilterQueryRef.current}
-                                requiresReportType={false}
-                            />
-
-                            <ImportButton importAction={importAction}/>
-                        </div>
-                    </div>
-
-                    <Button size="sm" className="h-8 w-full lg:w-auto" nativeButton={false}
-                            render={<Link href="/users/create"/>}>
-                        <Plus className="mr-2 h-4 w-4"/>
-                        {t("User.createHeading")}
-                    </Button>
-                </div>
-            </DataTable>
-
-            <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
-                <DialogContent className="sm:max-w-2xl">
-                    <DialogHeader>
-                        <div className="flex items-center justify-between gap-4 pr-6">
-                            <DialogTitle className="text-xl truncate">
-                                {viewItem?.email}
-                            </DialogTitle>
-                            {viewItem && (
-                                <Badge variant="outline"
-                                       className="text-xs sm:text-[10px] uppercase tracking-wider h-5 shrink-0">
-                                    {viewItem.state?.label}
-                                </Badge>
-                            )}
-                        </div>
-                        <DialogDescription className="sr-only">
-                            {t("Common.details")}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-6">
-                        <div className="grid gap-6">
-                            <div className="space-y-1">
-                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                    {t("User.externalId")}
-                                </p>
-                                <div className="flex items-center gap-2">
-                                    <p className="text-sm font-mono break-all text-foreground">
-                                        {viewItem?.externalId}
-                                    </p>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-6 w-6 shrink-0"
-                                        onClick={() => viewItem?.externalId && handleCopyExternalId(viewItem.externalId)}
-                                    >
-                                        {copied ? (
-                                            <Check className="h-3 w-3 text-green-600"/>
-                                        ) : (
-                                            <Copy className="h-3 w-3 text-muted-foreground/60"/>
-                                        )}
-                                    </Button>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                    {t("User.authorities")}
-                                </p>
-                                <div className="flex flex-wrap gap-1.5">
-                                    {viewItem?.authorities?.map((auth) => (
-                                        <Badge key={auth?.id} variant="secondary" className="text-xs">
-                                            {auth?.label}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {viewItem?.spexare && (
-                                <div className="space-y-1">
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                        {t("Spexare.heading")}
-                                    </p>
-                                    <div className="space-y-0.5">
-                                        <p className="text-sm font-medium">
-                                            {viewItem.spexare.firstName} {viewItem.spexare.lastName}
-                                        </p>
-                                        {viewItem.spexare.nickName && (
-                                            <p className="text-sm text-muted-foreground italic">
-                                                {viewItem.spexare.nickName}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {viewItem && (
-                            <div className="space-y-4">
-                                <AuditInfo item={viewItem}/>
-                                <AuditTrail id={viewItem.id} fetchAction={getRevisionsAction}
-                                            restoreActions={restoreActions} onRestored={() => setViewItem(null)}/>
-                            </div>
-                        )}
-                    </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setViewItem(null)}>
-                            {t("Common.close")}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            <Sheet open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                {editItem && (
-                    <UserForm
-                        item={editItem}
-                        authorities={authorities}
-                        states={states}
-                        onSuccess={() => {
-                            setEditItem(null);
-                            setFilterQuery("");
-                            router.refresh();
-                        }}
-                    />
-                )}
-            </Sheet>
-
-            <DataTableDeleteDialogs
-                deleteItem={deleteItem}
-                setDeleteItem={setDeleteItem}
-                isBulkDeleting={isBulkDeleting}
-                setIsBulkDeleting={setIsBulkDeleting}
-                isPending={isPending}
-                handleDelete={handleDelete}
-                handleBulkDelete={handleBulkDelete}
-            />
-        </>
+      <DataTableSkeleton
+        columnCount={4}
+        rowCount={15}
+      />
     );
+  }
+
+  return (
+    <>
+      <DataTable
+        columns={columns}
+        initialData={initialData}
+        initialSorting={[]}
+        initialFilter={defaultFilterQuery}
+        onRowClick={setViewItem}
+        onSelectionChange={setSelectedRows}
+        onFetch={(args) => getPageAction({ ...args, full: true })}
+        meta={{
+          setEditItem,
+          setDeleteItem,
+          addToQueue: (item) => enqueue("user", item),
+          setFilter: (handler) => {
+            setFilterQueryRef.current = handler;
+          },
+        }}
+      >
+        <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <Input
+              placeholder={t("User.filterPlaceholder")}
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              className="h-8 w-full sm:w-37.5 lg:w-62.5"
+            />
+
+            <div className="flex items-center gap-2">
+              {isFilterActive && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setFilterQuery("");
+                  }}
+                  className="h-8 px-2 lg:px-3"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  {t("Common.reset")}
+                </Button>
+              )}
+
+              {selectedRows.length > 0 && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="h-8"
+                  onClick={() => setIsBulkDeleting(true)}
+                >
+                  {t("Common.delete")} ({selectedRows.length})
+                </Button>
+              )}
+
+              <AddSelectedToQueueButton
+                entityType="user"
+                items={selectedRows}
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <ExportButton
+                exportAction={exportAction}
+                selectedIds={selectedRows.map((r) => r.id)}
+                getFilterQuery={() => lastFilterQueryRef.current}
+                requiresReportType={false}
+              />
+
+              <ImportButton importAction={importAction} />
+            </div>
+          </div>
+
+          <Button
+            size="sm"
+            className="h-8 w-full lg:w-auto"
+            nativeButton={false}
+            render={<Link href="/users/create" />}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            {t("User.createHeading")}
+          </Button>
+        </div>
+      </DataTable>
+
+      <Dialog
+        open={!!viewItem}
+        onOpenChange={(open) => !open && setViewItem(null)}
+      >
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-center justify-between gap-4 pr-6">
+              <DialogTitle className="truncate text-xl">{viewItem?.email}</DialogTitle>
+              {viewItem && (
+                <Badge
+                  variant="outline"
+                  className="h-5 shrink-0 text-xs tracking-wider uppercase sm:text-[10px]"
+                >
+                  {viewItem.state?.label}
+                </Badge>
+              )}
+            </div>
+            <DialogDescription className="sr-only">{t("Common.details")}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="grid gap-6">
+              <div className="space-y-1">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                  {t("User.externalId")}
+                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-foreground font-mono text-sm break-all">{viewItem?.externalId}</p>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 shrink-0"
+                    onClick={() => viewItem?.externalId && handleCopyExternalId(viewItem.externalId)}
+                  >
+                    {copied ? (
+                      <Check className="h-3 w-3 text-green-600" />
+                    ) : (
+                      <Copy className="text-muted-foreground/60 h-3 w-3" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                  {t("User.authorities")}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {viewItem?.authorities?.map((auth) => (
+                    <Badge
+                      key={auth?.id}
+                      variant="secondary"
+                      className="text-xs"
+                    >
+                      {auth?.label}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {viewItem?.spexare && (
+                <div className="space-y-1">
+                  <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                    {t("Spexare.heading")}
+                  </p>
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-medium">
+                      {viewItem.spexare.firstName} {viewItem.spexare.lastName}
+                    </p>
+                    {viewItem.spexare.nickName && (
+                      <p className="text-muted-foreground text-sm italic">{viewItem.spexare.nickName}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {viewItem && (
+              <div className="space-y-4">
+                <AuditInfo item={viewItem} />
+                <AuditTrail
+                  id={viewItem.id}
+                  fetchAction={getRevisionsAction}
+                  restoreActions={restoreActions}
+                  onRestored={() => setViewItem(null)}
+                />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setViewItem(null)}
+            >
+              {t("Common.close")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Sheet
+        open={!!editItem}
+        onOpenChange={(open) => !open && setEditItem(null)}
+      >
+        {editItem && (
+          <UserForm
+            item={editItem}
+            authorities={authorities}
+            states={states}
+            onSuccess={() => {
+              setEditItem(null);
+              setFilterQuery("");
+              router.refresh();
+            }}
+          />
+        )}
+      </Sheet>
+
+      <DataTableDeleteDialogs
+        deleteItem={deleteItem}
+        setDeleteItem={setDeleteItem}
+        isBulkDeleting={isBulkDeleting}
+        setIsBulkDeleting={setIsBulkDeleting}
+        isPending={isPending}
+        handleDelete={handleDelete}
+        handleBulkDelete={handleBulkDelete}
+      />
+    </>
+  );
 }

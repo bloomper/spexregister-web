@@ -1,4 +1,4 @@
-import {AccessTokenClaims, type Role} from "@/types/auth";
+import { AccessTokenClaims, type Role } from "@/types/auth";
 
 /**
  * Set for a minute when the app has asked Keycloak whether the user is already logged in to another FGV application.
@@ -8,57 +8,51 @@ export const SSO_CHECKED_COOKIE = "sso_checked";
 export const isAdmin = (roles: Role[]) => roles.includes("ADMIN");
 export const isEditor = (roles: Role[]) => roles.includes("EDITOR");
 export const isUser = (roles: Role[]) => roles.includes("USER");
-export const isAdminOrEditor = (roles: Role[]) => roles.some(r => ["ADMIN", "EDITOR"].includes(r));
+export const isAdminOrEditor = (roles: Role[]) => roles.some((r) => ["ADMIN", "EDITOR"].includes(r));
 
 function normalizeRole(value: string): Role | null {
-    const v = value.trim().toUpperCase();
-    if (v === "ADMIN" || v === "EDITOR" || v === "USER") {
-        return v;
-    }
-    return null;
+  const v = value.trim().toUpperCase();
+  if (v === "ADMIN" || v === "EDITOR" || v === "USER") {
+    return v;
+  }
+  return null;
 }
 
 /**
  * The Spexregister roles in an access token, from the `fgv-spexregister` client's roles, once each.
  */
 export function extractRolesFromClaims(claims: AccessTokenClaims): Role[] {
-    const rawRoles = claims.resource_access?.["fgv-spexregister"]?.roles ?? [];
-    const roles = rawRoles
-        .map(normalizeRole)
-        .filter((r): r is Role => r !== null);
+  const rawRoles = claims.resource_access?.["fgv-spexregister"]?.roles ?? [];
+  const roles = rawRoles.map(normalizeRole).filter((r): r is Role => r !== null);
 
-    return Array.from(new Set(roles));
+  return Array.from(new Set(roles));
 }
 
 /**
  * The theme, when it is one of light, dark and system.
  */
 export function normalizeTheme(value?: string): "light" | "dark" | "system" | undefined {
-    if (value === "light" || value === "dark" || value === "system") return value;
-    return undefined;
+  if (value === "light" || value === "dark" || value === "system") return value;
+  return undefined;
 }
 
 /**
  * The Keycloak logout address with the user's language and theme, so the logout page matches the application.
  */
-export const appendLogoutParams = (
-    logoutUrl: string,
-    locale?: string,
-    theme?: "light" | "dark" | "system"
-): string => {
-    if (!locale && !theme) {
-        return logoutUrl;
-    }
+export const appendLogoutParams = (logoutUrl: string, locale?: string, theme?: "light" | "dark" | "system"): string => {
+  if (!locale && !theme) {
+    return logoutUrl;
+  }
 
-    const separator = logoutUrl.includes("?") ? "&" : "?";
-    const urlParams = new URLSearchParams();
+  const separator = logoutUrl.includes("?") ? "&" : "?";
+  const urlParams = new URLSearchParams();
 
-    if (locale) {
-        urlParams.append("ui_locales", locale);
-    }
-    if (theme) {
-        urlParams.append("theme", theme);
-    }
+  if (locale) {
+    urlParams.append("ui_locales", locale);
+  }
+  if (theme) {
+    urlParams.append("theme", theme);
+  }
 
-    return `${logoutUrl}${separator}${urlParams.toString()}`;
+  return `${logoutUrl}${separator}${urlParams.toString()}`;
 };

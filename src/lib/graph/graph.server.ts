@@ -1,8 +1,8 @@
 import "server-only";
 
-import {GraphEdgeType, GraphNeighbourhood, GraphNode, GraphNodeType} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {runQuery} from "@/lib/graphql.server";
+import { GraphEdgeType, GraphNeighbourhood, GraphNode, GraphNodeType } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { runQuery } from "@/lib/graphql.server";
 
 export const GraphNodeFields = graphql(`
     fragment GraphNodeFields on GraphNode {
@@ -49,53 +49,61 @@ const NeighboursQuery = graphql(`
 `);
 
 const context = {
-    fetchOptions: {
-        next: {tags: ["spexare", "spex", "task", "tag"]}
-    }
+  fetchOptions: {
+    next: { tags: ["spexare", "spex", "task", "tag"] },
+  },
 };
 
 /**
  * The graph nodes matching the text; a blank text gives the user's own spexare or a random one.
  */
 export async function search(q: string, first = 10): Promise<GraphNode[]> {
-    const data = await runQuery(SearchQuery, {q, first}, context);
+  const data = await runQuery(SearchQuery, { q, first }, context);
 
-    return (data?.graphSearch ?? []) as GraphNode[];
+  return (data?.graphSearch ?? []) as GraphNode[];
 }
 
 /**
  * A node with at most `first` neighbours of each edge type, or null when it cannot be read.
  */
-export async function getNeighbourhood(type: GraphNodeType, id: string, first = 25): Promise<GraphNeighbourhood | null> {
-    const data = await runQuery(NeighbourhoodQuery, {type, id, first}, context);
+export async function getNeighbourhood(
+  type: GraphNodeType,
+  id: string,
+  first = 25
+): Promise<GraphNeighbourhood | null> {
+  const data = await runQuery(NeighbourhoodQuery, { type, id, first }, context);
 
-    return (data?.graphNeighbourhood as GraphNeighbourhood | undefined) ?? null;
+  return (data?.graphNeighbourhood as GraphNeighbourhood | undefined) ?? null;
 }
 
 /**
  * A page of all neighbours of a node along one edge type.
  */
 export async function getNeighbours(args: {
-    type: GraphNodeType;
-    id: string;
-    edge: GraphEdgeType;
-    first?: number;
-    after?: string | null;
+  type: GraphNodeType;
+  id: string;
+  edge: GraphEdgeType;
+  first?: number;
+  after?: string | null;
 }): Promise<{ nodes: GraphNode[]; endCursor: string | null; hasNextPage: boolean; totalCount: number }> {
-    const data = await runQuery(NeighboursQuery, {
-        type: args.type,
-        id: args.id,
-        edge: args.edge,
-        first: args.first ?? 25,
-        after: args.after ?? null,
-    }, context);
+  const data = await runQuery(
+    NeighboursQuery,
+    {
+      type: args.type,
+      id: args.id,
+      edge: args.edge,
+      first: args.first ?? 25,
+      after: args.after ?? null,
+    },
+    context
+  );
 
-    const connection = data?.graphNeighboursPaged;
+  const connection = data?.graphNeighboursPaged;
 
-    return {
-        nodes: (connection?.edges ?? []).map((edge) => edge?.node).filter(Boolean) as GraphNode[],
-        endCursor: connection?.pageInfo?.endCursor ?? null,
-        hasNextPage: connection?.pageInfo?.hasNextPage ?? false,
-        totalCount: connection?.totalCount ?? 0,
-    };
+  return {
+    nodes: (connection?.edges ?? []).map((edge) => edge?.node).filter(Boolean) as GraphNode[],
+    endCursor: connection?.pageInfo?.endCursor ?? null,
+    hasNextPage: connection?.pageInfo?.hasNextPage ?? false,
+    totalCount: connection?.totalCount ?? 0,
+  };
 }

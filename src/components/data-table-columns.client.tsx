@@ -1,85 +1,93 @@
 "use client";
 
-import type {Row, RowData, Table} from "@tanstack/react-table";
-import {ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, LucideIcon, MoreHorizontal} from "lucide-react";
-import {Button} from "@bloomper/fgv-web-ui/ui/button";
-import {Checkbox} from "@bloomper/fgv-web-ui/ui/checkbox";
-import {useTranslations} from "next-intl";
-import {Translated} from "@/components/translated.client";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@bloomper/fgv-web-ui/ui/tooltip";
-import {formatDate, formatDateTime} from "@/utils/utils";
-import {TableThumbnail} from "@/components/data-table-thumbnail.client";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@bloomper/fgv-web-ui/ui/dropdown-menu";
-import type {DataTableColumnDef, DataTableFeatures} from "@/components/data-table-features";
+import type { Row, RowData, Table } from "@tanstack/react-table";
+import { ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Circle, LucideIcon, MoreHorizontal } from "lucide-react";
+import { Button } from "@bloomper/fgv-web-ui/ui/button";
+import { Checkbox } from "@bloomper/fgv-web-ui/ui/checkbox";
+import { useTranslations } from "next-intl";
+import { Translated } from "@/components/translated.client";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@bloomper/fgv-web-ui/ui/tooltip";
+import { formatDate, formatDateTime } from "@/utils/utils";
+import { TableThumbnail } from "@/components/data-table-thumbnail.client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@bloomper/fgv-web-ui/ui/dropdown-menu";
+import type { DataTableColumnDef, DataTableFeatures } from "@/components/data-table-features";
 
 function SelectAllHeader({
-                             checked,
-                             indeterminate,
-                             onCheckedChange,
-                         }: {
-    checked: boolean;
-    indeterminate: boolean;
-    onCheckedChange: (value: boolean) => void;
+  checked,
+  indeterminate,
+  onCheckedChange,
+}: {
+  checked: boolean;
+  indeterminate: boolean;
+  onCheckedChange: (value: boolean) => void;
 }) {
-    const t = useTranslations();
-    return (
-        <Checkbox
-            checked={checked}
-            indeterminate={indeterminate}
-            onCheckedChange={onCheckedChange}
-            aria-label={t("Common.selectAll")}
-        />
-    );
+  const t = useTranslations();
+  return (
+    <Checkbox
+      checked={checked}
+      indeterminate={indeterminate}
+      onCheckedChange={onCheckedChange}
+      aria-label={t("Common.selectAll")}
+    />
+  );
 }
 
-function SelectRowCell({
-                           checked,
-                           onCheckedChange,
-                       }: {
-    checked: boolean;
-    onCheckedChange: (value: boolean) => void;
-}) {
-    const t = useTranslations();
-    return (
-        <Checkbox
-            checked={checked}
-            onCheckedChange={onCheckedChange}
-            onClick={(e) => e.stopPropagation()}
-            aria-label={t("Common.select")}
-        />
-    );
+function SelectRowCell({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (value: boolean) => void }) {
+  const t = useTranslations();
+  return (
+    <Checkbox
+      checked={checked}
+      onCheckedChange={onCheckedChange}
+      onClick={(e) => e.stopPropagation()}
+      aria-label={t("Common.select")}
+    />
+  );
 }
 
-function ActionsCell<T extends RowData>({row, table}: {
-    row: Row<DataTableFeatures, T>;
-    table: Table<DataTableFeatures, T>;
+function ActionsCell<T extends RowData>({
+  row,
+  table,
+}: {
+  row: Row<DataTableFeatures, T>;
+  table: Table<DataTableFeatures, T>;
 }) {
-    const t = useTranslations();
-    const meta = table.options.meta;
-    return (
-        <div onClick={(e) => e.stopPropagation()}>
-            <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0"/>}>
-                    <MoreHorizontal className="h-4 w-4"/>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => meta?.setEditItem?.(row.original)}>
-                        {t("Common.edit")}
-                    </DropdownMenuItem>
-                    {meta?.addToQueue && (
-                        <DropdownMenuItem onClick={() => meta.addToQueue?.(row.original)}>
-                            {t("EditQueue.add")}
-                        </DropdownMenuItem>
-                    )}
-                    {meta?.setDeleteItem && (
-                        <DropdownMenuItem className="text-destructive" onClick={() => meta.setDeleteItem?.(row.original)}>
-                            {t("Common.delete")}
-                        </DropdownMenuItem>
-                    )}
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-    );
+  const t = useTranslations();
+  const meta = table.options.meta;
+  return (
+    <div onClick={(e) => e.stopPropagation()}>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+            />
+          }
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => meta?.setEditItem?.(row.original)}>{t("Common.edit")}</DropdownMenuItem>
+          {meta?.addToQueue && (
+            <DropdownMenuItem onClick={() => meta.addToQueue?.(row.original)}>{t("EditQueue.add")}</DropdownMenuItem>
+          )}
+          {meta?.setDeleteItem && (
+            <DropdownMenuItem
+              className="text-destructive"
+              onClick={() => meta.setDeleteItem?.(row.original)}
+            >
+              {t("Common.delete")}
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
 }
 
 /**
@@ -87,190 +95,247 @@ function ActionsCell<T extends RowData>({row, table}: {
  * and the row's actions.
  */
 export const columnHelper = {
-    select: <T extends RowData, >(): DataTableColumnDef<T> => ({
-        id: "select",
-        header: ({table}) => (
-            <SelectAllHeader
-                checked={table.getIsAllPageRowsSelected()}
-                indeterminate={!table.getIsAllPageRowsSelected() && table.getIsSomePageRowsSelected()}
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            />
-        ),
-        cell: ({row}) => (
-            <SelectRowCell
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-            />
-        ),
-        enableSorting: false,
-    }),
-    text: <T extends RowData, >(id: string, translationId: string, accessorKey: string = id, className?: string): DataTableColumnDef<T> => ({
-        id,
-        accessorKey,
-        header: ({column}) => {
-            if (!column.getCanSort()) {
-                return <Translated id={translationId}/>;
-            }
+  select: <T extends RowData>(): DataTableColumnDef<T> => ({
+    id: "select",
+    header: ({ table }) => (
+      <SelectAllHeader
+        checked={table.getIsAllPageRowsSelected()}
+        indeterminate={!table.getIsAllPageRowsSelected() && table.getIsSomePageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      />
+    ),
+    cell: ({ row }) => (
+      <SelectRowCell
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+      />
+    ),
+    enableSorting: false,
+  }),
+  text: <T extends RowData>(
+    id: string,
+    translationId: string,
+    accessorKey: string = id,
+    className?: string
+  ): DataTableColumnDef<T> => ({
+    id,
+    accessorKey,
+    header: ({ column }) => {
+      if (!column.getCanSort()) {
+        return <Translated id={translationId} />;
+      }
 
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8 data-popup-open:bg-accent"
-                >
-                    <Translated id={translationId}/>
-                    {isSorted === "desc" ? <ArrowDown className="ml-2 h-4 w-4"/> : isSorted === "asc" ?
-                        <ArrowUp className="ml-2 h-4 w-4"/> : <ArrowUpDown className="ml-2 h-4 w-4"/>}
-                </Button>
-            );
-        },
-        cell: ({row}) => {
-            const value = row.getValue(id) as string;
-            return (
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger render={<div
-                            className="max-w-[200px] truncate font-medium cursor-default sm:max-w-[300px]"/>}>{value}</TooltipTrigger>
-                        <TooltipContent className="max-w-[400px] wrap-break-word">{value}</TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            );
-        },
-        meta: className ? {className} : undefined,
-    }),
-    date: <T extends RowData, >(id: string, translationId: string, accessorKey: string = id, className?: string): DataTableColumnDef<T> => ({
-        id,
-        accessorKey,
-        header: ({column}) => {
-            if (!column.getCanSort()) {
-                return <Translated id={translationId}/>;
-            }
+      const isSorted = column.getIsSorted();
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(isSorted === "asc")}
+          className="data-popup-open:bg-accent -ml-4 h-8"
+        >
+          <Translated id={translationId} />
+          {isSorted === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : isSorted === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const value = row.getValue(id) as string;
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger
+              render={<div className="max-w-[200px] cursor-default truncate font-medium sm:max-w-[300px]" />}
+            >
+              {value}
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[400px] wrap-break-word">{value}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    },
+    meta: className ? { className } : undefined,
+  }),
+  date: <T extends RowData>(
+    id: string,
+    translationId: string,
+    accessorKey: string = id,
+    className?: string
+  ): DataTableColumnDef<T> => ({
+    id,
+    accessorKey,
+    header: ({ column }) => {
+      if (!column.getCanSort()) {
+        return <Translated id={translationId} />;
+      }
 
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8"
-                >
-                    <Translated id={translationId}/>
-                    {isSorted === "desc" ? <ArrowDown className="ml-2 h-4 w-4"/> : isSorted === "asc" ?
-                        <ArrowUp className="ml-2 h-4 w-4"/> : <ArrowUpDown className="ml-2 h-4 w-4"/>}
-                </Button>
-            );
-        },
-        cell: ({row}) => {
-            const value = row.getValue(id) as string;
-            return value ? formatDate(value) : "-";
-        },
-        meta: className ? {className} : undefined,
-    }),
-    dateTime: <T extends RowData, >(id: string, translationId: string, accessorKey: string = id, className?: string): DataTableColumnDef<T> => ({
-        id,
-        accessorKey,
-        header: ({column}) => {
-            if (!column.getCanSort()) {
-                return <Translated id={translationId}/>;
-            }
+      const isSorted = column.getIsSorted();
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(isSorted === "asc")}
+          className="-ml-4 h-8"
+        >
+          <Translated id={translationId} />
+          {isSorted === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : isSorted === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const value = row.getValue(id) as string;
+      return value ? formatDate(value) : "-";
+    },
+    meta: className ? { className } : undefined,
+  }),
+  dateTime: <T extends RowData>(
+    id: string,
+    translationId: string,
+    accessorKey: string = id,
+    className?: string
+  ): DataTableColumnDef<T> => ({
+    id,
+    accessorKey,
+    header: ({ column }) => {
+      if (!column.getCanSort()) {
+        return <Translated id={translationId} />;
+      }
 
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(isSorted === "asc")}
-                    className="-ml-4 h-8"
-                >
-                    <Translated id={translationId}/>
-                    {isSorted === "desc" ? <ArrowDown className="ml-2 h-4 w-4"/> : isSorted === "asc" ?
-                        <ArrowUp className="ml-2 h-4 w-4"/> : <ArrowUpDown className="ml-2 h-4 w-4"/>}
-                </Button>
-            );
-        },
-        cell: ({row}) => {
-            const value = row.getValue(id) as string;
-            return value ? formatDateTime(value) : "-";
-        },
-        meta: className ? {className} : undefined,
-    }),
+      const isSorted = column.getIsSorted();
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(isSorted === "asc")}
+          className="-ml-4 h-8"
+        >
+          <Translated id={translationId} />
+          {isSorted === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : isSorted === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const value = row.getValue(id) as string;
+      return value ? formatDateTime(value) : "-";
+    },
+    meta: className ? { className } : undefined,
+  }),
 
-    image: <T extends RowData & { lastModifiedAt?: string | null }, >(
-        id: string,
-        translationId: string,
-        accessorKey: string,
-        fallbackIcon: LucideIcon,
-        className?: string
-    ): DataTableColumnDef<T> => ({
-        id,
-        accessorKey,
-        header: () => <Translated id={translationId}/>,
-        cell: ({row}) => (
-            <TableThumbnail
-                url={row.getValue(id)}
-                lastModifiedAt={row.original.lastModifiedAt}
-                fallbackIcon={fallbackIcon}
-            />
-        ),
-        meta: className ? {className} : undefined,
-    }),
-    boolean: <T extends RowData, >(id: string, translationId: string, className?: string): DataTableColumnDef<T> => ({
-        id,
-        accessorKey: id,
-        header: () => <Translated id={translationId}/>,
-        cell: ({row}) => (
-            <div className="flex items-center gap-2">
-                {row.getValue(id) ? <CheckCircle2 className="h-4 w-4 text-green-500"/> :
-                    <Circle className="h-4 w-4 text-muted-foreground"/>}
-            </div>
-        ),
-        meta: className ? {className} : undefined,
-    }),
-    audit: <T extends RowData, >(): DataTableColumnDef<T>[] => [
-        {
-            id: "createdAt",
-            accessorKey: "createdAt",
-            header: ({column}) => {
-                if (!column.getCanSort()) {
-                    return <Translated id="Common.createdAt"/>;
-                }
-
-                const isSorted = column.getIsSorted();
-                return (
-                    <Button variant="ghost" onClick={() => column.toggleSorting(isSorted === "asc")}
-                            className="-ml-4 h-8">
-                        <Translated id="Common.createdAt"/>
-                        {isSorted === "desc" ? <ArrowDown className="ml-2 h-4 w-4"/> : isSorted === "asc" ?
-                            <ArrowUp className="ml-2 h-4 w-4"/> : <ArrowUpDown className="ml-2 h-4 w-4"/>}
-                    </Button>
-                );
-            },
-            cell: ({row}) => formatDateTime(row.getValue("createdAt")) || "-",
-            meta: {className: "hidden xl:table-cell"}
-        },
-        {
-            id: "lastModifiedAt",
-            accessorKey: "lastModifiedAt",
-            header: ({column}) => {
-                if (!column.getCanSort()) {
-                    return <Translated id="Common.lastModifiedAt"/>;
-                }
-
-                const isSorted = column.getIsSorted();
-                return (
-                    <Button variant="ghost" onClick={() => column.toggleSorting(isSorted === "asc")}
-                            className="-ml-4 h-8">
-                        <Translated id="Common.lastModifiedAt"/>
-                        {isSorted === "desc" ? <ArrowDown className="ml-2 h-4 w-4"/> : isSorted === "asc" ?
-                            <ArrowUp className="ml-2 h-4 w-4"/> : <ArrowUpDown className="ml-2 h-4 w-4"/>}
-                    </Button>
-                );
-            },
-            cell: ({row}) => formatDateTime(row.getValue("lastModifiedAt")) || "-",
-            meta: {className: "hidden xl:table-cell"}
+  image: <T extends RowData & { lastModifiedAt?: string | null }>(
+    id: string,
+    translationId: string,
+    accessorKey: string,
+    fallbackIcon: LucideIcon,
+    className?: string
+  ): DataTableColumnDef<T> => ({
+    id,
+    accessorKey,
+    header: () => <Translated id={translationId} />,
+    cell: ({ row }) => (
+      <TableThumbnail
+        url={row.getValue(id)}
+        lastModifiedAt={row.original.lastModifiedAt}
+        fallbackIcon={fallbackIcon}
+      />
+    ),
+    meta: className ? { className } : undefined,
+  }),
+  boolean: <T extends RowData>(id: string, translationId: string, className?: string): DataTableColumnDef<T> => ({
+    id,
+    accessorKey: id,
+    header: () => <Translated id={translationId} />,
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        {row.getValue(id) ? (
+          <CheckCircle2 className="h-4 w-4 text-green-500" />
+        ) : (
+          <Circle className="text-muted-foreground h-4 w-4" />
+        )}
+      </div>
+    ),
+    meta: className ? { className } : undefined,
+  }),
+  audit: <T extends RowData>(): DataTableColumnDef<T>[] => [
+    {
+      id: "createdAt",
+      accessorKey: "createdAt",
+      header: ({ column }) => {
+        if (!column.getCanSort()) {
+          return <Translated id="Common.createdAt" />;
         }
-    ],
-    actions: <T extends RowData, >(): DataTableColumnDef<T> => ({
-        id: "actions",
-        cell: ({row, table}) => <ActionsCell row={row} table={table}/>,
-    })
+
+        const isSorted = column.getIsSorted();
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(isSorted === "asc")}
+            className="-ml-4 h-8"
+          >
+            <Translated id="Common.createdAt" />
+            {isSorted === "desc" ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : isSorted === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        );
+      },
+      cell: ({ row }) => formatDateTime(row.getValue("createdAt")) || "-",
+      meta: { className: "hidden xl:table-cell" },
+    },
+    {
+      id: "lastModifiedAt",
+      accessorKey: "lastModifiedAt",
+      header: ({ column }) => {
+        if (!column.getCanSort()) {
+          return <Translated id="Common.lastModifiedAt" />;
+        }
+
+        const isSorted = column.getIsSorted();
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(isSorted === "asc")}
+            className="-ml-4 h-8"
+          >
+            <Translated id="Common.lastModifiedAt" />
+            {isSorted === "desc" ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : isSorted === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        );
+      },
+      cell: ({ row }) => formatDateTime(row.getValue("lastModifiedAt")) || "-",
+      meta: { className: "hidden xl:table-cell" },
+    },
+  ],
+  actions: <T extends RowData>(): DataTableColumnDef<T> => ({
+    id: "actions",
+    cell: ({ row, table }) => (
+      <ActionsCell
+        row={row}
+        table={table}
+      />
+    ),
+  }),
 };

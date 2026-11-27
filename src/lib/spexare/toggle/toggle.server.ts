@@ -1,8 +1,8 @@
 import "server-only";
 
-import {Toggle, ToggleCreate, ToggleUpdate} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {mutateForData, runMutationField} from "@/lib/graphql.server";
+import { Toggle, ToggleCreate, ToggleUpdate } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { mutateForData, runMutationField } from "@/lib/graphql.server";
 
 export const ToggleSummary = graphql(`
     fragment ToggleSummary on Toggle {
@@ -48,21 +48,36 @@ const ToggleDeleteMutation = graphql(`
 `);
 
 export async function create(spexareId: string, typeId: string, input: ToggleCreate): Promise<Toggle> {
-    return mutateForData(ToggleCreateMutation, {
-        spexareId,
-        typeId,
-        input
-    }, "toggleCreate", "No data created") as Promise<Toggle>;
+  return mutateForData(
+    ToggleCreateMutation,
+    {
+      spexareId,
+      typeId,
+      input,
+    },
+    "toggleCreate",
+    "No data created"
+  ) as Promise<Toggle>;
 }
 
-export async function update(spexareId: string, typeId: string, id: string, input: Omit<ToggleUpdate, "id">): Promise<Toggle> {
-    return mutateForData(ToggleUpdateMutation, {
-        spexareId,
-        typeId,
-        input: {...input, id}
-    }, "toggleUpdate", "No data updated") as Promise<Toggle>;
+export async function update(
+  spexareId: string,
+  typeId: string,
+  id: string,
+  input: Omit<ToggleUpdate, "id">
+): Promise<Toggle> {
+  return mutateForData(
+    ToggleUpdateMutation,
+    {
+      spexareId,
+      typeId,
+      input: { ...input, id },
+    },
+    "toggleUpdate",
+    "No data updated"
+  ) as Promise<Toggle>;
 }
 
 export async function del(spexareId: string, typeId: string, id: string) {
-    return runMutationField(ToggleDeleteMutation, {spexareId, typeId, id}, "toggleDelete");
+  return runMutationField(ToggleDeleteMutation, { spexareId, typeId, id }, "toggleDelete");
 }

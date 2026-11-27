@@ -1,20 +1,20 @@
-import {expect, test} from "./fixtures";
+import { expect, test } from "./fixtures";
 
-test("authenticated dashboard renders news from the backend", async ({page}) => {
-    await page.goto("/");
+test("authenticated dashboard renders news from the backend", async ({ page }) => {
+  await page.goto("/");
 
-    await expect(page.getByText("Premiär 2026")).toBeVisible();
-    await expect(page.getByText("Nya lokaler")).toBeVisible();
+  await expect(page.getByText("Premiär 2026")).toBeVisible();
+  await expect(page.getByText("Nya lokaler")).toBeVisible();
 });
 
-test("authenticated dashboard renders the headline totals", async ({page}) => {
-    await page.goto("/");
+test("authenticated dashboard renders the headline totals", async ({ page }) => {
+  await page.goto("/");
 
-    // "Nyuppsättningar" (spex revivals) and the per-card footer are unique to the stats block.
-    await expect(page.getByText("Nyuppsättningar")).toBeVisible();
-    await expect(page.getByText("Nya spexare per debutår, 2024–2025")).toBeVisible();
+  // "Nyuppsättningar" (spex revivals) and the per-card footer are unique to the stats block.
+  await expect(page.getByText("Nyuppsättningar")).toBeVisible();
+  await expect(page.getByText("Nya spexare per debutår, 2024–2025")).toBeVisible();
 
-    // The spexare stat card shows its count (3, from the mock's statistics fixture).
-    const spexareCard = page.locator('[data-slot="card"]').filter({hasText: "Nyuppsättningar"});
-    await expect(spexareCard.getByText("4")).toBeVisible();
+  // The spexare stat card shows its count (3, from the mock's statistics fixture).
+  const spexareCard = page.locator('[data-slot="card"]').filter({ hasText: "Nyuppsättningar" });
+  await expect(spexareCard.getByText("4")).toBeVisible();
 });

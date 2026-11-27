@@ -1,8 +1,8 @@
 import "server-only";
 
-import {AuditedType, SortDirection, Task, TaskEdge} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {createResourceClient} from "@/lib/graphql.server";
+import { AuditedType, SortDirection, Task, TaskEdge } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { createResourceClient } from "@/lib/graphql.server";
 
 export const TaskSummary = graphql(`
     fragment TaskSummary on Task {
@@ -53,20 +53,18 @@ const TaskGetQuery = graphql(`
     }
 `);
 
-
-const client = createResourceClient<Task, TaskEdge, never, {id?: unknown}>({
-    singular: "task",
-    pagedSummaryQuery: TaskPagedSummary,
-    pagedFullQuery: TaskPagedFull,
-    getQuery: TaskGetQuery,
-    auditedType: AuditedType.Task,
-    cacheTag: "task",
-    restPath: "tasks",
-    defaultSort: ["name"],
-    defaultDirection: SortDirection.Asc,
-    defaultFilter: "",
+const client = createResourceClient<Task, TaskEdge, never, { id?: unknown }>({
+  singular: "task",
+  pagedSummaryQuery: TaskPagedSummary,
+  pagedFullQuery: TaskPagedFull,
+  getQuery: TaskGetQuery,
+  auditedType: AuditedType.Task,
+  cacheTag: "task",
+  restPath: "tasks",
+  defaultSort: ["name"],
+  defaultDirection: SortDirection.Asc,
+  defaultFilter: "",
 });
 
 // Read only: Spexipedia keeps base data
-export const {getPaged, get, getAll} = client;
-
+export const { getPaged, get, getAll } = client;

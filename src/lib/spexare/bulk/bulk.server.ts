@@ -1,8 +1,8 @@
 import "server-only";
 
-import {BulkResult, SpexareBulkInput} from "@/gql/schema";
-import {graphql} from "@/gql";
-import {auditReason, mutateForData, runQuery} from "@/lib/graphql.server";
+import { BulkResult, SpexareBulkInput } from "@/gql/schema";
+import { graphql } from "@/gql";
+import { auditReason, mutateForData, runQuery } from "@/lib/graphql.server";
 
 export const BulkResultFull = graphql(`
     fragment BulkResultFull on BulkResult {
@@ -40,26 +40,30 @@ const SpexareBulkApplyMutation = graphql(`
  * What a bulk change would do to each spexare, without changing anything and without caching.
  */
 export async function preview(input: SpexareBulkInput): Promise<BulkResult> {
-    const data = await runQuery(SpexareBulkPreviewQuery, {input}, {
-        fetchOptions: {cache: "no-store"},
-    });
-
-    if (!data?.spexareBulkPreview) {
-        throw new Error("No preview returned");
+  const data = await runQuery(
+    SpexareBulkPreviewQuery,
+    { input },
+    {
+      fetchOptions: { cache: "no-store" },
     }
+  );
 
-    return data.spexareBulkPreview as BulkResult;
+  if (!data?.spexareBulkPreview) {
+    throw new Error("No preview returned");
+  }
+
+  return data.spexareBulkPreview as BulkResult;
 }
 
 /**
  * Applies a bulk change, recording the reason with the revision.
  */
 export async function apply(input: SpexareBulkInput, reason?: string): Promise<BulkResult> {
-    return mutateForData(
-        SpexareBulkApplyMutation,
-        {input},
-        "spexareBulkApply",
-        "No data updated",
-        auditReason(reason),
-    ) as Promise<BulkResult>;
+  return mutateForData(
+    SpexareBulkApplyMutation,
+    { input },
+    "spexareBulkApply",
+    "No data updated",
+    auditReason(reason)
+  ) as Promise<BulkResult>;
 }

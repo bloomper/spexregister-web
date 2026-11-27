@@ -1,10 +1,10 @@
 import "server-only";
 
-import {graphql} from "@/gql";
-import {AuditedType, AuditSource, RestorePreview, RestoreResult, Revision, RevisionDetail} from "@/gql/schema";
-import {auditReason, mutateForData, runQuery} from "@/lib/graphql.server";
-import {mapConnection} from "@/utils/utils.server";
-import {RevisionFeedPage} from "@/types/pagination";
+import { graphql } from "@/gql";
+import { AuditedType, AuditSource, RestorePreview, RestoreResult, Revision, RevisionDetail } from "@/gql/schema";
+import { auditReason, mutateForData, runQuery } from "@/lib/graphql.server";
+import { mapConnection } from "@/utils/utils.server";
+import { RevisionFeedPage } from "@/types/pagination";
 
 const revisionsQuery = graphql(`
     query revisions($type: AuditedType!, $id: ID!) {
@@ -165,54 +165,58 @@ export const AUDIT_CACHE_TAG = "revisions";
  * The revisions of a record, newest first.
  */
 export async function getRevisions(type: AuditedType, id: string): Promise<Revision[]> {
-    const data = await runQuery(revisionsQuery, {type, id});
+  const data = await runQuery(revisionsQuery, { type, id });
 
-    return (data?.revisions as Revision[] | undefined) ?? [];
+  return (data?.revisions as Revision[] | undefined) ?? [];
 }
 
 /**
  * The revisions of the records of `relatedType` that belong to a record, such as a spexare's addresses.
  */
-export async function getRelatedRevisions(type: AuditedType, id: string, relatedType: AuditedType): Promise<Revision[]> {
-    const data = await runQuery(relatedRevisionsQuery, {type, id, relatedType});
+export async function getRelatedRevisions(
+  type: AuditedType,
+  id: string,
+  relatedType: AuditedType
+): Promise<Revision[]> {
+  const data = await runQuery(relatedRevisionsQuery, { type, id, relatedType });
 
-    return (data?.relatedRevisions as Revision[] | undefined) ?? [];
+  return (data?.relatedRevisions as Revision[] | undefined) ?? [];
 }
 
 /**
  * Which revisions to list in the change log. Without `from`, the period starts `sinceInDays` days back.
  */
 export type RevisionFeedArgs = {
-    first?: number;
-    last?: number;
-    after?: string | null;
-    before?: string | null;
-    type?: AuditedType | null;
-    modifiedBy?: string[] | null;
-    sources?: AuditSource[] | null;
-    from?: string | null;
-    to?: string | null;
-    sinceInDays?: number | null;
+  first?: number;
+  last?: number;
+  after?: string | null;
+  before?: string | null;
+  type?: AuditedType | null;
+  modifiedBy?: string[] | null;
+  sources?: AuditSource[] | null;
+  from?: string | null;
+  to?: string | null;
+  sinceInDays?: number | null;
 };
 
 /**
  * A page of the change log, newest first.
  */
 export async function getRevisionFeedPaged(args: RevisionFeedArgs): Promise<RevisionFeedPage> {
-    const data = await runQuery(revisionFeedPagedQuery, {
-        first: args.first ?? null,
-        last: args.last ?? null,
-        after: args.after ?? null,
-        before: args.before ?? null,
-        type: args.type ?? null,
-        modifiedBy: args.modifiedBy?.length ? args.modifiedBy : null,
-        sources: args.sources?.length ? args.sources : null,
-        from: args.from ?? null,
-        to: args.to ?? null,
-        sinceInDays: args.sinceInDays ?? null,
-    });
+  const data = await runQuery(revisionFeedPagedQuery, {
+    first: args.first ?? null,
+    last: args.last ?? null,
+    after: args.after ?? null,
+    before: args.before ?? null,
+    type: args.type ?? null,
+    modifiedBy: args.modifiedBy?.length ? args.modifiedBy : null,
+    sources: args.sources?.length ? args.sources : null,
+    from: args.from ?? null,
+    to: args.to ?? null,
+    sinceInDays: args.sinceInDays ?? null,
+  });
 
-    return mapConnection(data?.revisionFeedPaged);
+  return mapConnection(data?.revisionFeedPaged);
 }
 
 const REVISION_DETAIL_LIMIT_PER_TYPE = 20;
@@ -221,33 +225,33 @@ const REVISION_DETAIL_LIMIT_PER_TYPE = 20;
  * Everything changed in a revision, at most 20 records of each type.
  */
 export async function getRevisionDetail(revision: number): Promise<RevisionDetail | null> {
-    const data = await runQuery(revisionDetailQuery, {revision, limitPerType: REVISION_DETAIL_LIMIT_PER_TYPE});
+  const data = await runQuery(revisionDetailQuery, { revision, limitPerType: REVISION_DETAIL_LIMIT_PER_TYPE });
 
-    return (data?.revisionDetail as RevisionDetail | undefined) ?? null;
+  return (data?.revisionDetail as RevisionDetail | undefined) ?? null;
 }
 
 export async function getRevisionAuthors(): Promise<string[]> {
-    const data = await runQuery(revisionAuthorsQuery, {});
+  const data = await runQuery(revisionAuthorsQuery, {});
 
-    return data?.revisionAuthors ?? [];
+  return data?.revisionAuthors ?? [];
 }
 
 /**
  * What restoring the record to the revision would change, without changing anything.
  */
 export async function getRestorePreview(
-    type: AuditedType,
-    id: string,
-    revision: number,
-    cascade: boolean,
+  type: AuditedType,
+  id: string,
+  revision: number,
+  cascade: boolean
 ): Promise<RestorePreview> {
-    const data = await runQuery(restorePreviewQuery, {type, id, revision, cascade});
+  const data = await runQuery(restorePreviewQuery, { type, id, revision, cascade });
 
-    if (!data?.restorePreview) {
-        throw new Error("No restore preview returned");
-    }
+  if (!data?.restorePreview) {
+    throw new Error("No restore preview returned");
+  }
 
-    return data.restorePreview as RestorePreview;
+  return data.restorePreview as RestorePreview;
 }
 
 /**
@@ -255,16 +259,22 @@ export async function getRestorePreview(
  * with the new revision.
  */
 export async function restore(
-    type: AuditedType,
-    id: string,
-    revision: number,
-    cascade: boolean,
-    reason?: string,
+  type: AuditedType,
+  id: string,
+  revision: number,
+  cascade: boolean,
+  reason?: string
 ): Promise<RestoreResult> {
-    return await mutateForData(restoreMutation, {
-        type,
-        id,
-        revision,
-        cascade
-    }, "restore", "No data restored", auditReason(reason)) as RestoreResult;
+  return (await mutateForData(
+    restoreMutation,
+    {
+      type,
+      id,
+      revision,
+      cascade,
+    },
+    "restore",
+    "No data restored",
+    auditReason(reason)
+  )) as RestoreResult;
 }

@@ -1,68 +1,66 @@
-import {beforeEach, describe, expect, it, vi} from "vitest";
-import {NextRequest} from "next/server";
-import {GET} from "@/app/api/impex-result-download-proxy/route";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextRequest } from "next/server";
+import { GET } from "@/app/api/impex-result-download-proxy/route";
 
 const axiosGet = vi.fn();
-vi.mock("@/lib/axios.server", () => ({default: {get: (...a: unknown[]) => axiosGet(...a)}}));
+vi.mock("@/lib/axios.server", () => ({ default: { get: (...a: unknown[]) => axiosGet(...a) } }));
 
-const makeRequest = (query: string) =>
-    new NextRequest(`http://localhost/api/impex-result-download-proxy${query}`);
+const makeRequest = (query: string) => new NextRequest(`http://localhost/api/impex-result-download-proxy${query}`);
 
 beforeEach(() => {
-    axiosGet.mockReset();
-    vi.spyOn(console, "error").mockImplementation(() => {
-    });
-    vi.stubEnv("API_REST_BASE_URL", "https://api.test");
+  axiosGet.mockReset();
+  vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.stubEnv("API_REST_BASE_URL", "https://api.test");
 });
 
 describe("impex-result-download-proxy GET", () => {
-    it.each(["../spexare/1/image", "1/../../x", "abc"])("returns 400 for a non-numeric id %s", async (id) => {
-        const res = await GET(makeRequest(`?id=${encodeURIComponent(id)}`));
-        expect(res.status).toBe(400);
-        expect(axiosGet).not.toHaveBeenCalled();
+  it.each(["../spexare/1/image", "1/../../x", "abc"])("returns 400 for a non-numeric id %s", async (id) => {
+    const res = await GET(makeRequest(`?id=${encodeURIComponent(id)}`));
+    expect(res.status).toBe(400);
+    expect(axiosGet).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when id is missing", async () => {
+    const res = await GET(makeRequest(""));
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toEqual({ error: "Job ID is required" });
+  });
+
+  it("fetches the job results and forwards content headers", async () => {
+    axiosGet.mockResolvedValue({
+      data: new Uint8Array([1, 2]),
+      headers: { "content-type": "text/csv", "content-disposition": 'attachment; filename="export.csv"' },
     });
 
-    it("returns 400 when id is missing", async () => {
-        const res = await GET(makeRequest(""));
-        expect(res.status).toBe(400);
-        await expect(res.json()).resolves.toEqual({error: "Job ID is required"});
-    });
+    const res = await GET(makeRequest("?id=42"));
 
-    it("fetches the job results and forwards content headers", async () => {
-        axiosGet.mockResolvedValue({
-            data: new Uint8Array([1, 2]),
-            headers: {"content-type": "text/csv", "content-disposition": 'attachment; filename="export.csv"'},
-        });
+    expect(axiosGet).toHaveBeenCalledWith("https://api.test/api/jobs/42/results", expect.anything());
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toBe("text/csv");
+    expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="export.csv"');
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    expect(res.headers.get("Content-Security-Policy")).toContain("sandbox");
+    expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
+  });
 
-        const res = await GET(makeRequest("?id=42"));
+  it("defaults content-type and content-disposition when headers are absent", async () => {
+    axiosGet.mockResolvedValue({ data: new Uint8Array([1]), headers: {} });
 
-        expect(axiosGet).toHaveBeenCalledWith("https://api.test/api/jobs/42/results", expect.anything());
-        expect(res.status).toBe(200);
-        expect(res.headers.get("Content-Type")).toBe("text/csv");
-        expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="export.csv"');
-        expect(res.headers.get("Cache-Control")).toBe("no-store");
-        expect(res.headers.get("Content-Security-Policy")).toContain("sandbox");
-        expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
-    });
+    const res = await GET(makeRequest("?id=42"));
 
-    it("defaults content-type and content-disposition when headers are absent", async () => {
-        axiosGet.mockResolvedValue({data: new Uint8Array([1]), headers: {}});
+    expect(res.headers.get("Content-Type")).toBe("application/octet-stream");
+    expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="result-42"');
+  });
 
-        const res = await GET(makeRequest("?id=42"));
+  it("maps an axios error with a response to that status", async () => {
+    axiosGet.mockRejectedValue({ isAxiosError: true, response: { status: 403 } });
+    const res = await GET(makeRequest("?id=42"));
+    expect(res.status).toBe(403);
+  });
 
-        expect(res.headers.get("Content-Type")).toBe("application/octet-stream");
-        expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="result-42"');
-    });
-
-    it("maps an axios error with a response to that status", async () => {
-        axiosGet.mockRejectedValue({isAxiosError: true, response: {status: 403}});
-        const res = await GET(makeRequest("?id=42"));
-        expect(res.status).toBe(403);
-    });
-
-    it("maps a non-axios error to 500", async () => {
-        axiosGet.mockRejectedValue(new Error("boom"));
-        const res = await GET(makeRequest("?id=42"));
-        expect(res.status).toBe(500);
-    });
+  it("maps a non-axios error to 500", async () => {
+    axiosGet.mockRejectedValue(new Error("boom"));
+    const res = await GET(makeRequest("?id=42"));
+    expect(res.status).toBe(500);
+  });
 });

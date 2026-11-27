@@ -1,10 +1,10 @@
 import "server-only";
 
-import {graphql} from "@/gql";
-import {runMutation, runQuery} from "@/lib/graphql.server";
-import type {PermissionGrantCreate, PermissionGrantSummaryFragment, PermissionGrantUpdate} from "@/gql/graphql";
-import type {SortDirection} from "@/gql/schema";
-import type {CursorPage} from "@/types/pagination";
+import { graphql } from "@/gql";
+import { runMutation, runQuery } from "@/lib/graphql.server";
+import type { PermissionGrantCreate, PermissionGrantSummaryFragment, PermissionGrantUpdate } from "@/gql/graphql";
+import type { SortDirection } from "@/gql/schema";
+import type { CursorPage } from "@/types/pagination";
 
 export const CACHE_TAG = "permission-grants";
 
@@ -76,54 +76,56 @@ export type PermissionGrant = PermissionGrantSummaryFragment;
  * A page of the permission grants, for administrators.
  */
 export async function getGrantsPage(args: {
-    first?: number;
-    last?: number;
-    after?: string | null;
-    before?: string | null;
-    sort?: string[];
-    direction?: SortDirection;
-    filter?: string;
+  first?: number;
+  last?: number;
+  after?: string | null;
+  before?: string | null;
+  sort?: string[];
+  direction?: SortDirection;
+  filter?: string;
 }): Promise<CursorPage<PermissionGrant>> {
-    const data = await runQuery(PermissionGrantsPagedQuery, {
-        ...args,
-        sort: args.sort?.length ? args.sort : ["createdAt"],
-        filter: args.filter ?? "",
-    }, {
-        fetchOptions: {next: {tags: [CACHE_TAG]}},
-    });
-    const connection = data?.permissionGrantPaged;
+  const data = await runQuery(
+    PermissionGrantsPagedQuery,
+    {
+      ...args,
+      sort: args.sort?.length ? args.sort : ["createdAt"],
+      filter: args.filter ?? "",
+    },
+    {
+      fetchOptions: { next: { tags: [CACHE_TAG] } },
+    }
+  );
+  const connection = data?.permissionGrantPaged;
 
-    return {
-        items: (connection?.edges ?? [])
-            .map((edge) => edge?.node)
-            .filter((node): node is PermissionGrant => Boolean(node)),
-        pageInfo: {
-            hasNextPage: connection?.pageInfo.hasNextPage ?? false,
-            hasPreviousPage: connection?.pageInfo.hasPreviousPage ?? false,
-            startCursor: connection?.pageInfo.startCursor ?? null,
-            endCursor: connection?.pageInfo.endCursor ?? null,
-        },
-        totalCount: connection?.totalCount ?? 0,
-    };
+  return {
+    items: (connection?.edges ?? []).map((edge) => edge?.node).filter((node): node is PermissionGrant => Boolean(node)),
+    pageInfo: {
+      hasNextPage: connection?.pageInfo.hasNextPage ?? false,
+      hasPreviousPage: connection?.pageInfo.hasPreviousPage ?? false,
+      startCursor: connection?.pageInfo.startCursor ?? null,
+      endCursor: connection?.pageInfo.endCursor ?? null,
+    },
+    totalCount: connection?.totalCount ?? 0,
+  };
 }
 
 /**
  * Gives a user, or everyone with a role, a permission on a spexare, a spex's participants or a spex.
  */
 export async function createGrant(input: PermissionGrantCreate) {
-    return runMutation(PermissionGrantCreateMutation, {input});
+  return runMutation(PermissionGrantCreateMutation, { input });
 }
 
 /**
  * Changes a grant's permission and last valid day.
  */
 export async function updateGrant(input: PermissionGrantUpdate) {
-    return runMutation(PermissionGrantUpdateMutation, {input});
+  return runMutation(PermissionGrantUpdateMutation, { input });
 }
 
 /**
  * Removes a grant.
  */
 export async function deleteGrant(id: string) {
-    return runMutation(PermissionGrantDeleteMutation, {id});
+  return runMutation(PermissionGrantDeleteMutation, { id });
 }

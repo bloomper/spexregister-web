@@ -1,25 +1,27 @@
-import {describe, expect, it, vi} from "vitest";
-import {render, screen} from "@testing-library/react";
-import {RevisionDetailPanel} from "@/components/audit/revision-detail.client";
-import {AuditedType, AuditSource, RevisionDetail, RevisionEntityChange, RevisionType} from "@/gql/schema";
+import { describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { RevisionDetailPanel } from "@/components/audit/revision-detail.client";
+import { AuditedType, AuditSource, RevisionDetail, RevisionEntityChange, RevisionType } from "@/gql/schema";
 
 vi.mock("@/components/audit/audit-binary-thumbnail.client", () => ({
-    AuditBinaryThumbnail: () => <span data-testid="binary-thumbnail"/>,
+  AuditBinaryThumbnail: () => <span data-testid="binary-thumbnail" />,
 }));
 
-const spexareTarget = {type: AuditedType.Spexare, id: "88", label: "Anna Andersson"};
+const spexareTarget = { type: AuditedType.Spexare, id: "88", label: "Anna Andersson" };
 
-const entity = (overrides: Partial<RevisionEntityChange> = {}): RevisionEntityChange => ({
+const entity = (overrides: Partial<RevisionEntityChange> = {}): RevisionEntityChange =>
+  ({
     type: AuditedType.Spexare,
     entityId: "88",
     entityLabel: "Anna Andersson",
     revisionType: RevisionType.Mod,
-    changes: [{field: "firstName", oldValue: "Anna", newValue: "Anna-Karin", binary: false}],
+    changes: [{ field: "firstName", oldValue: "Anna", newValue: "Anna-Karin", binary: false }],
     target: spexareTarget,
     ...overrides,
-} as RevisionEntityChange);
+  }) as RevisionEntityChange;
 
-const detail = (overrides: Partial<RevisionDetail> = {}): RevisionDetail => ({
+const detail = (overrides: Partial<RevisionDetail> = {}): RevisionDetail =>
+  ({
     revision: 4821,
     modifiedAt: "2026-09-18T14:02:00Z",
     modifiedBy: "anna@spexregister.com",
@@ -28,81 +30,107 @@ const detail = (overrides: Partial<RevisionDetail> = {}): RevisionDetail => ({
     comment: null,
     entities: [entity()],
     ...overrides,
-} as RevisionDetail);
+  }) as RevisionDetail;
 
 describe("RevisionDetailPanel", () => {
-    it("says where the change came from", () => {
-        render(<RevisionDetailPanel detail={detail({
-            source: AuditSource.Restore,
-            comment: "Återställd från version 4711",
-        })}/>);
+  it("says where the change came from", () => {
+    render(
+      <RevisionDetailPanel
+        detail={detail({
+          source: AuditSource.Restore,
+          comment: "Återställd från version 4711",
+        })}
+      />
+    );
 
-        expect(screen.getByText("Audit.sources.RESTORE")).toBeInTheDocument();
-        expect(screen.getByText("Återställd från version 4711")).toBeInTheDocument();
-        expect(screen.getByText("spexareUpdate")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Audit.sources.RESTORE")).toBeInTheDocument();
+    expect(screen.getByText("Återställd från version 4711")).toBeInTheDocument();
+    expect(screen.getByText("spexareUpdate")).toBeInTheDocument();
+  });
 
-    it("admits when a revision predates origin recording rather than inventing one", () => {
-        render(<RevisionDetailPanel detail={detail({source: null, operation: null, comment: null})}/>);
+  it("admits when a revision predates origin recording rather than inventing one", () => {
+    render(<RevisionDetailPanel detail={detail({ source: null, operation: null, comment: null })} />);
 
-        expect(screen.getByText("Audit.originUnknown")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Audit.originUnknown")).toBeInTheDocument();
+  });
 
-    it("gathers everything changed in the same transaction under the record it belongs to", () => {
-        render(<RevisionDetailPanel detail={detail({
-            entities: [
-                entity(),
-                entity({
-                    type: AuditedType.Address,
-                    entityId: "12",
-                    entityLabel: "Storgatan 1",
-                    changes: [{field: "city", oldValue: "Göteborg", newValue: "Mölndal", binary: false}],
-                }),
-            ],
-        })}/>);
+  it("gathers everything changed in the same transaction under the record it belongs to", () => {
+    render(
+      <RevisionDetailPanel
+        detail={detail({
+          entities: [
+            entity(),
+            entity({
+              type: AuditedType.Address,
+              entityId: "12",
+              entityLabel: "Storgatan 1",
+              changes: [{ field: "city", oldValue: "Göteborg", newValue: "Mölndal", binary: false }],
+            }),
+          ],
+        })}
+      />
+    );
 
-        // One statement of context for the pair, not one per entity.
-        expect(screen.getAllByText(/Audit.partOfEdit/)).toHaveLength(1);
-        expect(screen.getByText("Address")).toBeInTheDocument();
-        expect(screen.getByText("Mölndal")).toBeInTheDocument();
-    });
+    // One statement of context for the pair, not one per entity.
+    expect(screen.getAllByText(/Audit.partOfEdit/)).toHaveLength(1);
+    expect(screen.getByText("Address")).toBeInTheDocument();
+    expect(screen.getByText("Mölndal")).toBeInTheDocument();
+  });
 
-    it("links each changed entity to the tab of its root that shows it", () => {
-        render(<RevisionDetailPanel detail={detail({
-            entities: [entity({type: AuditedType.Membership, entityId: "3", entityLabel: "2024"})],
-        })}/>);
+  it("links each changed entity to the tab of its root that shows it", () => {
+    render(
+      <RevisionDetailPanel
+        detail={detail({
+          entities: [entity({ type: AuditedType.Membership, entityId: "3", entityLabel: "2024" })],
+        })}
+      />
+    );
 
-        expect(screen.getByRole("link", {name: "Membership: Audit.openRecord"}))
-            .toHaveAttribute("href", "/spexare?open=88&tab=memberships");
-    });
+    expect(screen.getByRole("link", { name: "Membership: Audit.openRecord" })).toHaveAttribute(
+      "href",
+      "/spexare?open=88&tab=memberships"
+    );
+  });
 
-    it("offers no link for a record that no longer exists", () => {
-        render(<RevisionDetailPanel detail={detail({
-            entities: [entity({revisionType: RevisionType.Del, changes: [], target: null})],
-        })}/>);
+  it("offers no link for a record that no longer exists", () => {
+    render(
+      <RevisionDetailPanel
+        detail={detail({
+          entities: [entity({ revisionType: RevisionType.Del, changes: [], target: null })],
+        })}
+      />
+    );
 
-        expect(screen.queryByRole("link")).not.toBeInTheDocument();
-        expect(screen.getByText("Audit.recordRemoved")).toBeInTheDocument();
-    });
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.getByText("Audit.recordRemoved")).toBeInTheDocument();
+  });
 
-    it("says how much a bulk revision touched when only part of it is listed", () => {
-        render(<RevisionDetailPanel detail={detail({
-            summary: [
-                {type: AuditedType.Spexare, count: 1542, returned: 20},
-                {type: AuditedType.Tag, count: 14, returned: 14},
-            ],
-        })}/>);
+  it("says how much a bulk revision touched when only part of it is listed", () => {
+    render(
+      <RevisionDetailPanel
+        detail={detail({
+          summary: [
+            { type: AuditedType.Spexare, count: 1542, returned: 20 },
+            { type: AuditedType.Tag, count: 14, returned: 14 },
+          ],
+        })}
+      />
+    );
 
-        expect(screen.getByText(/Audit.bulkSummary/)).toBeInTheDocument();
-        expect(screen.getByText(/Audit.typeCount/)).toBeInTheDocument();
-        expect(screen.getByText("14")).toBeInTheDocument();
-    });
+    expect(screen.getByText(/Audit.bulkSummary/)).toBeInTheDocument();
+    expect(screen.getByText(/Audit.typeCount/)).toBeInTheDocument();
+    expect(screen.getByText("14")).toBeInTheDocument();
+  });
 
-    it("keeps an ordinary revision free of bulk counts", () => {
-        render(<RevisionDetailPanel detail={detail({
-            summary: [{type: AuditedType.Spexare, count: 1, returned: 1}],
-        })}/>);
+  it("keeps an ordinary revision free of bulk counts", () => {
+    render(
+      <RevisionDetailPanel
+        detail={detail({
+          summary: [{ type: AuditedType.Spexare, count: 1, returned: 1 }],
+        })}
+      />
+    );
 
-        expect(screen.queryByText(/Audit.bulkSummary/)).not.toBeInTheDocument();
-    });
+    expect(screen.queryByText(/Audit.bulkSummary/)).not.toBeInTheDocument();
+  });
 });

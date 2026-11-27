@@ -1,7 +1,7 @@
 "use client";
 
-import {useCallback, useEffect, useEffectEvent, useRef, useState} from "react";
-import {CursorPage, CursorPageInfo} from "@/types/pagination";
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
+import { CursorPage, CursorPageInfo } from "@/types/pagination";
 
 const EMPTY_ITEMS: never[] = [];
 
@@ -10,35 +10,38 @@ const EMPTY_ITEMS: never[] = [];
  * `initialPageInfo` start the list from a page rendered on the server.
  */
 export type UseInfiniteCursorOptions<TItem> = {
-    fetchPageAction: (args: { after: string | null; pageSize: number }) => Promise<CursorPage<TItem>>;
-    pageSize?: number;
-    rootMargin?: string;
-    getKeyAction?: (item: TItem) => string;
+  fetchPageAction: (args: { after: string | null; pageSize: number }) => Promise<CursorPage<TItem>>;
+  pageSize?: number;
+  rootMargin?: string;
+  getKeyAction?: (item: TItem) => string;
 
-    initialItems?: TItem[];
-    initialPageInfo?: CursorPageInfo;
-    initialAfter?: string | null;
+  initialItems?: TItem[];
+  initialPageInfo?: CursorPageInfo;
+  initialAfter?: string | null;
 };
 
 function useInView<T extends Element>(options?: IntersectionObserverInit) {
-    const ref = useRef<T | null>(null);
-    const [inView, setInView] = useState(false);
-    const {root, rootMargin, threshold} = options ?? {};
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
+  const { root, rootMargin, threshold } = options ?? {};
 
-    useEffect(() => {
-        if (!ref.current) {
-            return;
-        }
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
 
-        const obs = new IntersectionObserver(([entry]) => {
-            setInView(entry.isIntersecting);
-        }, {root, rootMargin, threshold});
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+      },
+      { root, rootMargin, threshold }
+    );
 
-        obs.observe(ref.current);
-        return () => obs.disconnect();
-    }, [root, rootMargin, threshold]);
+    obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [root, rootMargin, threshold]);
 
-    return {ref, inView};
+  return { ref, inView };
 }
 
 /**
@@ -47,143 +50,144 @@ function useInView<T extends Element>(options?: IntersectionObserverInit) {
  * loads again only when forced.
  */
 export function useInfiniteCursor<TItem>(options: UseInfiniteCursorOptions<TItem>) {
-    const {
-        fetchPageAction,
-        pageSize = 10,
-        rootMargin = "600px",
-        getKeyAction,
-        initialItems = EMPTY_ITEMS,
-        initialPageInfo,
-        initialAfter,
-    } = options;
+  const {
+    fetchPageAction,
+    pageSize = 10,
+    rootMargin = "600px",
+    getKeyAction,
+    initialItems = EMPTY_ITEMS,
+    initialPageInfo,
+    initialAfter,
+  } = options;
 
-    const [items, setItems] = useState<TItem[]>(initialItems);
-    const [after, setAfter] = useState<string | null>(
-        initialAfter ?? initialPageInfo?.endCursor ?? null
-    );
-    const [hasNextPage, setHasNextPage] = useState<boolean>(
-        initialPageInfo ? Boolean(initialPageInfo.hasNextPage) : true
-    );
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  const [items, setItems] = useState<TItem[]>(initialItems);
+  const [after, setAfter] = useState<string | null>(initialAfter ?? initialPageInfo?.endCursor ?? null);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(
+    initialPageInfo ? Boolean(initialPageInfo.hasNextPage) : true
+  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const generationRef = useRef(0);
+  const generationRef = useRef(0);
 
-    const initialSignature = [
-        initialItems.length,
-        getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[0]) : "",
-        getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[initialItems.length - 1]) : "",
-        initialAfter ?? "",
-        initialPageInfo?.endCursor ?? "",
-        String(initialPageInfo?.hasNextPage ?? ""),
-    ].join("|");
-    const seededSignatureRef = useRef<string | null>(null);
-    const seed = useEffectEvent(() => {
-        setItems(initialItems);
-        if (initialPageInfo) {
-            setAfter(initialPageInfo.endCursor ?? null);
-            setHasNextPage(Boolean(initialPageInfo.hasNextPage));
-        } else {
-            setAfter(initialAfter ?? null);
-            setHasNextPage(true);
+  const initialSignature = [
+    initialItems.length,
+    getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[0]) : "",
+    getKeyAction && initialItems.length > 0 ? getKeyAction(initialItems[initialItems.length - 1]) : "",
+    initialAfter ?? "",
+    initialPageInfo?.endCursor ?? "",
+    String(initialPageInfo?.hasNextPage ?? ""),
+  ].join("|");
+  const seededSignatureRef = useRef<string | null>(null);
+  const seed = useEffectEvent(() => {
+    setItems(initialItems);
+    if (initialPageInfo) {
+      setAfter(initialPageInfo.endCursor ?? null);
+      setHasNextPage(Boolean(initialPageInfo.hasNextPage));
+    } else {
+      setAfter(initialAfter ?? null);
+      setHasNextPage(true);
+    }
+  });
+
+  useEffect(() => {
+    if (seededSignatureRef.current === initialSignature) {
+      return;
+    }
+    seededSignatureRef.current = initialSignature;
+    generationRef.current += 1;
+    seed();
+  }, [initialSignature]);
+
+  const { ref: sentinelRef, inView } = useInView<HTMLDivElement>({ rootMargin });
+
+  const loadMore = useCallback(
+    async (force = false) => {
+      if (loading || !hasNextPage || (error && !force)) {
+        return;
+      }
+
+      const generation = generationRef.current;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const page = await fetchPageAction({ after, pageSize });
+
+        if (generation !== generationRef.current) {
+          return;
         }
-    });
 
-    useEffect(() => {
-        if (seededSignatureRef.current === initialSignature) {
-            return;
-        }
-        seededSignatureRef.current = initialSignature;
-        generationRef.current += 1;
-        seed();
-    }, [initialSignature]);
+        setItems((prev) => {
+          if (!getKeyAction) {
+            return [...prev, ...page.items];
+          }
 
-    const {ref: sentinelRef, inView} = useInView<HTMLDivElement>({rootMargin});
-
-    const loadMore = useCallback(async (force = false) => {
-        if (loading || !hasNextPage || (error && !force)) {
-            return;
-        }
-
-        const generation = generationRef.current;
-
-        setLoading(true);
-        setError(null);
-
-        try {
-            const page = await fetchPageAction({after, pageSize});
-
-            if (generation !== generationRef.current) {
-                return;
+          const seen = new Set(prev.map(getKeyAction));
+          const merged = [...prev];
+          for (const item of page.items) {
+            const key = getKeyAction(item);
+            if (!seen.has(key)) {
+              seen.add(key);
+              merged.push(item);
             }
+          }
+          return merged;
+        });
 
-            setItems((prev) => {
-                if (!getKeyAction) {
-                    return [...prev, ...page.items];
-                }
-
-                const seen = new Set(prev.map(getKeyAction));
-                const merged = [...prev];
-                for (const item of page.items) {
-                    const key = getKeyAction(item);
-                    if (!seen.has(key)) {
-                        seen.add(key);
-                        merged.push(item);
-                    }
-                }
-                return merged;
-            });
-
-            setHasNextPage(Boolean(page.pageInfo?.hasNextPage));
-            setAfter(page.pageInfo?.endCursor ?? null);
-        } catch (e) {
-            if (generation !== generationRef.current) {
-                return;
-            }
-            setError(e instanceof Error ? e.message : "Failed to load data");
-        } finally {
-            if (generation === generationRef.current) {
-                setLoading(false);
-            }
+        setHasNextPage(Boolean(page.pageInfo?.hasNextPage));
+        setAfter(page.pageInfo?.endCursor ?? null);
+      } catch (e) {
+        if (generation !== generationRef.current) {
+          return;
         }
-    }, [after, fetchPageAction, getKeyAction, hasNextPage, loading, pageSize, error]);
-
-    useEffect(() => {
-        if (items.length === 0 && !loading && error === null && hasNextPage) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            void loadMore();
+        setError(e instanceof Error ? e.message : "Failed to load data");
+      } finally {
+        if (generation === generationRef.current) {
+          setLoading(false);
         }
-    }, [items.length, loading, error, hasNextPage, loadMore]);
+      }
+    },
+    [after, fetchPageAction, getKeyAction, hasNextPage, loading, pageSize, error]
+  );
 
-    useEffect(() => {
-        if (!inView) {
-            return;
-        }
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        void loadMore();
-    }, [inView, loadMore]);
+  useEffect(() => {
+    if (items.length === 0 && !loading && error === null && hasNextPage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void loadMore();
+    }
+  }, [items.length, loading, error, hasNextPage, loadMore]);
 
-    const reset = useCallback(() => {
-        generationRef.current += 1;
-        setItems([]);
-        setAfter(null);
-        setHasNextPage(true);
-        setLoading(false);
-        setError(null);
-    }, []);
+  useEffect(() => {
+    if (!inView) {
+      return;
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadMore();
+  }, [inView, loadMore]);
 
-    const clearError = useCallback(() => {
-        setError(null);
-    }, []);
+  const reset = useCallback(() => {
+    generationRef.current += 1;
+    setItems([]);
+    setAfter(null);
+    setHasNextPage(true);
+    setLoading(false);
+    setError(null);
+  }, []);
 
-    return {
-        items,
-        loading,
-        error,
-        hasNextPage,
-        sentinelRef,
-        loadMore,
-        reset,
-        clearError,
-    };
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  return {
+    items,
+    loading,
+    error,
+    hasNextPage,
+    sentinelRef,
+    loadMore,
+    reset,
+    clearError,
+  };
 }

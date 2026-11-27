@@ -1,47 +1,43 @@
 "use client";
 
-import {useCallback, useMemo, useState} from "react";
-import {GraphEdge, GraphEdgeType, GraphNeighbourhood, GraphNode, GraphNodeType} from "@/gql/schema";
+import { useCallback, useMemo, useState } from "react";
+import { GraphEdge, GraphEdgeType, GraphNeighbourhood, GraphNode, GraphNodeType } from "@/gql/schema";
 
 export type LoadedNode = GraphNode & {
-    expanded?: boolean;
+  expanded?: boolean;
 };
 
 /**
  * Neighbours of a node not shown yet, as a neighbourhood returns only the first of each edge type.
  */
 export type PendingGroup = {
-    nodeId: string;
-    type: GraphNodeType;
-    entityId: string;
-    edge: GraphEdgeType;
-    shown: number;
-    totalCount: number;
+  nodeId: string;
+  type: GraphNodeType;
+  entityId: string;
+  edge: GraphEdgeType;
+  shown: number;
+  totalCount: number;
 };
 
 export type GraphState = {
-    nodes: LoadedNode[];
-    edges: GraphEdge[];
-    pending: PendingGroup[];
+  nodes: LoadedNode[];
+  edges: GraphEdge[];
+  pending: PendingGroup[];
 };
 
-const EMPTY: GraphState = {nodes: [], edges: [], pending: []};
+const EMPTY: GraphState = { nodes: [], edges: [], pending: [] };
 
 /**
  * Whether a node's label or sublabel contains the lower-case term, or the term is empty.
  */
 export function matchesTerm(node: GraphNode, term: string): boolean {
-    return !term
-        || node.label.toLowerCase().includes(term)
-        || (node.sublabel ?? "").toLowerCase().includes(term);
+  return !term || node.label.toLowerCase().includes(term) || (node.sublabel ?? "").toLowerCase().includes(term);
 }
 
 function mergeLabels(existing: string | null | undefined, incoming: string | null | undefined): string | null {
-    const parts = [existing, incoming]
-        .flatMap((label) => (label ?? "").split("; "))
-        .filter((part) => part !== "");
+  const parts = [existing, incoming].flatMap((label) => (label ?? "").split("; ")).filter((part) => part !== "");
 
-    return parts.length ? [...new Set(parts)].join("; ") : null;
+  return parts.length ? [...new Set(parts)].join("; ") : null;
 }
 
 /**
@@ -49,124 +45,124 @@ function mergeLabels(existing: string | null | undefined, incoming: string | nul
  * groups with more neighbours than returned become pending.
  */
 export function mergeNeighbourhood(state: GraphState, neighbourhood: GraphNeighbourhood): GraphState {
-    const nodes = new Map(state.nodes.map((node) => [node.id, node]));
-    const edges = new Map(state.edges.map((edge) => [edge.id, edge]));
+  const nodes = new Map(state.nodes.map((node) => [node.id, node]));
+  const edges = new Map(state.edges.map((edge) => [edge.id, edge]));
 
-    const origin = neighbourhood.origin;
+  const origin = neighbourhood.origin;
 
-    nodes.set(origin.id, {...nodes.get(origin.id), ...origin, expanded: true});
+  nodes.set(origin.id, { ...nodes.get(origin.id), ...origin, expanded: true });
 
-    for (const group of neighbourhood.groups ?? []) {
-        for (const node of group.nodes ?? []) {
-            const existing = nodes.get(node.id);
+  for (const group of neighbourhood.groups ?? []) {
+    for (const node of group.nodes ?? []) {
+      const existing = nodes.get(node.id);
 
-            nodes.set(node.id, {...node, expanded: existing?.expanded ?? false});
-        }
-        for (const edge of group.edges ?? []) {
-            edges.set(edge.id, {...edge, label: mergeLabels(edges.get(edge.id)?.label, edge.label)});
-        }
+      nodes.set(node.id, { ...node, expanded: existing?.expanded ?? false });
     }
+    for (const edge of group.edges ?? []) {
+      edges.set(edge.id, { ...edge, label: mergeLabels(edges.get(edge.id)?.label, edge.label) });
+    }
+  }
 
-    const pending = (neighbourhood.groups ?? [])
-        .filter((group) => group.totalCount > (group.nodes ?? []).length)
-        .map((group) => ({
-            nodeId: origin.id,
-            type: origin.type,
-            entityId: origin.entityId as string,
-            edge: group.type,
-            shown: (group.nodes ?? []).length,
-            totalCount: group.totalCount,
-        }));
+  const pending = (neighbourhood.groups ?? [])
+    .filter((group) => group.totalCount > (group.nodes ?? []).length)
+    .map((group) => ({
+      nodeId: origin.id,
+      type: origin.type,
+      entityId: origin.entityId as string,
+      edge: group.type,
+      shown: (group.nodes ?? []).length,
+      totalCount: group.totalCount,
+    }));
 
-    return {
-        nodes: [...nodes.values()],
-        edges: [...edges.values()],
-        pending: [
-            ...state.pending.filter((p) => p.nodeId !== origin.id),
-            ...pending,
-        ],
-    };
+  return {
+    nodes: [...nodes.values()],
+    edges: [...edges.values()],
+    pending: [...state.pending.filter((p) => p.nodeId !== origin.id), ...pending],
+  };
 }
 
 /**
  * Adds more neighbours of a node along one edge type, counting them off its pending group.
  */
 export function mergeNodes(state: GraphState, origin: LoadedNode, edge: GraphEdgeType, added: GraphNode[]): GraphState {
-    const nodes = new Map(state.nodes.map((node) => [node.id, node]));
-    const edges = new Map(state.edges.map((e) => [e.id, e]));
+  const nodes = new Map(state.nodes.map((node) => [node.id, node]));
+  const edges = new Map(state.edges.map((e) => [e.id, e]));
 
-    for (const node of added) {
-        const existing = nodes.get(node.id);
+  for (const node of added) {
+    const existing = nodes.get(node.id);
 
-        const id = `${node.id}->${origin.id}:${edge}`;
+    const id = `${node.id}->${origin.id}:${edge}`;
 
-        nodes.set(node.id, {...node, expanded: existing?.expanded ?? false});
-        edges.set(id, {
-            id,
-            source: node.id,
-            target: origin.id,
-            type: edge,
-            label: edges.get(id)?.label
-                ?? (edge === GraphEdgeType.Participation && origin.type === GraphNodeType.Spex ? origin.sublabel : null)
-                ?? null,
-        } as GraphEdge);
-    }
+    nodes.set(node.id, { ...node, expanded: existing?.expanded ?? false });
+    edges.set(id, {
+      id,
+      source: node.id,
+      target: origin.id,
+      type: edge,
+      label:
+        edges.get(id)?.label ??
+        (edge === GraphEdgeType.Participation && origin.type === GraphNodeType.Spex ? origin.sublabel : null) ??
+        null,
+    } as GraphEdge);
+  }
 
-    return {
-        nodes: [...nodes.values()],
-        edges: [...edges.values()],
-        pending: state.pending.map((p) => p.nodeId === origin.id && p.edge === edge
-            ? {...p, shown: p.shown + added.length}
-            : p),
-    };
+  return {
+    nodes: [...nodes.values()],
+    edges: [...edges.values()],
+    pending: state.pending.map((p) =>
+      p.nodeId === origin.id && p.edge === edge ? { ...p, shown: p.shown + added.length } : p
+    ),
+  };
 }
 
 /**
  * Folds a node back: removes the neighbours that hang only on it and its pending groups.
  */
 export function collapse(state: GraphState, id: string): GraphState {
-    const degree = new Map<string, number>();
+  const degree = new Map<string, number>();
 
-    for (const edge of state.edges) {
-        degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1);
-        degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1);
-    }
+  for (const edge of state.edges) {
+    degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1);
+    degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1);
+  }
 
-    const orphaned = new Set(state.edges
-        .filter((edge) => edge.source === id || edge.target === id)
-        .map((edge) => (edge.source === id ? edge.target : edge.source))
-        .filter((neighbour) => neighbour !== id && (degree.get(neighbour) ?? 0) <= 1));
+  const orphaned = new Set(
+    state.edges
+      .filter((edge) => edge.source === id || edge.target === id)
+      .map((edge) => (edge.source === id ? edge.target : edge.source))
+      .filter((neighbour) => neighbour !== id && (degree.get(neighbour) ?? 0) <= 1)
+  );
 
-    return {
-        nodes: state.nodes
-            .filter((node) => !orphaned.has(node.id))
-            .map((node) => (node.id === id ? {...node, expanded: false} : node)),
-        edges: state.edges.filter((edge) => !orphaned.has(edge.source) && !orphaned.has(edge.target)),
-        pending: state.pending.filter((group) => group.nodeId !== id),
-    };
+  return {
+    nodes: state.nodes
+      .filter((node) => !orphaned.has(node.id))
+      .map((node) => (node.id === id ? { ...node, expanded: false } : node)),
+    edges: state.edges.filter((edge) => !orphaned.has(edge.source) && !orphaned.has(edge.target)),
+    pending: state.pending.filter((group) => group.nodeId !== id),
+  };
 }
 
 /**
  * The nodes, edges and pending groups of the explored graph, with the functions that grow and shrink it.
  */
 export function useGraphState() {
-    const [state, setState] = useState<GraphState>(EMPTY);
+  const [state, setState] = useState<GraphState>(EMPTY);
 
-    const absorb = useCallback((neighbourhood: GraphNeighbourhood) => {
-        setState((previous) => mergeNeighbourhood(previous, neighbourhood));
-    }, []);
+  const absorb = useCallback((neighbourhood: GraphNeighbourhood) => {
+    setState((previous) => mergeNeighbourhood(previous, neighbourhood));
+  }, []);
 
-    const collapseNode = useCallback((id: string) => {
-        setState((previous) => collapse(previous, id));
-    }, []);
+  const collapseNode = useCallback((id: string) => {
+    setState((previous) => collapse(previous, id));
+  }, []);
 
-    const absorbNodes = useCallback((origin: LoadedNode, edge: GraphEdgeType, added: GraphNode[]) => {
-        setState((previous) => mergeNodes(previous, origin, edge, added));
-    }, []);
+  const absorbNodes = useCallback((origin: LoadedNode, edge: GraphEdgeType, added: GraphNode[]) => {
+    setState((previous) => mergeNodes(previous, origin, edge, added));
+  }, []);
 
-    const reset = useCallback(() => setState(EMPTY), []);
+  const reset = useCallback(() => setState(EMPTY), []);
 
-    const byId = useMemo(() => new Map(state.nodes.map((node) => [node.id, node])), [state.nodes]);
+  const byId = useMemo(() => new Map(state.nodes.map((node) => [node.id, node])), [state.nodes]);
 
-    return {state, byId, absorb, absorbNodes, collapseNode, reset};
+  return { state, byId, absorb, absorbNodes, collapseNode, reset };
 }

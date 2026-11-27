@@ -9,5 +9,6 @@
     "prettier-plugin-tailwindcss"
   ],
   "htmlWhitespaceSensitivity": "css",
-  "singleAttributePerLine": true
+  "singleAttributePerLine": true,
+  "embeddedLanguageFormatting": "off"
 }

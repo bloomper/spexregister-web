@@ -1,9 +1,9 @@
 import "server-only";
 
-import {print} from "graphql";
-import type {TypedDocumentNode} from "@graphql-typed-document-node/core";
-import {Country, Type} from "@/gql/schema";
-import {graphql} from "@/gql";
+import { print } from "graphql";
+import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import { Country, Type } from "@/gql/schema";
+import { graphql } from "@/gql";
 
 const CountriesQuery = graphql(`
     query Countries {
@@ -28,39 +28,42 @@ const TypesQuery = graphql(`
 /**
  * Runs a query without a user, for settings that are the same for everyone and can be cached.
  */
-async function fetchStatic<TData>(query: TypedDocumentNode<TData, Record<string, never>>, locale: string): Promise<TData> {
-    const response = await fetch(process.env.API_GRAPHQL_ENDPOINT || "", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept-Language": locale,
-        },
-        body: JSON.stringify({query: print(query)}),
-    });
+async function fetchStatic<TData>(
+  query: TypedDocumentNode<TData, Record<string, never>>,
+  locale: string
+): Promise<TData> {
+  const response = await fetch(process.env.API_GRAPHQL_ENDPOINT || "", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": locale,
+    },
+    body: JSON.stringify({ query: print(query) }),
+  });
 
-    const result = await response.json();
+  const result = await response.json();
 
-    if (result.errors) {
-        throw new Error(result.errors[0].message);
-    }
+  if (result.errors) {
+    throw new Error(result.errors[0].message);
+  }
 
-    return result.data;
+  return result.data;
 }
 
 /**
  * The countries labelled in the locale, cached across requests.
  */
 export async function getCountries(locale: string): Promise<Country[]> {
-    "use cache";
-    const data = await fetchStatic(CountriesQuery, locale);
-    return (data.countries ?? []) as Country[];
+  "use cache";
+  const data = await fetchStatic(CountriesQuery, locale);
+  return (data.countries ?? []) as Country[];
 }
 
 /**
  * The address, consent, membership, vocal and toggle types labelled in the locale, cached across requests.
  */
 export async function getTypes(locale: string): Promise<Type[]> {
-    "use cache";
-    const data = await fetchStatic(TypesQuery, locale);
-    return (data.types ?? []) as Type[];
+  "use cache";
+  const data = await fetchStatic(TypesQuery, locale);
+  return (data.types ?? []) as Type[];
 }

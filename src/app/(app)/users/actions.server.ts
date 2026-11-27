@@ -1,212 +1,218 @@
 "use server";
 
-import {Policies} from "@/utils/policy.server";
-import {withPolicyAction} from "@/utils/route.server";
-import {deleteEach} from "@/utils/utils.server";
+import { Policies } from "@/utils/policy.server";
+import { withPolicyAction } from "@/utils/route.server";
+import { deleteEach } from "@/utils/utils.server";
 import {
-    addAuthorities,
-    addSpexare,
-    create,
-    del,
-    exp,
-    get,
-    getAuthorities,
-    getPaged,
-    getStates,
-    imp,
-    removeAuthorities,
-    removeSpexare,
-    setSpexareAutoLink,
-    revisions,
-    setState,
-    update,
-    userFormSchema
+  addAuthorities,
+  addSpexare,
+  create,
+  del,
+  exp,
+  get,
+  getAuthorities,
+  getPaged,
+  getStates,
+  imp,
+  removeAuthorities,
+  removeSpexare,
+  setSpexareAutoLink,
+  revisions,
+  setState,
+  update,
+  userFormSchema,
 } from "@/lib/user";
-import {getPaged as getSpexarePaged} from "@/lib/spexare";
-import {getRestorePreview, restore} from "@/lib/audit/audit.server";
-import {revalidateTag} from "next/cache";
-import {AuditedType, ImpexType, SortDirection} from "@/gql/schema";
-import {textFilter} from "@/utils/filter";
+import { getPaged as getSpexarePaged } from "@/lib/spexare";
+import { getRestorePreview, restore } from "@/lib/audit/audit.server";
+import { revalidateTag } from "next/cache";
+import { AuditedType, ImpexType, SortDirection } from "@/gql/schema";
+import { textFilter } from "@/utils/filter";
 
 export async function getPageAction(args: {
-    first?: number;
-    last?: number;
-    after?: string | null;
-    before?: string | null;
-    sort?: string[];
-    direction?: SortDirection;
-    filter?: string;
-    full?: boolean | string;
+  first?: number;
+  last?: number;
+  after?: string | null;
+  before?: string | null;
+  sort?: string[];
+  direction?: SortDirection;
+  filter?: string;
+  full?: boolean | string;
 }) {
-    return withPolicyAction(Policies.user.requireRead, async () => {
-        return getPaged({
-            ...args,
-            full: args.full === true || args.full === "true"
-        });
+  return withPolicyAction(Policies.user.requireRead, async () => {
+    return getPaged({
+      ...args,
+      full: args.full === true || args.full === "true",
     });
+  });
 }
 
 export async function getAction(id: string) {
-    return withPolicyAction(Policies.user.requireRead, async () => {
-        return get(id);
-    });
+  return withPolicyAction(Policies.user.requireRead, async () => {
+    return get(id);
+  });
 }
 
 export async function createAction(data: unknown) {
-    return withPolicyAction(Policies.user.requireCreate, async () => {
-        const validated = userFormSchema.parse(data);
-        const {authorityIds, stateId, spexareId, spexareAutoLink, ...createInput} = validated;
-        void authorityIds;
-        void stateId;
-        void spexareId;
-        void spexareAutoLink;
-        const result = await create(createInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireCreate, async () => {
+    const validated = userFormSchema.parse(data);
+    const { authorityIds, stateId, spexareId, spexareAutoLink, ...createInput } = validated;
+    void authorityIds;
+    void stateId;
+    void spexareId;
+    void spexareAutoLink;
+    const result = await create(createInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function updateAction(id: string, data: unknown) {
-    return withPolicyAction(Policies.user.requireUpdate, async () => {
-        const validated = userFormSchema.parse(data);
-        const {authorityIds, stateId, spexareId, spexareAutoLink, ...updateInput} = validated;
-        void authorityIds;
-        void stateId;
-        void spexareId;
-        void spexareAutoLink;
-        const result = await update(id, updateInput);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireUpdate, async () => {
+    const validated = userFormSchema.parse(data);
+    const { authorityIds, stateId, spexareId, spexareAutoLink, ...updateInput } = validated;
+    void authorityIds;
+    void stateId;
+    void spexareId;
+    void spexareAutoLink;
+    const result = await update(id, updateInput);
+    revalidate();
+    return result;
+  });
 }
 
 export async function deleteAction(id: string) {
-    return withPolicyAction(Policies.user.requireDelete, async () => {
-        const result = await del(id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireDelete, async () => {
+    const result = await del(id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function bulkDeleteAction(ids: string[]) {
-    await withPolicyAction(Policies.user.requireDelete, async () => {
-        try {
-            await deleteEach(ids, del);
-        } finally {
-            revalidate();
-        }
-    });
+  await withPolicyAction(Policies.user.requireDelete, async () => {
+    try {
+      await deleteEach(ids, del);
+    } finally {
+      revalidate();
+    }
+  });
 }
 
 export async function exportAction(ids: string[] | null, filter: string | null, type: ImpexType) {
-    return withPolicyAction(Policies.user.requireExport, async () => {
-        return await exp(ids, filter, type);
-    });
+  return withPolicyAction(Policies.user.requireExport, async () => {
+    return await exp(ids, filter, type);
+  });
 }
 
 export async function importAction(type: ImpexType, file: File) {
-    return withPolicyAction(Policies.user.requireImport, async () => {
-        const result = await imp(type, file);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireImport, async () => {
+    const result = await imp(type, file);
+    revalidate();
+    return result;
+  });
 }
 
 export async function getAuthoritiesAction() {
-    return withPolicyAction(Policies.user.requireRead, async () => {
-        return getAuthorities();
-    });
+  return withPolicyAction(Policies.user.requireRead, async () => {
+    return getAuthorities();
+  });
 }
 
 export async function addAuthoritiesAction(userId: string, ids: string[]) {
-    return withPolicyAction(Policies.user.requireUpdate, async () => {
-        const result = await addAuthorities(userId, ids);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireUpdate, async () => {
+    const result = await addAuthorities(userId, ids);
+    revalidate();
+    return result;
+  });
 }
 
 export async function removeAuthoritiesAction(userId: string, ids: string[]) {
-    return withPolicyAction(Policies.user.requireUpdate, async () => {
-        const result = await removeAuthorities(userId, ids);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireUpdate, async () => {
+    const result = await removeAuthorities(userId, ids);
+    revalidate();
+    return result;
+  });
 }
 
 export async function getStatesAction() {
-    return withPolicyAction(Policies.user.requireRead, async () => {
-        return getStates();
-    });
+  return withPolicyAction(Policies.user.requireRead, async () => {
+    return getStates();
+  });
 }
 
 export async function setStateAction(userId: string, id: string) {
-    return withPolicyAction(Policies.user.requireUpdate, async () => {
-        const result = await setState(userId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireUpdate, async () => {
+    const result = await setState(userId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function addSpexareAction(userId: string, id: string) {
-    return withPolicyAction(Policies.user.requireUpdate, async () => {
-        const result = await addSpexare(userId, id);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireUpdate, async () => {
+    const result = await addSpexare(userId, id);
+    revalidate();
+    return result;
+  });
 }
 
 export async function removeSpexareAction(userId: string) {
-    return withPolicyAction(Policies.user.requireUpdate, async () => {
-        const result = await removeSpexare(userId);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireUpdate, async () => {
+    const result = await removeSpexare(userId);
+    revalidate();
+    return result;
+  });
 }
 
 export async function searchSpexareAction(query: string) {
-    return withPolicyAction(Policies.user.requireRead, async () => {
-        const nameFilter = textFilter(["firstName", "lastName", "nickName"], query);
-        if (!nameFilter) {
-            return [];
-        }
-        const result = await getSpexarePaged({
-            first: 10,
-            filter: `${nameFilter} AND user:NULL`,
-            full: false
-        });
-        return result.items;
+  return withPolicyAction(Policies.user.requireRead, async () => {
+    const nameFilter = textFilter(["firstName", "lastName", "nickName"], query);
+    if (!nameFilter) {
+      return [];
+    }
+    const result = await getSpexarePaged({
+      first: 10,
+      filter: `${nameFilter} AND user:NULL`,
+      full: false,
     });
+    return result.items;
+  });
 }
 
 export async function getRevisionsAction(id: string) {
-    return withPolicyAction(Policies.user.requireRead, async () => {
-        return revisions(id);
-    });
+  return withPolicyAction(Policies.user.requireRead, async () => {
+    return revisions(id);
+  });
 }
 
 export async function getRestorePreviewAction(type: AuditedType, id: string, revision: number, cascade: boolean) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        return getRestorePreview(type, id, revision, cascade);
-    });
+  return withPolicyAction(Policies.audit.requireRestore, async () => {
+    return getRestorePreview(type, id, revision, cascade);
+  });
 }
 
-export async function restoreRevisionAction(type: AuditedType, id: string, revision: number, cascade: boolean, reason?: string) {
-    return withPolicyAction(Policies.audit.requireRestore, async () => {
-        const result = await restore(type, id, revision, cascade, reason);
-        revalidate();
-        return result;
-    });
+export async function restoreRevisionAction(
+  type: AuditedType,
+  id: string,
+  revision: number,
+  cascade: boolean,
+  reason?: string
+) {
+  return withPolicyAction(Policies.audit.requireRestore, async () => {
+    const result = await restore(type, id, revision, cascade, reason);
+    revalidate();
+    return result;
+  });
 }
 
 function revalidate() {
-    revalidateTag("user", "max");
+  revalidateTag("user", "max");
 }
 
 export async function setSpexareAutoLinkAction(userId: string, enabled: boolean) {
-    return withPolicyAction(Policies.user.requireUpdate, async () => {
-        const result = await setSpexareAutoLink(userId, enabled);
-        revalidate();
-        return result;
-    });
+  return withPolicyAction(Policies.user.requireUpdate, async () => {
+    const result = await setSpexareAutoLink(userId, enabled);
+    revalidate();
+    return result;
+  });
 }

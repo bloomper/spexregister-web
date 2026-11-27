@@ -1,48 +1,47 @@
 import "server-only";
 
-import {PageInfo} from "@/gql/schema";
-import {CursorPage} from "@/types/pagination";
+import { PageInfo } from "@/gql/schema";
+import { CursorPage } from "@/types/pagination";
 
 /**
  * A GraphQL connection as a page of items, without the empty edges.
  */
 export function mapConnection<T, E extends { cursor: string; node: T }>(
-    connection: { edges: (E | null | undefined)[]; pageInfo: PageInfo; totalCount?: number | null } | null | undefined
+  connection: { edges: (E | null | undefined)[]; pageInfo: PageInfo; totalCount?: number | null } | null | undefined
 ): CursorPage<T> & { edges: E[] } {
-    const edges = (connection?.edges ?? []).filter((e): e is E => Boolean(e?.cursor && e?.node));
+  const edges = (connection?.edges ?? []).filter((e): e is E => Boolean(e?.cursor && e?.node));
 
-    return {
-        items: edges.map(e => e.node),
-        edges: edges,
-        pageInfo: {
-            hasNextPage: Boolean(connection?.pageInfo?.hasNextPage),
-            hasPreviousPage: Boolean(connection?.pageInfo?.hasPreviousPage),
-            startCursor: connection?.pageInfo?.startCursor ?? null,
-            endCursor: connection?.pageInfo?.endCursor ?? null,
-        },
-        totalCount: connection?.totalCount ?? 0,
-    };
+  return {
+    items: edges.map((e) => e.node),
+    edges: edges,
+    pageInfo: {
+      hasNextPage: Boolean(connection?.pageInfo?.hasNextPage),
+      hasPreviousPage: Boolean(connection?.pageInfo?.hasPreviousPage),
+      startCursor: connection?.pageInfo?.startCursor ?? null,
+      endCursor: connection?.pageInfo?.endCursor ?? null,
+    },
+    totalCount: connection?.totalCount ?? 0,
+  };
 }
 
 function parseSupportedLocales(raw: string | undefined): Set<string> {
-    const items = (raw ?? "")
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+  const items = (raw ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 
-    return new Set(items.length > 0 ? items : ["sv", "en"]);
+  return new Set(items.length > 0 ? items : ["sv", "en"]);
 }
 
 const SUPPORTED_LOCALES = parseSupportedLocales(process.env.SUPPORTED_LOCALES);
-const DEFAULT_LOCALE = process.env.DEFAULT_LOCALE && SUPPORTED_LOCALES.has(process.env.DEFAULT_LOCALE)
-    ? process.env.DEFAULT_LOCALE
-    : "sv";
+const DEFAULT_LOCALE =
+  process.env.DEFAULT_LOCALE && SUPPORTED_LOCALES.has(process.env.DEFAULT_LOCALE) ? process.env.DEFAULT_LOCALE : "sv";
 
 /**
  * The locale when it is supported, or else the default locale.
  */
 export function normalizeLocale(input: string | undefined): string {
-    return input && SUPPORTED_LOCALES.has(input) ? input : DEFAULT_LOCALE;
+  return input && SUPPORTED_LOCALES.has(input) ? input : DEFAULT_LOCALE;
 }
 
 /**
@@ -50,43 +49,42 @@ export function normalizeLocale(input: string | undefined): string {
  * that the proxies cannot be used to fetch anything else.
  */
 export function resolveBackendUrl(url: string, baseUrl: string | undefined): URL | null {
-    if (!baseUrl) {
-        return null;
+  if (!baseUrl) {
+    return null;
+  }
+
+  try {
+    const base = new URL(baseUrl);
+    const basePath = base.pathname.replace(/\/$/, "");
+    const target =
+      url.startsWith("/") && !url.startsWith("//") ? new URL(`${basePath}${url}`, base.origin) : new URL(url);
+
+    if (target.origin !== base.origin || !target.pathname.startsWith(`${basePath}/api/`)) {
+      return null;
     }
 
-    try {
-        const base = new URL(baseUrl);
-        const basePath = base.pathname.replace(/\/$/, "");
-        const target = url.startsWith("/") && !url.startsWith("//")
-            ? new URL(`${basePath}${url}`, base.origin)
-            : new URL(url);
-
-        if (target.origin !== base.origin || !target.pathname.startsWith(`${basePath}/api/`)) {
-            return null;
-        }
-
-        return target;
-    } catch {
-        return null;
-    }
+    return target;
+  } catch {
+    return null;
+  }
 }
 
 /**
  * Deletes each id in turn, going on past failures, and throws afterwards naming those that failed.
  */
 export async function deleteEach(ids: string[], del: (id: string) => Promise<unknown>): Promise<void> {
-    const failed: string[] = [];
+  const failed: string[] = [];
 
-    for (const id of ids) {
-        try {
-            await del(id);
-        } catch (error) {
-            console.error(`Could not delete ${id}`, error);
-            failed.push(id);
-        }
+  for (const id of ids) {
+    try {
+      await del(id);
+    } catch (error) {
+      console.error(`Could not delete ${id}`, error);
+      failed.push(id);
     }
+  }
 
-    if (failed.length > 0) {
-        throw new Error(`Could not delete ${failed.length} of ${ids.length}: ${failed.join(", ")}`);
-    }
+  if (failed.length > 0) {
+    throw new Error(`Could not delete ${failed.length} of ${ids.length}: ${failed.join(", ")}`);
+  }
 }
