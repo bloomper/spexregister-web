@@ -5,8 +5,10 @@
   "printWidth": 120,
   "tabWidth": 2,
   "useTabs": false,
-  "plugins": ["prettier-plugin-tailwindcss"],
+  "plugins": [
+    "prettier-plugin-tailwindcss"
+  ],
   "htmlWhitespaceSensitivity": "css",
   "singleAttributePerLine": true,
-  "embeddedLanguageFormatting": "off",
+  "embeddedLanguageFormatting": "off"
 }
