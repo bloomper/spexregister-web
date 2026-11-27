@@ -20,10 +20,10 @@ export async function getMaintenanceJobsAction() {
 }
 
 /**
- * Pulls from the sources of copied data now.
+ * Pulls from a source of copied data now.
  */
-export async function runSyncAction(full: boolean) {
-    return withPolicyAction(Policies.admin.requireAdmin, async () => runSync(full));
+export async function runSyncAction(source: string, full: boolean) {
+    return withPolicyAction(Policies.admin.requireAdmin, async () => runSync(source, full));
 }
 
 /**

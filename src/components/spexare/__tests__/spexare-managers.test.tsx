@@ -7,7 +7,8 @@ import {AddressManager} from "@/components/spexare/address/address-manager.clien
 import {MembershipManager} from "@/components/spexare/membership/membership-manager.client";
 import {TaggingManager} from "@/components/spexare/tagging/tagging-manager.client";
 import * as actions from "@/app/(app)/spexare/actions.server";
-import {type Address, type Consent, type Membership, type Tag, type Toggle, type Type, TypeType} from "@/gql/schema";
+import {type Address, type Consent, type Membership, MembershipKind, type Tag, type Toggle, type Type, TypeType} from "@/gql/schema";
+import {MedlemskapProvider} from "@/components/medlemskap-provider.client";
 import {toast} from "sonner";
 
 const refresh = vi.hoisted(() => vi.fn());
@@ -166,6 +167,47 @@ describe("MembershipManager", () => {
         await userEvent.click(within(row).getAllByRole("button").at(-1)!);
 
         await waitFor(() => expect(actions.deleteMembershipAction).toHaveBeenCalledWith("s1", "FGV", "m1"));
+    });
+});
+
+describe("MembershipManager with internal memberships", () => {
+    const fgv = {...type("FGV", TypeType.Membership, "FGV"), membershipKind: MembershipKind.Internal} as Type;
+    const cing = {...type("CING", TypeType.Membership, "CING"), membershipKind: MembershipKind.External} as Type;
+    const memberships = [
+        {id: "m1", type: fgv, year: "2024", lifetime: false},
+        {id: "m2", type: fgv, year: "2019", lifetime: true},
+        {id: "m3", type: cing, year: "2023", lifetime: false},
+    ] as unknown as Membership[];
+
+    it("shows FGV read-only, with a life membership from its first year, and lets only external ones be deleted", async () => {
+        render(<MembershipManager spexareId="s1" initialMemberships={memberships} types={[fgv, cing]}/>);
+
+        expect(screen.getByText('Medlemskap.lifetimeFrom:{"year":"2019"}')).toBeInTheDocument();
+        expect(screen.getByText("Medlemskap.kept")).toBeInTheDocument();
+        expect(within(rowOf("2024")).queryByRole("button")).toBeNull();
+        expect(within(rowOf("2023")).getAllByRole("button")).toHaveLength(1);
+    });
+
+    it("links to the member in Medlemskap only for those who manage members there", () => {
+        const {rerender} = render(
+            <MedlemskapProvider medlemskap={{url: "https://membership.example.org", canManage: true}}>
+                <MembershipManager spexareId="s1" initialMemberships={memberships} types={[fgv, cing]}/>
+            </MedlemskapProvider>);
+
+        expect(screen.getAllByText("Medlemskap.edit")[0].closest("a")).toHaveAttribute("href", "https://membership.example.org/members/s1");
+
+        rerender(
+            <MedlemskapProvider medlemskap={{url: "https://membership.example.org", canManage: false}}>
+                <MembershipManager spexareId="s1" initialMemberships={memberships} types={[fgv, cing]}/>
+            </MedlemskapProvider>);
+
+        expect(screen.queryByText("Medlemskap.edit")).toBeNull();
+    });
+
+    it("offers only external types when adding", async () => {
+        render(<MembershipManager spexareId="s1" initialMemberships={[]} types={[fgv]}/>);
+
+        expect(screen.queryByRole("button", {name: "Common.add"})).toBeNull();
     });
 });
 

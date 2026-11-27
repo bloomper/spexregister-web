@@ -49,9 +49,13 @@
       "heading": "Base data from other applications",
       "title": "From {source}",
       "sources": {
-        "spexipedia": "Spexipedia"
+        "spexipedia": "Spexipedia",
+        "medlemskap": "Medlemskap"
       },
-      "description": "Spex, revivals, categories, tasks and characters are maintained in Spexipedia. Spexregister keeps a copy that picks up the changes when Spexipedia announces them and every five minutes.",
+      "description": {
+        "spexipedia": "Spex, revivals, categories, tasks and characters are maintained in Spexipedia. Spexregister keeps a copy that picks up the changes when Spexipedia announces them and every five minutes.",
+        "medlemskap": "FGV memberships are kept in Medlemskap. Spexregister keeps a copy that picks up the changes when Medlemskap announces them and every five minutes."
+      },
       "stale": "Not reached for an hour",
       "lastPulled": "Last pulled",
       "lastSuccess": "Last success",
@@ -422,7 +426,8 @@
     "spexify": "Spexify",
     "spexgram": "Spexgram",
     "archive": "Spexarkiv",
-    "spexipedia": "Spexipedia"
+    "spexipedia": "Spexipedia",
+    "membership": "Medlemskap"
   },
   "Home": {
     "heading": "Home",
@@ -837,5 +842,11 @@
     "spexareAutoLink": "Link automatically by email",
     "spexareAutoLinkDescription": "Without a spexare, the user is linked to the only spexare with the same verified email address. Turned off when a link is removed by hand.",
     "state": "State"
+  },
+  "Medlemskap": {
+    "lifetimeFrom": "For life from {year}",
+    "edit": "Edit in Medlemskap",
+    "show": "Show in Medlemskap",
+    "kept": "FGV memberships are kept in Medlemskap and cannot be changed here."
   }
 }

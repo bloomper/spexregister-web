@@ -8,6 +8,7 @@ export const MembershipSummary = graphql(`
     fragment MembershipSummary on Membership {
         id
         year
+        lifetime
         type {
             id
             label

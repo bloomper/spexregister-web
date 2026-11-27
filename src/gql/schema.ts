@@ -566,7 +566,37 @@ export type MaintenanceJobStatus = {
   schedule?: Maybe<Scalars['String']['output']>;
 };
 
-/** Membership of an association in one year. */
+export type MedlemskapMembership = {
+  __typename?: 'MedlemskapMembership';
+  id: Scalars['ID']['output'];
+  lifetime: Scalars['Boolean']['output'];
+  spexareId: Scalars['ID']['output'];
+  type: Scalars['String']['output'];
+  year: Scalars['Int']['output'];
+};
+
+export type MedlemskapPostalAddress = {
+  __typename?: 'MedlemskapPostalAddress';
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  streetAddress?: Maybe<Scalars['String']['output']>;
+};
+
+export type MedlemskapSpexare = {
+  __typename?: 'MedlemskapSpexare';
+  deceased: Scalars['Boolean']['output'];
+  /** The first email address found, home addresses first. */
+  email?: Maybe<Scalars['String']['output']>;
+  firstName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  lastName: Scalars['String']['output'];
+  nickname?: Maybe<Scalars['String']['output']>;
+  /** The first postal address found, home addresses first. */
+  postalAddress?: Maybe<MedlemskapPostalAddress>;
+};
+
+/** Membership of an association in one year. Internal memberships (FGV) are a copy of Medlemskap's and cannot be changed here. */
 export type Membership = {
   __typename?: 'Membership';
   createdAt: Scalars['Instant']['output'];
@@ -574,6 +604,8 @@ export type Membership = {
   id: Scalars['ID']['output'];
   lastModifiedAt?: Maybe<Scalars['Instant']['output']>;
   lastModifiedBy?: Maybe<Scalars['String']['output']>;
+  /** A life membership counts in year and every year after it. */
+  lifetime: Scalars['Boolean']['output'];
   type: Type;
   year: Scalars['Year']['output'];
 };
@@ -594,6 +626,12 @@ export type MembershipEdge = {
   cursor: Scalars['String']['output'];
   node: Membership;
 };
+
+/** Whose memberships of a type are: Medlemskap's (a read-only copy here) or kept here. */
+export enum MembershipKind {
+  External = 'EXTERNAL',
+  Internal = 'INTERNAL'
+}
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -634,9 +672,11 @@ export type Mutation = {
   jobDelete?: Maybe<Scalars['Void']['output']>;
   /** ADMIN. Starts the job in the background, as its schedule would. False when it is already running. */
   maintenanceJobRun: Scalars['Boolean']['output'];
+  /** MEMBERSHIP. Links a Keycloak user to a spexare that nobody else is linked to; replaces the user's earlier link. */
+  medlemskapLinkUser: MedlemskapSpexare;
   /**
-   * Every role, with WRITE on the spexare. typeId is a MEMBERSHIP type such as FGV; fails when the spexare already is a
-   * member that year.
+   * Every role, with WRITE on the spexare. typeId is an external MEMBERSHIP type such as CING; internal types such as FGV
+   * are refused, and the spexare cannot be a member twice in a year.
    */
   membershipCreate?: Maybe<Membership>;
   /** ADMIN, EDITOR or USER with WRITE on the spexare. */
@@ -706,8 +746,9 @@ export type Mutation = {
    */
   spexareUpdate?: Maybe<Spexare>;
   /**
-   * ADMIN. Pulls Spexipedia's change feed now and waits for it; with full, from the start, reporting the records here that
-   * Spexipedia no longer lists (they are never deleted). Null when a pull is already running.
+   * ADMIN. Pulls a source's change feed now (source spexipedia, the default, or medlemskap) and waits for it; with full,
+   * from the start, reporting the records here that Spexipedia no longer lists (they are never deleted). Medlemskap's
+   * full pull applies everything again. Null when a pull is already running.
    */
   syncRun?: Maybe<SyncResult>;
   /** ADMIN or EDITOR. */
@@ -855,6 +896,12 @@ export type MutationMaintenanceJobRunArgs = {
 };
 
 
+export type MutationMedlemskapLinkUserArgs = {
+  spexareId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+
 export type MutationMembershipCreateArgs = {
   input: MembershipCreate;
   spexareId: Scalars['ID']['input'];
@@ -988,6 +1035,7 @@ export type MutationSpexareUpdateArgs = {
 
 export type MutationSyncRunArgs = {
   full?: InputMaybe<Scalars['Boolean']['input']>;
+  source?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1321,6 +1369,14 @@ export type Query = {
   /** ADMIN. The scheduled maintenance jobs, with their schedules and how their latest runs went. */
   maintenanceJobs: Array<MaintenanceJobStatus>;
   me?: Maybe<User>;
+  /** MEMBERSHIP. FGV memberships as Spexregister has them, oldest spexare first, for checking that the copy and Medlemskap agree. */
+  medlemskapFgvMemberships: Array<MedlemskapMembership>;
+  /** MEMBERSHIP. Spexare by id, in the given order; unknown ids are left out. At most 2000. */
+  medlemskapSpexareByIds: Array<MedlemskapSpexare>;
+  /** MEMBERSHIP. The spexare a Keycloak user is linked to, or null. */
+  medlemskapSpexareForUser?: Maybe<MedlemskapSpexare>;
+  /** MEMBERSHIP. Spexare whose name or nickname contains every word. At most 50. */
+  medlemskapSpexareSearch: Array<MedlemskapSpexare>;
   /** ADMIN, EDITOR or USER. USER sees published news only. */
   news?: Maybe<News>;
   /** ADMIN or EDITOR. */
@@ -1410,7 +1466,7 @@ export type Query = {
   state?: Maybe<State>;
   /** ADMIN, EDITOR or USER. */
   states?: Maybe<Array<Maybe<State>>>;
-  /** ADMIN. Where the sync of base data from Spexipedia has got to. */
+  /** ADMIN. Where the sync of base data from Spexipedia and of FGV memberships from Medlemskap has got to. */
   syncSources: Array<SyncSource>;
   /** Every role. */
   tag?: Maybe<Tag>;
@@ -1579,6 +1635,64 @@ export type QueryJobStatusArgs = {
  */
 export type QueryLanguageArgs = {
   isoCode: Scalars['Locale']['input'];
+};
+
+
+/**
+ * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
+ * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
+ * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
+ * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
+ * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
+ *
+ * Lists only ever contain what the caller may read.
+ */
+export type QueryMedlemskapFgvMembershipsArgs = {
+  after?: InputMaybe<Scalars['ID']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+/**
+ * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
+ * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
+ * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
+ * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
+ * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
+ *
+ * Lists only ever contain what the caller may read.
+ */
+export type QueryMedlemskapSpexareByIdsArgs = {
+  ids: Array<Scalars['ID']['input']>;
+};
+
+
+/**
+ * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
+ * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
+ * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
+ * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
+ * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
+ *
+ * Lists only ever contain what the caller may read.
+ */
+export type QueryMedlemskapSpexareForUserArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
+/**
+ * Queries named *Paged return a Relay connection: page with first and after, or last and before. Their filter is an
+ * expression of criteria such as year:2024, title:*Ali* or parent!NULL combined with AND, OR and parentheses. The
+ * operators are : (equals), ! (not equals), >, < and ~ (SQL LIKE); an asterisk at the start or end of a value of : makes
+ * it ends with, starts with or contains, and NULL, TRUE and FALSE compare as such. Nested attributes such as details.title
+ * can be filtered on only where the type allows it. sort names attributes, ordered by direction.
+ *
+ * Lists only ever contain what the caller may read.
+ */
+export type QueryMedlemskapSpexareSearchArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  q: Scalars['String']['input'];
 };
 
 
@@ -2880,7 +2994,7 @@ export type SyncSkipped = {
   skippedAt: Scalars['Instant']['output'];
 };
 
-/** A source of copied data: today Spexipedia, for spex, revivals, categories, tasks and characters. */
+/** A source of copied data: Spexipedia, for spex, revivals, categories, tasks and characters, and Medlemskap, for FGV memberships. */
 export type SyncSource = {
   __typename?: 'SyncSource';
   /** How many changes have been applied in all. */
@@ -3083,6 +3197,8 @@ export type Type = {
   __typename?: 'Type';
   id: Scalars['ID']['output'];
   label: Scalars['String']['output'];
+  /** For a MEMBERSHIP type: INTERNAL when Medlemskap keeps it, EXTERNAL when it is kept here. Null for other types. */
+  membershipKind?: Maybe<MembershipKind>;
   type: TypeType;
 };
 
